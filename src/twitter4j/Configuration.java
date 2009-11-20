@@ -45,7 +45,7 @@ public class Configuration {
     /*package*/ static void init() {
         defaultProperty = new Properties();
         defaultProperty.setProperty("twitter4j.debug", "false");
-        defaultProperty.setProperty("twitter4j.source", "CodeTwitter");
+        defaultProperty.setProperty("twitter4j.source", "my2cents");
         //defaultProperty.setProperty("twitter4j.clientVersion","");
         defaultProperty.setProperty("twitter4j.clientURL", "http://yusuke.homeip.net/twitter4j/en/twitter4j-{twitter4j.clientVersion}.xml");
         defaultProperty.setProperty("twitter4j.http.userAgent", "twitter4j http://yusuke.homeip.net/twitter4j/ /{twitter4j.clientVersion}");
