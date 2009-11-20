@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/LoginLayout"
+		android:background="@drawable/comment_editor_background"
+		android:orientation="vertical" android:visibility="gone">
+
+		<Button
+				android:id="@+id/login_button"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:text="Please login to comment"/>
+	</LinearLayout>
+	
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/CommentLayout"
+		android:background="@drawable/comment_editor_background"
+		android:orientation="vertical"
+		android:visibility="gone">
+
+		<LinearLayout
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:orientation="horizontal"
+			android:gravity="center_vertical">
+			<EditText
+				android:id="@+id/comment_edittext"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:imeOptions="actionSend|flagNoEnterAction"
+				android:inputType="textCapSentences|textAutoCorrect|textMultiLine|textImeMultiLine|textShortMessage"
+				android:layout_weight="1" />
+			<Button
+				android:id="@+id/comment_send_button"
+				android:text="Send"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" />
+		</LinearLayout>
+
+		<Gallery
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:spacing="5px"
+			android:id="@+id/comment_tag_gallery"
+			android:longClickable="true"
+			android:unselectedAlpha="0.3"></Gallery>
+	</LinearLayout>
+	
+	<RelativeLayout
+		android:layout_height="wrap_content"
+		android:id="@+id/ProductLayout"
+		android:background="@drawable/product_info_background"
+		android:layout_width="fill_parent"
+		android:visibility="gone">
+		<ImageView
+			android:layout_width="wrap_content"
+			android:id="@+id/productImageView"
+			android:maxHeight="90px"
+			android:maxWidth="90px"
+			android:adjustViewBounds="true"
+			android:layout_height="wrap_content" />
+
+
+		<TextView
+			android:layout_height="wrap_content"
+			android:id="@+id/productNameTextView"
+			android:layout_toRightOf="@id/productImageView"
+			android:layout_width="wrap_content"
+			android:textSize="5pt"
+			android:layout_marginLeft="5px" />
+	</RelativeLayout>
+	<ListView
+		android:id="@+id/android:list"
+		android:layout_width="fill_parent"
+		android:layout_weight="1"
+		android:scrollbars="vertical"
+		android:layout_height="80px"
+		android:choiceMode="none"
+		android:clickable="false">
+	</ListView>
+
+
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:gravity="center">
+		<ToggleButton
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:textOff="Product"
+			android:textOn="Product"
+			android:id="@+id/productToggleButton"
+			android:width="150px"
+			android:textSize="4pt"></ToggleButton>
+		<ToggleButton
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:textOn="Comment"
+			android:textOff="Comment"
+			android:id="@+id/commentToggleButton"
+			android:width="150px"
+			android:textSize="4pt"></ToggleButton>
+	</LinearLayout>
+</LinearLayout>

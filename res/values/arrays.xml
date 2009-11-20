@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+	<string-array name="twitter_providers">
+		<item>Twitter</item>
+		<item>Identi.ca</item>
+		<item>Custom</item>
+	</string-array>
+</resources>

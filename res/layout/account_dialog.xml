@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_height="fill_parent"
+	android:padding="10dp" android:layout_width="250px">
+
+	<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Service Provider"></TextView><Spinner android:layout_height="wrap_content" android:id="@+id/providerSpinner" android:layout_width="fill_parent" android:entries="@array/twitter_providers"></Spinner><TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:text="Username"/>
+	<EditText
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent" android:imeOptions="flagNoEnterAction" android:id="@+id/usernameEditText" android:inputType="textPersonName"/>
+	<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Password"></TextView><EditText android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/passwordEditText" android:imeOptions="flagNoEnterAction" android:inputType="textPassword"></EditText><CheckBox android:layout_height="wrap_content" android:id="@+id/showPasswordCheckBox" android:text="Show Password" android:layout_width="fill_parent"></CheckBox><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Custom API URL" android:id="@+id/customApiTextView" android:visibility="gone"></TextView><EditText android:layout_height="wrap_content" android:id="@+id/customApiEditText" android:layout_width="fill_parent" android:imeOptions="flagNoEnterAction" android:inputType="textUri" android:visibility="gone"></EditText><LinearLayout android:layout_height="wrap_content" android:orientation="horizontal" android:layout_width="fill_parent" android:gravity="center" android:layout_marginTop="10px"><Button android:layout_height="wrap_content" android:text="Done" android:id="@+id/accountDoneButton" android:layout_width="wrap_content" android:width="90px"></Button><Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/accountCancelButton" android:text="Cancel" android:width="90px"></Button>
+</LinearLayout>
+
+
+
+
+
+
+
+
+
+</LinearLayout>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FrameLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<SurfaceView
+		android:id="@+id/preview_view"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_centerInParent="true" />
+
+	<at.m2c.scanner.ViewfinderView
+		android:id="@+id/viewfinder_view"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:background="@color/transparent" />
+
+	
+
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:background="@color/transparent">
+
+		<FrameLayout
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_weight="1"
+			android:background="@color/transparent" />
+
+		<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_weight="0"
+			android:background="@color/status_view"
+			android:baselineAligned="false"
+			android:padding="4px" android:gravity="center">
+
+			<TextView
+				android:id="@+id/status_text_view"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="left|center_vertical"
+				android:text="@string/msg_default_status"
+				android:textColor="@color/status_text"
+				android.textSize="14sp" />
+
+		</LinearLayout>
+
+	</LinearLayout>
+
+</FrameLayout>

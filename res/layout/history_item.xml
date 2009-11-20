@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="?android:attr/listPreferredItemHeight"
+	android:padding="6dip">
+	<ImageView
+		android:layout_width="wrap_content"
+		android:src="@drawable/icon"
+		android:id="@+id/history_image" android:layout_marginRight="5px" android:layout_height="wrap_content" android:adjustViewBounds="true" android:visibility="visible" android:maxHeight="90px" android:maxWidth="90px"/>
+	<TextView
+		android:id="@+id/history_code"
+		android:layout_height="wrap_content"
+		android:layout_toRightOf="@id/history_image"
+		android:layout_width="wrap_content" android:textSize="6pt" android:textColor="#3366aa"/>
+	<TextView
+		android:layout_height="wrap_content"
+		android:id="@+id/history_time"
+		android:layout_toRightOf="@id/history_code"
+		android:layout_width="wrap_content" android:paddingLeft="10px" android:textSize="5pt" android:textColor="#6699aa"></TextView>
+	<TextView
+		android:layout_width="fill_parent"
+		android:ellipsize="marquee"
+		android:id="@+id/history_name"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/history_code"
+		android:layout_toRightOf="@id/history_image" />
+</RelativeLayout>
