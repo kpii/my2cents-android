@@ -35,7 +35,7 @@
 			android:key="number_of_search_results" android:defaultValue="15"
 			android:summary="How many tweets are returned by Twitter search"></EditTextPreference>
 		<CheckBoxPreference android:key="gps_enabled"
-			android:title="GPS" android:summary="Use GPS information"
+			android:title="Location" android:summary="Use my location"
 			android:defaultValue="false"></CheckBoxPreference>
 
 
