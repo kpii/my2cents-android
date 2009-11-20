@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
 import android.util.Log;
 import at.m2c.util.Helper;
 
@@ -54,10 +55,16 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     	}
         
         ContentValues map = new ContentValues();
+        
         map.put("code", product.getProductCode());
         map.put("time", new Date().toLocaleString());
         map.put("name", product.getProductName());
-        map.put("image", Helper.getBitmapAsByteArray(product.getProductImage()));
+        
+        Bitmap image = product.getProductImage();
+        if (image != null) {
+        	map.put("image", Helper.getBitmapAsByteArray(image));
+        }
+        
         try{
             db.insert("products", null, map);
         } catch (SQLException e) {
