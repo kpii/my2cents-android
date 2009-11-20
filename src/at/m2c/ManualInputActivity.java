@@ -27,6 +27,9 @@ public final class ManualInputActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		this.setTitle("my2cents Ñ Search for products");
+		
 		setContentView(R.layout.input_dialog);
 
 		Button doneButton = (Button) findViewById(R.id.doneButton);
