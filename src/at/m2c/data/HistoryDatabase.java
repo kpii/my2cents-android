@@ -42,6 +42,7 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     }
     
     public void AddEntry(ProductInfo product) {
+    	if ((product == null) || (product.getProductName() == null) || (product.getProductName().equals(""))) return;
     	
     	SQLiteDatabase db = getWritableDatabase();
     	
