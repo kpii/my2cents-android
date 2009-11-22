@@ -259,7 +259,7 @@ public final class CommentActivity extends ListActivity {
 					runOnUiThread(dismissProgressDialog);
 				}
 			};
-
+			
 			new Thread(null, postComment, "CommentSender").start();
 			progressDialog = ProgressDialog.show(CommentActivity.this, null, "Sending...", true);
 		}
@@ -472,6 +472,8 @@ public final class CommentActivity extends ListActivity {
 
 	private Runnable dismissProgressDialog = new Runnable() {
 		public void run() {
+			EditText commentEditor = (EditText) findViewById(R.id.comment_edittext);
+			commentEditor.setText("");
 			progressDialog.dismiss();
 		}
 	};
