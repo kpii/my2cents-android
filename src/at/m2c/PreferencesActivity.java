@@ -15,12 +15,11 @@ public final class PreferencesActivity extends PreferenceActivity implements OnS
 	
 	private static final String TAG = "PreferencesActivity";
 	
-	public static String ProductCodePrefix = "#";
+	public final static String TagPrefix = "#";
+	public final static String ProductCodePrefix = "#my2c #";
 
-	public static final String TWITTER_PROVIDER = "twitter_provider";
 	public static final String TWITTER_USERNAME = "twitter_username";
 	public static final String TWITTER_PASSWORD = "twitter_password";
-	public static final String TWITTER_CUSTOM_API_URL = "twitter_custom_api_url";
 
 	static final String KEY_PLAY_BEEP = "preferences_play_beep";
 	static final String KEY_VIBRATE = "preferences_vibrate";
@@ -28,8 +27,6 @@ public final class PreferencesActivity extends PreferenceActivity implements OnS
 
 	static final String KEY_PREFIX = "preferences_prefix";
 	public static final String GPS_ENABLED = "gps_enabled";
-	public static final String RESEARCH_ENABLED = "research_enabled";
-	public static final String NUMBER_OF_SEARCH_RESULTS = "number_of_search_results";
 	
 	static final String ACCOUNT_PREFERENCE = "account_preference";
 	static final String IS_COMMENTING_POSSIBLE = "is_commenting_possible";

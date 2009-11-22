@@ -82,7 +82,7 @@ public final class NetworkManager {
 		}
 		
 		setBasicAuthentication(connection, name, password);
-		connection.setRequestProperty("User-Agent", "ProductPeep");
+		connection.setRequestProperty("User-Agent", "my2cents");
 		InputStream inputStream;
 		try {
 			inputStream = connection.getInputStream();

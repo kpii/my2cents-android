@@ -26,15 +26,11 @@ import android.text.InputType;
 import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import at.m2c.util.ProviderManager;
 
@@ -42,10 +38,8 @@ public final class AccountActivity extends Activity {
 	private boolean credentialsCorrect;
 	private ProgressDialog progressDialog;
 	
-	private String provider;
 	private String username;
 	private String password;
-	private String customApiUrl;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,28 +47,14 @@ public final class AccountActivity extends Activity {
 		setContentView(R.layout.account_dialog);
 		
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		provider = preferences.getString(PreferencesActivity.TWITTER_PROVIDER, "Twitter");
 		username = preferences.getString(PreferencesActivity.TWITTER_USERNAME, "");
 		password = preferences.getString(PreferencesActivity.TWITTER_PASSWORD, "");
-		customApiUrl = preferences.getString(PreferencesActivity.TWITTER_CUSTOM_API_URL, "");
-		
-		Spinner providerSpinner = (Spinner) findViewById(R.id.providerSpinner);
-		providerSpinner.setOnItemSelectedListener(providerListener);
-		int index = 0;
-		if (provider.equals("Identi.ca"))
-			index = 1;
-		else if (provider.equals("Custom"))
-			index = 2;
-		providerSpinner.setSelection(index);
 		
 		EditText usernameEditText = (EditText) findViewById(R.id.usernameEditText);
 		usernameEditText.setText(username);
 		
 		EditText passwordEditText = (EditText) findViewById(R.id.passwordEditText);
 		passwordEditText.setText(password);
-		
-		EditText customApiEditText = (EditText) findViewById(R.id.customApiEditText);
-		customApiEditText.setText(customApiUrl);
 
 		Button accountDoneButton = (Button) findViewById(R.id.accountDoneButton);
 		accountDoneButton.setOnClickListener(doneListener);
@@ -85,32 +65,6 @@ public final class AccountActivity extends Activity {
 		CheckBox showPasswordCheckBox = (CheckBox) findViewById(R.id.showPasswordCheckBox);
 		showPasswordCheckBox.setOnCheckedChangeListener(showPasswordListener);
 	}
-	
-	private final OnItemSelectedListener providerListener = new OnItemSelectedListener() {
-
-		public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-			String value = parent.getItemAtPosition(position).toString();
-			if (value.equals("Custom")) {
-				TextView customApiTextView = (TextView) findViewById(R.id.customApiTextView);
-				customApiTextView.setVisibility(View.VISIBLE);
-				
-				EditText customApiEditText = (EditText) findViewById(R.id.customApiEditText);
-				customApiEditText.setVisibility(View.VISIBLE);
-			}
-			else
-			{
-				TextView customApiTextView = (TextView) findViewById(R.id.customApiTextView);
-				customApiTextView.setVisibility(View.GONE);
-				
-				EditText customApiEditText = (EditText) findViewById(R.id.customApiEditText);
-				customApiEditText.setVisibility(View.GONE);
-			}
-		}
-
-		public void onNothingSelected(AdapterView<?> parent) {
-			// TODO Auto-generated method stub			
-		}		
-	};
 	
 	private Runnable checkCredentials = new Runnable() {
 		public void run() {
@@ -128,11 +82,8 @@ public final class AccountActivity extends Activity {
 				
 				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(AccountActivity.this);
 				SharedPreferences.Editor editor = sharedPreferences.edit();
-
-				editor.putString(PreferencesActivity.TWITTER_PROVIDER, provider);
 				editor.putString(PreferencesActivity.TWITTER_USERNAME, username);
 				editor.putString(PreferencesActivity.TWITTER_PASSWORD, password);
-				editor.putString(PreferencesActivity.TWITTER_CUSTOM_API_URL, customApiUrl);
 				
 				editor.putBoolean(PreferencesActivity.IS_COMMENTING_POSSIBLE, ProviderManager.isCommentingPossible());
 
@@ -150,8 +101,6 @@ public final class AccountActivity extends Activity {
 
 	private final OnClickListener doneListener = new OnClickListener() {
 		public void onClick(View view) {
-			Spinner providerSpinner = (Spinner) findViewById(R.id.providerSpinner);
-			provider = providerSpinner.getSelectedItem().toString();
 			
 			EditText usernameEditText = (EditText) findViewById(R.id.usernameEditText);
 			username = usernameEditText.getText().toString();
@@ -159,10 +108,7 @@ public final class AccountActivity extends Activity {
 			EditText passwordEditText = (EditText) findViewById(R.id.passwordEditText);
 			password = passwordEditText.getText().toString();
 			
-			EditText customApiEditText = (EditText) findViewById(R.id.customApiEditText);
-			customApiUrl = customApiEditText.getText().toString();
-			
-			ProviderManager.Initialize(provider, username, password, customApiUrl);
+			ProviderManager.Initialize(username, password);
 			
 			progressDialog = ProgressDialog.show(AccountActivity.this, "User Account", "Checking Credentials...", true);
 			new Thread(null, checkCredentials, "CredentialsVerifier").start();

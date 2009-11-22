@@ -1,17 +1,6 @@
 package at.m2c.util;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 
 import twitter4j.Query;
 import twitter4j.QueryResult;
@@ -29,35 +18,17 @@ public final class ProviderManager {
 
 	final static String TWITTER_API_ROOT = "http://twitter.com/";
 	final static String TWITTER_SEARCH_API_ROOT = "http://search.twitter.com/";
-	final static String IDENTICA_API_ROOT = "http://identi.ca/api/";
-	final static String JEEJEE_API_ROOT = "http://jeejee.wanted.base45.de/api/";
-
-	static String apiRoot = TWITTER_API_ROOT;
-	static String searchApiRoot = TWITTER_SEARCH_API_ROOT;
-	
-	private final static String RESEARCH_URL = "http://cocoa.ethz.ch/productpeep";
 
 	private static Twitter twitter;
 	
 	private static boolean isCommentingPossible;
 	
 
-	public final static void Initialize(String provider, String username, String password, String customApiUrl)
+	public final static void Initialize(String username, String password)
 	{		
 		twitter = new Twitter(username, password);
-		
-		if (provider.equals("Twitter")) {
-			twitter.setBaseURL(TWITTER_API_ROOT);
-			twitter.setSearchBaseURL(TWITTER_SEARCH_API_ROOT);
-		}
-		else if (provider.equals("Identi.ca")) {
-			twitter.setBaseURL(IDENTICA_API_ROOT);
-			twitter.setSearchBaseURL(IDENTICA_API_ROOT);
-		}
-		else {
-			twitter.setBaseURL(customApiUrl);
-			twitter.setSearchBaseURL(customApiUrl);
-		}
+		twitter.setBaseURL(TWITTER_API_ROOT);
+		twitter.setSearchBaseURL(TWITTER_SEARCH_API_ROOT);
 	}
 
 	public final static Status updateStatus(String statusText, Location l) {
@@ -70,29 +41,6 @@ public final class ProviderManager {
 			Log.e(TAG, e.toString());
 			return null;
 		}
-	}
-	
-	public final static boolean postResearchData(String ean, String username, String comment) {
-		HttpClient httpclient = new DefaultHttpClient();
-	    HttpPost httppost = new HttpPost(RESEARCH_URL);
-
-	    try {
-	        // Add your data
-	        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
-	        nameValuePairs.add(new BasicNameValuePair("ean", ean));
-	        nameValuePairs.add(new BasicNameValuePair("user", username));
-	        nameValuePairs.add(new BasicNameValuePair("comment", comment));
-	        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-	        // Execute HTTP Post Request
-	        HttpResponse response = httpclient.execute(httppost);
-	    } catch (ClientProtocolException e) {
-	        return false;
-	    } catch (IOException e) {
-	    	return false;
-	    }
-	    
-	    return true;
 	}
 	
 	public final static List<Tweet> search(String searchTerm, int numberOfResults){

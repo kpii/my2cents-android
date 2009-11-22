@@ -59,9 +59,8 @@ public final class CommentActivity extends ListActivity {
 	private volatile boolean shutdownRequested;
 	
 	private boolean gpsEnabled;
-	private boolean researchEnabled;
 	
-	private int numberOfResults = 15;
+	private final static int numberOfResults = 30;
 	private LocationManager locationManager;
 
 	public CaptureActivityHandler mHandler;
@@ -105,11 +104,9 @@ public final class CommentActivity extends ListActivity {
 		sendCommentButton.setOnClickListener(sendCommentListener);
 
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		String provider = preferences.getString(PreferencesActivity.TWITTER_PROVIDER, "Twitter");
 		String username = preferences.getString(PreferencesActivity.TWITTER_USERNAME, "");
 		String password = preferences.getString(PreferencesActivity.TWITTER_PASSWORD, "");
-		String customApiUrl = preferences.getString(PreferencesActivity.TWITTER_CUSTOM_API_URL, "");
-		ProviderManager.Initialize(provider, username, password, customApiUrl);
+		ProviderManager.Initialize(username, password);
 	}
 	
 	@Override
@@ -153,16 +150,9 @@ public final class CommentActivity extends ListActivity {
 		
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		gpsEnabled = preferences.getBoolean(PreferencesActivity.GPS_ENABLED, false);
-		researchEnabled = preferences.getBoolean(PreferencesActivity.RESEARCH_ENABLED, false);
 		
 		boolean isCommentingPossible = preferences.getBoolean(PreferencesActivity.IS_COMMENTING_POSSIBLE, false);
 		ProviderManager.setCommentingPossible(isCommentingPossible);
-		
-		numberOfResults = Integer.parseInt(preferences.getString(PreferencesActivity.NUMBER_OF_SEARCH_RESULTS, "15"));
-		if (numberOfResults > 100)
-			numberOfResults = 100;
-		else if (numberOfResults < 1)
-			numberOfResults = 1;
 	}
 
 	private final OnItemLongClickListener tagsLongClickListener = new OnItemLongClickListener() {
@@ -246,10 +236,6 @@ public final class CommentActivity extends ListActivity {
 					}
 					
 					Status status = ProviderManager.updateStatus(message, l);
-					if (researchEnabled) {
-						ProviderManager.postResearchData(DataManager.getProductInfo().getProductCode(), status.getUser().getScreenName(), commentEditor.getText().toString());
-					}
-					
 					if (status != null) {
 						Tweet comment = new Tweet(status);
 						if (comment != null) {
@@ -319,7 +305,7 @@ public final class CommentActivity extends ListActivity {
 
 	private Runnable viewComments = new Runnable() {
 		public void run() {
-			searchComments(PreferencesActivity.ProductCodePrefix + DataManager.getProductInfo().getProductCode());
+			searchComments(PreferencesActivity.TagPrefix + DataManager.getProductInfo().getProductCode());
 		}
 	};
 
@@ -516,10 +502,14 @@ public final class CommentActivity extends ListActivity {
 				}
 				
 				commentsAdapter.notifyDataSetChanged();
+				
+				progressDialog.dismiss();
+				new Thread(null, loadAvatars, "AvatarLoader").start();
 			}
-
-			progressDialog.dismiss();
-			new Thread(null, loadAvatars, "AvatarLoader").start();
+			else {
+				progressDialog.dismiss();
+				Toast.makeText(CommentActivity.this, "No comments yet. Be the first one to add your 2 cents on this product! Click on 'Add my 2 cents'", Toast.LENGTH_LONG).show();
+			}
 		}
 	};
 

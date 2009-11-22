@@ -28,7 +28,7 @@ public final class ManualInputActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		this.setTitle("my2cents Ñ Search for products");
+		this.setTitle("my2cents - Search for products");
 		
 		setContentView(R.layout.input_dialog);
 

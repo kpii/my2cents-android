@@ -128,7 +128,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 		playBeep = prefs.getBoolean(PreferencesActivity.KEY_PLAY_BEEP, true);
 		vibrate = prefs.getBoolean(PreferencesActivity.KEY_VIBRATE, false);
 		copyToClipboard = prefs.getBoolean(PreferencesActivity.KEY_COPY_TO_CLIPBOARD, true);
-		PreferencesActivity.ProductCodePrefix = prefs.getString(PreferencesActivity.KEY_PREFIX, "#");
 		initBeepSound();
 	}
 

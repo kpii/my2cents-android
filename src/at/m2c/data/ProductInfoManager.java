@@ -48,48 +48,10 @@ public final class ProductInfoManager {
      */
     private static final String ENDPOINT = "ecs.amazonaws.com";
 
-	private static final String CODECHECK_USERNAME = "eth317mtec";
-	private static final String CODECHECK_PASSWORD = "kT3jDb4_q5DF-T";
-	private static final String CODECHECK_URL = "http://www.codecheck.info/WebServiceTest/rest/prod/ean/0/";
-	private static final String CODECHECK_IMAGE_URL = "http://www.codecheck.info/WebServiceTest/rest/img/id/";
-
 	
 	
 	public static final void updateProductInfo(ProductInfo productInfo) {
-		if (!updateFromAmazon(productInfo)) {
-			boolean isNumber = false;
-			try {
-				Double.parseDouble(productInfo.getProductCode());
-				isNumber = true;
-			} catch (NumberFormatException e) {
-				isNumber = false;
-			}
-			if (isNumber) {
-				if (!updateFromUpcdatabase(productInfo)) {
-				}
-//				if (!updateFromCodecheck(productInfo)) {
-//					if (!updateFromUpcdatabase(productInfo)) {
-//					}
-//				}
-			}			
-		}
-	}
-
-	private static final boolean updateFromCodecheck(ProductInfo productInfo) {
-		String url = CODECHECK_URL + productInfo.getProductCode();
-		String jsonString = NetworkManager.getRemotePageAsString(url, CODECHECK_USERNAME, CODECHECK_PASSWORD);
-
-		try {
-			JSONObject json = new JSONObject(jsonString).optJSONObject("result");
-			productInfo.setProductName(json.getString("name"));
-			String imgId = json.getString("imgId");
-			URL imageUrl = new URL(CODECHECK_IMAGE_URL + imgId + "/2");
-			Bitmap image = NetworkManager.getRemoteImage(imageUrl, CODECHECK_USERNAME, CODECHECK_PASSWORD);
-			productInfo.setProductImage(image);
-		} catch (Exception e) {
-			return false;
-		}
-		return true;
+		updateFromAmazon(productInfo);
 	}
 	
 	private static final boolean updateFromAmazon(ProductInfo productInfo) {
@@ -141,20 +103,6 @@ public final class ProductInfoManager {
         	return false;
         }
 
-		return true;
-	}
-
-	private static final boolean updateFromUpcdatabase(ProductInfo productInfo) {
-		try {
-			XMLRPCClient client = new XMLRPCClient("http://www.upcdatabase.com/rpc");
-			HashMap<?, ?> result = (HashMap<?, ?>) client.call("lookupUPC", productInfo.getProductCode());
-			if (result.size() > 0 && result.get("message").toString().equalsIgnoreCase("Database entry found")) {
-				productInfo.setProductName(result.get("description").toString());
-				return true;
-			}
-		} catch (Exception e) {
-			return false;
-		}
 		return true;
 	}
 }
