@@ -37,7 +37,7 @@
 				android:layout_height="wrap_content"
 				android:imeOptions="actionSend|flagNoEnterAction"
 				android:inputType="textCapSentences|textAutoCorrect|textMultiLine|textImeMultiLine|textShortMessage"
-				android:layout_weight="1" />
+				android:layout_weight="1" android:maxLength="120"/>
 			<Button
 				android:id="@+id/comment_send_button"
 				android:text="Send"
