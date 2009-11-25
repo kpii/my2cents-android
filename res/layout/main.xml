@@ -15,7 +15,8 @@
 		<Button
 				android:id="@+id/login_button"
 				android:layout_width="fill_parent"
-				android:layout_height="wrap_content" android:text="Please login to comment"/>
+				android:layout_height="wrap_content"
+				android:text="Please login to comment"/>
 	</LinearLayout>
 	
 	<LinearLayout
@@ -37,7 +38,8 @@
 				android:layout_height="wrap_content"
 				android:imeOptions="actionSend|flagNoEnterAction"
 				android:inputType="textCapSentences|textAutoCorrect|textMultiLine|textImeMultiLine|textShortMessage"
-				android:layout_weight="1" android:maxLength="120"/>
+				android:layout_weight="1"
+				android:maxLength="120"/>
 			<Button
 				android:id="@+id/comment_send_button"
 				android:text="Send"
@@ -74,7 +76,7 @@
 			android:id="@+id/productNameTextView"
 			android:layout_toRightOf="@id/productImageView"
 			android:layout_width="wrap_content"
-			android:textSize="5pt"
+			android:textSize="@dimen/product_info_text"
 			android:layout_marginLeft="5px" />
 	</RelativeLayout>
 	<ListView
@@ -99,13 +101,11 @@
 			android:textOff="Product"
 			android:textOn="Product"
 			android:id="@+id/productToggleButton"
-			android:width="150px"
-			android:textSize="4pt"></ToggleButton>
+			android:textSize="@dimen/toggle_button_text" android:width="150sp"></ToggleButton>
 		<ToggleButton
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:id="@+id/commentToggleButton"
-			android:width="150px"
-			android:textSize="4pt" android:textOff="Add my 2 cents" android:textOn="Add my 2 cents"></ToggleButton>
+			android:textSize="@dimen/toggle_button_text" android:textOff="Add my 2 cents" android:textOn="Add my 2 cents" android:width="150sp"></ToggleButton>
 	</LinearLayout>
 </LinearLayout>

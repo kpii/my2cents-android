@@ -57,6 +57,7 @@ import at.m2c.scanner.CameraManager;
 import at.m2c.scanner.CaptureActivityHandler;
 import at.m2c.scanner.ViewfinderView;
 
+import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 import com.google.zxing.ResultPoint;
 import com.google.zxing.client.result.ParsedResult;
@@ -302,6 +303,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 	private void handleDecodeInternally(Result rawResult, Bitmap barcode) {
 		ParsedResult result = ResultParser.parseResult(rawResult);
 		String productCode = result.getDisplayResult().replace("\r", "");
+		if (rawResult.getBarcodeFormat().equals(BarcodeFormat.UPC_A)) {
+			productCode = "0" + productCode;
+		}
 		ProductInfo productInfo = new ProductInfo(productCode);
 		DataManager.setProductInfo(productInfo);
 
