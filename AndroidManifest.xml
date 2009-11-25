@@ -6,7 +6,8 @@
 	package="at.m2c">
 		
 	<!-- We require Cupcake (Android 1.5) or later. -->
-  <uses-sdk android:minSdkVersion="3"/>
+  <uses-sdk android:minSdkVersion="3"
+  			android:targetSdkVersion="4"/>
   <!-- Donut-specific flags which allow us to run on large and high dpi screens. -->
   <supports-screens
     android:largeScreens="true"
