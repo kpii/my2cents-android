@@ -16,24 +16,27 @@
 
 package at.m2c.scanner;
 
-import java.util.Hashtable;
-import java.util.Vector;
-
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.util.Log;
-import at.m2c.CaptureActivity;
-import at.m2c.R;
-
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
+import com.google.zxing.ResultPointCallback;
 import com.google.zxing.common.GlobalHistogramBinarizer;
+
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import at.m2c.CaptureActivity;
+import at.m2c.R;
+
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * This thread does all the heavy lifting of decoding the images.
@@ -44,15 +47,21 @@ final class DecodeThread extends Thread {
   public static final String BARCODE_BITMAP = "barcode_bitmap";
   private static final String TAG = "DecodeThread";
 
-  public Handler handler;
+  private Handler handler;
   private final CaptureActivity activity;
   private final MultiFormatReader multiFormatReader;
+  private final ResultPointCallback resultPointCallback;
 
-  DecodeThread(CaptureActivity activity) {
+  DecodeThread(CaptureActivity activity, ResultPointCallback resultPointCallback) {
     this.activity = activity;
     multiFormatReader = new MultiFormatReader();
+    this.resultPointCallback = resultPointCallback;
 
     setDecodeProductMode();
+  }
+
+  Handler getHandler() {
+    return handler;
   }
 
   @Override
@@ -75,13 +84,52 @@ final class DecodeThread extends Thread {
   }
 
   private void setDecodeProductMode() {
+    doSetDecodeMode(BarcodeFormat.UPC_A,
+                    BarcodeFormat.UPC_E,
+                    BarcodeFormat.EAN_13,
+                    BarcodeFormat.EAN_8);
+  }
+
+  /**
+   * Select the 1D formats we want this client to decode by hand.
+   */
+  private void setDecode1DMode() {
+    doSetDecodeMode(BarcodeFormat.UPC_A,
+                    BarcodeFormat.UPC_E,
+                    BarcodeFormat.EAN_13,
+                    BarcodeFormat.EAN_8,
+                    BarcodeFormat.CODE_39,
+                    BarcodeFormat.CODE_128,
+                    BarcodeFormat.ITF);
+  }
+
+  private void setDecodeQRMode() {
+    doSetDecodeMode(BarcodeFormat.QR_CODE);
+  }
+
+  /**
+   * Instead of calling setHints(null), which would allow new formats to sneak in, we
+   * explicitly set which formats are available.
+   */
+  private void setDecodeAllMode() {
+    doSetDecodeMode(BarcodeFormat.UPC_A,
+                    BarcodeFormat.UPC_E,
+                    BarcodeFormat.EAN_13,
+                    BarcodeFormat.EAN_8,
+                    BarcodeFormat.CODE_39,
+                    BarcodeFormat.CODE_128,
+                    BarcodeFormat.ITF,
+                    BarcodeFormat.QR_CODE);
+  }
+
+  private void doSetDecodeMode(BarcodeFormat... formats) {
     Hashtable<DecodeHintType, Object> hints = new Hashtable<DecodeHintType, Object>(3);
-    Vector<BarcodeFormat> vector = new Vector<BarcodeFormat>(4);
-    vector.addElement(BarcodeFormat.UPC_A);
-    vector.addElement(BarcodeFormat.UPC_E);
-    vector.addElement(BarcodeFormat.EAN_13);
-    vector.addElement(BarcodeFormat.EAN_8);
+    Vector<BarcodeFormat> vector = new Vector<BarcodeFormat>(formats.length);
+    for (BarcodeFormat format : formats) {
+      vector.addElement(format);
+    }
     hints.put(DecodeHintType.POSSIBLE_FORMATS, vector);
+    hints.put(DecodeHintType.NEED_RESULT_POINT_CALLBACK, resultPointCallback);
     multiFormatReader.setHints(hints);
   }
 
@@ -95,27 +143,25 @@ final class DecodeThread extends Thread {
    */
   private void decode(byte[] data, int width, int height) {
     long start = System.currentTimeMillis();
-    boolean success;
     Result rawResult = null;
-    BaseLuminanceSource source = CameraManager.get().buildLuminanceSource(data, width, height);
+    PlanarYUVLuminanceSource source = CameraManager.get().buildLuminanceSource(data, width, height);
     BinaryBitmap bitmap = new BinaryBitmap(new GlobalHistogramBinarizer(source));
     try {
       rawResult = multiFormatReader.decodeWithState(bitmap);
-      success = true;
-    } catch (ReaderException e) {
-      success = false;
+    } catch (ReaderException re) {
+      // continue
     }
-    long end = System.currentTimeMillis();
 
-    if (success) {
+    if (rawResult != null) {
+      long end = System.currentTimeMillis();
       Log.v(TAG, "Found barcode (" + (end - start) + " ms):\n" + rawResult.toString());
-      Message message = Message.obtain(activity.handler, R.id.decode_succeeded, rawResult);
+      Message message = Message.obtain(activity.getHandler(), R.id.decode_succeeded, rawResult);
       Bundle bundle = new Bundle();
       bundle.putParcelable(BARCODE_BITMAP, source.renderCroppedGreyscaleBitmap());
       message.setData(bundle);
       message.sendToTarget();
     } else {
-      Message message = Message.obtain(activity.handler, R.id.decode_failed);
+      Message message = Message.obtain(activity.getHandler(), R.id.decode_failed);
       message.sendToTarget();
     }
   }

@@ -16,9 +16,9 @@
 
 package at.m2c.scanner;
 
-import android.graphics.Bitmap;
-
 import com.google.zxing.LuminanceSource;
+
+import android.graphics.Bitmap;
 
 /**
  * This object extends LuminanceSource around an array of YUV data returned from the camera driver,
@@ -26,18 +26,18 @@ import com.google.zxing.LuminanceSource;
  * superfluous pixels around the perimeter and speed up decoding.
  *
  * It works for any pixel format where the Y channel is planar and appears first, including
- * YCbCr_420_SP and YCbCr_422_SP. Any subsequent color data will be ignored.
+ * YCbCr_420_SP and YCbCr_422_SP.
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
-public final class PlanarYUVLuminanceSource extends BaseLuminanceSource {
+public final class PlanarYUVLuminanceSource extends LuminanceSource {
   private final byte[] yuvData;
   private final int dataWidth;
   private final int dataHeight;
   private final int left;
   private final int top;
 
-  public PlanarYUVLuminanceSource(byte[] yuvData, int dataWidth, int dataHeight, int left, int top,
+  PlanarYUVLuminanceSource(byte[] yuvData, int dataWidth, int dataHeight, int left, int top,
       int width, int height) {
     super(width, height);
 
@@ -102,22 +102,14 @@ public final class PlanarYUVLuminanceSource extends BaseLuminanceSource {
     return true;
   }
 
-  @Override
-  public LuminanceSource crop(int left, int top, int width, int height) {
-    return new PlanarYUVLuminanceSource(yuvData, dataWidth, dataHeight, left, top, width, height);
-  }
-
-  @Override
   public int getDataWidth() {
     return dataWidth;
   }
 
-  @Override
   public int getDataHeight() {
     return dataHeight;
   }
 
-  @Override
   public Bitmap renderCroppedGreyscaleBitmap() {
     int width = getWidth();
     int height = getHeight();
@@ -129,7 +121,7 @@ public final class PlanarYUVLuminanceSource extends BaseLuminanceSource {
       int outputOffset = y * width;
       for (int x = 0; x < width; x++) {
         int grey = yuv[inputOffset + x] & 0xff;
-        pixels[outputOffset + x] = (0xff000000) | (grey * 0x00010101);
+        pixels[outputOffset + x] = 0xFF000000 | (grey * 0x00010101);
       }
       inputOffset += dataWidth;
     }
@@ -137,11 +129,5 @@ public final class PlanarYUVLuminanceSource extends BaseLuminanceSource {
     Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
     bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
     return bitmap;
-  }
-
-  // Can't be implemented here, as the color representations vary.
-  @Override
-  public Bitmap renderFullColorBitmap(boolean halfSize) {
-    return null;
   }
 }

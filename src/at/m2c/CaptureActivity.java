@@ -35,6 +35,7 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.text.ClipboardManager;
@@ -76,7 +77,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
 	private final static int MANUAL_INPUT_CODE = 0;
 
-	public CaptureActivityHandler handler;
+	private CaptureActivityHandler handler;
 
 	private ViewfinderView viewfinderView;
 	private MediaPlayer mediaPlayer;
@@ -87,6 +88,14 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 	private boolean copyToClipboard;
 	private final OnCompletionListener beepListener = new BeepListener();
 
+	public ViewfinderView getViewfinderView() {
+	    return viewfinderView;
+	  }
+
+	  public Handler getHandler() {
+	    return handler;
+	  }
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -259,37 +268,35 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 	}
 
 	/**
-	 * Superimpose a line for 1D or dots for 2D to highlight the key features of
-	 * the barcode.
-	 * 
-	 * @param barcode
-	 *            A bitmap of the captured image.
-	 * @param rawResult
-	 *            The decoded results which contains the points to draw.
-	 */
-	private void drawResultPoints(Bitmap barcode, Result rawResult) {
-		ResultPoint[] points = rawResult.getResultPoints();
-		if (points != null && points.length > 0) {
-			Canvas canvas = new Canvas(barcode);
-			Paint paint = new Paint();
-			paint.setColor(getResources().getColor(R.color.result_image_border));
-			paint.setStrokeWidth(3.0f);
-			paint.setStyle(Paint.Style.STROKE);
-			Rect border = new Rect(2, 2, barcode.getWidth() - 2, barcode.getHeight() - 2);
-			canvas.drawRect(border, paint);
+	   * Superimpose a line for 1D or dots for 2D to highlight the key features of the barcode.
+	   *
+	   * @param barcode   A bitmap of the captured image.
+	   * @param rawResult The decoded results which contains the points to draw.
+	   */
+	  private void drawResultPoints(Bitmap barcode, Result rawResult) {
+	    ResultPoint[] points = rawResult.getResultPoints();
+	    if (points != null && points.length > 0) {
+	      Canvas canvas = new Canvas(barcode);
+	      Paint paint = new Paint();
+	      paint.setColor(getResources().getColor(R.color.result_image_border));
+	      paint.setStrokeWidth(3.0f);
+	      paint.setStyle(Paint.Style.STROKE);
+	      Rect border = new Rect(2, 2, barcode.getWidth() - 2, barcode.getHeight() - 2);
+	      canvas.drawRect(border, paint);
 
-			paint.setColor(getResources().getColor(R.color.result_points));
-			if (points.length == 2) {
-				paint.setStrokeWidth(4.0f);
-				canvas.drawLine(points[0].getX(), points[0].getY(), points[1].getX(), points[1].getY(), paint);
-			} else {
-				paint.setStrokeWidth(10.0f);
-				for (ResultPoint point : points) {
-					canvas.drawPoint(point.getX(), point.getY(), paint);
-				}
-			}
-		}
-	}
+	      paint.setColor(getResources().getColor(R.color.result_points));
+	      if (points.length == 2) {
+	        paint.setStrokeWidth(4.0f);
+	        canvas.drawLine(points[0].getX(), points[0].getY(), points[1].getX(),
+	            points[1].getY(), paint);
+	      } else {
+	        paint.setStrokeWidth(10.0f);
+	        for (ResultPoint point : points) {
+	          canvas.drawPoint(point.getX(), point.getY(), paint);
+	        }
+	      }
+	    }
+	  }
 
 	// Put up our own UI for how to handle the decoded contents.
 	private void handleDecodeInternally(Result rawResult, Bitmap barcode) {
@@ -386,8 +393,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 	}
 
 	public void drawViewfinder() {
-		viewfinderView.drawViewfinder();
-	}
+	    viewfinderView.drawViewfinder();
+	  }
 
 	/**
 	 * When the beep has finished playing, rewind to queue up another one.
