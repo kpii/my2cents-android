@@ -77,4 +77,9 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     	String query = "SELECT * FROM products ORDER BY _id DESC";
     	return db.rawQuery(query, null);
     }
+    
+    public void clearHistory() {
+    	SQLiteDatabase db = getWritableDatabase();
+    	db.delete("products", null, null);
+    }
 }

@@ -59,8 +59,7 @@ public final class HistoryActivity extends ListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.main_menu, menu);
-//		menu.getItem(R.id.historyMenuItem).setVisible(false);
+		inflater.inflate(R.menu.history_menu, menu);
 		return true;
 	}
 
@@ -70,6 +69,11 @@ public final class HistoryActivity extends ListActivity {
 			case R.id.searchMenuItem: {
 				Intent intent = new Intent(this, ManualInputActivity.class);
 				startActivityForResult(intent, MANUAL_INPUT_CODE);
+				break;
+			}
+			case R.id.clearHistoryMenuItem: {
+				DataManager.getHistoryDatabase().clearHistory();
+				adapter.getCursor().requery();
 				break;
 			}
 			case R.id.preferencesMenuItem: {
