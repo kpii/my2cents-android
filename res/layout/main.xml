@@ -79,7 +79,8 @@
 			android:textSize="@dimen/product_info_text"
 			android:layout_marginLeft="5px" />
 	</RelativeLayout>
-	<ListView
+	<LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/NotificationLayout" android:padding="5sp" android:visibility="gone"><TextView android:id="@+id/notificationTextView" android:layout_width="fill_parent" android:layout_height="fill_parent" android:textColor="@color/result_minor_text" android:textStyle="bold" android:typeface="monospace"></TextView>
+</LinearLayout><ListView
 		android:id="@+id/android:list"
 		android:layout_width="fill_parent"
 		android:layout_weight="1"
@@ -108,4 +109,5 @@
 			android:id="@+id/commentToggleButton"
 			android:textSize="@dimen/toggle_button_text" android:textOff="Add my 2 cents" android:textOn="Add my 2 cents" android:width="150sp"></ToggleButton>
 	</LinearLayout>
+
 </LinearLayout>

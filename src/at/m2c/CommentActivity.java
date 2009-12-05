@@ -487,11 +487,15 @@ public final class CommentActivity extends ListActivity {
 
 	private Runnable displayComments = new Runnable() {
 		public void run() {
+			ViewGroup notificationLayout = (ViewGroup) findViewById(R.id.NotificationLayout);
+			
 			commentsAdapter.clear();
 			tagsAdapter.clear();
 			
 			String productTag = PreferencesActivity.ProductCodePrefix + DataManager.getProductInfo().getProductCode();
 			if (comments != null && comments.size() > 0) {
+				notificationLayout.setVisibility(View.GONE);
+				
 				Set<String> tags = new TreeSet<String>();
 				for (Tweet comment : comments) {
 					commentsAdapter.add(comment);
@@ -517,7 +521,10 @@ public final class CommentActivity extends ListActivity {
 			}
 			else {
 				progressDialog.dismiss();
-				Toast.makeText(CommentActivity.this, "No comments yet. Be the first one to add your 2 cents on this product! Click on 'Add my 2 cents'", Toast.LENGTH_LONG).show();
+				
+				TextView notificationTextView = (TextView) findViewById(R.id.notificationTextView);
+				notificationTextView.setText("No comments yet. Be the first one to add your 2 cents on this product! Click on 'Add my 2 cents'");
+				notificationLayout.setVisibility(View.VISIBLE);
 			}
 		}
 	};

@@ -37,15 +37,17 @@ public final class NetworkManager {
 	}
 
 	public static Bitmap getRemoteImage(final URL url) {
-		try {
-			final URLConnection connection = url.openConnection();
-			connection.connect();
-			final BufferedInputStream stream = new BufferedInputStream(connection.getInputStream());
-			final Bitmap bitmap = BitmapFactory.decodeStream(stream);
-			stream.close();
-			return bitmap;
-		} catch (IOException e) {
-			Log.d(TAG, "Cannot load remote image.");
+		if (url != null) {
+			try {
+				final URLConnection connection = url.openConnection();
+				connection.connect();
+				final BufferedInputStream stream = new BufferedInputStream(connection.getInputStream());
+				final Bitmap bitmap = BitmapFactory.decodeStream(stream);
+				stream.close();
+				return bitmap;
+			} catch (IOException e) {
+				Log.d(TAG, "Cannot load remote image.");
+			}
 		}
 		return null;
 	}
