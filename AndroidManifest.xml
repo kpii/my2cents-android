@@ -54,7 +54,7 @@
 		<activity
 			android:name="ManualInputActivity"
 			android:screenOrientation="user"
-			android:theme="@android:style/Theme.Dialog">
+			android:theme="@android:style/Theme.Dialog" android:label="my2cents - Search for products">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.VIEW" />
@@ -65,7 +65,7 @@
 		<activity
 			android:name="AccountActivity"
 			android:screenOrientation="user"
-			android:theme="@android:style/Theme.Dialog">
+			android:theme="@android:style/Theme.Dialog" android:label="my2cents - Twitter Account">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.VIEW" />
