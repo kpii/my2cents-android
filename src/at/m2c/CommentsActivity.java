@@ -82,11 +82,11 @@ public final class CommentsActivity extends ListActivity {
 		setContentView(R.layout.comments);
 
 		comments = new ArrayList<Tweet>();
-		commentsAdapter = new CommentAdapter(this, R.layout.row, comments);
+		commentsAdapter = new CommentAdapter(this, R.layout.comment_item, comments);
 		setListAdapter(commentsAdapter);
 
 		tags = new ArrayList<String>();
-		tagsAdapter = new TagAdapter(this, R.layout.tag, tags);
+		tagsAdapter = new TagAdapter(this, R.layout.tag_item, tags);
 		tagsGallery = (Gallery) findViewById(R.id.comment_tag_gallery);
 		tagsGallery.setAdapter(tagsAdapter);
 		tagsGallery.setOnItemLongClickListener(tagsLongClickListener);
@@ -366,7 +366,7 @@ public final class CommentsActivity extends ListActivity {
 			View view = convertView;
 			if (view == null) {
 				LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				view = inflator.inflate(R.layout.tag, null);
+				view = inflator.inflate(R.layout.tag_item, null);
 			}
 
 			String tag = tags.get(position);
@@ -395,7 +395,7 @@ public final class CommentsActivity extends ListActivity {
 			View view = convertView;
 			if (view == null) {
 				LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				view = inflator.inflate(R.layout.row, null);
+				view = inflator.inflate(R.layout.comment_item, null);
 			}
 
 			Tweet comment = comments.get(position);
