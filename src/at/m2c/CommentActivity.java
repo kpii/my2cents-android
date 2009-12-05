@@ -224,6 +224,12 @@ public final class CommentActivity extends ListActivity {
 
 	private final Button.OnClickListener sendCommentListener = new Button.OnClickListener() {
 		public void onClick(View view) {
+			final Runnable commentPosted = new Runnable() {
+				public void run() {
+					Toast.makeText(CommentActivity.this, "Comment posted successfully", Toast.LENGTH_SHORT).show();
+				}
+			};
+			
 			Runnable postComment = new Runnable() {
 				public void run() {
 					EditText commentEditor = (EditText) findViewById(R.id.comment_edittext);
@@ -254,6 +260,7 @@ public final class CommentActivity extends ListActivity {
 							comments.add(0, comment);
 							runOnUiThread(displayComments);
 						}
+						runOnUiThread(commentPosted);
 					}
 
 					runOnUiThread(dismissProgressDialog);
