@@ -51,7 +51,7 @@ import at.m2c.util.GpsManager;
 import at.m2c.util.NetworkManager;
 import at.m2c.util.ProviderManager;
 
-public final class CommentActivity extends ListActivity {
+public final class CommentsActivity extends ListActivity {
 
 	private final static int MANUAL_INPUT_CODE = 0;
 	private final static int ACCOUNT_ACTIVITY_CODE = 1;
@@ -79,7 +79,7 @@ public final class CommentActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+		setContentView(R.layout.comments);
 
 		comments = new ArrayList<Tweet>();
 		commentsAdapter = new CommentAdapter(this, R.layout.row, comments);
@@ -90,12 +90,6 @@ public final class CommentActivity extends ListActivity {
 		tagsGallery = (Gallery) findViewById(R.id.comment_tag_gallery);
 		tagsGallery.setAdapter(tagsAdapter);
 		tagsGallery.setOnItemLongClickListener(tagsLongClickListener);
-
-		ToggleButton productToggleButton = (ToggleButton) findViewById(R.id.productToggleButton);
-		productToggleButton.setOnClickListener(productToggleListener);
-
-		ToggleButton commentToggleButton = (ToggleButton) findViewById(R.id.commentToggleButton);
-		commentToggleButton.setOnClickListener(commentToggleListener);
 		
 		Button loginButton = (Button) findViewById(R.id.login_button);
 		loginButton.setOnClickListener(loginListener);
@@ -130,10 +124,9 @@ public final class CommentActivity extends ListActivity {
 				TextView productNameTextView = (TextView) findViewById(R.id.productNameTextView);
 				productNameTextView.setText("Loading product information...");
 				
-				new Thread(null, updateProductInfo, "ProductInfoUpdater").start();
 				new Thread(null, viewComments, "CommentsLoader").start();
 
-				progressDialog = ProgressDialog.show(CommentActivity.this, null, "Loading data...", true);
+				progressDialog = ProgressDialog.show(CommentsActivity.this, null, "Loading data...", true);
 			}
 		}
 	}
@@ -226,7 +219,7 @@ public final class CommentActivity extends ListActivity {
 		public void onClick(View view) {
 			final Runnable commentPosted = new Runnable() {
 				public void run() {
-					Toast.makeText(CommentActivity.this, "Comment posted successfully", Toast.LENGTH_SHORT).show();
+					Toast.makeText(CommentsActivity.this, "Comment posted successfully", Toast.LENGTH_SHORT).show();
 				}
 			};
 			
@@ -268,45 +261,7 @@ public final class CommentActivity extends ListActivity {
 			};
 			
 			new Thread(null, postComment, "CommentSender").start();
-			progressDialog = ProgressDialog.show(CommentActivity.this, null, "Sending...", true);
-		}
-	};
-
-	private Runnable updateProductInfo = new Runnable() {
-		public void run() {
-			ProductInfo product = DataManager.getProductInfo();
-			ProductInfoManager.updateProductInfo(product);
-			DataManager.getHistoryDatabase().AddEntry(product);
-			runOnUiThread(displayProductInfo);
-		}
-	};
-
-	private Runnable displayProductInfo = new Runnable() {
-		public void run() {
-			ProductInfo productInfo = DataManager.getProductInfo();
-			
-			ViewGroup layout = (ViewGroup) findViewById(R.id.ProductLayout);
-			TextView productNameTextView = (TextView) findViewById(R.id.productNameTextView);
-			ToggleButton toggleButton = (ToggleButton) findViewById(R.id.productToggleButton);
-			
-			if ((productInfo == null) || (productInfo.getProductName() == null) || (productInfo.getProductName().equals(""))) {
-				Toast.makeText(CommentActivity.this, "Product information was not found.", Toast.LENGTH_SHORT).show();
-				productNameTextView.setText("Product information was not found.");
-				toggleButton.setChecked(false);
-				layout.setVisibility(View.GONE);
-				
-				return;
-			}
-			else {
-				productNameTextView.setText(productInfo.getProductName());
-				toggleButton.setChecked(true);
-				layout.setVisibility(View.VISIBLE);
-				
-				if (productInfo.getProductImage() != null) {
-					ImageView productImageView = (ImageView) findViewById(R.id.productImageView);
-					productImageView.setImageBitmap(productInfo.getProductImage());
-				}
-			}
+			progressDialog = ProgressDialog.show(CommentsActivity.this, null, "Sending...", true);
 		}
 	};
 
@@ -373,7 +328,7 @@ public final class CommentActivity extends ListActivity {
 						ProductInfo productInfo = new ProductInfo(barcode);
 						DataManager.setProductInfo(productInfo);
 	
-						Intent intent = new Intent(this, CommentActivity.class);
+						Intent intent = new Intent(this, CommentsActivity.class);
 						intent.setAction(Intents.ACTION);
 						startActivity(intent);
 					}
@@ -382,8 +337,7 @@ public final class CommentActivity extends ListActivity {
 			}
 			case ACCOUNT_ACTIVITY_CODE: {
 				if (resultCode == RESULT_OK) {
-					ToggleButton commentToggleButton = (ToggleButton) findViewById(R.id.commentToggleButton);
-					updateCommentUI(commentToggleButton.isChecked());
+					
 				}
 				break;
 			}

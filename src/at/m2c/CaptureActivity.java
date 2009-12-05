@@ -212,7 +212,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 					ProductInfo productInfo = new ProductInfo(barcode);
 					DataManager.setProductInfo(productInfo);
 
-					Intent intent = new Intent(this, CommentActivity.class);
+					Intent intent = new Intent(this, MainActivity.class);
 					intent.setAction(Intents.ACTION);
 					startActivity(intent);
 				}
@@ -314,7 +314,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 			clipboard.setText(productCode);
 		}
 
-		Intent intent = new Intent(this, CommentActivity.class);
+		Intent intent = new Intent(this, MainActivity.class);
 		intent.setAction(Intents.ACTION);
 		startActivity(intent);
 	}

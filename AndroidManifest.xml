@@ -30,10 +30,9 @@
 				<category
 					android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
-
 		</activity>
 		<activity
-			android:name="HistoryActivity">
+			android:name=".MainActivity">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.VIEW" />
@@ -42,7 +41,16 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="PreferencesActivity"
+			android:name=".HistoryActivity">
+			<intent-filter>
+				<action
+					android:name="android.intent.action.VIEW" />
+				<category
+					android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".PreferencesActivity"
 			android:label="@string/preferences_name">
 			<intent-filter>
 				<action
@@ -52,7 +60,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="ManualInputActivity"
+			android:name=".ManualInputActivity"
 			android:screenOrientation="user"
 			android:theme="@android:style/Theme.Dialog" android:label="my2cents - Search for products">
 			<intent-filter>
@@ -63,7 +71,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="AccountActivity"
+			android:name=".AccountActivity"
 			android:screenOrientation="user"
 			android:theme="@android:style/Theme.Dialog" android:label="my2cents - Twitter Account">
 			<intent-filter>
@@ -74,7 +82,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="HelpActivity"
+			android:name=".HelpActivity"
 			android:screenOrientation="user">
 			<intent-filter>
 				<action
@@ -84,7 +92,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="CommentActivity"
+			android:name=".CommentsActivity"
 			android:screenOrientation="user"
 			android:configChanges="orientation|keyboardHidden"
 			android:theme="@android:style/Theme.Light">
@@ -93,6 +101,19 @@
 				<action
 					android:name="at.m2c.ACTION"></action>
 
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".ProductsActivity"
+			android:screenOrientation="user"
+			android:configChanges="orientation|keyboardHidden"
+			android:theme="@android:style/Theme.Light">
+
+			<intent-filter>
+				<action
+					android:name="android.intent.action.VIEW" />
+				<category
+					android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
 	</application>

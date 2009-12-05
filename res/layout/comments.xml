@@ -56,29 +56,7 @@
 			android:unselectedAlpha="0.3"></Gallery>
 	</LinearLayout>
 	
-	<RelativeLayout
-		android:layout_height="wrap_content"
-		android:id="@+id/ProductLayout"
-		android:background="@drawable/product_info_background"
-		android:layout_width="fill_parent"
-		android:visibility="gone">
-		<ImageView
-			android:layout_width="wrap_content"
-			android:id="@+id/productImageView"
-			android:maxHeight="90px"
-			android:maxWidth="90px"
-			android:adjustViewBounds="true"
-			android:layout_height="wrap_content" />
-
-
-		<TextView
-			android:layout_height="wrap_content"
-			android:id="@+id/productNameTextView"
-			android:layout_toRightOf="@id/productImageView"
-			android:layout_width="wrap_content"
-			android:textSize="@dimen/product_info_text"
-			android:layout_marginLeft="5px" />
-	</RelativeLayout>
+	
 	<LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/NotificationLayout" android:padding="5sp" android:visibility="gone"><TextView android:id="@+id/notificationTextView" android:layout_width="fill_parent" android:layout_height="fill_parent" android:textColor="@color/result_minor_text" android:textStyle="bold" android:typeface="monospace"></TextView>
 </LinearLayout><ListView
 		android:id="@+id/android:list"
@@ -91,23 +69,6 @@
 	</ListView>
 
 
-	<LinearLayout
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:layout_width="fill_parent"
-		android:gravity="center">
-		<ToggleButton
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:textOff="Product"
-			android:textOn="Product"
-			android:id="@+id/productToggleButton"
-			android:textSize="@dimen/toggle_button_text" android:width="150sp"></ToggleButton>
-		<ToggleButton
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:id="@+id/commentToggleButton"
-			android:textSize="@dimen/toggle_button_text" android:textOff="Add my 2 cents" android:textOn="Add my 2 cents" android:width="150sp"></ToggleButton>
-	</LinearLayout>
+	
 
 </LinearLayout>

@@ -50,7 +50,7 @@ public final class HistoryActivity extends ListActivity {
 		ProductInfo productInfo = new ProductInfo(selectedCode);
 		DataManager.setProductInfo(productInfo);
 		
-		Intent intent = new Intent(this, CommentActivity.class);
+		Intent intent = new Intent(this, CommentsActivity.class);
 		intent.setAction(Intents.ACTION);
 		startActivity(intent);
 	}
@@ -102,7 +102,7 @@ public final class HistoryActivity extends ListActivity {
 						
 						DataManager.setProductInfo(productInfo);
 	
-						Intent intent = new Intent(this, CommentActivity.class);
+						Intent intent = new Intent(this, CommentsActivity.class);
 						intent.setAction(Intents.ACTION);
 						startActivity(intent);
 					}
