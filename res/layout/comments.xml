@@ -24,8 +24,7 @@
 		android:layout_height="wrap_content"
 		android:id="@+id/CommentLayout"
 		android:background="@drawable/comment_editor_background"
-		android:orientation="vertical"
-		android:visibility="gone">
+		android:orientation="vertical" android:visibility="gone">
 
 		<LinearLayout
 			android:layout_height="wrap_content"

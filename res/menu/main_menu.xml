@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <menu
 	xmlns:android="http://schemas.android.com/apk/res/android">
+	
+	<item
+		android:id="@+id/scanMenuItem"
+		android:title="Scan"
+		android:icon="@drawable/barcode" />
 
 	<item
 		android:id="@+id/searchMenuItem"
 		android:title="Search"
 		android:icon="@android:drawable/ic_menu_search" />
-
-	<item
-		android:id="@+id/historyMenuItem"
-		android:title="History"
-		android:icon="@android:drawable/ic_menu_recent_history" />
 		
 	<item
 		android:id="@+id/preferencesMenuItem"

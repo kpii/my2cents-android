@@ -4,7 +4,6 @@ import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TabHost;
-import at.m2c.util.NetworkManager;
 
 public class MainActivity extends TabActivity {
 	@Override
@@ -13,8 +12,8 @@ public class MainActivity extends TabActivity {
 
 		TabHost host = getTabHost();
 		
-		host.addTab(host.newTabSpec("products").setIndicator("Products").setContent(new Intent(this, ProductsActivity.class).setAction(Intents.ACTION)));
-		host.addTab(host.newTabSpec("comments").setIndicator("Comments").setContent(new Intent(this, CommentsActivity.class).setAction(Intents.ACTION)));
-		host.addTab(host.newTabSpec("history").setIndicator("History").setContent(new Intent(this, HistoryActivity.class)));
+		host.addTab(host.newTabSpec("products").setIndicator("Products", getResources().getDrawable(R.drawable.products)).setContent(new Intent(this, ProductsActivity.class).setAction(Intents.ACTION)));
+		host.addTab(host.newTabSpec("comments").setIndicator("Comments", getResources().getDrawable(R.drawable.comments)).setContent(new Intent(this, CommentsActivity.class).setAction(Intents.ACTION)));
+		host.addTab(host.newTabSpec("history").setIndicator("History", getResources().getDrawable(android.R.drawable.ic_menu_recent_history)).setContent(new Intent(this, HistoryActivity.class)));
 	}
 }

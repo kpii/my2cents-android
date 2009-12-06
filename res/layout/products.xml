@@ -4,35 +4,22 @@
 	android:orientation="vertical"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
-
-	
-	
-	
-	
-	<RelativeLayout
+	<LinearLayout
 		android:layout_height="wrap_content"
-		android:id="@+id/ProductLayout"
-		android:background="@drawable/product_info_background"
-		android:layout_width="fill_parent">
-		<ImageView
-			android:layout_width="wrap_content"
-			android:id="@+id/productImageView"
-			android:maxHeight="90px"
-			android:maxWidth="90px"
-			android:adjustViewBounds="true"
-			android:layout_height="wrap_content" />
-
-
+		android:layout_width="fill_parent"
+		android:id="@+id/NotificationLayout"
+		android:padding="5sp"
+		android:visibility="gone">
 		<TextView
-			android:layout_height="wrap_content"
-			android:id="@+id/productNameTextView"
-			android:layout_toRightOf="@id/productImageView"
-			android:layout_width="wrap_content"
-			android:textSize="@dimen/product_info_text"
-			android:layout_marginLeft="5px" />
-	</RelativeLayout>
-	<LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/NotificationLayout" android:padding="5sp" android:visibility="gone"><TextView android:id="@+id/notificationTextView" android:layout_width="fill_parent" android:layout_height="fill_parent" android:textColor="@color/result_minor_text" android:textStyle="bold" android:typeface="monospace"></TextView>
-</LinearLayout><ListView
+			android:id="@+id/notificationTextView"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:textColor="@color/result_minor_text"
+			android:textStyle="bold"
+			android:typeface="monospace">
+		</TextView>
+	</LinearLayout>
+	<ListView
 		android:id="@+id/android:list"
 		android:layout_width="fill_parent"
 		android:layout_weight="1"
@@ -41,8 +28,4 @@
 		android:choiceMode="none"
 		android:clickable="false">
 	</ListView>
-
-
-	
-
 </LinearLayout>

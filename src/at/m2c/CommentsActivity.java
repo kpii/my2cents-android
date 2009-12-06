@@ -121,9 +121,6 @@ public final class CommentsActivity extends ListActivity {
 			if (action.equals(Intents.ACTION)) {
 				setTitle("my2cents :: " + DataManager.getProductInfo().getProductCode());
 				
-				TextView productNameTextView = (TextView) findViewById(R.id.productNameTextView);
-				productNameTextView.setText("Loading product information...");
-				
 				new Thread(null, viewComments, "CommentsLoader").start();
 
 				progressDialog = ProgressDialog.show(CommentsActivity.this, null, "Loading data...", true);
@@ -171,16 +168,6 @@ public final class CommentsActivity extends ListActivity {
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
-
-	private final Button.OnClickListener productToggleListener = new Button.OnClickListener() {
-		public void onClick(View view) {
-			ViewGroup layout = (ViewGroup) findViewById(R.id.ProductLayout);
-			if (((ToggleButton) view).isChecked())
-				layout.setVisibility(View.VISIBLE);
-			else
-				layout.setVisibility(View.GONE);
-		}
-	};
 
 	private final Button.OnClickListener commentToggleListener = new Button.OnClickListener() {
 		public void onClick(View view) {
@@ -265,6 +252,14 @@ public final class CommentsActivity extends ListActivity {
 		}
 	};
 
+	private Runnable updateProductInfo = new Runnable() {
+		public void run() {
+			ProductInfo product = DataManager.getProductInfo();
+			ProductInfoManager.updateProductInfo(product);
+			DataManager.getHistoryDatabase().AddEntry(product);
+		}
+	};
+
 	private Runnable viewComments = new Runnable() {
 		public void run() {
 			searchComments(PreferencesActivity.TagPrefix + DataManager.getProductInfo().getProductCode());
@@ -293,14 +288,14 @@ public final class CommentsActivity extends ListActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+			case R.id.scanMenuItem: {
+				Intent intent = new Intent(this, CaptureActivity.class);
+				startActivity(intent);
+				break;
+			}
 			case R.id.searchMenuItem: {
 				Intent intent = new Intent(this, ManualInputActivity.class);
 				startActivityForResult(intent, MANUAL_INPUT_CODE);
-				break;
-			}
-			case R.id.historyMenuItem: {
-				Intent intent = new Intent(this, HistoryActivity.class);
-				startActivity(intent);
 				break;
 			}
 			case R.id.preferencesMenuItem: {
@@ -337,7 +332,7 @@ public final class CommentsActivity extends ListActivity {
 			}
 			case ACCOUNT_ACTIVITY_CODE: {
 				if (resultCode == RESULT_OK) {
-					
+					updateCommentUI(true);
 				}
 				break;
 			}

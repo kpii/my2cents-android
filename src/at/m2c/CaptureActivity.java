@@ -177,14 +177,14 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+			case R.id.scanMenuItem: {
+				Intent intent = new Intent(this, CaptureActivity.class);
+				startActivity(intent);
+				break;
+			}
 			case R.id.searchMenuItem: {
 				Intent intent = new Intent(this, ManualInputActivity.class);
 				startActivityForResult(intent, MANUAL_INPUT_CODE);
-				break;
-			}
-			case R.id.historyMenuItem: {
-				Intent intent = new Intent(this, HistoryActivity.class);
-				startActivity(intent);
 				break;
 			}
 			case R.id.preferencesMenuItem: {
