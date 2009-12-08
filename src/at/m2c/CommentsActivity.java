@@ -144,6 +144,9 @@ public final class CommentsActivity extends ListActivity {
 		ProviderManager.setCommentingPossible(isCommentingPossible);
 		
 		updateCommentUI();
+		
+		if (commentsAdapter.getCount() > 0)
+			commentsAdapter.notifyDataSetChanged();
 	}
 
 	private final OnItemLongClickListener tagsLongClickListener = new OnItemLongClickListener() {
@@ -446,8 +449,8 @@ public final class CommentsActivity extends ListActivity {
 		public void run() {
 			URL url = null;
 			for (Tweet comment : commentsAdapter.comments) {
-				if (shutdownRequested)
-					return;
+//				if (shutdownRequested)
+//					return;
 				if (avatarMap.containsKey(comment.getFromUser())) {
 					comment.setProfileImage(avatarMap.get(comment.getFromUser()));
 				} else {
@@ -459,7 +462,8 @@ public final class CommentsActivity extends ListActivity {
 					comment.setProfileImage(NetworkManager.getRemoteImage(url));
 					avatarMap.put(comment.getFromUser(), comment.getProfileImage());
 				}
-				runOnUiThread(refreshComments);
+				if (!shutdownRequested)
+					runOnUiThread(refreshComments);
 			}
 		}
 	};

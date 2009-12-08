@@ -72,7 +72,7 @@ public final class ProductsActivity extends ListActivity {
 				
 				new Thread(null, viewProducts, "ProductInfoUpdater").start();
 
-				progressDialog = ProgressDialog.show(ProductsActivity.this, null, "Loading product information...", true);
+				progressDialog = ProgressDialog.show(this, null, "Loading product information...", true);
 			}
 		}
 	}
@@ -84,6 +84,9 @@ public final class ProductsActivity extends ListActivity {
 		if (!NetworkManager.isNetworkAvailable()) {
 			return;
 		}
+		
+		if (productInfoAdapter.getCount() > 0)
+			productInfoAdapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -231,8 +234,8 @@ public final class ProductsActivity extends ListActivity {
 		public void run() {
 			URL url = null;
 			for (ProductInfo product : productInfoAdapter.products) {
-				if (shutdownRequested)
-					return;
+//				if (shutdownRequested)
+//					return;
 				if (avatarMap.containsKey(product.getProductName())) {
 					product.setProductImage(avatarMap.get(product.getProductName()));
 				} else {
@@ -244,7 +247,8 @@ public final class ProductsActivity extends ListActivity {
 					product.setProductImage(NetworkManager.getRemoteImage(url));
 					avatarMap.put(product.getProductName(), product.getProductImage());
 				}
-				runOnUiThread(refreshProducts);
+				if (!shutdownRequested)
+					runOnUiThread(refreshProducts);
 			}
 		}
 	};
