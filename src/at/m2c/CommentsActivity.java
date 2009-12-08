@@ -53,8 +53,7 @@ import at.m2c.util.ProviderManager;
 
 public final class CommentsActivity extends ListActivity {
 
-	private final static int MANUAL_INPUT_CODE = 0;
-	private final static int ACCOUNT_ACTIVITY_CODE = 1;
+	private final static int ACCOUNT_ACTIVITY_CODE = 0;
 
 	private volatile boolean shutdownRequested;
 	
@@ -123,7 +122,7 @@ public final class CommentsActivity extends ListActivity {
 				
 				new Thread(null, viewComments, "CommentsLoader").start();
 
-				progressDialog = ProgressDialog.show(CommentsActivity.this, null, "Loading data...", true);
+				progressDialog = ProgressDialog.show(CommentsActivity.this, null, "Loading comments...", true);
 			}
 		}
 	}
@@ -143,6 +142,8 @@ public final class CommentsActivity extends ListActivity {
 		
 		boolean isCommentingPossible = preferences.getBoolean(PreferencesActivity.IS_COMMENTING_POSSIBLE, false);
 		ProviderManager.setCommentingPossible(isCommentingPossible);
+		
+		updateCommentUI();
 	}
 
 	private final OnItemLongClickListener tagsLongClickListener = new OnItemLongClickListener() {
@@ -168,30 +169,18 @@ public final class CommentsActivity extends ListActivity {
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
-
-	private final Button.OnClickListener commentToggleListener = new Button.OnClickListener() {
-		public void onClick(View view) {
-			updateCommentUI(((ToggleButton) view).isChecked());
-		}
-	};
 	
-	private void updateCommentUI(boolean isVisible) {
+	private void updateCommentUI() {
 		ViewGroup commentLayout = (ViewGroup) findViewById(R.id.CommentLayout);
 		ViewGroup loginLayout = (ViewGroup) findViewById(R.id.LoginLayout);
 		
-		if (isVisible) {
-			if (!ProviderManager.isCommentingPossible()) {
-				commentLayout.setVisibility(View.GONE);
-				loginLayout.setVisibility(View.VISIBLE);
-			}
-			else {
-				loginLayout.setVisibility(View.GONE);
-				commentLayout.setVisibility(View.VISIBLE);
-			}
+		if (!ProviderManager.isCommentingPossible()) {
+			commentLayout.setVisibility(View.GONE);
+			loginLayout.setVisibility(View.VISIBLE);
 		}
 		else {
-			commentLayout.setVisibility(View.GONE);
 			loginLayout.setVisibility(View.GONE);
+			commentLayout.setVisibility(View.VISIBLE);
 		}
 	}
 	
@@ -240,6 +229,8 @@ public final class CommentsActivity extends ListActivity {
 							comments.add(0, comment);
 							runOnUiThread(displayComments);
 						}
+						ProductInfo product = DataManager.getProductInfo();
+						DataManager.getHistoryDatabase().AddEntry(product);
 						runOnUiThread(commentPosted);
 					}
 
@@ -252,14 +243,6 @@ public final class CommentsActivity extends ListActivity {
 		}
 	};
 
-	private Runnable updateProductInfo = new Runnable() {
-		public void run() {
-			ProductInfo product = DataManager.getProductInfo();
-			ProductInfoManager.updateProductInfo(product);
-			DataManager.getHistoryDatabase().AddEntry(product);
-		}
-	};
-
 	private Runnable viewComments = new Runnable() {
 		public void run() {
 			searchComments(PreferencesActivity.TagPrefix + DataManager.getProductInfo().getProductCode());
@@ -269,11 +252,6 @@ public final class CommentsActivity extends ListActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
 		shutdownRequested = true;
 	}
 
@@ -294,8 +272,8 @@ public final class CommentsActivity extends ListActivity {
 				break;
 			}
 			case R.id.searchMenuItem: {
-				Intent intent = new Intent(this, ManualInputActivity.class);
-				startActivityForResult(intent, MANUAL_INPUT_CODE);
+				Intent intent = new Intent(this, SearchActivity.class);
+				startActivity(intent);
 				break;
 			}
 			case R.id.preferencesMenuItem: {
@@ -316,23 +294,9 @@ public final class CommentsActivity extends ListActivity {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		switch (requestCode) {
-			case MANUAL_INPUT_CODE: {
-				if (resultCode == RESULT_OK) {
-					String barcode = data.getStringExtra("PRODUCT_CODE");
-					if (barcode != null && !barcode.equals("")) {
-						ProductInfo productInfo = new ProductInfo(barcode);
-						DataManager.setProductInfo(productInfo);
-	
-						Intent intent = new Intent(this, CommentsActivity.class);
-						intent.setAction(Intents.ACTION);
-						startActivity(intent);
-					}
-				}
-				break;
-			}
 			case ACCOUNT_ACTIVITY_CODE: {
 				if (resultCode == RESULT_OK) {
-					updateCommentUI(true);
+					updateCommentUI();
 				}
 				break;
 			}
@@ -436,7 +400,7 @@ public final class CommentsActivity extends ListActivity {
 
 	private Runnable displayComments = new Runnable() {
 		public void run() {
-			ViewGroup notificationLayout = (ViewGroup) findViewById(R.id.NotificationLayout);
+			ViewGroup notificationLayout = (ViewGroup) findViewById(R.id.CommentsNotificationLayout);
 			
 			commentsAdapter.clear();
 			tagsAdapter.clear();
@@ -471,8 +435,8 @@ public final class CommentsActivity extends ListActivity {
 			else {
 				progressDialog.dismiss();
 				
-				TextView notificationTextView = (TextView) findViewById(R.id.notificationTextView);
-				notificationTextView.setText("No comments yet. Be the first one to add your 2 cents on this product! Click on 'Add my 2 cents'");
+				TextView notificationTextView = (TextView) findViewById(R.id.commentsNotificationTextView);
+				notificationTextView.setText("No comments yet. Be the first one to add your 2 cents on this product!");
 				notificationLayout.setVisibility(View.VISIBLE);
 			}
 		}

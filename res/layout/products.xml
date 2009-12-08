@@ -7,11 +7,11 @@
 	<LinearLayout
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"
-		android:id="@+id/NotificationLayout"
+		android:id="@+id/ProductsNotificationLayout"
 		android:padding="5sp"
 		android:visibility="gone">
 		<TextView
-			android:id="@+id/notificationTextView"
+			android:id="@+id/productsNotificationTextView"
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
 			android:textColor="@color/result_minor_text"

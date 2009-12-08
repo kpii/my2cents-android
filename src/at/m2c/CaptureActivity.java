@@ -76,8 +76,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
 	private static final String PACKAGE_NAME = "at.m2c";
 
-	private final static int MANUAL_INPUT_CODE = 0;
-
 	private CaptureActivityHandler handler;
 
 	private ViewfinderView viewfinderView;
@@ -170,21 +168,16 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.main_menu, menu);
+		inflater.inflate(R.menu.capture_menu, menu);
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.scanMenuItem: {
-				Intent intent = new Intent(this, CaptureActivity.class);
-				startActivity(intent);
-				break;
-			}
 			case R.id.searchMenuItem: {
-				Intent intent = new Intent(this, ManualInputActivity.class);
-				startActivityForResult(intent, MANUAL_INPUT_CODE);
+				Intent intent = new Intent(this, SearchActivity.class);
+				startActivity(intent);
 				break;
 			}
 			case R.id.preferencesMenuItem: {
@@ -199,27 +192,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 			}
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		switch (requestCode) {
-		case MANUAL_INPUT_CODE: {
-			if (resultCode == RESULT_OK) {
-				String barcode = data.getStringExtra("PRODUCT_CODE");
-				if (barcode != null && !barcode.equals("")) {
-					ProductInfo productInfo = new ProductInfo(barcode);
-					DataManager.setProductInfo(productInfo);
-
-					Intent intent = new Intent(this, MainActivity.class);
-					intent.setAction(Intents.ACTION);
-					startActivity(intent);
-				}
-			}
-			break;
-		}
-		}
 	}
 
 	@Override

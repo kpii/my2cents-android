@@ -19,8 +19,6 @@ import at.m2c.util.Helper;
 
 public final class HistoryActivity extends ListActivity {
 
-	private final static int MANUAL_INPUT_CODE = 0;
-
 	private HistoryAdapter adapter;
 
 	@Override
@@ -67,8 +65,8 @@ public final class HistoryActivity extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.searchMenuItem: {
-				Intent intent = new Intent(this, ManualInputActivity.class);
-				startActivityForResult(intent, MANUAL_INPUT_CODE);
+				Intent intent = new Intent(this, SearchActivity.class);
+				startActivity(intent);
 				break;
 			}
 			case R.id.clearHistoryMenuItem: {
@@ -88,28 +86,6 @@ public final class HistoryActivity extends ListActivity {
 			}
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		switch (requestCode) {
-			case MANUAL_INPUT_CODE: {
-				if (resultCode == RESULT_OK) {
-					String barcode = data.getStringExtra("PRODUCT_CODE");
-					if (barcode != null && !barcode.equals("")) {
-						ProductInfo productInfo = new ProductInfo(barcode);
-						
-						DataManager.setProductInfo(productInfo);
-	
-						Intent intent = new Intent(this, CommentsActivity.class);
-						intent.setAction(Intents.ACTION);
-						startActivity(intent);
-					}
-				}
-				break;
-			}
-		}
 	}
 	
 	

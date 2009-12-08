@@ -34,9 +34,6 @@ import at.m2c.util.NetworkManager;
 
 public final class ProductsActivity extends ListActivity {
 
-	private final static int MANUAL_INPUT_CODE = 0;
-	private final static int ACCOUNT_ACTIVITY_CODE = 1;
-
 	private volatile boolean shutdownRequested;
 	
 	private ProgressDialog progressDialog;
@@ -113,11 +110,6 @@ public final class ProductsActivity extends ListActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
 		shutdownRequested = true;
 	}
 
@@ -138,8 +130,8 @@ public final class ProductsActivity extends ListActivity {
 				break;
 			}
 			case R.id.searchMenuItem: {
-				Intent intent = new Intent(this, ManualInputActivity.class);
-				startActivityForResult(intent, MANUAL_INPUT_CODE);
+				Intent intent = new Intent(this, SearchActivity.class);
+				startActivity(intent);
 				break;
 			}
 			case R.id.preferencesMenuItem: {
@@ -154,33 +146,6 @@ public final class ProductsActivity extends ListActivity {
 			}
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		switch (requestCode) {
-			case MANUAL_INPUT_CODE: {
-				if (resultCode == RESULT_OK) {
-					String barcode = data.getStringExtra("PRODUCT_CODE");
-					if (barcode != null && !barcode.equals("")) {
-						ProductInfo productInfo = new ProductInfo(barcode);
-						DataManager.setProductInfo(productInfo);
-	
-						Intent intent = new Intent(this, ProductsActivity.class);
-						intent.setAction(Intents.ACTION);
-						startActivity(intent);
-					}
-				}
-				break;
-			}
-			case ACCOUNT_ACTIVITY_CODE: {
-				if (resultCode == RESULT_OK) {
-					
-				}
-				break;
-			}
-		}
 	}
 
 	@Override
@@ -237,7 +202,7 @@ public final class ProductsActivity extends ListActivity {
 
 	private Runnable displayProducts = new Runnable() {
 		public void run() {
-			ViewGroup notificationLayout = (ViewGroup) findViewById(R.id.NotificationLayout);
+			ViewGroup notificationLayout = (ViewGroup) findViewById(R.id.ProductsNotificationLayout);
 			
 			productInfoAdapter.clear();
 			if (products != null && products.size() > 0) {
@@ -255,7 +220,7 @@ public final class ProductsActivity extends ListActivity {
 			else {
 				progressDialog.dismiss();
 				
-				TextView notificationTextView = (TextView) findViewById(R.id.notificationTextView);
+				TextView notificationTextView = (TextView) findViewById(R.id.productsNotificationTextView);
 				notificationTextView.setText("No comments yet. Be the first one to add your 2 cents on this product! Click on 'Add my 2 cents'");
 				notificationLayout.setVisibility(View.VISIBLE);
 			}

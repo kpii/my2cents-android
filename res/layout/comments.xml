@@ -4,28 +4,26 @@
 	android:orientation="vertical"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
-
 	<LinearLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/LoginLayout"
 		android:background="@drawable/comment_editor_background"
-		android:orientation="vertical" android:visibility="gone">
-
+		android:orientation="vertical"
+		android:visibility="gone">
 		<Button
-				android:id="@+id/login_button"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:text="Please login to comment"/>
+			android:id="@+id/login_button"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="Please login to comment" />
 	</LinearLayout>
-	
 	<LinearLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/CommentLayout"
 		android:background="@drawable/comment_editor_background"
-		android:orientation="vertical" android:visibility="gone">
-
+		android:orientation="vertical"
+		android:visibility="gone">
 		<LinearLayout
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
@@ -38,14 +36,13 @@
 				android:imeOptions="actionSend|flagNoEnterAction"
 				android:inputType="textCapSentences|textAutoCorrect|textMultiLine|textImeMultiLine|textShortMessage"
 				android:layout_weight="1"
-				android:maxLength="120"/>
+				android:maxLength="120" />
 			<Button
 				android:id="@+id/comment_send_button"
 				android:text="Send"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content" />
 		</LinearLayout>
-
 		<Gallery
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
@@ -54,10 +51,21 @@
 			android:longClickable="true"
 			android:unselectedAlpha="0.3"></Gallery>
 	</LinearLayout>
-	
-	
-	<LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/NotificationLayout" android:padding="5sp" android:visibility="gone"><TextView android:id="@+id/notificationTextView" android:layout_width="fill_parent" android:layout_height="fill_parent" android:textColor="@color/result_minor_text" android:textStyle="bold" android:typeface="monospace"></TextView>
-</LinearLayout><ListView
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:id="@+id/CommentsNotificationLayout"
+		android:padding="5sp"
+		android:visibility="gone">
+		<TextView
+			android:id="@+id/commentsNotificationTextView"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:textColor="@color/result_minor_text"
+			android:textStyle="bold"
+			android:typeface="monospace"></TextView>
+	</LinearLayout>
+	<ListView
 		android:id="@+id/android:list"
 		android:layout_width="fill_parent"
 		android:layout_weight="1"
@@ -66,8 +74,4 @@
 		android:choiceMode="none"
 		android:clickable="false">
 	</ListView>
-
-
-	
-
 </LinearLayout>
