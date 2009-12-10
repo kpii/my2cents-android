@@ -6,27 +6,28 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import at.m2c.data.DataManager;
 import at.m2c.data.ProductInfo;
 import at.m2c.data.ProductInfoManager;
@@ -50,6 +51,8 @@ public final class ProductsActivity extends ListActivity {
 		products = new ArrayList<ProductInfo>();
 		productInfoAdapter = new ProductInfoAdapter(this, R.layout.product_item, products);
 		setListAdapter(productInfoAdapter);
+		
+		registerForContextMenu(getListView());
 	}
 	
 	@Override
@@ -89,19 +92,25 @@ public final class ProductsActivity extends ListActivity {
 			productInfoAdapter.notifyDataSetChanged();
 	}
 
-	@Override
-	public void onListItemClick(ListView parent, View v, int position, long id) {
-		ProductInfo selectedProduct = productInfoAdapter.items.get(position);
-		
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(selectedProduct.getProductName())
-		       .setPositiveButton("Close", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                dialog.dismiss();
-		           }
-		       });
-		AlertDialog alert = builder.create();
-		alert.show();
+	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, view, menuInfo);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.product_context_menu, menu);
+	}
+	
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		switch (item.getItemId()) {
+			case R.id.productDetailContextMenuItem: {
+				ProductInfo selectedProduct = productInfoAdapter.items.get(info.position);
+				
+				Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse(selectedProduct.getDetailPageUrl()));  
+				startActivity(viewIntent);
+				return true;
+			}
+			default:
+				return super.onContextItemSelected(item);
+		}		
 	}
 
 	private Runnable viewProducts = new Runnable() {
@@ -130,22 +139,22 @@ public final class ProductsActivity extends ListActivity {
 			case R.id.scanMenuItem: {
 				Intent intent = new Intent(this, CaptureActivity.class);
 				startActivity(intent);
-				break;
+				return true;
 			}
 			case R.id.searchMenuItem: {
 				Intent intent = new Intent(this, SearchActivity.class);
 				startActivity(intent);
-				break;
+				return true;
 			}
 			case R.id.preferencesMenuItem: {
 				Intent intent = new Intent(this, PreferencesActivity.class);
 				startActivity(intent);
-				break;
+				return true;
 			}
 			case R.id.infoMenuItem: {
 				Intent intent = new Intent(this, HelpActivity.class);
 				startActivity(intent);
-				break;
+				return true;
 			}
 		}
 		return super.onOptionsItemSelected(item);
@@ -172,10 +181,10 @@ public final class ProductsActivity extends ListActivity {
 			ProductInfo product = items.get(position);
 			if (product != null) {
 				TextView productNameTextView = (TextView) view.findViewById(R.id.product_name_textview);
-				productNameTextView.setText(product.getProductCode());
+				productNameTextView.setText(product.getProductId());
 
 				TextView productInfoProviderTextView = (TextView) view.findViewById(R.id.product_info_provider_textview);
-				productInfoProviderTextView.setText(product.getProductInfoProvider());
+				productInfoProviderTextView.setText(product.getProductInfoProvider().toString());
 
 				TextView productDescriptionTextView = (TextView) view.findViewById(R.id.product_description_textview);
 				productDescriptionTextView.setText(product.getProductName());

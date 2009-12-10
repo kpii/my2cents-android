@@ -19,7 +19,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
@@ -43,7 +42,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemLongClickListener;
 import at.m2c.data.DataManager;
-import at.m2c.data.ProductInfo;
 import at.m2c.util.GpsManager;
 import at.m2c.util.NetworkManager;
 import at.m2c.util.ProviderManager;
@@ -267,25 +265,26 @@ public final class CommentsActivity extends ListActivity {
 			case R.id.scanMenuItem: {
 				Intent intent = new Intent(this, CaptureActivity.class);
 				startActivity(intent);
-				break;
+				return true;
 			}
 			case R.id.searchMenuItem: {
 				Intent intent = new Intent(this, SearchActivity.class);
 				startActivity(intent);
-				break;
+				return true;
 			}
 			case R.id.preferencesMenuItem: {
 				Intent intent = new Intent(this, PreferencesActivity.class);
 				startActivity(intent);
-				break;
+				return true;
 			}
 			case R.id.infoMenuItem: {
 				Intent intent = new Intent(this, HelpActivity.class);
 				startActivity(intent);
-				break;
+				return true;
 			}
+			default:
+				return super.onOptionsItemSelected(item);
 		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

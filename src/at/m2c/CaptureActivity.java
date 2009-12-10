@@ -178,20 +178,21 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 			case R.id.searchMenuItem: {
 				Intent intent = new Intent(this, SearchActivity.class);
 				startActivity(intent);
-				break;
+				return true;
 			}
 			case R.id.preferencesMenuItem: {
 				Intent intent = new Intent(this, PreferencesActivity.class);
 				startActivity(intent);
-				break;
+				return true;
 			}
 			case R.id.infoMenuItem: {
 				Intent intent = new Intent(this, HelpActivity.class);
 				startActivity(intent);
-				break;
+				return true;
 			}
+			default:
+				return super.onOptionsItemSelected(item);
 		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

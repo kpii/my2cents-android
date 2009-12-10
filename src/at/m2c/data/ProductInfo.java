@@ -4,19 +4,17 @@ import android.graphics.Bitmap;
 
 public final class ProductInfo {
 
-	private final String productCode;
+	private final String productId;
+	private String productCode;
 	private String productName;
 	private String productDescription;
-	private String productInfoProvider;
+	private ProductInfoProvider productInfoProvider;
+	private String detailPageUrl;
 	private String productImageUrl;
 	private Bitmap productImage;
 
-	public ProductInfo(String productCode) {
-		this.productCode = productCode;
-	}
-
-	public String getProductCode() {
-		return productCode;
+	public ProductInfo(String productId) {
+		this.productId = productId;
 	}
 
 	public void setProductName(String productName) {
@@ -43,11 +41,11 @@ public final class ProductInfo {
 		return productDescription;
 	}
 
-	public void setProductInfoProvider(String productInfoProvider) {
+	public void setProductInfoProvider(ProductInfoProvider productInfoProvider) {
 		this.productInfoProvider = productInfoProvider;
 	}
 
-	public String getProductInfoProvider() {
+	public ProductInfoProvider getProductInfoProvider() {
 		return productInfoProvider;
 	}
 
@@ -57,5 +55,25 @@ public final class ProductInfo {
 
 	public String getProductImageUrl() {
 		return productImageUrl;
+	}
+
+	public String getProductId() {
+		return productId;
+	}
+
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
+	}
+
+	public String getProductCode() {
+		return productCode;
+	}
+
+	public void setDetailPageUrl(String detailPageUrl) {
+		this.detailPageUrl = detailPageUrl;
+	}
+
+	public String getDetailPageUrl() {
+		return detailPageUrl;
 	}
 }
