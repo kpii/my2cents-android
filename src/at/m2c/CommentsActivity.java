@@ -225,8 +225,6 @@ public final class CommentsActivity extends ListActivity {
 							tweets.add(0, comment);
 							runOnUiThread(displayTweets);
 						}
-						
-//						DataManager.getHistoryDatabase().AddEntry(product);
 						runOnUiThread(commentPosted);
 					}
 

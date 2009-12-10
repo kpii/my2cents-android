@@ -108,6 +108,12 @@ public final class ProductsActivity extends ListActivity {
 				startActivity(viewIntent);
 				return true;
 			}
+			case R.id.productAddToFavoritesContextMenuItem: {
+				ProductInfo selectedProduct = productInfoAdapter.items.get(info.position);
+				
+				DataManager.getHistoryDatabase().AddEntry(selectedProduct);
+				return true;
+			}
 			default:
 				return super.onContextItemSelected(item);
 		}		

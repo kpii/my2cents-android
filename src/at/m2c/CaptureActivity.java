@@ -202,13 +202,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 		super.onConfigurationChanged(config);
 	}
 
-	private final DialogInterface.OnClickListener mAboutListener = new DialogInterface.OnClickListener() {
-		public void onClick(DialogInterface dialogInterface, int i) {
-			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.zxing_url)));
-			startActivity(intent);
-		}
-	};
-
 	public void surfaceCreated(SurfaceHolder holder) {
 		if (!hasSurface) {
 			hasSurface = true;

@@ -35,7 +35,7 @@ public final class HistoryActivity extends ListActivity {
 		adapter = new HistoryAdapter(this,
         		R.layout.history_item,
         		cursor,
-                new String[] { "code", "time", "name" },
+                new String[] { "productId", "provider", "name" },
                 new int[] { R.id.history_code, R.id.history_time, R.id.history_name });
 		
         setListAdapter(adapter);
@@ -47,7 +47,7 @@ public final class HistoryActivity extends ListActivity {
 		String searchTerm = cursor.getString(1);
 		DataManager.setSearchTerm(searchTerm);
 		
-		Intent intent = new Intent(this, CommentsActivity.class);
+		Intent intent = new Intent(this, MainActivity.class);
 		intent.setAction(Intents.ACTION);
 		startActivity(intent);
 	}

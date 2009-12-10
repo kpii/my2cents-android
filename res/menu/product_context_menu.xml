@@ -5,4 +5,9 @@
 		android:id="@+id/productDetailContextMenuItem"
 		android:title="Show Product Details"
 		android:icon="@android:drawable/ic_menu_info_details" />
+		
+	<item
+		android:id="@+id/productAddToFavoritesContextMenuItem"
+		android:title="Add To Favorites"
+		android:icon="@android:drawable/ic_menu_info_details" />
 </menu>

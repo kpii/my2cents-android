@@ -1,7 +1,5 @@
 package at.m2c.data;
 
-import java.util.Date;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -29,8 +27,8 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE products ("
                 + "_id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + "code TEXT,"
-                + "time TEXT,"
+                + "productId TEXT,"
+                + "provider TEXT,"
                 + "name TEXT,"
                 + "image BLOB);");
     }
@@ -47,17 +45,22 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     	
     	SQLiteDatabase db = getWritableDatabase();
     	
-    	db.delete("products", "code = '" + product.getProductCode() + "'", null);
+//    	db.delete("products", "code = '" + product.getProductCode() + "'", null);
         
-    	Cursor cursor = db.rawQuery("SELECT * FROM products", null);
-    	if (cursor.getCount() > 100) {
-    		db.delete("products", "_id = (SELECT MIN(_id) FROM products)", null);
+//    	Cursor cursor = db.rawQuery("SELECT * FROM products", null);
+//    	if (cursor.getCount() > 100) {
+//    		db.delete("products", "_id = (SELECT MIN(_id) FROM products)", null);
+//    	}
+    	
+    	Cursor cursor = db.rawQuery("SELECT * FROM products WHERE productId=?", new String[] {product.getProductId()});
+    	if (cursor.getCount() > 0) {
+    		return;
     	}
         
         ContentValues map = new ContentValues();
         
-        map.put("code", product.getProductCode());
-        map.put("time", new Date().toLocaleString());
+        map.put("productId", product.getProductId());
+        map.put("provider", product.getProductInfoProvider().toString());
         map.put("name", product.getProductName());
         
         Bitmap image = product.getProductImage();
