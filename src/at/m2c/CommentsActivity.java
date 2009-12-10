@@ -41,12 +41,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 import android.widget.AdapterView.OnItemLongClickListener;
 import at.m2c.data.DataManager;
 import at.m2c.data.ProductInfo;
-import at.m2c.data.ProductInfoManager;
-import at.m2c.scanner.CaptureActivityHandler;
 import at.m2c.util.GpsManager;
 import at.m2c.util.NetworkManager;
 import at.m2c.util.ProviderManager;
@@ -62,16 +59,14 @@ public final class CommentsActivity extends ListActivity {
 	private final static int numberOfResults = 30;
 	private LocationManager locationManager;
 
-	public CaptureActivityHandler mHandler;
-
 	private Gallery tagsGallery;
 
 	private ProgressDialog progressDialog;
-	private List<Tweet> comments;
-	private CommentAdapter commentsAdapter;
+	private List<Tweet> tweets;
+	private TweetsAdapter tweetsAdapter;
 
 	private ArrayList<String> tags;
-	private ArrayAdapter<String> tagsAdapter;
+	private TagAdapter tagsAdapter;
 
 	private HashMap<String, Bitmap> avatarMap = new HashMap<String, Bitmap>();
 
@@ -80,9 +75,9 @@ public final class CommentsActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.comments);
 
-		comments = new ArrayList<Tweet>();
-		commentsAdapter = new CommentAdapter(this, R.layout.comment_item, comments);
-		setListAdapter(commentsAdapter);
+		tweets = new ArrayList<Tweet>();
+		tweetsAdapter = new TweetsAdapter(this, R.layout.comment_item, tweets);
+		setListAdapter(tweetsAdapter);
 
 		tags = new ArrayList<String>();
 		tagsAdapter = new TagAdapter(this, R.layout.tag_item, tags);
@@ -118,7 +113,7 @@ public final class CommentsActivity extends ListActivity {
 		String action = intent == null ? null : intent.getAction();
 		if (intent != null && action != null) {
 			if (action.equals(Intents.ACTION)) {
-				setTitle("my2cents :: " + DataManager.getProductInfo().getProductCode());
+				setTitle("my2cents :: " + DataManager.getSearchTerm());
 				
 				new Thread(null, viewComments, "CommentsLoader").start();
 
@@ -145,8 +140,8 @@ public final class CommentsActivity extends ListActivity {
 		
 		updateCommentUI();
 		
-		if (commentsAdapter.getCount() > 0)
-			commentsAdapter.notifyDataSetChanged();
+		if (tweetsAdapter.getCount() > 0)
+			tweetsAdapter.notifyDataSetChanged();
 	}
 
 	private final OnItemLongClickListener tagsLongClickListener = new OnItemLongClickListener() {
@@ -160,7 +155,7 @@ public final class CommentsActivity extends ListActivity {
 
 	@Override
 	public void onListItemClick(ListView parent, View v, int position, long id) {
-		Tweet selectedComment = commentsAdapter.comments.get(position);
+		Tweet selectedComment = tweetsAdapter.items.get(position);
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(selectedComment.getText())
@@ -206,7 +201,7 @@ public final class CommentsActivity extends ListActivity {
 				public void run() {
 					EditText commentEditor = (EditText) findViewById(R.id.comment_edittext);
 					String message = commentEditor.getText().toString() + " " + PreferencesActivity.ProductCodePrefix
-							+ DataManager.getProductInfo().getProductCode();
+							+ DataManager.getSearchTerm();
 					
 					Location l = null;
 					if (gpsEnabled && (locationManager != null)) {
@@ -229,11 +224,11 @@ public final class CommentsActivity extends ListActivity {
 								comment.setProfileImage(NetworkManager.getRemoteImage(url));
 								avatarMap.put(comment.getFromUser(), comment.getProfileImage());
 							}
-							comments.add(0, comment);
-							runOnUiThread(displayComments);
+							tweets.add(0, comment);
+							runOnUiThread(displayTweets);
 						}
-						ProductInfo product = DataManager.getProductInfo();
-						DataManager.getHistoryDatabase().AddEntry(product);
+						
+//						DataManager.getHistoryDatabase().AddEntry(product);
 						runOnUiThread(commentPosted);
 					}
 
@@ -248,7 +243,7 @@ public final class CommentsActivity extends ListActivity {
 
 	private Runnable viewComments = new Runnable() {
 		public void run() {
-			searchComments(PreferencesActivity.TagPrefix + DataManager.getProductInfo().getProductCode());
+			searchComments(PreferencesActivity.TagPrefix + DataManager.getSearchTerm());
 		}
 	};
 
@@ -306,20 +301,13 @@ public final class CommentsActivity extends ListActivity {
 		}
 	}
 
-	@Override
-	public void onConfigurationChanged(Configuration config) {
-		// Do nothing, this is to prevent the activity from being restarted when
-		// the keyboard opens.
-		super.onConfigurationChanged(config);
-	}
-
 	private class TagAdapter extends ArrayAdapter<String> {
 
-		private ArrayList<String> tags;
+		private ArrayList<String> items;
 
 		public TagAdapter(Context context, int textViewResourceId, ArrayList<String> tags) {
 			super(context, textViewResourceId, tags);
-			this.tags = tags;
+			this.items = tags;
 		}
 
 		@Override
@@ -331,7 +319,7 @@ public final class CommentsActivity extends ListActivity {
 				view = inflator.inflate(R.layout.tag_item, null);
 			}
 
-			String tag = tags.get(position);
+			String tag = items.get(position);
 			if (tag != null) {
 				TextView tagTextView = (TextView) view.findViewById(R.id.tag_textview);
 				if (tagTextView != null) {
@@ -342,13 +330,13 @@ public final class CommentsActivity extends ListActivity {
 		}
 	}
 
-	private class CommentAdapter extends ArrayAdapter<Tweet> {
+	private class TweetsAdapter extends ArrayAdapter<Tweet> {
 
-		private List<Tweet> comments;
+		private List<Tweet> items;
 
-		public CommentAdapter(Context context, int textViewResourceId, List<Tweet> comments) {
-			super(context, textViewResourceId, comments);
-			this.comments = comments;
+		public TweetsAdapter(Context context, int textViewResourceId, List<Tweet> tweets) {
+			super(context, textViewResourceId, tweets);
+			this.items = tweets;
 		}
 
 		@Override
@@ -360,7 +348,7 @@ public final class CommentsActivity extends ListActivity {
 				view = inflator.inflate(R.layout.comment_item, null);
 			}
 
-			Tweet comment = comments.get(position);
+			Tweet comment = items.get(position);
 			if (comment != null) {
 				TextView authorTextView = (TextView) view.findViewById(R.id.tweet_author);
 				authorTextView.setText(comment.getFromUser());
@@ -386,11 +374,11 @@ public final class CommentsActivity extends ListActivity {
 
 	private void searchComments(String searchTerm) {
 		try {
-			comments = ProviderManager.search(searchTerm, numberOfResults);
+			tweets = ProviderManager.search(searchTerm, numberOfResults);
 		} catch (Exception e) {
 			Log.e(this.toString(), e.getMessage());
 		}
-		runOnUiThread(displayComments);
+		runOnUiThread(displayTweets);
 	}
 
 	private Runnable dismissProgressDialog = new Runnable() {
@@ -401,20 +389,20 @@ public final class CommentsActivity extends ListActivity {
 		}
 	};
 
-	private Runnable displayComments = new Runnable() {
+	private Runnable displayTweets = new Runnable() {
 		public void run() {
 			ViewGroup notificationLayout = (ViewGroup) findViewById(R.id.CommentsNotificationLayout);
 			
-			commentsAdapter.clear();
+			tweetsAdapter.clear();
 			tagsAdapter.clear();
 			
-			String productTag = PreferencesActivity.ProductCodePrefix + DataManager.getProductInfo().getProductCode();
-			if (comments != null && comments.size() > 0) {
+			String productTag = PreferencesActivity.ProductCodePrefix + DataManager.getSearchTerm();
+			if (tweets != null && tweets.size() > 0) {
 				notificationLayout.setVisibility(View.GONE);
 				
 				Set<String> tags = new TreeSet<String>();
-				for (Tweet comment : comments) {
-					commentsAdapter.add(comment);
+				for (Tweet comment : tweets) {
+					tweetsAdapter.add(comment);
 					
 					String text = comment.getText().replace(productTag, "");
 					if (text.contains("#")) {
@@ -430,7 +418,7 @@ public final class CommentsActivity extends ListActivity {
 					tagsAdapter.add(tag);
 				}
 				
-				commentsAdapter.notifyDataSetChanged();
+				tweetsAdapter.notifyDataSetChanged();
 				
 				progressDialog.dismiss();
 				new Thread(null, loadAvatars, "AvatarLoader").start();
@@ -448,7 +436,7 @@ public final class CommentsActivity extends ListActivity {
 	private Runnable loadAvatars = new Runnable() {
 		public void run() {
 			URL url = null;
-			for (Tweet comment : commentsAdapter.comments) {
+			for (Tweet comment : tweetsAdapter.items) {
 //				if (shutdownRequested)
 //					return;
 				if (avatarMap.containsKey(comment.getFromUser())) {
@@ -470,7 +458,7 @@ public final class CommentsActivity extends ListActivity {
 
 	private Runnable refreshComments = new Runnable() {
 		public void run() {
-			commentsAdapter.notifyDataSetChanged();
+			tweetsAdapter.notifyDataSetChanged();
 		}
 	};
 }

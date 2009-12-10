@@ -4,15 +4,7 @@ import android.content.Context;
 
 public final class DataManager {
 	private static HistoryDatabase historyDatabase;
-	private static ProductInfo productInfo;
-
-	public static void setProductInfo(ProductInfo productInfo) {
-		DataManager.productInfo = productInfo;
-	}
-
-	public static ProductInfo getProductInfo() {
-		return productInfo;
-	}
+	private static String searchTerm;
 
 	public static void initHistoryDatabase(Context context) {
 		historyDatabase = new HistoryDatabase(context);
@@ -20,5 +12,13 @@ public final class DataManager {
 	
 	public static HistoryDatabase getHistoryDatabase() {
 		return historyDatabase;
+	}
+
+	public static void setSearchTerm(String searchTerm) {
+		DataManager.searchTerm = searchTerm;
+	}
+
+	public static String getSearchTerm() {
+		return searchTerm;
 	}
 }

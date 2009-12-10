@@ -44,9 +44,8 @@ public final class HistoryActivity extends ListActivity {
 	@Override
 	public void onListItemClick(ListView parent, View v, int position, long id) {
 		Cursor cursor = (Cursor) adapter.getItem(position);
-		String selectedCode = cursor.getString(1);
-		ProductInfo productInfo = new ProductInfo(selectedCode);
-		DataManager.setProductInfo(productInfo);
+		String searchTerm = cursor.getString(1);
+		DataManager.setSearchTerm(searchTerm);
 		
 		Intent intent = new Intent(this, CommentsActivity.class);
 		intent.setAction(Intents.ACTION);

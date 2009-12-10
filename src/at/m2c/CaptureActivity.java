@@ -278,8 +278,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 		if (rawResult.getBarcodeFormat().equals(BarcodeFormat.UPC_A)) {
 			productCode = "0" + productCode;
 		}
-		ProductInfo productInfo = new ProductInfo(productCode);
-		DataManager.setProductInfo(productInfo);
+		
+		DataManager.setSearchTerm(productCode);
 
 		if (copyToClipboard) {
 			ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);

@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import at.m2c.data.DataManager;
-import at.m2c.data.ProductInfo;
 
 public final class SearchActivity extends Activity {
 	@Override
@@ -26,9 +25,7 @@ public final class SearchActivity extends Activity {
 			EditText editor = (EditText) findViewById(R.id.barcodeInputEditText);
 
 			String searchTerm = editor.getText().toString();
-			
-			ProductInfo productInfo = new ProductInfo(searchTerm);
-			DataManager.setProductInfo(productInfo);
+			DataManager.setSearchTerm(searchTerm);
 
 			Intent intent = new Intent(view.getContext(), MainActivity.class);
 			intent.setAction(Intents.ACTION);

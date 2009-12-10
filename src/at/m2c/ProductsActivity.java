@@ -68,11 +68,11 @@ public final class ProductsActivity extends ListActivity {
 		String action = intent == null ? null : intent.getAction();
 		if (intent != null && action != null) {
 			if (action.equals(Intents.ACTION)) {
-				setTitle("my2cents :: " + DataManager.getProductInfo().getProductCode());
+				setTitle("my2cents :: " + DataManager.getSearchTerm());
 				
 				new Thread(null, viewProducts, "ProductInfoUpdater").start();
 
-				progressDialog = ProgressDialog.show(this, null, "Loading product information...", true);
+				progressDialog = ProgressDialog.show(this, null, "Loading products...", true);
 			}
 		}
 	}
@@ -91,7 +91,7 @@ public final class ProductsActivity extends ListActivity {
 
 	@Override
 	public void onListItemClick(ListView parent, View v, int position, long id) {
-		ProductInfo selectedProduct = productInfoAdapter.products.get(position);
+		ProductInfo selectedProduct = productInfoAdapter.items.get(position);
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(selectedProduct.getProductName())
@@ -106,7 +106,7 @@ public final class ProductsActivity extends ListActivity {
 
 	private Runnable viewProducts = new Runnable() {
 		public void run() {
-			searchProducts(DataManager.getProductInfo().getProductCode());
+			searchProducts(DataManager.getSearchTerm());
 		}
 	};
 
@@ -151,20 +151,13 @@ public final class ProductsActivity extends ListActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	@Override
-	public void onConfigurationChanged(Configuration config) {
-		// Do nothing, this is to prevent the activity from being restarted when
-		// the keyboard opens.
-		super.onConfigurationChanged(config);
-	}
-
 	private class ProductInfoAdapter extends ArrayAdapter<ProductInfo> {
 
-		private List<ProductInfo> products;
+		private List<ProductInfo> items;
 
 		public ProductInfoAdapter(Context context, int textViewResourceId, List<ProductInfo> products) {
 			super(context, textViewResourceId, products);
-			this.products = products;
+			this.items = products;
 		}
 
 		@Override
@@ -176,7 +169,7 @@ public final class ProductsActivity extends ListActivity {
 				view = inflator.inflate(R.layout.product_item, null);
 			}
 
-			ProductInfo product = products.get(position);
+			ProductInfo product = items.get(position);
 			if (product != null) {
 				TextView productNameTextView = (TextView) view.findViewById(R.id.product_name_textview);
 				productNameTextView.setText(product.getProductCode());
@@ -233,7 +226,7 @@ public final class ProductsActivity extends ListActivity {
 	private Runnable loadProductImages = new Runnable() {
 		public void run() {
 			URL url = null;
-			for (ProductInfo product : productInfoAdapter.products) {
+			for (ProductInfo product : productInfoAdapter.items) {
 //				if (shutdownRequested)
 //					return;
 				if (avatarMap.containsKey(product.getProductName())) {

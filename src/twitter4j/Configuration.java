@@ -64,15 +64,6 @@ public class Configuration {
         //defaultProperty.setProperty("twitter4j.oauth.consumerSecret","PsNHCdOqiBZY1GgoDrjtC5BokFT3G7loolNq8KYvmw");
         defaultProperty.setProperty("twitter4j.async.numThreads", "1");
         defaultProperty.setProperty("twitter4j.clientVersion", Version.getVersion());
-        try{
-            // Android platform should have dalvik.system.VMRuntime in the classpath.
-            // @see http://developer.android.com/reference/dalvik/system/VMRuntime.html
-            Class.forName("dalvik.system.VMRuntime");
-            defaultProperty.setProperty("twitter4j.dalvik", "true");
-        }catch(ClassNotFoundException cnfe){
-            defaultProperty.setProperty("twitter4j.dalvik", "false");
-        }
-        DALVIK = getBoolean("twitter4j.dalvik");
         String t4jProps = "twitter4j.properties";
         boolean loaded = loadProperties(defaultProperty, "." + File.separatorChar + t4jProps) ||
                 loadProperties(defaultProperty, Configuration.class.getResourceAsStream("/WEB-INF/" + t4jProps)) ||
@@ -98,13 +89,6 @@ public class Configuration {
         } catch (Exception ignore) {
         }
         return false;
-    }
-
-    private static boolean DALVIK;
-
-
-    public static boolean isDalvik() {
-        return DALVIK;
     }
 
     public static boolean useSSL() {
