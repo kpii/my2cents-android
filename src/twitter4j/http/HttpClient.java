@@ -26,6 +26,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j.http;
 
+import twitter4j.Configuration;
+import twitter4j.TwitterException;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Authenticator;
@@ -33,15 +36,15 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
+import java.net.Proxy.Type;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.net.Proxy.Type;
+import java.security.AccessControlException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import twitter4j.Configuration;
-import twitter4j.TwitterException;
+import static twitter4j.http.RequestMethod.*;
 
 /**
  * A utility class to handle HTTP request/response.
@@ -73,6 +76,7 @@ public class HttpClient implements java.io.Serializable {
     private int connectionTimeout = Configuration.getConnectionTimeout();
     private int readTimeout = Configuration.getReadTimeout();
     private static final long serialVersionUID = 808018030183407996L;
+    private static boolean isJDK14orEarlier = false;
     private Map<String, String> requestHeaders = new HashMap<String, String>();
     private OAuth oauth = null;
     private String requestTokenURL = Configuration.getScheme() + "twitter.com/oauth/request_token";
@@ -80,6 +84,18 @@ public class HttpClient implements java.io.Serializable {
     private String authenticationURL = Configuration.getScheme() + "twitter.com/oauth/authenticate";
     private String accessTokenURL = Configuration.getScheme() + "twitter.com/oauth/access_token";
     private OAuthToken oauthToken = null;
+    private List<HttpResponseListener> httpResponseListeners = new ArrayList<HttpResponseListener>();
+
+    static {
+        try {
+            String versionStr = System.getProperty("java.specification.version");
+            if (null != versionStr) {
+                isJDK14orEarlier = 1.5d > Double.parseDouble(versionStr);
+            }
+        } catch (AccessControlException ace) {
+            isJDK14orEarlier = true;
+        }
+    }
 
     public HttpClient(String userId, String password) {
         this();
@@ -91,7 +107,7 @@ public class HttpClient implements java.io.Serializable {
         this.basic = null;
         setUserAgent(null);
         setOAuthConsumer(null, null);
-        setRequestHeader("Accept-Encoding","gzip");
+        setRequestHeader("Accept-Encoding", "gzip");
     }
 
     public void setUserId(String userId) {
@@ -111,7 +127,7 @@ public class HttpClient implements java.io.Serializable {
     public String getPassword() {
         return password;
     }
-    
+
     public boolean isAuthenticationEnabled(){
         return null != basic || null != oauth;
     }
@@ -140,7 +156,7 @@ public class HttpClient implements java.io.Serializable {
      * @since Twitter4J 2.0.0
      */
     public RequestToken getOAuthRequestToken() throws TwitterException {
-        this.oauthToken = new RequestToken(httpRequest(requestTokenURL, new PostParameter[0], true), this);
+        this.oauthToken = new RequestToken(httpRequest(RequestMethod.POST, requestTokenURL, new PostParameter[0], true), this);
         return (RequestToken)this.oauthToken;
     }
 
@@ -151,10 +167,8 @@ public class HttpClient implements java.io.Serializable {
      * @since Twitter4J 2.0.9
      */
     public RequestToken getOauthRequestToken(String callback_url) throws TwitterException {
-        this.oauthToken = new RequestToken(httpRequest(requestTokenURL,
-                new PostParameter[]{new PostParameter("oauth_callback", callback_url)}
-                , true), this);
-        return (RequestToken) this.oauthToken;
+      this.oauthToken = new RequestToken(httpRequest(RequestMethod.POST, requestTokenURL, new PostParameter[]{new PostParameter("oauth_callback", callback_url)}, true), this);
+      return (RequestToken)this.oauthToken;
     }
 
     /**
@@ -167,7 +181,7 @@ public class HttpClient implements java.io.Serializable {
     public AccessToken getOAuthAccessToken(RequestToken token) throws TwitterException {
         try {
             this.oauthToken = token;
-            this.oauthToken = new AccessToken(httpRequest(accessTokenURL, new PostParameter[0], true));
+            this.oauthToken = new AccessToken(httpRequest(RequestMethod.POST, accessTokenURL, new PostParameter[0], true));
         } catch (TwitterException te) {
             throw new TwitterException("The user has not given access to the account.", te, te.getStatusCode());
         }
@@ -177,15 +191,16 @@ public class HttpClient implements java.io.Serializable {
     /**
      *
      * @param token request token
+     * @param oauth_verifier oauth_verifier or pin
      * @return access token
      * @throws TwitterException
-     * @since Twitter4J 2.0.8
+     * @since Twitter4J 2.0.0
      */
-    public AccessToken getOAuthAccessToken(RequestToken token, String pin) throws TwitterException {
+    public AccessToken getOAuthAccessToken(RequestToken token, String oauth_verifier) throws TwitterException {
         try {
             this.oauthToken = token;
-            this.oauthToken = new AccessToken(httpRequest(accessTokenURL
-                    , new PostParameter[]{new PostParameter("oauth_verifier", pin)}, true));
+            this.oauthToken = new AccessToken(httpRequest(RequestMethod.POST, accessTokenURL
+                    , new PostParameter[]{new PostParameter("oauth_verifier", oauth_verifier)}, true));
         } catch (TwitterException te) {
             throw new TwitterException("The user has not given access to the account.", te, te.getStatusCode());
         }
@@ -204,7 +219,7 @@ public class HttpClient implements java.io.Serializable {
         try {
             this.oauthToken = new OAuthToken(token, tokenSecret) {
             };
-            this.oauthToken = new AccessToken(httpRequest(accessTokenURL, new PostParameter[0], true));
+            this.oauthToken = new AccessToken(httpRequest(RequestMethod.POST, accessTokenURL, new PostParameter[0], true));
         } catch (TwitterException te) {
             throw new TwitterException("The user has not given access to the account.", te, te.getStatusCode());
         }
@@ -225,7 +240,7 @@ public class HttpClient implements java.io.Serializable {
         try {
             this.oauthToken = new OAuthToken(token, tokenSecret) {
             };
-            this.oauthToken = new AccessToken(httpRequest(accessTokenURL,
+            this.oauthToken = new AccessToken(httpRequest(RequestMethod.POST, accessTokenURL,
                     new PostParameter[]{new PostParameter("oauth_verifier", oauth_verifier)}, true));
         } catch (TwitterException te) {
             throw new TwitterException("The user has not given access to the account.", te, te.getStatusCode());
@@ -385,33 +400,42 @@ public class HttpClient implements java.io.Serializable {
 
     public Response post(String url, PostParameter[] postParameters,
                          boolean authenticated) throws TwitterException {
-        return httpRequest(url, postParameters, authenticated);
+        return httpRequest(RequestMethod.POST, url, postParameters, authenticated);
     }
 
     public Response post(String url, boolean authenticated) throws TwitterException {
-        return httpRequest(url, new PostParameter[0], authenticated);
+        return httpRequest(RequestMethod.POST, url, new PostParameter[0], authenticated);
     }
 
     public Response post(String url, PostParameter[] PostParameters) throws
             TwitterException {
-        return httpRequest(url, PostParameters, false);
+        return httpRequest(RequestMethod.POST, url, PostParameters, false);
     }
 
     public Response post(String url) throws
             TwitterException {
-        return httpRequest(url, new PostParameter[0], false);
+        return httpRequest(RequestMethod.POST, url, new PostParameter[0], false);
     }
 
     public Response get(String url, boolean authenticated) throws
             TwitterException {
-        return httpRequest(url, null, authenticated);
+        return httpRequest(RequestMethod.GET, url, null, authenticated);
     }
 
     public Response get(String url) throws TwitterException {
-        return httpRequest(url, null, false);
+        return httpRequest(RequestMethod.GET, url, null, false);
     }
 
-    protected Response httpRequest(String url, PostParameter[] postParams,
+    public Response delete(String url, boolean authenticated) throws TwitterException {
+        return httpRequest(RequestMethod.DELETE, url, null, authenticated);
+    }
+
+    public Response delete(String url) throws TwitterException {
+        return httpRequest(RequestMethod.DELETE, url, null, false);
+    }
+
+    protected Response httpRequest(RequestMethod requestMethod,
+                                   String url, PostParameter[] postParams,
                                  boolean authenticated) throws TwitterException {
         int retriedCount;
         int retry = retryCount + 1;
@@ -425,8 +449,9 @@ public class HttpClient implements java.io.Serializable {
                     con = getConnection(url);
                     con.setDoInput(true);
                     setHeaders(url, postParams, con, authenticated);
-                    if (null != postParams) {
-                        con.setRequestMethod("POST");
+                    con.setRequestMethod(requestMethod.name());
+                    if (requestMethod == RequestMethod.POST &&
+                        null != postParams) {
                         con.setRequestProperty("Content-Type",
                                 "application/x-www-form-urlencoded");
                         con.setDoOutput(true);
@@ -440,8 +465,6 @@ public class HttpClient implements java.io.Serializable {
                         osw.write(bytes);
                         osw.flush();
                         osw.close();
-                    } else {
-                        con.setRequestMethod("GET");
                     }
                     res = new Response(con);
                     responseCode = con.getResponseCode();
@@ -463,7 +486,7 @@ public class HttpClient implements java.io.Serializable {
                         if (responseCode < INTERNAL_SERVER_ERROR || retriedCount == retryCount) {
                             throw new TwitterException(getCause(responseCode) + "\n" + res.asString(), responseCode);
                         }
-                        // will retry if the status code is INTERNAL_SERVER_ERROR 
+                        // will retry if the status code is INTERNAL_SERVER_ERROR
                     } else {
                         break;
                     }
@@ -489,10 +512,21 @@ public class HttpClient implements java.io.Serializable {
                 //nothing to do
             }
         }
+        fireHttpResponseEvent(new HttpResponseEvent(url, postParams, authenticated, res));
         return res;
     }
 
-    public static String encodeParameters(PostParameter[] postParams) {
+    private void fireHttpResponseEvent(HttpResponseEvent httpResponseEvent) {
+		for(HttpResponseListener listener : httpResponseListeners){
+			listener.httpResponseReceived(httpResponseEvent);
+		}
+	}
+
+    public void addHttpResponseListener(HttpResponseListener listener){
+    	httpResponseListeners.add(listener);
+    }
+
+	public static String encodeParameters(PostParameter[] postParams) {
         StringBuffer buf = new StringBuffer();
         for (int j = 0; j < postParams.length; j++) {
             if (j != 0) {
@@ -583,10 +617,10 @@ public class HttpClient implements java.io.Serializable {
         } else {
             con = (HttpURLConnection) new URL(url).openConnection();
         }
-        if (connectionTimeout > 0) {
+        if (connectionTimeout > 0 && !isJDK14orEarlier) {
             con.setConnectTimeout(connectionTimeout);
         }
-        if (readTimeout > 0) {
+        if (readTimeout > 0 && !isJDK14orEarlier) {
             con.setReadTimeout(readTimeout);
         }
         return con;
@@ -604,11 +638,12 @@ public class HttpClient implements java.io.Serializable {
         if (readTimeout != that.readTimeout) return false;
         if (retryCount != that.retryCount) return false;
         if (retryIntervalMillis != that.retryIntervalMillis) return false;
-        if (accessTokenURL != null ? !accessTokenURL.equals(that.accessTokenURL) : that.accessTokenURL != null)
-            return false;
+        if (!accessTokenURL.equals(that.accessTokenURL)) return false;
         if (!authenticationURL.equals(that.authenticationURL)) return false;
         if (!authorizationURL.equals(that.authorizationURL)) return false;
         if (basic != null ? !basic.equals(that.basic) : that.basic != null)
+            return false;
+        if (!httpResponseListeners.equals(that.httpResponseListeners))
             return false;
         if (oauth != null ? !oauth.equals(that.oauth) : that.oauth != null)
             return false;
@@ -648,8 +683,9 @@ public class HttpClient implements java.io.Serializable {
         result = 31 * result + requestTokenURL.hashCode();
         result = 31 * result + authorizationURL.hashCode();
         result = 31 * result + authenticationURL.hashCode();
-        result = 31 * result + (accessTokenURL != null ? accessTokenURL.hashCode() : 0);
+        result = 31 * result + accessTokenURL.hashCode();
         result = 31 * result + (oauthToken != null ? oauthToken.hashCode() : 0);
+        result = 31 * result + httpResponseListeners.hashCode();
         return result;
     }
 

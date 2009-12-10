@@ -26,56 +26,44 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j;
 
-import java.util.Date;
-
 import org.json.JSONObject;
 
 import twitter4j.http.Response;
 
 /**
- * A data class representing Twitter rate limit status
+ * CursorSupport'ed ResponseList implementation.
+ *
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
-public class RateLimitStatus extends TwitterResponseImpl {
-    private int remainingHits;
-    private int hourlyLimit;
-    private int resetTimeInSeconds;
-    private Date resetTime;
-    private static final long serialVersionUID = 933996804168952707L;
+public class PagableResponseList<T extends TwitterResponse> extends
+        ResponseList implements CursorSupport{
+    private final long previousCursor;
+    private final long nextCursor;
+    private static final long serialVersionUID = 1531950333538983361L;
 
-    /* package */ RateLimitStatus(Response res) throws TwitterException {
-        super(res);
-        JSONObject json = res.asJSONObject();
-        remainingHits = getChildInt("remaining_hits", json);
-        hourlyLimit = getChildInt("hourly_limit", json);
-        resetTimeInSeconds = getChildInt("reset_time_in_seconds", json);
-        resetTime = getChildDate("reset_time", json, "EEE MMM d HH:mm:ss Z yyyy");
+
+    /*package*/
+
+    PagableResponseList(int size, JSONObject json, Response res) {
+        super(size, res);
+        this.previousCursor = TwitterResponseImpl.getChildLong("previous_cursor", json);
+        this.nextCursor = TwitterResponseImpl.getChildLong("next_cursor", json);
     }
 
-    public RateLimitStatus(int rateLimitLimit, int rateLimitRemaining,
-			long rateLimitReset) {
-    	hourlyLimit = rateLimitLimit;
-		remainingHits = rateLimitRemaining;
-		resetTime = new Date(rateLimitReset * 1000);
-		resetTimeInSeconds = (int)rateLimitReset;
-	}
-
-	public int getRemainingHits() {
-        return remainingHits;
+    public boolean hasPrevious() {
+        return 0 != previousCursor;
     }
 
-    public int getHourlyLimit() {
-        return hourlyLimit;
+    public long getPreviousCursor() {
+        return previousCursor;
     }
 
-    public int getResetTimeInSeconds() {
-        return resetTimeInSeconds;
+    public boolean hasNext() {
+        return 0 != nextCursor;
     }
 
-    /**
-     * @since Twitter4J 2.0.9
-     */
-    public Date getResetTime() {
-        return resetTime;
+    public long getNextCursor() {
+        return nextCursor;
     }
+
 }

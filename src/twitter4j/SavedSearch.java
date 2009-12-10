@@ -42,7 +42,7 @@ import twitter4j.http.Response;
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.0.8
  */
-public class SavedSearch extends TwitterResponse {
+public class SavedSearch extends TwitterResponseImpl {
     private Date createdAt;
     private String query;
     private int position;
@@ -64,7 +64,7 @@ public class SavedSearch extends TwitterResponse {
         init(savedSearch);
     }
 
-    /*package*/ static List<SavedSearch> constructSavedSearches(Response res) throws TwitterException {
+    /*package*/ static List<SavedSearch> createSavedSearchList(Response res) throws TwitterException {
             JSONArray json = res.asJSONArray();
             List<SavedSearch> savedSearches;
             try {

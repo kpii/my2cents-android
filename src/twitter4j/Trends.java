@@ -45,7 +45,7 @@ import twitter4j.http.Response;
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.0.2
  */
-public class Trends extends TwitterResponse implements Comparable<Trends> {
+public class Trends extends TwitterResponseImpl implements Comparable<Trends> {
     private Date asOf;
     private Date trendAt;
     private Trend[] trends;
@@ -64,7 +64,7 @@ public class Trends extends TwitterResponse implements Comparable<Trends> {
     }
 
     /*package*/
-    static List<Trends> constructTrendsList(Response res) throws
+    static List<Trends> createTrendsList(Response res) throws
             TwitterException {
         JSONObject json = res.asJSONObject();
         List<Trends> trends;
@@ -99,7 +99,7 @@ public class Trends extends TwitterResponse implements Comparable<Trends> {
     }
 
     /*package*/
-    static Trends constructTrends(Response res) throws TwitterException {
+    static Trends createTrends(Response res) throws TwitterException {
         JSONObject json = res.asJSONObject();
         try {
             Date asOf = parseDate(json.getString("as_of"));
@@ -116,7 +116,7 @@ public class Trends extends TwitterResponse implements Comparable<Trends> {
         if (asOfStr.length() == 10) {
             parsed = new Date(Long.parseLong(asOfStr) * 1000);
         } else {
-            parsed = TwitterResponse.parseDate(asOfStr, "EEE, d MMM yyyy HH:mm:ss z");
+            parsed = parseDate(asOfStr, "EEE, d MMM yyyy HH:mm:ss z");
         }
         return parsed;
     }

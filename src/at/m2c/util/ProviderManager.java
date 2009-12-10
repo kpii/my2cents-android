@@ -16,9 +16,6 @@ public final class ProviderManager {
 
 	private final static String TAG = "ProviderManager";
 
-	final static String TWITTER_API_ROOT = "http://twitter.com/";
-	final static String TWITTER_SEARCH_API_ROOT = "http://search.twitter.com/";
-
 	private static Twitter twitter;
 	
 	private static boolean isCommentingPossible;
@@ -27,8 +24,6 @@ public final class ProviderManager {
 	public final static void Initialize(String username, String password)
 	{		
 		twitter = new Twitter(username, password);
-		twitter.setBaseURL(TWITTER_API_ROOT);
-		twitter.setSearchBaseURL(TWITTER_SEARCH_API_ROOT);
 	}
 
 	public final static Status updateStatus(String statusText, Location l) {

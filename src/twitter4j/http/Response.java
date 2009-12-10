@@ -32,8 +32,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -142,7 +140,6 @@ public class Response {
                     buf.append(line).append("\n");
                 }
                 this.responseAsString = buf.toString();
-                this.responseAsString = unescape(responseAsString);
                 log(responseAsString);
                 stream.close();
                 con.disconnect();
@@ -206,6 +203,7 @@ public class Response {
         }
     }
 
+
     public InputStreamReader asReader() {
         try {
             return new InputStreamReader(is, "UTF-8");
@@ -216,26 +214,6 @@ public class Response {
 
     public void disconnect(){
         con.disconnect();
-    }
-
-    private static Pattern escaped = Pattern.compile("&#([0-9]{3,5});");
-
-    /**
-     * Unescape UTF-8 escaped characters to string.
-     * @author pengjianq...@gmail.com
-     *
-     * @param original The string to be unescaped.
-     * @return The unescaped string
-     */
-    public static String unescape(String original) {
-        Matcher mm = escaped.matcher(original);
-        StringBuffer unescaped = new StringBuffer();
-        while (mm.find()) {
-            mm.appendReplacement(unescaped, Character.toString(
-                    (char) Integer.parseInt(mm.group(1), 10)));
-        }
-        mm.appendTail(unescaped);
-        return unescaped.toString();
     }
 
     @Override

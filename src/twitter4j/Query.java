@@ -26,10 +26,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j;
 
+import twitter4j.http.PostParameter;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import twitter4j.http.PostParameter;
 
 /**
  * A data class represents search query.

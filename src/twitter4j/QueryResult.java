@@ -40,13 +40,12 @@ import twitter4j.http.Response;
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
 
-public class QueryResult extends TwitterResponse {
+public class QueryResult extends TwitterResponseImpl {
 
     private long sinceId;
     private long maxId;
     private String refreshUrl;
     private int resultsPerPage;
-    private int total = -1;
     private String warning;
     private double completedIn;
     private int page;
@@ -54,7 +53,7 @@ public class QueryResult extends TwitterResponse {
     private List<Tweet> tweets;
     private static final long serialVersionUID = -9059136565234613286L;
 
-    /*package*/ QueryResult(Response res, TwitterSupport twitterSupport) throws TwitterException {
+    /*package*/ QueryResult(Response res) throws TwitterException {
         super(res);
         JSONObject json = res.asJSONObject();
         try {
@@ -71,7 +70,7 @@ public class QueryResult extends TwitterResponse {
             tweets = new ArrayList<Tweet>(array.length());
             for (int i = 0; i < array.length(); i++) {
                 JSONObject tweet = array.getJSONObject(i);
-                tweets.add(new Tweet(tweet, twitterSupport));
+                tweets.add(new Tweet(tweet));
             }
         } catch (JSONException jsone) {
             throw new TwitterException(jsone.getMessage() + ":" + json.toString(), jsone);
@@ -133,7 +132,6 @@ public class QueryResult extends TwitterResponse {
         if (page != that.page) return false;
         if (resultsPerPage != that.resultsPerPage) return false;
         if (sinceId != that.sinceId) return false;
-        if (total != that.total) return false;
         if (!query.equals(that.query)) return false;
         if (refreshUrl != null ? !refreshUrl.equals(that.refreshUrl) : that.refreshUrl != null)
             return false;
@@ -153,7 +151,6 @@ public class QueryResult extends TwitterResponse {
         result = 31 * result + (int) (maxId ^ (maxId >>> 32));
         result = 31 * result + (refreshUrl != null ? refreshUrl.hashCode() : 0);
         result = 31 * result + resultsPerPage;
-        result = 31 * result + total;
         result = 31 * result + (warning != null ? warning.hashCode() : 0);
         temp = completedIn != +0.0d ? Double.doubleToLongBits(completedIn) : 0L;
         result = 31 * result + (int) (temp ^ (temp >>> 32));
@@ -170,7 +167,6 @@ public class QueryResult extends TwitterResponse {
                 ", maxId=" + maxId +
                 ", refreshUrl='" + refreshUrl + '\'' +
                 ", resultsPerPage=" + resultsPerPage +
-                ", total=" + total +
                 ", warning='" + warning + '\'' +
                 ", completedIn=" + completedIn +
                 ", page=" + page +

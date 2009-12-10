@@ -26,56 +26,48 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j;
 
-import java.util.Date;
-
-import org.json.JSONObject;
-
 import twitter4j.http.Response;
 
+import java.util.ArrayList;
+
 /**
- * A data class representing Twitter rate limit status
+ * List of TwitterResponse.
+ *
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
-public class RateLimitStatus extends TwitterResponseImpl {
-    private int remainingHits;
-    private int hourlyLimit;
-    private int resetTimeInSeconds;
-    private Date resetTime;
-    private static final long serialVersionUID = 933996804168952707L;
+public class ResponseList<T extends TwitterResponse> extends ArrayList<T>
+        implements TwitterResponse {
 
-    /* package */ RateLimitStatus(Response res) throws TwitterException {
-        super(res);
-        JSONObject json = res.asJSONObject();
-        remainingHits = getChildInt("remaining_hits", json);
-        hourlyLimit = getChildInt("hourly_limit", json);
-        resetTimeInSeconds = getChildInt("reset_time_in_seconds", json);
-        resetTime = getChildDate("reset_time", json, "EEE MMM d HH:mm:ss Z yyyy");
+    private transient int rateLimitLimit = -1;
+    private transient int rateLimitRemaining = -1;
+    private transient long rateLimitReset = -1;
+    private static final long serialVersionUID = 1106730646596850864L;
+
+    ResponseList(int size, Response res) {
+        super(size);
+        String limit = res.getResponseHeader("X-RateLimit-Limit");
+        if (null != limit) {
+            rateLimitLimit = Integer.parseInt(limit);
+        }
+        String remaining = res.getResponseHeader("X-RateLimit-Remaining");
+        if (null != remaining) {
+            rateLimitRemaining = Integer.parseInt(remaining);
+        }
+        String reset = res.getResponseHeader("X-RateLimit-Reset");
+        if (null != reset) {
+            rateLimitReset = Long.parseLong(reset);
+        }
     }
 
-    public RateLimitStatus(int rateLimitLimit, int rateLimitRemaining,
-			long rateLimitReset) {
-    	hourlyLimit = rateLimitLimit;
-		remainingHits = rateLimitRemaining;
-		resetTime = new Date(rateLimitReset * 1000);
-		resetTimeInSeconds = (int)rateLimitReset;
-	}
-
-	public int getRemainingHits() {
-        return remainingHits;
+    public int getRateLimitLimit() {
+        return rateLimitLimit;
     }
 
-    public int getHourlyLimit() {
-        return hourlyLimit;
+    public int getRateLimitRemaining() {
+        return rateLimitRemaining;
     }
 
-    public int getResetTimeInSeconds() {
-        return resetTimeInSeconds;
-    }
-
-    /**
-     * @since Twitter4J 2.0.9
-     */
-    public Date getResetTime() {
-        return resetTime;
+    public long getRateLimitReset() {
+        return rateLimitReset;
     }
 }

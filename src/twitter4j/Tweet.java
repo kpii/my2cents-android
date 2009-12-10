@@ -34,12 +34,11 @@ import org.json.JSONObject;
 import android.graphics.Bitmap;
 import at.m2c.util.RelativeTime;
 
-
 /**
  * A data class representing a Tweet in the search response
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
-public class Tweet extends TwitterResponse{
+public class Tweet extends TwitterResponseImpl {
     private String text;
     private int toUserId = -1;
     private String toUser = null;
@@ -65,7 +64,7 @@ public class Tweet extends TwitterResponse{
     	text = status.getText();
     }
 
-    /*package*/Tweet(JSONObject tweet, TwitterSupport twitterSupport) throws TwitterException {
+    /*package*/Tweet(JSONObject tweet) throws TwitterException {
         super();
         try {
             text = getString("text", tweet, false);

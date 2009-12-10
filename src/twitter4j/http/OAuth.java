@@ -26,6 +26,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j.http;
 
+import twitter4j.Configuration;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -36,11 +40,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
-import twitter4j.Configuration;
 
 /**
  * @author Yusuke Yamamoto - yusuke at mac.com

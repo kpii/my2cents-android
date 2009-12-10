@@ -26,11 +26,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j.http;
 
-import java.io.Serializable;
+import twitter4j.TwitterException;
 
 import javax.crypto.spec.SecretKeySpec;
-
-import twitter4j.TwitterException;
+import java.io.Serializable;
 
 abstract class OAuthToken implements Serializable {
     

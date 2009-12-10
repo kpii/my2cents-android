@@ -26,11 +26,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j;
 
+import twitter4j.http.PostParameter;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import twitter4j.http.PostParameter;
 
 /**
  * A java reporesentation of the <a href="http://apiwiki.twitter.com/Streaming-API-Documentation">Twitter Streaming API</a>
@@ -230,8 +230,7 @@ public class TwitterStream extends TwitterSupport {
         }
         return buf.toString();
     }
-    
-    
+
     private String toTrackString(final String[] keywords) {
         final StringBuffer buf = new StringBuffer(20 * keywords.length  * 4);
         for (String keyword : keywords) {
@@ -242,7 +241,7 @@ public class TwitterStream extends TwitterSupport {
         }
         return buf.toString();
     }
-    
+
     private synchronized void startHandler(StreamHandlingThread handler) throws TwitterException {
         cleanup();
         if(null == statusListener){

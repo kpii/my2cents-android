@@ -26,56 +26,32 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j;
 
-import java.util.Date;
-
-import org.json.JSONObject;
-
-import twitter4j.http.Response;
-
 /**
- * A data class representing Twitter rate limit status
+ *
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
-public class RateLimitStatus extends TwitterResponseImpl {
-    private int remainingHits;
-    private int hourlyLimit;
-    private int resetTimeInSeconds;
-    private Date resetTime;
-    private static final long serialVersionUID = 933996804168952707L;
-
-    /* package */ RateLimitStatus(Response res) throws TwitterException {
-        super(res);
-        JSONObject json = res.asJSONObject();
-        remainingHits = getChildInt("remaining_hits", json);
-        hourlyLimit = getChildInt("hourly_limit", json);
-        resetTimeInSeconds = getChildInt("reset_time_in_seconds", json);
-        resetTime = getChildDate("reset_time", json, "EEE MMM d HH:mm:ss Z yyyy");
-    }
-
-    public RateLimitStatus(int rateLimitLimit, int rateLimitRemaining,
-			long rateLimitReset) {
-    	hourlyLimit = rateLimitLimit;
-		remainingHits = rateLimitRemaining;
-		resetTime = new Date(rateLimitReset * 1000);
-		resetTimeInSeconds = (int)rateLimitReset;
-	}
-
-	public int getRemainingHits() {
-        return remainingHits;
-    }
-
-    public int getHourlyLimit() {
-        return hourlyLimit;
-    }
-
-    public int getResetTimeInSeconds() {
-        return resetTimeInSeconds;
-    }
+public interface CursorSupport {
+    /**
+     *
+     * @since Twitter4J 2.0.10
+     */
+    boolean hasPrevious();
 
     /**
-     * @since Twitter4J 2.0.9
+     *
+     * @since Twitter4J 2.0.10
      */
-    public Date getResetTime() {
-        return resetTime;
-    }
+    long getPreviousCursor();
+
+    /**
+     *
+     * @since Twitter4J 2.0.10
+     */
+    boolean hasNext();
+
+    /**
+     *
+     * @since Twitter4J 2.0.10
+     */
+    long getNextCursor();
 }
