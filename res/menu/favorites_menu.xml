@@ -8,8 +8,8 @@
 		android:icon="@android:drawable/ic_menu_search" />
 
 	<item
-		android:id="@+id/clearHistoryMenuItem"
-		android:title="Clear History"
+		android:id="@+id/clearFavoritesMenuItem"
+		android:title="Clear Favorites"
 		android:icon="@android:drawable/ic_menu_delete" />
 		
 	<item

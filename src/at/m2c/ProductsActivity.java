@@ -111,7 +111,7 @@ public final class ProductsActivity extends ListActivity {
 			case R.id.productAddToFavoritesContextMenuItem: {
 				ProductInfo selectedProduct = productInfoAdapter.items.get(info.position);
 				
-				DataManager.getHistoryDatabase().AddEntry(selectedProduct);
+				DataManager.getDatabase().addFavoriteItem(selectedProduct);
 				return true;
 			}
 			default:

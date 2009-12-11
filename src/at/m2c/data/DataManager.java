@@ -3,15 +3,15 @@ package at.m2c.data;
 import android.content.Context;
 
 public final class DataManager {
-	private static HistoryDatabase historyDatabase;
+	private static DatabaseHelper database;
 	private static String searchTerm;
 
-	public static void initHistoryDatabase(Context context) {
-		historyDatabase = new HistoryDatabase(context);
+	public static void initDatabase(Context context) {
+		database = new DatabaseHelper(context);
 	}
 	
-	public static HistoryDatabase getHistoryDatabase() {
-		return historyDatabase;
+	public static DatabaseHelper getDatabase() {
+		return database;
 	}
 
 	public static void setSearchTerm(String searchTerm) {

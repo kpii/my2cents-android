@@ -11,21 +11,21 @@ import android.util.Log;
 import at.m2c.util.Helper;
 
 
-public class HistoryDatabase extends SQLiteOpenHelper {
+public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String TAG = "HistoryDatabase";
+    private static final String TAG = "DatabaseHelper";
 	/** The name of the database file on the file system */
-    private static final String DATABASE_NAME = "History";
+    private static final String DATABASE_NAME = "Database";
     /** The version of the database that this class understands. */
     private static final int DATABASE_VERSION = 1;
     
-    public HistoryDatabase(Context context) {
+    public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE products ("
+        db.execSQL("CREATE TABLE favorites ("
                 + "_id INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + "productId TEXT,"
                 + "provider TEXT,"
@@ -36,23 +36,16 @@ public class HistoryDatabase extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
-        db.execSQL("DROP TABLE IF EXISTS products");
+        db.execSQL("DROP TABLE IF EXISTS favorites");
         onCreate(db);
     }
     
-    public void AddEntry(ProductInfo product) {
+    public void addFavoriteItem(ProductInfo product) {
     	if ((product == null) || (product.getProductName() == null) || (product.getProductName().equals(""))) return;
     	
     	SQLiteDatabase db = getWritableDatabase();
     	
-//    	db.delete("products", "code = '" + product.getProductCode() + "'", null);
-        
-//    	Cursor cursor = db.rawQuery("SELECT * FROM products", null);
-//    	if (cursor.getCount() > 100) {
-//    		db.delete("products", "_id = (SELECT MIN(_id) FROM products)", null);
-//    	}
-    	
-    	Cursor cursor = db.rawQuery("SELECT * FROM products WHERE productId=?", new String[] {product.getProductId()});
+    	Cursor cursor = db.rawQuery("SELECT * FROM favorites WHERE productId=?", new String[] {product.getProductId()});
     	if (cursor.getCount() > 0) {
     		return;
     	}
@@ -69,20 +62,20 @@ public class HistoryDatabase extends SQLiteOpenHelper {
         }
         
         try{
-            db.insert("products", null, map);
+            db.insert("favorites", null, map);
         } catch (SQLException e) {
             Log.e(TAG, e.toString());
         }
     }
     
-    public Cursor getHistory() {
+    public Cursor getFavorites() {
     	SQLiteDatabase db = getWritableDatabase();
-    	String query = "SELECT * FROM products ORDER BY _id DESC";
+    	String query = "SELECT * FROM favorites ORDER BY _id DESC";
     	return db.rawQuery(query, null);
     }
     
-    public void clearHistory() {
+    public void clearFavorites() {
     	SQLiteDatabase db = getWritableDatabase();
-    	db.delete("products", null, null);
+    	db.delete("favorites", null, null);
     }
 }

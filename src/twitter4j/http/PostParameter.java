@@ -26,18 +26,26 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j.http;
 
+import java.io.File;
+import java.util.List;
+
 /**
  * A data class representing HTTP Post parameter
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
 public class PostParameter implements java.io.Serializable, Comparable {
-    String name;
-    String value;
+    String name = null;
+    String value = null;
+    File file = null;
     private static final long serialVersionUID = -8708108746980739212L;
 
     public PostParameter(String name, String value) {
         this.name = name;
         this.value = value;
+    }
+    public PostParameter(String name, File file) {
+        this.name = name;
+        this.file = file;
     }
     public PostParameter(String name, double value) {
         this.name = name;
@@ -49,33 +57,122 @@ public class PostParameter implements java.io.Serializable, Comparable {
         this.value = String.valueOf(value);
     }
 
+    public PostParameter(String name, boolean value) {
+        this.name = name;
+        this.value = String.valueOf(value);
+    }
+
     public String getName(){
         return name;
     }
     public String getValue(){
+//http://code.google.com/p/twitter-api/issues/detail?id=889&q=oauth%20image&colspec=ID%20Stars%20Type%20Status%20Priority%20Owner%20Summary%20Opened%20Modified%20Component#c9
+// @todo        
+//        if(isFile()){
+//            return "@" + file.getName() + ";type=" + getContentType();
+//        }
         return value;
+    }
+    public boolean isFile(){
+        return null != file;
+    }
+
+    private static final String JPEG = "image/jpeg";
+    private static final String GIF = "image/gif";
+    private static final String PNG = "image/png";
+    private static final String OCTET = "application/octet-stream";
+
+    /**
+     * 
+     * @return content-type
+     */
+    public String getContentType() {
+        if (!isFile()) {
+            throw new IllegalStateException("not a file");
+        }
+        String contentType;
+        String extensions = file.getName();
+        int index = extensions.lastIndexOf(".");
+        if (-1 == index) {
+            // no extension
+            contentType = OCTET;
+        } else {
+            extensions = extensions.substring(extensions.lastIndexOf(".") + 1).toLowerCase();
+            if (extensions.length() == 3) {
+                if ("gif".equals(extensions)) {
+                    contentType = GIF;
+                } else if ("png".equals(extensions)) {
+                    contentType = PNG;
+                } else if ("jpg".equals(extensions)) {
+                    contentType = JPEG;
+                } else {
+                    contentType = OCTET;
+                }
+            } else if (extensions.length() == 4) {
+                if ("jpeg".equals(extensions)) {
+                    contentType = JPEG;
+                } else {
+                    contentType = OCTET;
+                }
+            } else {
+                contentType = OCTET;
+            }
+        }
+        return contentType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PostParameter)) return false;
+
+        PostParameter that = (PostParameter) o;
+
+        if (file != null ? !file.equals(that.file) : that.file != null)
+            return false;
+        if (!name.equals(that.name)) return false;
+        if (value != null ? !value.equals(that.value) : that.value != null)
+            return false;
+
+        return true;
+    }
+
+    /*package*/ static boolean containsFile(PostParameter[] params) {
+        boolean containsFile = false;
+        for (PostParameter param : params) {
+            if (param.isFile()) {
+                containsFile = true;
+                break;
+            }
+        }
+        return containsFile;
+    }
+    /*package*/ static boolean containsFile(List<PostParameter> params) {
+        boolean containsFile = false;
+        for (PostParameter param : params) {
+            if (param.isFile()) {
+                containsFile = true;
+                break;
+            }
+        }
+        return containsFile;
     }
 
     @Override
     public int hashCode() {
         int result = name.hashCode();
-        result = 31 * result + value.hashCode();
+        result = 31 * result + (value != null ? value.hashCode() : 0);
+        result = 31 * result + (file != null ? file.hashCode() : 0);
         return result;
     }
 
-    @Override public boolean equals(Object obj) {
-        if (null == obj) {
-            return false;
-        }
-        if (this == obj) {
-            return true;
-        }
-        if (obj instanceof PostParameter) {
-            PostParameter that = (PostParameter) obj;
-            return this.name.equals(that.name) &&
-                this.value.equals(that.value);
-        }
-        return false;
+    @Override
+    public String toString() {
+        return "PostParameter{" +
+                "name='" + name + '\'' +
+                ", value='" + value + '\'' +
+                ", file=" + file +
+                '}';
     }
 
     public int compareTo(Object o) {

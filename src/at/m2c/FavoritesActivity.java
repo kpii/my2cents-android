@@ -17,23 +17,23 @@ import at.m2c.data.DataManager;
 import at.m2c.data.ProductInfo;
 import at.m2c.util.Helper;
 
-public final class HistoryActivity extends ListActivity {
+public final class FavoritesActivity extends ListActivity {
 
 	private HistoryAdapter adapter;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.history);
+		setContentView(R.layout.favorites);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		
-		Cursor cursor = DataManager.getHistoryDatabase().getHistory();		
+		Cursor cursor = DataManager.getDatabase().getFavorites();		
 		adapter = new HistoryAdapter(this,
-        		R.layout.history_item,
+        		R.layout.favorite_item,
         		cursor,
                 new String[] { "productId", "provider", "name" },
                 new int[] { R.id.history_code, R.id.history_time, R.id.history_name });
@@ -56,7 +56,7 @@ public final class HistoryActivity extends ListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.history_menu, menu);
+		inflater.inflate(R.menu.favorites_menu, menu);
 		return true;
 	}
 
@@ -68,8 +68,8 @@ public final class HistoryActivity extends ListActivity {
 				startActivity(intent);
 				return true;
 			}
-			case R.id.clearHistoryMenuItem: {
-				DataManager.getHistoryDatabase().clearHistory();
+			case R.id.clearFavoritesMenuItem: {
+				DataManager.getDatabase().clearFavorites();
 				adapter.getCursor().requery();
 				return true;
 			}
