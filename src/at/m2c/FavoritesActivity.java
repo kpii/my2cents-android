@@ -36,7 +36,7 @@ public final class FavoritesActivity extends ListActivity {
         		R.layout.favorite_item,
         		cursor,
                 new String[] { "productId", "provider", "name" },
-                new int[] { R.id.history_code, R.id.history_time, R.id.history_name });
+                new int[] { R.id.favorite_code, R.id.favorite_provider, R.id.favorite_name });
 		
         setListAdapter(adapter);
 	}
@@ -99,7 +99,7 @@ public final class FavoritesActivity extends ListActivity {
 		public void bindView(View view, Context context, Cursor cursor) {
 			 byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex("image"));
 			 Bitmap bitmap = Helper.getByteArrayAsBitmap(bitmapArray);
-			 ImageView imageView = (ImageView) view.findViewById(R.id.history_image);
+			 ImageView imageView = (ImageView) view.findViewById(R.id.favorite_image);
 			 imageView.setImageBitmap(bitmap);
 			 
 			 super.bindView(view, context, cursor);

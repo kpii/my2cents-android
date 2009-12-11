@@ -6,7 +6,7 @@
 	android:padding="6dip">
 	<ImageView
 		android:layout_width="wrap_content"
-		android:id="@+id/history_image"
+		android:id="@+id/favorite_image"
 		android:layout_marginRight="5px"
 		android:layout_height="wrap_content"
 		android:adjustViewBounds="true"
@@ -14,16 +14,16 @@
 		android:maxHeight="90px"
 		android:maxWidth="90px" />
 	<TextView
-		android:id="@+id/history_code"
+		android:id="@+id/favorite_code"
 		android:layout_height="wrap_content"
-		android:layout_toRightOf="@id/history_image"
+		android:layout_toRightOf="@id/favorite_image"
 		android:layout_width="wrap_content"
 		android:textSize="6pt"
 		android:textColor="#3366aa" />
 	<TextView
 		android:layout_height="wrap_content"
-		android:id="@+id/history_time"
-		android:layout_toRightOf="@id/history_code"
+		android:id="@+id/favorite_provider"
+		android:layout_toRightOf="@id/favorite_code"
 		android:layout_width="wrap_content"
 		android:paddingLeft="10px"
 		android:textSize="5pt"
@@ -31,8 +31,8 @@
 	<TextView
 		android:layout_width="fill_parent"
 		android:ellipsize="marquee"
-		android:id="@+id/history_name"
+		android:id="@+id/favorite_name"
 		android:layout_height="wrap_content"
-		android:layout_below="@id/history_code"
-		android:layout_toRightOf="@id/history_image" />
+		android:layout_below="@id/favorite_code"
+		android:layout_toRightOf="@id/favorite_image" />
 </RelativeLayout>

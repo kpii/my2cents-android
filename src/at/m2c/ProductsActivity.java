@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -24,7 +25,6 @@ import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -73,11 +73,78 @@ public final class ProductsActivity extends ListActivity {
 			if (action.equals(Intents.ACTION)) {
 				setTitle("my2cents :: " + DataManager.getSearchTerm());
 				
-				new Thread(null, viewProducts, "ProductInfoUpdater").start();
-
-				progressDialog = ProgressDialog.show(this, null, "Loading products...", true);
+				new GetProductInfo().execute(DataManager.getSearchTerm());
 			}
 		}
+	}
+	
+	private class GetProductInfo extends AsyncTask<String, Void, List<ProductInfo>> {
+
+		@Override
+		protected void onPreExecute() {
+			progressDialog = ProgressDialog.show(ProductsActivity.this, null, "Loading products...", true);
+	    }
+		
+		@Override
+		protected List<ProductInfo> doInBackground(String... params) {
+			return ProductInfoManager.getProductsFromAmazon(params[0]);
+		}
+		
+		@Override
+		protected void onPostExecute(List<ProductInfo> result) {
+			products = result;
+	         
+	        ViewGroup notificationLayout = (ViewGroup) findViewById(R.id.ProductsNotificationLayout);
+				
+			productInfoAdapter.clear();
+			if (products != null && products.size() > 0) {
+				notificationLayout.setVisibility(View.GONE);
+				
+				for (ProductInfo product : products) {
+					productInfoAdapter.add(product);
+				}
+				
+				productInfoAdapter.notifyDataSetChanged();
+				progressDialog.dismiss();
+				
+				new GetProductImages().execute(productInfoAdapter.items);
+			}
+			else {
+				progressDialog.dismiss();
+				
+				TextView notificationTextView = (TextView) findViewById(R.id.productsNotificationTextView);
+				notificationTextView.setText("No comments yet. Be the first one to add your 2 cents on this product! Click on 'Add my 2 cents'");
+				notificationLayout.setVisibility(View.VISIBLE);
+			}
+	    }
+	}
+	
+	private class GetProductImages extends AsyncTask<List<ProductInfo>, Void, Void> {
+		
+		@Override
+		protected Void doInBackground(List<ProductInfo>... params) {
+			URL url = null;
+			for (ProductInfo product : params[0]) {
+				if (avatarMap.containsKey(product.getProductName())) {
+					product.setProductImage(avatarMap.get(product.getProductName()));
+				} else {
+					try {
+						url = new URL(product.getProductImageUrl());
+					} catch (MalformedURLException e) {
+						Log.e(this.toString(), e.toString());
+					}
+					product.setProductImage(NetworkManager.getRemoteImage(url));
+					avatarMap.put(product.getProductName(), product.getProductImage());
+				}
+				publishProgress();
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onProgressUpdate(Void... progress) {
+			productInfoAdapter.notifyDataSetChanged();
+	    }
 	}
 
 	@Override
@@ -118,12 +185,6 @@ public final class ProductsActivity extends ListActivity {
 				return super.onContextItemSelected(item);
 		}		
 	}
-
-	private Runnable viewProducts = new Runnable() {
-		public void run() {
-			searchProducts(DataManager.getSearchTerm());
-		}
-	};
 
 	@Override
 	protected void onPause() {
@@ -201,69 +262,4 @@ public final class ProductsActivity extends ListActivity {
 			return view;
 		}
 	}
-
-	private void searchProducts(String searchTerm) {
-		try {
-			products = ProductInfoManager.getProductsFromAmazon(searchTerm);
-		} catch (Exception e) {
-			Log.e(this.toString(), e.getMessage());
-		}
-		runOnUiThread(displayProducts);
-	}
-
-	private Runnable displayProducts = new Runnable() {
-		public void run() {
-			ViewGroup notificationLayout = (ViewGroup) findViewById(R.id.ProductsNotificationLayout);
-			
-			productInfoAdapter.clear();
-			if (products != null && products.size() > 0) {
-				notificationLayout.setVisibility(View.GONE);
-				
-				for (ProductInfo product : products) {
-					productInfoAdapter.add(product);
-				}
-				
-				productInfoAdapter.notifyDataSetChanged();
-				progressDialog.dismiss();
-				
-				new Thread(null, loadProductImages, "ProductImageLoader").start();
-			}
-			else {
-				progressDialog.dismiss();
-				
-				TextView notificationTextView = (TextView) findViewById(R.id.productsNotificationTextView);
-				notificationTextView.setText("No comments yet. Be the first one to add your 2 cents on this product! Click on 'Add my 2 cents'");
-				notificationLayout.setVisibility(View.VISIBLE);
-			}
-		}
-	};
-
-	private Runnable loadProductImages = new Runnable() {
-		public void run() {
-			URL url = null;
-			for (ProductInfo product : productInfoAdapter.items) {
-//				if (shutdownRequested)
-//					return;
-				if (avatarMap.containsKey(product.getProductName())) {
-					product.setProductImage(avatarMap.get(product.getProductName()));
-				} else {
-					try {
-						url = new URL(product.getProductImageUrl());
-					} catch (MalformedURLException e) {
-						Log.e(this.toString(), e.toString());
-					}
-					product.setProductImage(NetworkManager.getRemoteImage(url));
-					avatarMap.put(product.getProductName(), product.getProductImage());
-				}
-				if (!shutdownRequested)
-					runOnUiThread(refreshProducts);
-			}
-		}
-	};
-
-	private Runnable refreshProducts = new Runnable() {
-		public void run() {
-			productInfoAdapter.notifyDataSetChanged();
-		}
-	};
 }
