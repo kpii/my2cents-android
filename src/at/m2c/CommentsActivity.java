@@ -22,6 +22,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -47,6 +48,8 @@ import at.m2c.util.NetworkManager;
 import at.m2c.util.ProviderManager;
 
 public final class CommentsActivity extends ListActivity {
+	
+	private GetComments asyncTask;
 
 	private final static int ACCOUNT_ACTIVITY_CODE = 0;
 
@@ -54,7 +57,6 @@ public final class CommentsActivity extends ListActivity {
 	
 	private boolean gpsEnabled;
 	
-	private final static int numberOfResults = 30;
 	private LocationManager locationManager;
 
 	private Gallery tagsGallery;
@@ -111,13 +113,102 @@ public final class CommentsActivity extends ListActivity {
 		String action = intent == null ? null : intent.getAction();
 		if (intent != null && action != null) {
 			if (action.equals(Intents.ACTION)) {
-				setTitle("my2cents :: " + DataManager.getSearchTerm());
+//				if ((asyncTask != null) && (!asyncTask.isCancelled())) {
+//					asyncTask.cancel(true);
+//					asyncTask = null;
+//				}
 				
-				new Thread(null, viewComments, "CommentsLoader").start();
-
-				progressDialog = ProgressDialog.show(CommentsActivity.this, null, "Loading comments...", true);
+				setTitle("my2cents :: " + DataManager.getSearchTerm());				
+				asyncTask = (GetComments) new GetComments().execute(PreferencesActivity.TagPrefix + DataManager.getSearchTerm());
 			}
 		}
+	}
+	
+	private class GetComments extends AsyncTask<String, Void, List<Tweet>> {
+
+		@Override
+		protected void onPreExecute() {
+			progressDialog = ProgressDialog.show(CommentsActivity.this, null, "Loading comments...", true);
+	    }
+		
+		@Override
+		protected List<Tweet> doInBackground(String... params) {
+			return ProviderManager.search(params[0]);
+		}
+		
+		@Override
+		protected void onPostExecute(List<Tweet> result) {
+			tweets = result;
+	         
+			ViewGroup notificationLayout = (ViewGroup) findViewById(R.id.CommentsNotificationLayout);
+			
+			tweetsAdapter.clear();
+			tagsAdapter.clear();
+			
+			String productTag = PreferencesActivity.ProductCodePrefix + DataManager.getSearchTerm();
+			if (tweets != null && tweets.size() > 0) {
+				notificationLayout.setVisibility(View.GONE);
+				
+				Set<String> tags = new TreeSet<String>();
+				for (Tweet comment : tweets) {
+					tweetsAdapter.add(comment);
+					
+					String text = comment.getText().replace(productTag, "");
+					if (text.contains("#")) {
+						Pattern p = Pattern.compile("#[A-Za-z0-9]+");						
+						Matcher m = p.matcher(text);
+						while (m.find()) {
+							tags.add(m.group());
+						}
+					}
+				}
+				
+				for (String tag : tags) {
+					tagsAdapter.add(tag);
+				}
+				
+				tweetsAdapter.notifyDataSetChanged();
+				
+				progressDialog.dismiss();
+				
+				new GetProfileImages().execute(tweetsAdapter.items);
+			}
+			else {
+				progressDialog.dismiss();
+				
+				TextView notificationTextView = (TextView) findViewById(R.id.commentsNotificationTextView);
+				notificationTextView.setText("No comments yet. Be the first one to add your 2 cents on this product!");
+				notificationLayout.setVisibility(View.VISIBLE);
+			}
+	    }
+	}
+	
+	private class GetProfileImages extends AsyncTask<List<Tweet>, Void, Void> {
+		
+		@Override
+		protected Void doInBackground(List<Tweet>... params) {			
+			URL url = null;
+			for (Tweet tweet : params[0]) {
+				if (avatarMap.containsKey(tweet.getFromUser())) {
+					tweet.setProfileImage(avatarMap.get(tweet.getFromUser()));
+				} else {
+					try {
+						url = new URL(tweet.getProfileImageUrl());
+					} catch (MalformedURLException e) {
+						Log.e(this.toString(), e.toString());
+					}
+					tweet.setProfileImage(NetworkManager.getRemoteImage(url));
+					avatarMap.put(tweet.getFromUser(), tweet.getProfileImage());
+				}
+				publishProgress();
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onProgressUpdate(Void... progress) {
+			tweetsAdapter.notifyDataSetChanged();
+	    }
 	}
 
 	@Override
@@ -191,6 +282,7 @@ public final class CommentsActivity extends ListActivity {
 		public void onClick(View view) {
 			final Runnable commentPosted = new Runnable() {
 				public void run() {
+					tweetsAdapter.notifyDataSetChanged();
 					Toast.makeText(CommentsActivity.this, "Comment posted successfully", Toast.LENGTH_SHORT).show();
 				}
 			};
@@ -223,7 +315,6 @@ public final class CommentsActivity extends ListActivity {
 								avatarMap.put(comment.getFromUser(), comment.getProfileImage());
 							}
 							tweets.add(0, comment);
-							runOnUiThread(displayTweets);
 						}
 						runOnUiThread(commentPosted);
 					}
@@ -234,12 +325,6 @@ public final class CommentsActivity extends ListActivity {
 			
 			new Thread(null, postComment, "CommentSender").start();
 			progressDialog = ProgressDialog.show(CommentsActivity.this, null, "Sending...", true);
-		}
-	};
-
-	private Runnable viewComments = new Runnable() {
-		public void run() {
-			searchComments(PreferencesActivity.TagPrefix + DataManager.getSearchTerm());
 		}
 	};
 
@@ -369,93 +454,11 @@ public final class CommentsActivity extends ListActivity {
 		}
 	}
 
-	private void searchComments(String searchTerm) {
-		try {
-			tweets = ProviderManager.search(searchTerm, numberOfResults);
-		} catch (Exception e) {
-			Log.e(this.toString(), e.getMessage());
-		}
-		runOnUiThread(displayTweets);
-	}
-
 	private Runnable dismissProgressDialog = new Runnable() {
 		public void run() {
 			EditText commentEditor = (EditText) findViewById(R.id.comment_edittext);
 			commentEditor.setText("");
 			progressDialog.dismiss();
-		}
-	};
-
-	private Runnable displayTweets = new Runnable() {
-		public void run() {
-			ViewGroup notificationLayout = (ViewGroup) findViewById(R.id.CommentsNotificationLayout);
-			
-			tweetsAdapter.clear();
-			tagsAdapter.clear();
-			
-			String productTag = PreferencesActivity.ProductCodePrefix + DataManager.getSearchTerm();
-			if (tweets != null && tweets.size() > 0) {
-				notificationLayout.setVisibility(View.GONE);
-				
-				Set<String> tags = new TreeSet<String>();
-				for (Tweet comment : tweets) {
-					tweetsAdapter.add(comment);
-					
-					String text = comment.getText().replace(productTag, "");
-					if (text.contains("#")) {
-						Pattern p = Pattern.compile("#[A-Za-z0-9]+");						
-						Matcher m = p.matcher(text);
-						while (m.find()) {
-							tags.add(m.group());
-						}
-					}
-				}
-				
-				for (String tag : tags) {
-					tagsAdapter.add(tag);
-				}
-				
-				tweetsAdapter.notifyDataSetChanged();
-				
-				progressDialog.dismiss();
-				new Thread(null, loadAvatars, "AvatarLoader").start();
-			}
-			else {
-				progressDialog.dismiss();
-				
-				TextView notificationTextView = (TextView) findViewById(R.id.commentsNotificationTextView);
-				notificationTextView.setText("No comments yet. Be the first one to add your 2 cents on this product!");
-				notificationLayout.setVisibility(View.VISIBLE);
-			}
-		}
-	};
-
-	private Runnable loadAvatars = new Runnable() {
-		public void run() {
-			URL url = null;
-			for (Tweet comment : tweetsAdapter.items) {
-//				if (shutdownRequested)
-//					return;
-				if (avatarMap.containsKey(comment.getFromUser())) {
-					comment.setProfileImage(avatarMap.get(comment.getFromUser()));
-				} else {
-					try {
-						url = new URL(comment.getProfileImageUrl());
-					} catch (MalformedURLException e) {
-						Log.e(this.toString(), e.toString());
-					}
-					comment.setProfileImage(NetworkManager.getRemoteImage(url));
-					avatarMap.put(comment.getFromUser(), comment.getProfileImage());
-				}
-				if (!shutdownRequested)
-					runOnUiThread(refreshComments);
-			}
-		}
-	};
-
-	private Runnable refreshComments = new Runnable() {
-		public void run() {
-			tweetsAdapter.notifyDataSetChanged();
 		}
 	};
 }

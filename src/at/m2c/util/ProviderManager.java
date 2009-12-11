@@ -20,6 +20,8 @@ public final class ProviderManager {
 	
 	private static boolean isCommentingPossible;
 	
+	private final static int numberOfResults = 30;
+	
 
 	public final static void Initialize(String username, String password)
 	{		
@@ -38,7 +40,7 @@ public final class ProviderManager {
 		}
 	}
 	
-	public final static List<Tweet> search(String searchTerm, int numberOfResults){
+	public final static List<Tweet> search(String searchTerm){
 		Query query = new Query();
 		query.setQuery(searchTerm);
 		query.setRpp(numberOfResults);
