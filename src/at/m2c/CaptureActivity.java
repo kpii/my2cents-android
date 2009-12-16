@@ -170,7 +170,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.main_menu, menu);
+		inflater.inflate(R.menu.capture_menu, menu);
 		return true;
 	}
 

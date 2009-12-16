@@ -358,6 +358,11 @@ public final class CommentActivity extends ListActivity {
 				startActivity(intent);
 				break;
 			}
+			case R.id.scanMenuItem: {
+				Intent intent = new Intent(this, CaptureActivity.class);
+				startActivity(intent);
+				break;
+			}
 		}
 		return super.onOptionsItemSelected(item);
 	}
