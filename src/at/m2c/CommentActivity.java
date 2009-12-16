@@ -523,7 +523,7 @@ public final class CommentActivity extends ListActivity {
 				progressDialog.dismiss();
 				
 				TextView notificationTextView = (TextView) findViewById(R.id.notificationTextView);
-				notificationTextView.setText("No comments yet. Be the first one to add your 2 cents on this product! Click on 'Add my 2 cents'");
+				notificationTextView.setText("No comments yet. Be the first one to add your 2 cents on this product! Click on 'Add my2cents'");
 				notificationLayout.setVisibility(View.VISIBLE);
 			}
 		}
