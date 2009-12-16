@@ -39,7 +39,7 @@
 				android:imeOptions="actionSend|flagNoEnterAction"
 				android:inputType="textCapSentences|textAutoCorrect|textMultiLine|textImeMultiLine|textShortMessage"
 				android:layout_weight="1"
-				android:maxLength="120"/>
+				android:maxLength="119"/>
 			<Button
 				android:id="@+id/comment_send_button"
 				android:text="Send"
@@ -107,7 +107,7 @@
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
 			android:id="@+id/commentToggleButton"
-			android:textSize="@dimen/toggle_button_text" android:textOff="Add my 2 cents" android:textOn="Add my 2 cents" android:width="150sp"></ToggleButton>
+			android:textSize="@dimen/toggle_button_text" android:textOff="Add my2cents" android:textOn="Add my2cents" android:width="150sp"></ToggleButton>
 	</LinearLayout>
 
 </LinearLayout>
