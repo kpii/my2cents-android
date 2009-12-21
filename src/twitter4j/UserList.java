@@ -40,7 +40,7 @@ import twitter4j.http.Response;
  * @author Dan Checkoway - dcheckoway at gmail.com
  * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-GET-list-id">REST API Documentation - Basic list information element</a>
  */
-public class List extends TwitterResponseImpl implements java.io.Serializable {
+public class UserList extends TwitterResponseImpl implements java.io.Serializable {
 
     private int id;
     private String name;
@@ -55,17 +55,23 @@ public class List extends TwitterResponseImpl implements java.io.Serializable {
     private static final long serialVersionUID = -6345893237975349030L;
 
 
-    /*package*/List(Response res) throws TwitterException {
+    /*package*/
+
+    UserList(Response res) throws TwitterException {
         super(res);
         init(res.asJSONObject());
     }
 
-    /*package*/List(Response res, JSONObject json) throws TwitterException {
+    /*package*/
+
+    UserList(Response res, JSONObject json) throws TwitterException {
         super(res);
         init(json);
     }
 
-    /*package*/List(JSONObject json) throws TwitterException {
+    /*package*/
+
+    UserList(JSONObject json) throws TwitterException {
         super();
         init(json);
     }
@@ -182,15 +188,15 @@ public class List extends TwitterResponseImpl implements java.io.Serializable {
     public User getUser() {
         return user;
     }
-    /*package*/ static PagableResponseList<List> createListList(Response res) throws TwitterException {
+    /*package*/ static PagableResponseList<UserList> createListList(Response res) throws TwitterException {
         try {
             JSONObject json = res.asJSONObject();
             JSONArray list = json.getJSONArray("lists");
             int size = list.length();
-            PagableResponseList<List> users =
-                    new PagableResponseList<List>(size, json, res);
+            PagableResponseList<UserList> users =
+                    new PagableResponseList<UserList>(size, json, res);
             for (int i = 0; i < size; i++) {
-                users.add(new List(res, list.getJSONObject(i)));
+                users.add(new UserList(res, list.getJSONObject(i)));
             }
             return users;
         } catch (JSONException jsone) {
@@ -213,12 +219,12 @@ public class List extends TwitterResponseImpl implements java.io.Serializable {
         if (this == obj) {
             return true;
         }
-        return obj instanceof List && ((List) obj).id == this.id;
+        return obj instanceof UserList && ((UserList) obj).id == this.id;
     }
 
     @Override
     public String toString() {
-        return "List{" +
+        return "UserList{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", fullName='" + fullName + '\'' +

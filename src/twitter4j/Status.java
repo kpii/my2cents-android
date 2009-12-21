@@ -57,36 +57,21 @@ public class Status extends TwitterResponseImpl implements java.io.Serializable 
 
     /*package*/Status(Response res) throws TwitterException {
         super(res);
-        init(res, res.asJSONObject());
+        init(res.asJSONObject());
     }
 
     /*package*/Status(Response res, JSONObject json) throws
             TwitterException {
         super(res);
-        init(res, json);
+        init(json);
     }
 
-    public Status(String str) throws TwitterException, JSONException {
-        // StatusStream uses this constructor
+    /*package*/ Status(JSONObject json) throws TwitterException, JSONException {
         super();
-        JSONObject json = new JSONObject(str);
-        id = json.getLong("id");
-        text = json.getString("text");
-        source = json.getString("source");
-        createdAt = parseDate(json.getString("created_at"), "EEE MMM dd HH:mm:ss z yyyy");
-
-        inReplyToStatusId = getLong("in_reply_to_status_id", json);
-        inReplyToUserId = getInt("in_reply_to_user_id", json);
-        isFavorited = getBoolean("favorited", json);
-        user = new User(json.getJSONObject("user"));
+        init(json);
     }
 
-    private void init(Response res, JSONObject json) throws
-            TwitterException {
-        try {
-            user = new User(res, json.getJSONObject("user"));
-        } catch (JSONException ignore) {
-        }
+    private void init(JSONObject json) throws TwitterException {
         id = getChildLong("id", json);
         text = getChildText("text", json);
         source = getChildText("source", json);
@@ -97,19 +82,27 @@ public class Status extends TwitterResponseImpl implements java.io.Serializable 
         isFavorited = getChildBoolean("favorited", json);
         inReplyToScreenName = getChildText("in_reply_to_screen_name", json);
         try {
-            if(!json.isNull("geo")){
+            if (!json.isNull("user")) {
+                user = new User(json.getJSONObject("user"));
+            }
+        } catch (JSONException jsone) {
+            throw new TwitterException(jsone);
+        }
+        try {
+            if (!json.isNull("geo")) {
                 String coordinates = json.getJSONObject("geo")
-                .getString("coordinates");
-                coordinates = coordinates.substring(1,coordinates.length()-1);
+                        .getString("coordinates");
+                coordinates = coordinates.substring(1, coordinates.length() - 1);
                 String[] point = coordinates.split(",");
                 latitude = Double.parseDouble(point[0]);
                 longitude = Double.parseDouble(point[1]);
             }
-        } catch (JSONException ignore) {
+        } catch (JSONException jsone) {
+            throw new TwitterException(jsone);
         }
-        if(!json.isNull("retweeted_status")){
+        if (!json.isNull("retweeted_status")) {
             try {
-                retweetedStatus = new Status(res, json.getJSONObject("retweeted_status"));
+                retweetedStatus = new Status(json.getJSONObject("retweeted_status"));
             } catch (JSONException ignore) {
             }
         }
@@ -249,7 +242,7 @@ public class Status extends TwitterResponseImpl implements java.io.Serializable 
         return retweetedStatus;
     }
 
-    /*package*/ static ResponseList<Status> createStatuseList(Response res) throws TwitterException {
+    /*package*/ static ResponseList<Status> createStatusList(Response res) throws TwitterException {
         try {
             JSONArray list = res.asJSONArray();
             int size = list.length();

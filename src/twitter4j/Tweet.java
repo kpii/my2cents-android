@@ -54,7 +54,7 @@ public class Tweet extends TwitterResponseImpl {
     private Bitmap profileImage;
     
     private static final long serialVersionUID = 4299736733993211587L;
-    
+
     public Tweet(Status status) {
     	super();
     	fromUser = status.getUser().getScreenName();
@@ -63,7 +63,7 @@ public class Tweet extends TwitterResponseImpl {
     	relativeTime = RelativeTime.getDifference(createdAt.getTime());
     	text = status.getText();
     }
-
+    
     /*package*/Tweet(JSONObject tweet) throws TwitterException {
         super();
         try {
@@ -233,8 +233,8 @@ public class Tweet extends TwitterResponseImpl {
                 ", createdAt=" + createdAt +
                 '}';
     }
-
-	public String getRelativeTime() {
+    
+    public String getRelativeTime() {
 		return relativeTime;
 	}
 

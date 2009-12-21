@@ -121,10 +121,74 @@ public class TwitterAdapter implements TwitterListener {
     public void gotFollowersStatuses(PagableResponseList<User> users){
     }
     /*List Methods*/
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void createdUserList(UserList userList) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void updatedUserList(UserList userList) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void gotUserLists(PagableResponseList<UserList> userLists) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void gotShowUserList(UserList userList) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void deletedUserList(UserList userList) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void gotUserListStatuses(PagableResponseList<UserList> userLists) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void gotUserListMemberships(PagableResponseList<UserList> userLists) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void gotUserListSubscriptions(PagableResponseList<UserList> userLists) {}
 
     /*List Members Methods*/
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void gotUserListMembers(PagableResponseList<User> users) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void addedUserListMember(UserList userList) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void deletedUserListMember(UserList userList) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void checkedUserListMembership(PagableResponseList<User> users) {}
 
     /*List Subscribers Methods*/
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void gotUserListSubscribers(PagableResponseList<User> users) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void subscribedUserList(UserList userList) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void unsubscribedUserList(UserList userList) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void checkedUserListSubscription(User user) {}
 
     /*Direct Message Methods*/
     public void gotDirectMessages(ResponseList<DirectMessage> messages){
@@ -154,6 +218,11 @@ public class TwitterAdapter implements TwitterListener {
      * @since Twitter4J 2.0.1
      */
     public void gotExistsFriendship(boolean exists) {
+    }
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void gotShowFriendship(Relationship relationship) {
     }
 
     /*Social Graph Methods*/

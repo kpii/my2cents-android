@@ -23,50 +23,67 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
 ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 */
-package twitter4j.http;
+package twitter4j;
+
+import java.io.Serializable;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
- *
- * @author Dan Checkoway - dcheckoway at gmail.com
+ * A data class representing Status deletionNotice<br>
+ * Clients are urged to honor deletionNotice requests and discard deleted statuses immediately. At times, status deletionNotice messages may arrive before the status. Even in this case, the late arriving status should be deleted from your backing store.
+ * @author Yusuke Yamamoto - yusuke at mac.com
+ * @since Twitter4J 2.1.0
  */
-final class RequestMethod {
-    private final String method;
-    public static final RequestMethod GET = new RequestMethod("GET");
-    public static final RequestMethod POST = new RequestMethod("POST");
-    public static final RequestMethod DELETE = new RequestMethod("DELETE");
-    public static final RequestMethod HEAD = new RequestMethod("HEAD");
-    public static final RequestMethod PUT = new RequestMethod("PUT");
+public class StatusDeletionNotice implements Serializable {
 
-    private RequestMethod(String method) {
-        this.method = method;
+    private long statusId;
+    private int userId;
+    private static final long serialVersionUID = 1723338404242596062L;
+
+    /*package*/ StatusDeletionNotice(JSONObject json) throws JSONException {
+        //{"delete":{"status":{"id":4821647803,"user_id":16346228}}}
+        JSONObject status = json.getJSONObject("delete").getJSONObject("status");
+        this.statusId = TwitterResponseImpl.getChildLong("id", status);
+        this.userId = TwitterResponseImpl.getChildInt("user_id", status);
     }
 
-    public final String name() {
-        return method;
+    public long getStatusId() {
+        return statusId;
+    }
+
+    public int getUserId() {
+        return userId;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof RequestMethod)) return false;
+        if (!(o instanceof StatusDeletionNotice)) return false;
 
-        RequestMethod that = (RequestMethod) o;
+        StatusDeletionNotice that = (StatusDeletionNotice) o;
 
-        if (!method.equals(that.method)) return false;
+        if (statusId != that.statusId) return false;
+        if (userId != that.userId) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return method.hashCode();
+        int result = (int) (statusId ^ (statusId >>> 32));
+        result = 31 * result + userId;
+        return result;
     }
 
     @Override
     public String toString() {
-        return "RequestMethod{" +
-                "method='" + method + '\'' +
+        return "StatusDeletionNotice{" +
+                "statusId=" + statusId +
+                ", userId=" + userId +
                 '}';
     }
 }

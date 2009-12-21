@@ -5,9 +5,10 @@
 	android:versionCode="1"
 	package="at.m2c">
 
-	<!-- We require Cupcake (Android 1.5) or later. -->
+	<!-- We require Cupcake (Android 1.5) or later, but are really targeting Donut. -->
 	<uses-sdk
-		android:targetSdkVersion="4" android:minSdkVersion="4"/>
+		android:minSdkVersion="3"
+		android:targetSdkVersion="4" />
 	<!-- Donut-specific flags which allow us to run on large and high dpi screens. -->
 	<supports-screens
 		android:largeScreens="true"
@@ -22,7 +23,8 @@
 		android:icon="@drawable/birdy">
 		<activity
 			android:screenOrientation="landscape"
-			android:configChanges="orientation|keyboardHidden" android:name="CaptureActivity">
+			android:configChanges="orientation|keyboardHidden"
+			android:name="CaptureActivity">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.MAIN" />
@@ -61,7 +63,8 @@
 		<activity
 			android:screenOrientation="user"
 			android:theme="@android:style/Theme.Dialog"
-			android:label="my2cents - Search for products" android:name="SearchActivity">
+			android:label="my2cents - Search for products"
+			android:name="SearchActivity">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.VIEW" />

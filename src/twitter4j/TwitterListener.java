@@ -112,10 +112,74 @@ public interface TwitterListener {
     void gotFollowersStatuses(PagableResponseList<User> users);
 
     /*List Methods*/
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    void createdUserList(UserList userList);
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    void updatedUserList(UserList userList);
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    void gotUserLists(PagableResponseList<UserList> userLists);
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    void gotShowUserList(UserList userList);
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    void deletedUserList(UserList userList);
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    void gotUserListStatuses(PagableResponseList<UserList> userLists);
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    void gotUserListMemberships(PagableResponseList<UserList> userLists);
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    void gotUserListSubscriptions(PagableResponseList<UserList> userLists);
 
     /*List Members Methods*/
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    void gotUserListMembers(PagableResponseList<User> users);
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    void addedUserListMember(UserList userList);
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    void deletedUserListMember(UserList userList);
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    void checkedUserListMembership(PagableResponseList<User> users);
 
     /*List Subscribers Methods*/
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    void gotUserListSubscribers(PagableResponseList<User> users);
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    void subscribedUserList(UserList userList);
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    void unsubscribedUserList(UserList userList);
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    void checkedUserListSubscription(User user);
 
     /*Direct Message Methods*/
     void gotDirectMessages(ResponseList<DirectMessage> messages);
@@ -144,6 +208,10 @@ public interface TwitterListener {
      * @since Twitter4J 2.0.1
      */
     void gotExistsFriendship(boolean exists);
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    void gotShowFriendship(Relationship relationship);
 
     /*Social Graph Methods*/
     void gotFriendsIDs(IDs ids);

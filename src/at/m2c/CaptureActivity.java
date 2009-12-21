@@ -19,6 +19,7 @@ package at.m2c;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,7 +34,6 @@ import android.graphics.Rect;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -52,7 +52,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 import at.m2c.data.DataManager;
-import at.m2c.data.ProductInfo;
 import at.m2c.scanner.CameraManager;
 import at.m2c.scanner.CaptureActivityHandler;
 import at.m2c.scanner.ViewfinderView;
@@ -341,17 +340,36 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 	}
 
 	private void initCamera(SurfaceHolder surfaceHolder) {
-		try {
-			CameraManager.get().openDriver(surfaceHolder);
-		} catch (IOException ioe) {
-			Log.w(TAG, ioe);
-			return;
-		}
-		if (handler == null) {
-			boolean beginScanning = lastResult == null;
-			handler = new CaptureActivityHandler(this, beginScanning);
-		}
-	}
+	    try {
+	      CameraManager.get().openDriver(surfaceHolder);
+	    } catch (IOException ioe) {
+	      Log.w(TAG, ioe);
+	      displayFrameworkBugMessageAndExit();
+	      return;
+	    } catch (RuntimeException e) {
+	      // Barcode Scanner has seen crashes in the wild of this variety:
+	      // java.?lang.?RuntimeException: Fail to connect to camera service
+	      Log.e(TAG, e.toString());
+	      displayFrameworkBugMessageAndExit();
+	      return;
+	    }
+	    if (handler == null) {
+	      boolean beginScanning = lastResult == null;
+	      handler = new CaptureActivityHandler(this, beginScanning);
+	    }
+	  }
+
+	  private void displayFrameworkBugMessageAndExit() {
+	    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    builder.setTitle(getString(R.string.app_name));
+	    builder.setMessage("Sorry, the Android camera encountered a problem. You may need to restart the device.");
+	    builder.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
+	      public void onClick(DialogInterface dialogInterface, int i) {
+	        finish();
+	      }
+	    });
+	    builder.show();
+	  }
 
 	private void resetStatusView() {
 		viewfinderView.setVisibility(View.VISIBLE);

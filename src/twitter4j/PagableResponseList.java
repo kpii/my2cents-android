@@ -36,7 +36,7 @@ import twitter4j.http.Response;
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
 public class PagableResponseList<T extends TwitterResponse> extends
-        ResponseList implements CursorSupport{
+        ResponseList<T> implements CursorSupport{
     private final long previousCursor;
     private final long nextCursor;
     private static final long serialVersionUID = 1531950333538983361L;
