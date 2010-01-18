@@ -113,7 +113,7 @@ public final class ProductsActivity extends ListActivity {
 				progressDialog.dismiss();
 				
 				TextView notificationTextView = (TextView) findViewById(R.id.productsNotificationTextView);
-				notificationTextView.setText("No comments yet. Be the first one to add your 2 cents on this product! Click on 'Add my 2 cents'");
+				notificationTextView.setText("No products found.");
 				notificationLayout.setVisibility(View.VISIBLE);
 			}
 	    }
