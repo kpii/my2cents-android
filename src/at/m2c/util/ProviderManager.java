@@ -8,6 +8,7 @@ import twitter4j.Status;
 import twitter4j.Tweet;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
 import twitter4j.User;
 import android.location.Location;
 import android.util.Log;
@@ -25,13 +26,13 @@ public final class ProviderManager {
 
 	public final static void Initialize(String username, String password)
 	{		
-		twitter = new Twitter(username, password);
+		twitter = TwitterFactory.getBasicAuthenticatedInstance(username, password);
 	}
 
-	public final static Status updateStatus(String statusText, Location l) {
+	public final static Status updateStatus(String statusText, Location location) {
 		try {
-			if (l != null)
-				return twitter.updateStatus(statusText, l.getLatitude(), l.getLongitude());
+			if (location != null)
+				return twitter.updateStatus(statusText, location);
 			else
 				return twitter.updateStatus(statusText);
 		} catch (TwitterException e) {

@@ -26,124 +26,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import twitter4j.http.Response;
 
 /**
- * A data class representing a Saved Search
+ * A data interface representing a Saved Search
  *
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.0.8
  */
-public class SavedSearch extends TwitterResponseImpl {
-    private Date createdAt;
-    private String query;
-    private int position;
-    private String name;
-    private int id;
-    private static final long serialVersionUID = 3083819860391598212L;
+public interface SavedSearch extends TwitterResponse, java.io.Serializable {
+    Date getCreatedAt();
 
-    /*package*/ SavedSearch(Response res) throws TwitterException {
-        super(res);
-        init(res.asJSONObject());
-    }
+    String getQuery();
 
-    /*package*/ SavedSearch(Response res, JSONObject json) throws TwitterException {
-        super(res);
-        init(json);
-    }
+    int getPosition();
 
-    /*package*/ SavedSearch(JSONObject savedSearch) throws TwitterException {
-        init(savedSearch);
-    }
+    String getName();
 
-    /*package*/ static List<SavedSearch> createSavedSearchList(Response res) throws TwitterException {
-            JSONArray json = res.asJSONArray();
-            List<SavedSearch> savedSearches;
-            try {
-                savedSearches = new ArrayList<SavedSearch>(json.length());
-                for(int i=0;i<json.length();i++){
-                    savedSearches.add(new SavedSearch(res,json.getJSONObject(i)));
-                }
-                return savedSearches;
-            } catch (JSONException jsone) {
-                throw new TwitterException(jsone.getMessage() + ":" + res.asString(), jsone);
-            }
-        }
+    int getId();
 
-    private void init(JSONObject savedSearch) throws TwitterException {
-        try {
-            createdAt = parseDate(savedSearch.getString("created_at"), "EEE MMM dd HH:mm:ss z yyyy");
-            query = getString("query", savedSearch, true);
-            position = getInt("position", savedSearch);
-            name = getString("name", savedSearch, true);
-            id = getInt("id", savedSearch);
-        } catch (JSONException jsone) {
-            throw new TwitterException(jsone.getMessage() + ":" + savedSearch.toString(), jsone);
-        }
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public String getQuery() {
-        return query;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SavedSearch)) return false;
-
-        SavedSearch that = (SavedSearch) o;
-
-        if (id != that.id) return false;
-        if (position != that.position) return false;
-        if (!createdAt.equals(that.createdAt)) return false;
-        if (!name.equals(that.name)) return false;
-        if (!query.equals(that.query)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = createdAt.hashCode();
-        result = 31 * result + query.hashCode();
-        result = 31 * result + position;
-        result = 31 * result + name.hashCode();
-        result = 31 * result + id;
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "SavedSearch{" +
-                "createdAt=" + createdAt +
-                ", query='" + query + '\'' +
-                ", position=" + position +
-                ", name='" + name + '\'' +
-                ", id=" + id +
-                '}';
-    }
 }

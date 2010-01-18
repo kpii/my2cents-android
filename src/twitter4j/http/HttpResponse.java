@@ -44,16 +44,16 @@ import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import twitter4j.Configuration;
 import twitter4j.TwitterException;
+import twitter4j.conf.Configuration;
 
 /**
  * A data class representing HTTP Response
  *
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
-public class Response {
-    private final static boolean DEBUG = Configuration.getDebug();
+public class HttpResponse {
+    private static final boolean DEBUG = Configuration.getInstance().isDebug();
 
     private static ThreadLocal<DocumentBuilder> builders =
             new ThreadLocal<DocumentBuilder>() {
@@ -77,7 +77,7 @@ public class Response {
     private boolean streamConsumed = false;
 
 
-    public Response(HttpURLConnection con) throws IOException {
+    public HttpResponse(HttpURLConnection con) throws IOException {
         this.con = con;
         this.statusCode = con.getResponseCode();
         if(null == (is = con.getErrorStream())){
@@ -90,7 +90,7 @@ public class Response {
     }
 
     // for test purpose
-    /*package*/ Response(String content) {
+    /*package*/ HttpResponse(String content) {
         this.responseAsString = content;
     }
 

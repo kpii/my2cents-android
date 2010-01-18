@@ -28,7 +28,7 @@ package twitter4j;
 
 import org.json.JSONObject;
 
-import twitter4j.http.Response;
+import twitter4j.http.HttpResponse;
 
 /**
  * CursorSupport'ed ResponseList implementation.
@@ -44,10 +44,10 @@ public class PagableResponseList<T extends TwitterResponse> extends
 
     /*package*/
 
-    PagableResponseList(int size, JSONObject json, Response res) {
+    PagableResponseList(int size, JSONObject json, HttpResponse res) {
         super(size, res);
-        this.previousCursor = TwitterResponseImpl.getChildLong("previous_cursor", json);
-        this.nextCursor = TwitterResponseImpl.getChildLong("next_cursor", json);
+        this.previousCursor = ParseUtil.getLong("previous_cursor", json);
+        this.nextCursor = ParseUtil.getLong("next_cursor", json);
     }
 
     public boolean hasPrevious() {

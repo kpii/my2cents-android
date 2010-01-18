@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import twitter4j.Status;
 import twitter4j.Tweet;
+import twitter4j.TweetJSONImpl;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -300,7 +301,7 @@ public final class CommentsActivity extends ListActivity {
 					
 					Status status = ProviderManager.updateStatus(message, l);
 					if (status != null) {
-						Tweet comment = new Tweet(status);
+						Tweet comment = new TweetJSONImpl(status);
 						if (comment != null) {
 							if (avatarMap.containsKey(comment.getFromUser())) {
 								comment.setProfileImage(avatarMap.get(comment.getFromUser()));

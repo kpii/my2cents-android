@@ -26,8 +26,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j;
 
+
 /**
- * Super class of Twitter Response objects.
+ * Super interface of Twitter Response data interfaces which indicates that rate limit status is avaialble.
  *
  * @see twitter4j.DirectMessage
  * @see twitter4j.Status
@@ -35,8 +36,11 @@ package twitter4j;
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
 public interface TwitterResponse extends java.io.Serializable {
-
-    public int getRateLimitLimit() ;
-    public int getRateLimitRemaining();
-    public long getRateLimitReset() ;
+    /**
+     * Returns the current rate limit status if available.
+     *
+     * @return current rate limit status
+     * @since Twitter4J 2.1.0
+     */
+    RateLimitStatus getRateLimitStatus();
 }

@@ -26,8 +26,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j;
 
-import static twitter4j.TwitterResponseImpl.getChildInt;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,19 +34,20 @@ import java.io.InputStreamReader;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import twitter4j.http.Response;
+import twitter4j.conf.Configuration;
+import twitter4j.http.HttpResponse;
 
 /**
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.0.4
  */
 public class StatusStream {
-    private final static boolean DEBUG = Configuration.getDebug();
+    private static final boolean DEBUG = Configuration.getInstance().isDebug();
 
     private boolean streamAlive = true;
     private BufferedReader br;
     private InputStream is;
-    private Response response;
+    private HttpResponse response;
 
     /*package*/
 
@@ -58,7 +57,7 @@ public class StatusStream {
     }
     /*package*/
 
-    StatusStream(Response response) throws IOException {
+    StatusStream(HttpResponse response) throws IOException {
         this(response.asStream());
         this.response = response;
     }
@@ -75,11 +74,11 @@ public class StatusStream {
                 try {
                     JSONObject json = new JSONObject(line);
                     if (!json.isNull("text")) {
-                        listener.onStatus(new Status(json));
+                        listener.onStatus(new StatusJSONImpl(json));
                     } else if (!json.isNull("delete")) {
                         listener.onDeletionNotice(new StatusDeletionNotice(json));
                     } else if (!json.isNull("limit")) {
-                        listener.onTrackLimitationNotice(getChildInt("track", json.getJSONObject("limit")));
+                        listener.onTrackLimitationNotice(ParseUtil.getInt("track", json.getJSONObject("limit")));
                     }
                 } catch (JSONException ex) {
                     listener.onException(ex);

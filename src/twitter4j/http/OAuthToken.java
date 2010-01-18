@@ -29,9 +29,8 @@ package twitter4j.http;
 import twitter4j.TwitterException;
 
 import javax.crypto.spec.SecretKeySpec;
-import java.io.Serializable;
 
-abstract class OAuthToken implements Serializable {
+abstract class OAuthToken implements java.io.Serializable {
     
 	private String token;
     private String tokenSecret;
@@ -44,7 +43,7 @@ abstract class OAuthToken implements Serializable {
         this.tokenSecret = tokenSecret;
     }
 
-    OAuthToken(Response response) throws TwitterException {
+    OAuthToken(HttpResponse response) throws TwitterException {
         this(response.asString());
     }
     OAuthToken(String string) {
@@ -87,8 +86,6 @@ abstract class OAuthToken implements Serializable {
 
         OAuthToken that = (OAuthToken) o;
 
-        if (secretKeySpec != null ? !secretKeySpec.equals(that.secretKeySpec) : that.secretKeySpec != null)
-            return false;
         if (!token.equals(that.token)) return false;
         if (!tokenSecret.equals(that.tokenSecret)) return false;
 
@@ -99,7 +96,6 @@ abstract class OAuthToken implements Serializable {
     public int hashCode() {
         int result = token.hashCode();
         result = 31 * result + tokenSecret.hashCode();
-        result = 31 * result + (secretKeySpec != null ? secretKeySpec.hashCode() : 0);
         return result;
     }
 

@@ -27,10 +27,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j;
 
-import java.io.Serializable;
-
 import org.json.JSONException;
 import org.json.JSONObject;
+
 
 /**
  * A data class representing Status deletionNotice<br>
@@ -38,7 +37,7 @@ import org.json.JSONObject;
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.1.0
  */
-public class StatusDeletionNotice implements Serializable {
+public class StatusDeletionNotice implements java.io.Serializable {
 
     private long statusId;
     private int userId;
@@ -47,8 +46,8 @@ public class StatusDeletionNotice implements Serializable {
     /*package*/ StatusDeletionNotice(JSONObject json) throws JSONException {
         //{"delete":{"status":{"id":4821647803,"user_id":16346228}}}
         JSONObject status = json.getJSONObject("delete").getJSONObject("status");
-        this.statusId = TwitterResponseImpl.getChildLong("id", status);
-        this.userId = TwitterResponseImpl.getChildInt("user_id", status);
+        this.statusId = ParseUtil.getLong("id", status);
+        this.userId = ParseUtil.getInt("user_id", status);
     }
 
     public long getStatusId() {
