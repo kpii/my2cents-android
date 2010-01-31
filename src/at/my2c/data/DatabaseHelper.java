@@ -91,7 +91,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     
     
     public void addHistoryItem(ProductInfo product) {
-    	if ((product == null) || (product.getProductName() == null) || (product.getProductName().equals(""))) return;
+    	if ((product == null) || (product.getProductCode() == null) || (product.getProductCode().equals(""))) return;
     	
     	SQLiteDatabase db = getWritableDatabase();
     	
@@ -106,7 +106,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         
         map.put("productCode", product.getProductCode());
         map.put("time", new Date().toLocaleString());
-        map.put("name", product.getProductName());
+        
+        if (product.getProductName() != null) {
+        	map.put("name", product.getProductName());
+        }
         
         Bitmap image = product.getProductImage();
         if (image != null) {
