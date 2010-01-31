@@ -3,7 +3,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:versionName="1.0"
 	android:versionCode="1"
-	package="at.m2c">
+	package="at.my2c">
 
 	<!-- We require Cupcake (Android 1.5) or later, but are really targeting Donut. -->
 	<uses-sdk
@@ -101,7 +101,7 @@
 			android:theme="@android:style/Theme.Light">
 			<intent-filter>
 				<action
-					android:name="at.m2c.ACTION"></action>
+					android:name="at.my2c.ACTION"></action>
 			</intent-filter>
 		</activity>
 		<activity

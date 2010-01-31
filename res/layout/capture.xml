@@ -10,7 +10,7 @@
 		android:layout_height="fill_parent"
 		android:layout_centerInParent="true" />
 
-	<at.m2c.scanner.ViewfinderView
+	<at.my2c.scanner.ViewfinderView
 		android:id="@+id/viewfinder_view"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
