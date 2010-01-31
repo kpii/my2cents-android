@@ -33,7 +33,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="MainActivity">
+			android:name="MainActivity" android:theme="@android:style/Theme.Light" android:configChanges="orientation|keyboardHidden">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.VIEW" />
@@ -103,28 +103,8 @@
 					android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
-		<activity
-			android:name="CommentsActivity"
-			android:screenOrientation="user"
-			android:configChanges="orientation|keyboardHidden"
-			android:theme="@android:style/Theme.Light">
-			<intent-filter>
-				<action
-					android:name="at.my2c.ACTION"></action>
-			</intent-filter>
-		</activity>
-		<activity
-			android:name="ProductsActivity"
-			android:screenOrientation="user"
-			android:configChanges="orientation|keyboardHidden"
-			android:theme="@android:style/Theme.Light">
-			<intent-filter>
-				<action
-					android:name="android.intent.action.VIEW" />
-				<category
-					android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-		</activity>
+		
+		
 	</application>
 	<uses-permission
 		android:name="android.permission.CAMERA" />

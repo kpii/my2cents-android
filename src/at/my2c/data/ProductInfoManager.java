@@ -111,4 +111,67 @@ public final class ProductInfoManager {
         	return null;
         }
 	}
+	
+	public final static ProductInfo getProductFromAmazon(String searchTerm){
+		AwsSignedRequestsHelper helper;
+        try {
+            helper = AwsSignedRequestsHelper.getInstance(ENDPOINT, AWS_ACCESS_KEY_ID, AWS_SECRET_KEY);
+        } catch (Exception e) {
+            return null;
+        }
+        
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("Service", "AWSECommerceService");
+        params.put("Version", "2009-10-01");
+        params.put("Operation", "ItemLookup");
+        params.put("Condition", "All");
+        params.put("IdType", "EAN");
+        params.put("SearchIndex", "All");
+        params.put("ItemId", searchTerm);
+        params.put("ResponseGroup", "ItemAttributes,Images");
+
+        String requestUrl = helper.sign(params);
+        
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            URL url = new URL(requestUrl);
+            URLConnection connection = url.openConnection();
+            connection.connect();
+            InputStream stream = connection.getInputStream();
+            
+            Document dom = builder.parse(stream);
+            
+            ProductInfo productInfo = null;
+            NodeList itemNodes = dom.getElementsByTagName("Item");
+            for (int i=0; i<itemNodes.getLength(); i++) {
+            	Node node = itemNodes.item(i);
+            	if (node.getNodeType() == Node.ELEMENT_NODE) {
+            		Element element = (Element) node;
+            		
+            		String productId = element.getElementsByTagName("ASIN").item(0).getLastChild().getNodeValue();
+            		productInfo = new ProductInfo(productId);
+            		
+            		productInfo.setProductCode(searchTerm);
+                    productInfo.setProductInfoProvider(ProductInfoProvider.Amazon);
+                    
+                    String detailPageUrl = element.getElementsByTagName("DetailPageURL").item(0).getLastChild().getNodeValue();
+                    productInfo.setDetailPageUrl(detailPageUrl);
+                    
+                    String title = element.getElementsByTagName("Title").item(0).getLastChild().getNodeValue();
+                    productInfo.setProductName(title);
+                    
+                    String imageUrlString = element.getElementsByTagName("ThumbnailImage").item(0).getChildNodes().item(0).getLastChild().getNodeValue();
+                    productInfo.setProductImageUrl(imageUrlString);
+                    
+                    break;
+            	}
+             }
+            
+            stream.close();
+            return productInfo;
+        } catch (Exception e) {
+        	return null;
+        }
+	}
 }

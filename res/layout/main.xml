@@ -5,6 +5,69 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 	<LinearLayout
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:id="@+id/NotificationLayout"
+		android:background="@drawable/comment_editor_background"
+		android:padding="5sp"
+		android:visibility="gone">
+		<TextView
+			android:id="@+id/notificationTextView"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:textColor="@color/result_minor_text"
+			android:textStyle="bold"
+			android:typeface="monospace">
+		</TextView>
+	</LinearLayout>
+	<RelativeLayout
+		android:id="@+id/ProductInfoLayout"
+		android:visibility="gone"
+		android:background="@drawable/comment_editor_background"
+		android:layout_width="fill_parent"
+		android:layout_height="?android:attr/listPreferredItemHeight"
+		android:padding="6dip">
+		<ImageView
+			android:layout_width="wrap_content"
+			android:id="@+id/product_imageview"
+			android:layout_marginRight="5px"
+			android:layout_height="wrap_content"
+			android:maxWidth="90px"
+			android:maxHeight="90px"
+			android:adjustViewBounds="true" />
+		<TextView
+			android:id="@+id/product_name_textview"
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@id/product_imageview"
+			android:layout_width="wrap_content"
+			android:textSize="@dimen/comment_username_text"
+			android:textColor="#3366aa" />
+		<TextView
+			android:layout_height="wrap_content"
+			android:id="@+id/product_info_provider_textview"
+			android:layout_toRightOf="@id/product_name_textview"
+			android:layout_width="wrap_content"
+			android:paddingLeft="10px"
+			android:textSize="@dimen/comment_sent_text"
+			android:textColor="#6699aa"></TextView>
+		<TextView
+			android:layout_width="fill_parent"
+			android:ellipsize="marquee"
+			android:id="@+id/product_description_textview"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/product_name_textview"
+			android:layout_toRightOf="@id/product_imageview" />
+	</RelativeLayout>
+	<ListView
+		android:id="@+id/android:list"
+		android:layout_width="fill_parent"
+		android:layout_weight="1"
+		android:scrollbars="vertical"
+		android:layout_height="80px"
+		android:choiceMode="none"
+		android:clickable="false">
+	</ListView>
+	<LinearLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/LoginLayout"
@@ -65,13 +128,4 @@
 			android:textStyle="bold"
 			android:typeface="monospace"></TextView>
 	</LinearLayout>
-	<ListView
-		android:id="@+id/android:list"
-		android:layout_width="fill_parent"
-		android:layout_weight="1"
-		android:scrollbars="vertical"
-		android:layout_height="80px"
-		android:choiceMode="none"
-		android:clickable="false">
-	</ListView>
 </LinearLayout>
