@@ -58,6 +58,20 @@
 			android:layout_below="@id/product_name_textview"
 			android:layout_toRightOf="@id/product_imageview" />
 	</RelativeLayout>
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:id="@+id/CommentsNotificationLayout"
+		android:padding="5sp"
+		android:visibility="gone">
+		<TextView
+			android:id="@+id/commentsNotificationTextView"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:textColor="@color/result_minor_text"
+			android:textStyle="bold"
+			android:typeface="monospace"></TextView>
+	</LinearLayout>
 	<ListView
 		android:id="@+id/android:list"
 		android:layout_width="fill_parent"
@@ -113,19 +127,5 @@
 			android:id="@+id/comment_tag_gallery"
 			android:longClickable="true"
 			android:unselectedAlpha="0.3"></Gallery>
-	</LinearLayout>
-	<LinearLayout
-		android:layout_height="wrap_content"
-		android:layout_width="fill_parent"
-		android:id="@+id/CommentsNotificationLayout"
-		android:padding="5sp"
-		android:visibility="gone">
-		<TextView
-			android:id="@+id/commentsNotificationTextView"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			android:textColor="@color/result_minor_text"
-			android:textStyle="bold"
-			android:typeface="monospace"></TextView>
 	</LinearLayout>
 </LinearLayout>

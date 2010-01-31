@@ -18,7 +18,7 @@
 		android:layout_height="wrap_content"
 		android:layout_toRightOf="@id/history_image"
 		android:layout_width="wrap_content"
-		android:textSize="6pt"
+		android:textSize="@dimen/comment_username_text"
 		android:textColor="#3366aa" />
 	<TextView
 		android:layout_height="wrap_content"
@@ -26,7 +26,7 @@
 		android:layout_toRightOf="@id/history_code"
 		android:layout_width="wrap_content"
 		android:paddingLeft="10px"
-		android:textSize="5pt"
+		android:textSize="@dimen/comment_sent_text"
 		android:textColor="#6699aa"></TextView>
 	<TextView
 		android:layout_width="fill_parent"

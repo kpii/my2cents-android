@@ -34,7 +34,7 @@ public final class HistoryActivity extends ListActivity {
 		adapter = new HistoryAdapter(this,
         		R.layout.history_item,
         		cursor,
-                new String[] { "productId", "provider", "name" },
+                new String[] { "productCode", "time", "name" },
                 new int[] { R.id.history_code, R.id.history_provider, R.id.history_name });
 		
         setListAdapter(adapter);
@@ -62,12 +62,17 @@ public final class HistoryActivity extends ListActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+			case R.id.scanMenuItem: {
+				Intent intent = new Intent(this, CaptureActivity.class);
+				startActivity(intent);
+				return true;
+			}
 			case R.id.searchMenuItem: {
 				Intent intent = new Intent(this, SearchActivity.class);
 				startActivity(intent);
 				return true;
 			}
-			case R.id.clearFavoritesMenuItem: {
+			case R.id.clearHistoryMenuItem: {
 				DataManager.getDatabase().clearHistory();
 				adapter.getCursor().requery();
 				return true;

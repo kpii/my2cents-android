@@ -9,9 +9,10 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import twitter4j.GeoLocation;
-import twitter4j.Status;
 import twitter4j.Tweet;
+import twitter4j.TweetJSONImpl;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -275,52 +276,13 @@ public final class MainActivity extends ListActivity {
 
 	private final Button.OnClickListener sendCommentListener = new Button.OnClickListener() {
 		public void onClick(View view) {
-			final Runnable commentPosted = new Runnable() {
-				public void run() {
-					tweetsAdapter.notifyDataSetChanged();
-					Toast.makeText(MainActivity.this, "Comment posted successfully", Toast.LENGTH_SHORT).show();
-				}
-			};
+			EditText commentEditor = (EditText) findViewById(R.id.comment_edittext);
+			String message = commentEditor.getText().toString() +
+				" " +
+				PreferencesActivity.ProductCodePrefix +
+				DataManager.getSearchTerm();
 			
-			Runnable postComment = new Runnable() {
-				public void run() {
-					EditText commentEditor = (EditText) findViewById(R.id.comment_edittext);
-					String message = commentEditor.getText().toString() + " " + PreferencesActivity.ProductCodePrefix
-							+ DataManager.getSearchTerm();
-					
-					Location l = null;
-					if (gpsEnabled && (locationManager != null)) {
-						l = GpsManager.getGPS(locationManager);
-					}
-					
-					GeoLocation location = new GeoLocation(l.getLatitude(), l.getLongitude());
-					Status status = ProviderManager.updateStatus(message, location);
-//					if (status != null) {
-//						Tweet comment = new TweetJSONImpl(status);
-//						if (comment != null) {
-//							if (avatarMap.containsKey(comment.getFromUser())) {
-//								comment.setProfileImage(avatarMap.get(comment.getFromUser()));
-//							} else {
-//								URL url = null;
-//								try {
-//									url = new URL(comment.getProfileImageUrl());
-//								} catch (MalformedURLException e) {
-//									Log.e(this.toString(), e.toString());
-//								}
-//								comment.setProfileImage(NetworkManager.getRemoteImage(url));
-//								avatarMap.put(comment.getFromUser(), comment.getProfileImage());
-//							}
-//							tweets.add(0, comment);
-//						}
-//						runOnUiThread(commentPosted);
-//					}
-
-					runOnUiThread(dismissProgressDialog);
-				}
-			};
-			
-			new Thread(null, postComment, "CommentSender").start();
-			progressDialog = ProgressDialog.show(MainActivity.this, null, "Sending...", true);
+			new PostComment().execute(message);
 		}
 	};
 
@@ -348,6 +310,11 @@ public final class MainActivity extends ListActivity {
 			}
 			case R.id.searchMenuItem: {
 				Intent intent = new Intent(this, SearchActivity.class);
+				startActivity(intent);
+				return true;
+			}
+			case R.id.historyMenuItem: {
+				Intent intent = new Intent(this, HistoryActivity.class);
 				startActivity(intent);
 				return true;
 			}
@@ -449,14 +416,6 @@ public final class MainActivity extends ListActivity {
 			return view;
 		}
 	}
-
-	private Runnable dismissProgressDialog = new Runnable() {
-		public void run() {
-			EditText commentEditor = (EditText) findViewById(R.id.comment_edittext);
-			commentEditor.setText("");
-			progressDialog.dismiss();
-		}
-	};
 	
 	
 	private class GetProductInfo extends AsyncTask<String, Void, ProductInfo> {
@@ -465,13 +424,22 @@ public final class MainActivity extends ListActivity {
 		protected ProductInfo doInBackground(String... params) {
 			ProductInfo product = ProductInfoManager.getProductFromAmazon(params[0]);
 			
-			URL url = null;
-			try {
-				url = new URL(product.getProductImageUrl());
-			} catch (MalformedURLException e) {
-				Log.e(this.toString(), e.toString());
+			if (product != null) {
+				URL url = null;
+				try {
+					url = new URL(product.getProductImageUrl());
+				} catch (MalformedURLException e) {
+					Log.e(this.toString(), e.toString());
+				}
+				product.setProductImage(NetworkManager.getRemoteImage(url));
+				
+				DataManager.getDatabase().addHistoryItem(product);
 			}
-			product.setProductImage(NetworkManager.getRemoteImage(url));
+			else {
+				ProductInfo emptyProduct = new ProductInfo(params[0]);
+				emptyProduct.setProductCode(params[0]);
+				DataManager.getDatabase().addHistoryItem(emptyProduct);
+			}
 			
 			return product;
 		}
@@ -483,6 +451,7 @@ public final class MainActivity extends ListActivity {
 	        ViewGroup productInfoLayout = (ViewGroup) findViewById(R.id.ProductInfoLayout);
 				
 	        if (product != null) {
+	        	
 	        	notificationLayout.setVisibility(View.GONE);
 	        	productInfoLayout.setVisibility(View.VISIBLE);
 				
@@ -504,6 +473,54 @@ public final class MainActivity extends ListActivity {
 				notificationLayout.setVisibility(View.VISIBLE);
 				productInfoLayout.setVisibility(View.GONE);
 			}
+	    }
+	}
+	
+	
+	private class PostComment extends AsyncTask<String, Void, twitter4j.Status> {
+
+		@Override
+		protected void onPreExecute() {
+			progressDialog = ProgressDialog.show(MainActivity.this, null, "Sending...", true);
+	    }
+		
+		@Override
+		protected twitter4j.Status doInBackground(String... params) {
+			
+			GeoLocation location = null;
+			if (gpsEnabled && (locationManager != null)) {
+				Location l = GpsManager.getGPS(locationManager);
+				if (l != null) {
+					location = new GeoLocation(l.getLatitude(), l.getLongitude());
+				}
+			}
+			
+			twitter4j.Status status = ProviderManager.updateStatus(params[0], location);
+			
+			if (status != null) {
+				if (!avatarMap.containsKey(status.getUser().getScreenName())) {
+					avatarMap.put(status.getUser().getScreenName(), NetworkManager.getRemoteImage(status.getUser().getProfileImageURL()));
+				}
+			}
+			
+			return status;
+		}
+		
+		@Override
+		protected void onPostExecute(twitter4j.Status status) {
+			if (status != null) {
+				ViewGroup notificationLayout = (ViewGroup) findViewById(R.id.CommentsNotificationLayout);
+				notificationLayout.setVisibility(View.GONE);
+				
+				tweetsAdapter.insert(new TweetJSONImpl(status), 0);
+				tweetsAdapter.notifyDataSetChanged();
+				
+				EditText commentEditor = (EditText) findViewById(R.id.comment_edittext);
+				commentEditor.setText("");
+				Toast.makeText(MainActivity.this, "Comment posted successfully", Toast.LENGTH_SHORT).show();
+			}
+
+			progressDialog.dismiss();
 	    }
 	}
 }

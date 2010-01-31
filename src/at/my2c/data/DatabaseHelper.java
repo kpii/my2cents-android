@@ -1,5 +1,7 @@
 package at.my2c.data;
 
+import java.util.Date;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -34,8 +36,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         
         db.execSQL("CREATE TABLE history ("
                 + "_id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + "productId TEXT,"
-                + "provider TEXT,"
+                + "productCode TEXT,"
+                + "time TEXT,"
                 + "name TEXT,"
                 + "image BLOB);");
     }
@@ -93,15 +95,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     	
     	SQLiteDatabase db = getWritableDatabase();
     	
-    	Cursor cursor = db.rawQuery("SELECT * FROM favorites WHERE productId=?", new String[] {product.getProductId()});
-    	if (cursor.getCount() > 0) {
-    		return;
+    	db.delete("history", "productCode = '" + product.getProductCode() + "'", null);
+    	
+    	Cursor cursor = db.rawQuery("SELECT * FROM history", null);
+    	if (cursor.getCount() > 100) {
+    		db.delete("history", "_id = (SELECT MIN(_id) FROM history)", null);
     	}
         
         ContentValues map = new ContentValues();
         
-        map.put("productId", product.getProductId());
-        map.put("provider", product.getProductInfoProvider().toString());
+        map.put("productCode", product.getProductCode());
+        map.put("time", new Date().toLocaleString());
         map.put("name", product.getProductName());
         
         Bitmap image = product.getProductImage();
@@ -110,7 +114,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         
         try{
-            db.insert("favorites", null, map);
+            db.insert("history", null, map);
         } catch (SQLException e) {
             Log.e(TAG, e.toString());
         }

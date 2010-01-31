@@ -33,7 +33,9 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="MainActivity" android:theme="@android:style/Theme.Light" android:configChanges="orientation|keyboardHidden">
+			android:name="MainActivity"
+			android:theme="@android:style/Theme.Light"
+			android:configChanges="orientation|keyboardHidden">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.VIEW" />
@@ -51,7 +53,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="HistoryActivity">
+			android:name="HistoryActivity" android:theme="@android:style/Theme.Light" android:label="my2cents History">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.VIEW" />
@@ -103,8 +105,6 @@
 					android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
-		
-		
 	</application>
 	<uses-permission
 		android:name="android.permission.CAMERA" />

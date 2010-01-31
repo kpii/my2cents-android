@@ -41,8 +41,9 @@ import org.json.JSONObject;
  *
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
-/*package*/ final class TweetJSONImpl implements Tweet, java.io.Serializable {
-    private String text;
+	public final class TweetJSONImpl implements Tweet, java.io.Serializable {
+    
+	private String text;
     private int toUserId = -1;
     private String toUser = null;
     private String fromUser;
@@ -55,6 +56,14 @@ import org.json.JSONObject;
 
     private GeoLocation geoLocation = null;
     private static final long serialVersionUID = 4299736733993211587L;
+    
+    public TweetJSONImpl(Status status) {
+    	super();
+    	fromUser = status.getUser().getScreenName();
+    	profileImageUrl = status.getUser().getProfileImageURL().toString();
+    	createdAt = status.getCreatedAt();
+    	text = status.getText();
+    }
 
     /*package*/ TweetJSONImpl(JSONObject tweet) throws TwitterException {
         text = getUnescapedString("text", tweet);
