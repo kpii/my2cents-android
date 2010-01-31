@@ -4,21 +4,96 @@
 	android:orientation="vertical"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
-
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:id="@+id/NotificationLayout"
+		android:background="@drawable/comment_editor_background"
+		android:padding="5sp"
+		android:visibility="gone">
+		<TextView
+			android:id="@+id/notificationTextView"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:textColor="@color/result_minor_text"
+			android:textStyle="bold"
+			android:typeface="monospace">
+		</TextView>
+	</LinearLayout>
+	<RelativeLayout
+		android:id="@+id/ProductInfoLayout"
+		android:visibility="gone"
+		android:background="@drawable/comment_editor_background"
+		android:layout_width="fill_parent"
+		android:layout_height="?android:attr/listPreferredItemHeight"
+		android:padding="6dip">
+		<ImageView
+			android:layout_width="wrap_content"
+			android:id="@+id/product_imageview"
+			android:layout_marginRight="5px"
+			android:layout_height="wrap_content"
+			android:maxWidth="90px"
+			android:maxHeight="90px"
+			android:adjustViewBounds="true" />
+		<TextView
+			android:id="@+id/product_name_textview"
+			android:layout_height="wrap_content"
+			android:layout_toRightOf="@id/product_imageview"
+			android:layout_width="wrap_content"
+			android:textSize="@dimen/comment_username_text"
+			android:textColor="#3366aa" />
+		<TextView
+			android:layout_height="wrap_content"
+			android:id="@+id/product_info_provider_textview"
+			android:layout_toRightOf="@id/product_name_textview"
+			android:layout_width="wrap_content"
+			android:paddingLeft="10px"
+			android:textSize="@dimen/comment_sent_text"
+			android:textColor="#6699aa"></TextView>
+		<TextView
+			android:layout_width="fill_parent"
+			android:ellipsize="marquee"
+			android:id="@+id/product_description_textview"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/product_name_textview"
+			android:layout_toRightOf="@id/product_imageview" />
+	</RelativeLayout>
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:id="@+id/CommentsNotificationLayout"
+		android:padding="5sp"
+		android:visibility="gone">
+		<TextView
+			android:id="@+id/commentsNotificationTextView"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:textColor="@color/result_minor_text"
+			android:textStyle="bold"
+			android:typeface="monospace"></TextView>
+	</LinearLayout>
+	<ListView
+		android:id="@+id/android:list"
+		android:layout_width="fill_parent"
+		android:layout_weight="1"
+		android:scrollbars="vertical"
+		android:layout_height="80px"
+		android:choiceMode="none"
+		android:clickable="false">
+	</ListView>
 	<LinearLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/LoginLayout"
 		android:background="@drawable/comment_editor_background"
-		android:orientation="vertical" android:visibility="gone">
-
+		android:orientation="vertical"
+		android:visibility="gone">
 		<Button
-				android:id="@+id/login_button"
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:text="Please login to comment"/>
+			android:id="@+id/login_button"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="Please login to comment" />
 	</LinearLayout>
-	
 	<LinearLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
@@ -26,7 +101,6 @@
 		android:background="@drawable/comment_editor_background"
 		android:orientation="vertical"
 		android:visibility="gone">
-
 		<LinearLayout
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
@@ -39,14 +113,13 @@
 				android:imeOptions="actionSend|flagNoEnterAction"
 				android:inputType="textCapSentences|textAutoCorrect|textMultiLine|textImeMultiLine|textShortMessage"
 				android:layout_weight="1"
-				android:maxLength="119"/>
+				android:maxLength="120" />
 			<Button
 				android:id="@+id/comment_send_button"
 				android:text="Send"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content" />
 		</LinearLayout>
-
 		<Gallery
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
@@ -55,59 +128,4 @@
 			android:longClickable="true"
 			android:unselectedAlpha="0.3"></Gallery>
 	</LinearLayout>
-	
-	<RelativeLayout
-		android:layout_height="wrap_content"
-		android:id="@+id/ProductLayout"
-		android:background="@drawable/product_info_background"
-		android:layout_width="fill_parent"
-		android:visibility="gone">
-		<ImageView
-			android:layout_width="wrap_content"
-			android:id="@+id/productImageView"
-			android:maxHeight="90px"
-			android:maxWidth="90px"
-			android:adjustViewBounds="true"
-			android:layout_height="wrap_content" />
-
-
-		<TextView
-			android:layout_height="wrap_content"
-			android:id="@+id/productNameTextView"
-			android:layout_toRightOf="@id/productImageView"
-			android:layout_width="wrap_content"
-			android:textSize="@dimen/product_info_text"
-			android:layout_marginLeft="5px" />
-	</RelativeLayout>
-	<LinearLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/NotificationLayout" android:padding="5sp" android:visibility="gone"><TextView android:id="@+id/notificationTextView" android:layout_width="fill_parent" android:layout_height="fill_parent" android:textColor="@color/result_minor_text" android:textStyle="bold" android:typeface="monospace"></TextView>
-</LinearLayout><ListView
-		android:id="@+id/android:list"
-		android:layout_width="fill_parent"
-		android:layout_weight="1"
-		android:scrollbars="vertical"
-		android:layout_height="80px"
-		android:choiceMode="none"
-		android:clickable="false">
-	</ListView>
-
-
-	<LinearLayout
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:layout_width="fill_parent"
-		android:gravity="center">
-		<ToggleButton
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:textOff="Product"
-			android:textOn="Product"
-			android:id="@+id/productToggleButton"
-			android:textSize="@dimen/toggle_button_text" android:width="150sp"></ToggleButton>
-		<ToggleButton
-			android:layout_height="wrap_content"
-			android:layout_width="wrap_content"
-			android:id="@+id/commentToggleButton"
-			android:textSize="@dimen/toggle_button_text" android:textOff="Add my2cents" android:textOn="Add my2cents" android:width="150sp"></ToggleButton>
-	</LinearLayout>
-
 </LinearLayout>

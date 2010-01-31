@@ -3,36 +3,57 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:versionName="1.0"
 	android:versionCode="1"
-	package="at.m2c">
-		
-	<!-- We require Cupcake (Android 1.5) or later. -->
-  <uses-sdk android:minSdkVersion="3"
-  			android:targetSdkVersion="4"/>
-  <!-- Donut-specific flags which allow us to run on large and high dpi screens. -->
-  <supports-screens
-    android:largeScreens="true"
-    android:normalScreens="true"
-    android:smallScreens="true"
-    android:anyDensity="true"/>
-		
+	package="at.my2c">
+
+	<!-- We require Cupcake (Android 1.5) or later, but are really targeting Donut. -->
+	<uses-sdk
+		android:minSdkVersion="3"
+		android:targetSdkVersion="4" />
+	<!-- Donut-specific flags which allow us to run on large and high dpi screens. -->
+	<supports-screens
+		android:largeScreens="true"
+		android:normalScreens="true"
+		android:smallScreens="true"
+		android:anyDensity="true" />
 	<application
 		android:label="@string/app_name"
 		android:debuggable="true"
 		android:name="My2CentsApplication"
-		android:icon="@drawable/birdy" android:theme="@android:style/Theme.Light">
+		android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
+		android:icon="@drawable/birdy">
 		<activity
 			android:screenOrientation="landscape"
-			android:configChanges="orientation|keyboardHidden" android:name="CaptureActivity" android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen">
+			android:configChanges="orientation|keyboardHidden"
+			android:name="CaptureActivity">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.MAIN" />
 				<category
 					android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
-
 		</activity>
 		<activity
-			android:name="HistoryActivity">
+			android:name="MainActivity"
+			android:theme="@android:style/Theme.Light"
+			android:configChanges="orientation|keyboardHidden">
+			<intent-filter>
+				<action
+					android:name="android.intent.action.VIEW" />
+				<category
+					android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name="FavoritesActivity">
+			<intent-filter>
+				<action
+					android:name="android.intent.action.VIEW" />
+				<category
+					android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name="HistoryActivity" android:theme="@android:style/Theme.Light" android:label="my2cents History">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.VIEW" />
@@ -51,9 +72,10 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="ManualInputActivity"
 			android:screenOrientation="user"
-			android:theme="@android:style/Theme.Dialog" android:label="my2cents - Search for products">
+			android:theme="@android:style/Theme.Dialog"
+			android:label="my2cents - Search for products"
+			android:name="SearchActivity">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.VIEW" />
@@ -64,7 +86,8 @@
 		<activity
 			android:name="AccountActivity"
 			android:screenOrientation="user"
-			android:theme="@android:style/Theme.Dialog" android:label="my2cents - Twitter Account">
+			android:theme="@android:style/Theme.Dialog"
+			android:label="my2cents - Twitter Account">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.VIEW" />
@@ -80,18 +103,6 @@
 					android:name="android.intent.action.VIEW" />
 				<category
 					android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-		</activity>
-		<activity
-			android:name="CommentActivity"
-			android:screenOrientation="user"
-			android:configChanges="orientation|keyboardHidden"
-			android:theme="@android:style/Theme.Light">
-
-			<intent-filter>
-				<action
-					android:name="at.m2c.ACTION"></action>
-
 			</intent-filter>
 		</activity>
 	</application>

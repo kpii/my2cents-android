@@ -37,147 +37,7 @@ import java.util.List;
 public class TwitterAdapter implements TwitterListener {
     public TwitterAdapter() {
     }
-    /**
-     * @since Twitter4J 2.0.10
-     */
-    public void gotHomeTimeline(List<Status> statuses){
-    }
-    public void gotPublicTimeline(List<Status> statuses){
-    }
-    public void gotFriendsTimeline(List<Status> statuses){
-    }
-    public void gotUserTimeline(List<Status> statuses){
-    }
-    /**
-     * @since Twitter4J 2.0.1
-     */
-    public void gotShowStatus(Status statuses){
-    }
-    public void updatedStatus(Status statuses){
-    }
-    /**
-     * @since Twitter4J 2.0.1
-     */
-    public void gotMentions(List<Status> statuses){
-    }
-    /**
-     * @since Twitter4J 2.0.10
-     */
-    public void gotRetweetedByMe(List<Status> statuses) {
-    }
-    /**
-     * @since Twitter4J 2.0.10
-     */
-    public void gotRetweetedToMe(List<Status> statuses) {
-    }
-    /**
-     * @since Twitter4J 2.0.10
-     */
-    public void gotRetweetsOfMe(List<Status> statuses) {
-    }
-    public void destroyedStatus(Status destroyedStatus){
-    }
-    /**
-     * @since Twitter4J 2.0.10
-     */
-    public void retweetedStatus(Status retweetedStatus){
-    }
-
-    public void gotFriends(List<User> users){
-    }
-    public void gotFollowers(List<User> users){
-    }
-    public void gotFeatured(List<User> users){
-    }
-    public void gotUserDetail(User user){
-    }
-    public void gotDirectMessages(List<DirectMessage> messages){
-    }
-    public void gotSentDirectMessages(List<DirectMessage> messages){
-    }
-    public void sentDirectMessage(DirectMessage message){
-    }
-    /**
-     * @since Twitter4J 2.0.1
-     */
-    public void destroyedDirectMessage(DirectMessage message){
-    }
-    public void gotFriendsIDs(IDs ids){
-    }
-    public void gotFollowersIDs(IDs ids){
-    }
-    /**
-     * @since Twitter4J 2.0.1
-     */
-    public void createdFriendship(User user){
-    }
-    /**
-     * @since Twitter4J 2.0.1
-     */
-    public void destroyedFriendship(User user){
-    }
-    /**
-     * @since Twitter4J 2.0.1
-     */
-    public void gotExistsFriendship(boolean exists) {
-    }
-    /**
-     * @since Twitter4J 2.0.2
-     */
-    public void updatedProfile(User user){
-    }
-    public void updatedProfileColors(User user){
-    }
-    public void gotRateLimitStatus(RateLimitStatus status){
-    }
-    public void updatedDeliverlyDevice(User user){
-    }
-    public void gotFavorites(List<Status> statuses){
-    }
-    public void createdFavorite(Status status){
-    }
-    public void destroyedFavorite(Status status){
-    }
-    /**
-     * @since Twitter4J 2.0.1
-     */
-    public void enabledNotification(User user){
-    }
-    /**
-     * @since Twitter4J 2.0.1
-     */
-    public void disabledNotification(User user){
-    }
-    /**
-     * @since Twitter4J 2.0.1
-     */
-    public void createdBlock(User user){
-    }
-    /**
-     * @since Twitter4J 2.0.1
-     */
-    public void destroyedBlock(User user){
-    }
-    /**
-     * @since Twitter4J 2.0.4
-     */
-    public void gotExistsBlock(boolean blockExists){
-    }
-
-    /**
-     * @since Twitter4J 2.0.4
-     */
-    public void gotBlockingUsers(List<User> blockingUsers){
-    }
-
-    /**
-     * @since Twitter4J 2.0.4
-     */
-    public void gotBlockingUsersIDs(IDs blockingUsersIDs){
-    }
-
-    public void tested(boolean test){
-    }
+    /*Search API Methods*/
     public void searched(QueryResult result){
     }
     /**
@@ -201,10 +61,282 @@ public class TwitterAdapter implements TwitterListener {
     public void gotWeeklyTrends(List<Trends> trendsList) {
     }
 
+    /*Timeline Methods*/
+    public void gotPublicTimeline(ResponseList<Status> statuses){
+    }
+
+    /**
+     * @since Twitter4J 2.0.10
+     */
+    public void gotHomeTimeline(ResponseList<Status> statuses) {
+    }
+
+    public void gotFriendsTimeline(ResponseList<Status> statuses){
+    }
+    public void gotUserTimeline(ResponseList<Status> statuses){
+    }
+    /**
+     * @since Twitter4J 2.0.1
+     */
+    public void gotMentions(ResponseList<Status> statuses){
+    }
+    /**
+     * @since Twitter4J 2.0.10
+     */
+    public void gotRetweetedByMe(ResponseList<Status> statuses) {
+    }
+    /**
+     * @since Twitter4J 2.0.10
+     */
+    public void gotRetweetedToMe(ResponseList<Status> statuses) {
+    }
+    /**
+     * @since Twitter4J 2.0.10
+     */
+    public void gotRetweetsOfMe(ResponseList<Status> statuses) {
+    }
+
+    /*Status Methods*/
+    /**
+     * @since Twitter4J 2.0.1
+     */
+    public void gotShowStatus(Status statuses){
+    }
+    public void updatedStatus(Status statuses){
+    }
+    public void destroyedStatus(Status destroyedStatus){
+    }
+    /**
+     * @since Twitter4J 2.0.10
+     */
+    public void retweetedStatus(Status retweetedStatus){
+    }
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void gotRetweets(ResponseList<Status> retweets){
+    }
+
+    /*User Methods*/
+    public void gotUserDetail(User user){
+    }
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void searchedUser(ResponseList<User> userList) {
+    }
+
+    public void gotFriendsStatuses(PagableResponseList<User> users){
+    }
+    public void gotFollowersStatuses(PagableResponseList<User> users){
+    }
+    /*List Methods*/
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void createdUserList(UserList userList) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void updatedUserList(UserList userList) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void gotUserLists(PagableResponseList<UserList> userLists) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void gotShowUserList(UserList userList) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void deletedUserList(UserList userList) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void gotUserListStatuses(PagableResponseList<UserList> userLists) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void gotUserListMemberships(PagableResponseList<UserList> userLists) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void gotUserListSubscriptions(PagableResponseList<UserList> userLists) {}
+
+    /*List Members Methods*/
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void gotUserListMembers(PagableResponseList<User> users) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void addedUserListMember(UserList userList) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void deletedUserListMember(UserList userList) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void checkedUserListMembership(PagableResponseList<User> users) {}
+
+    /*List Subscribers Methods*/
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void gotUserListSubscribers(PagableResponseList<User> users) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void subscribedUserList(UserList userList) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void unsubscribedUserList(UserList userList) {}
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void checkedUserListSubscription(User user) {}
+
+    /*Direct Message Methods*/
+    public void gotDirectMessages(ResponseList<DirectMessage> messages){
+    }
+    public void gotSentDirectMessages(ResponseList<DirectMessage> messages){
+    }
+    public void sentDirectMessage(DirectMessage message){
+    }
+    /**
+     * @since Twitter4J 2.0.1
+     */
+    public void destroyedDirectMessage(DirectMessage message){
+    }
+
+    /*Friendship Methods*/
+    /**
+     * @since Twitter4J 2.0.1
+     */
+    public void createdFriendship(User user){
+    }
+    /**
+     * @since Twitter4J 2.0.1
+     */
+    public void destroyedFriendship(User user){
+    }
+    /**
+     * @since Twitter4J 2.0.1
+     */
+    public void gotExistsFriendship(boolean exists) {
+    }
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void gotShowFriendship(Relationship relationship) {
+    }
+
+    /*Social Graph Methods*/
+    public void gotFriendsIDs(IDs ids){
+    }
+
+    public void gotFollowersIDs(IDs ids){
+    }
+
+    /*Account Methods*/
+
+    public void gotRateLimitStatus(RateLimitStatus status) {
+    }
+
+    public void updatedDeliveryDevice(User user) {
+    }
+
+    public void updatedProfileColors(User user) {
+    }
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void updatedProfileImage(User user) {
+    }
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void updatedProfileBackgroundImage(User user) {
+    }
+    /**
+     * @since Twitter4J 2.0.2
+     */
+    public void updatedProfile(User user){
+    }
+    /*Favorite Methods*/
+    public void gotFavorites(ResponseList<Status> statuses){
+    }
+    public void createdFavorite(Status status){
+    }
+    public void destroyedFavorite(Status status){
+    }
+
+    /*Notification Methods*/
+    /**
+     * @since Twitter4J 2.0.1
+     */
+    public void enabledNotification(User user){
+    }
+    /**
+     * @since Twitter4J 2.0.1
+     */
+    public void disabledNotification(User user){
+    }
+    /*Block Methods*/
+    /**
+     * @since Twitter4J 2.0.1
+     */
+    public void createdBlock(User user){
+    }
+    /**
+     * @since Twitter4J 2.0.1
+     */
+    public void destroyedBlock(User user){
+    }
+    /**
+     * @since Twitter4J 2.0.4
+     */
+    public void gotExistsBlock(boolean blockExists){
+    }
+
+    /**
+     * @since Twitter4J 2.0.4
+     */
+    public void gotBlockingUsers(ResponseList<User> blockingUsers){
+    }
+
+    /**
+     * @since Twitter4J 2.0.4
+     */
+    public void gotBlockingUsersIDs(IDs blockingUsersIDs) {
+    }
+
+    /*Spam Reporting Methods*/
+
+    public void reportedSpam(User reportedSpammer) throws TwitterException {
+    }
+
+
+    /*Saved Searches Methods*/
+    //getSavedSearches()
+    //showSavedSearch()
+    //createSavedSearch()
+    //destroySavedSearch()
+
+    /*Local Trends Methods*/
+
+    /*Help Methods*/
+    public void tested(boolean test){
+    }
+
     /**
      * @param ex TwitterException
-     * @param method int
+     * @param method
      */
-    public void onException(TwitterException ex,int method) {
+    public void onException(TwitterException ex, TwitterMethod method) {
     }
 }

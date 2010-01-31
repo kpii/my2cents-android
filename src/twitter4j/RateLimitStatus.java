@@ -28,46 +28,55 @@ package twitter4j;
 
 import java.util.Date;
 
-import org.w3c.dom.Element;
-
-import twitter4j.http.Response;
-
 /**
- * A data class representing Twitter rate limit status
+ * A data interface representing Twitter REST API's rate limit status
+ *
  * @author Yusuke Yamamoto - yusuke at mac.com
+ * @see <a href="http://apiwiki.twitter.com/Rate-limiting">Twitter API Wiki / Rate limiting</a>
  */
-public class RateLimitStatus extends TwitterResponse {
-    private int remainingHits;
-    private int hourlyLimit;
-    private int resetTimeInSeconds;
-    private Date resetTime;
-    private static final long serialVersionUID = 933996804168952707L;
-
-    /* package */ RateLimitStatus(Response res) throws TwitterException {
-        super(res);
-        Element elem = res.asDocument().getDocumentElement();
-        remainingHits = getChildInt("remaining-hits", elem);
-        hourlyLimit = getChildInt("hourly-limit", elem);
-        resetTimeInSeconds = getChildInt("reset-time-in-seconds", elem);
-        resetTime = getChildDate("reset-time", elem, "yyyy-M-d'T'HH:mm:ss+00:00");
-    }
-
-    public int getRemainingHits() {
-        return remainingHits;
-    }
-
-    public int getHourlyLimit() {
-        return hourlyLimit;
-    }
-
-    public int getResetTimeInSeconds() {
-        return resetTimeInSeconds;
-    }
+public interface RateLimitStatus extends java.io.Serializable {
+    /**
+     * Returns the remaining number of API requests available.<br>
+     * This value is identical to the &quot;X-RateLimit-Remaining&quot; response header.
+     *
+     * @return the remaining number of API requests available
+     */
+    int getRemainingHits();
 
     /**
+     * Returns the current limit in effect<br>
+     * This value is identical to the &quot;X-RateLimit-Limit&quot; response header.
+     *
+     * @return the current limit in effect
+     */
+    int getHourlyLimit();
+
+    /**
+     * Returns the seconds the current rate limiting period ends.<br>
+     * This should be a same as getResetTime().getTime()/1000.
+     *
+     * @return the seconds the current rate limiting period ends
      * @since Twitter4J 2.0.9
      */
-    public Date getResetTime() {
-        return resetTime;
-    }
+    int getResetTimeInSeconds();
+
+    /**
+     * Returns the amount of seconds until the current rate limiting period ends.<br>
+     * This is a value provided/calculated only by Twitter4J for handiness and not a part of the twitter API spec.
+     *
+     * @return the amount of seconds until next rate limiting period
+     * @since Twitter4J 2.1.0
+     */
+    int getSecondsUntilReset();
+
+
+    /**
+     * Returns the time the current rate limiting period ends.<br>
+     * This value is a java.util.Date-typed variation of the &quot;X-RateLimit-Reset&quot; response header.
+     *
+     * @return the time the current rate limiting period ends
+     * @since Twitter4J 2.0.9
+     */
+    Date getResetTime();
+
 }

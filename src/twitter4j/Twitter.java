@@ -26,404 +26,203 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j;
 
+import static twitter4j.http.HttpParameter.getParameterArray;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 
+import twitter4j.api.AccountMethods;
+import twitter4j.api.BlockMethods;
+import twitter4j.api.DirectMessageMethods;
+import twitter4j.api.FavoriteMethods;
+import twitter4j.api.FriendshipMethods;
+import twitter4j.api.HelpMethods;
+import twitter4j.api.ListMembersMethods;
+import twitter4j.api.ListMethods;
+import twitter4j.api.ListSubscribersMethods;
+import twitter4j.api.LocalTrendsMethods;
+import twitter4j.api.NotificationMethods;
+import twitter4j.api.SavedSearchesMethods;
+import twitter4j.api.SearchMethods;
+import twitter4j.api.SocialGraphMethods;
+import twitter4j.api.SpamReportingMethods;
+import twitter4j.api.StatusMethods;
+import twitter4j.api.TimelineMethods;
+import twitter4j.api.UserMethods;
+import twitter4j.conf.Configuration;
+import twitter4j.conf.ConfigurationContext;
 import twitter4j.http.AccessToken;
-import twitter4j.http.HttpClient;
-import twitter4j.http.PostParameter;
+import twitter4j.http.Authorization;
+import twitter4j.http.BasicAuthorization;
+import twitter4j.http.HttpParameter;
+import twitter4j.http.NullAuthorization;
+import twitter4j.http.OAuthAuthorization;
+import twitter4j.http.OAuthSupport;
 import twitter4j.http.RequestToken;
-import twitter4j.http.Response;
 
 /**
- * A java reporesentation of the <a href="http://apiwiki.twitter.com/">Twitter API</a>
+ * A java representation of the <a href="http://apiwiki.twitter.com/">Twitter API</a>
+ * <br>This class is thread safe and can be cached/re-used and used concurrently.
+ *
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
-public class Twitter extends TwitterSupport implements java.io.Serializable {
-    private String baseURL = Configuration.getScheme() + "twitter.com/";
-    private String searchBaseURL = Configuration.getScheme() + "search.twitter.com/";
+public class Twitter extends TwitterOAuthSupportBase
+        implements java.io.Serializable,
+        SearchMethods,
+        TimelineMethods,
+        StatusMethods,
+        UserMethods,
+        ListMethods,
+        ListMembersMethods,
+        ListSubscribersMethods,
+        DirectMessageMethods,
+        FriendshipMethods,
+        SocialGraphMethods,
+        AccountMethods,
+        FavoriteMethods,
+        NotificationMethods,
+        BlockMethods,
+        SpamReportingMethods,
+        SavedSearchesMethods,
+        LocalTrendsMethods,
+        HelpMethods {
     private static final long serialVersionUID = -1486360080128882436L;
+    Twitter(Configuration conf){
+        super(conf);
+    }
 
+
+    /**
+     * Creates an unauthenticated Twitter instance
+     * @deprecated use TwitterFactory.getInstance() instead
+     */
     public Twitter() {
-        super();
-        format.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-        http.setRequestTokenURL(Configuration.getScheme() + "twitter.com/oauth/request_token");
-        http.setAuthorizationURL(Configuration.getScheme() + "twitter.com/oauth/authorize");
-        http.setAccessTokenURL(Configuration.getScheme() + "twitter.com/oauth/access_token");
-    }
-
-    public Twitter(String baseURL) {
-        this();
-        this.baseURL = baseURL;
-    }
-
-    public Twitter(String id, String password) {
-        this();
-        setUserId(id);
-        setPassword(password);
-    }
-
-    public Twitter(String id, String password, String baseURL) {
-        this();
-        setUserId(id);
-        setPassword(password);
-        this.baseURL = baseURL;
+        super(ConfigurationContext.getInstance());
     }
 
     /**
-     * Sets the base URL
+     * Creates a Twitter instance with supplied id
      *
-     * @param baseURL String the base URL
+     * @param screenName the screen name of the user
+     * @param password   the password of the user
+     * @deprecated use TwitterFactory.getBasicAuthenticatedInstance(screenName, password) instead
      */
-    public void setBaseURL(String baseURL) {
-        this.baseURL = baseURL;
+    public Twitter(String screenName, String password) {
+        super(ConfigurationContext.getInstance(), screenName, password);
+    }
+    /*package*/
+    Twitter(Configuration conf, String screenName, String password) {
+        super(conf, screenName, password);
+    }
+    /*package*/
+    Twitter(Configuration conf, Authorization auth) {
+        super(conf, auth);
     }
 
     /**
-     * Returns the base URL
+     * Returns authenticating user's screen name.<br>
+     * This method automatically retrieves userId using verifyCredentials if the instance is using OAuth based authentication.
      *
-     * @return the base URL
+     * @return the authenticating screen name
+     * @throws TwitterException      when verifyCredentials threw an exception.
+     * @throws IllegalStateException if no credentials are supplied
      */
-    public String getBaseURL() {
-        return this.baseURL;
-    }
-
-    /**
-     * Sets the search base URL
-     *
-     * @param searchBaseURL the search base URL
-     * @since Twitter4J 1.1.7
-     */
-    public void setSearchBaseURL(String searchBaseURL) {
-        this.searchBaseURL = searchBaseURL;
-    }
-
-    /**
-     * Returns the search base url
-     * @return search base url
-     * @since Twitter4J 1.1.7
-     */
-    public String getSearchBaseURL(){
-        return this.searchBaseURL;
-    }
-
-    /**
-     *
-     * @param consumerKey OAuth consumer key
-     * @param consumerSecret OAuth consumer secret
-     * @since Twitter 2.0.0
-     */
-    public synchronized void setOAuthConsumer(String consumerKey, String consumerSecret){
-        this.http.setOAuthConsumer(consumerKey, consumerSecret);
-    }
-
-    /**
-     * Retrieves a request token
-     * @return generated request token.
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter 2.0.0
-     * @see <a href="http://apiwiki.twitter.com/OAuth-FAQ">Twitter API Wiki - OAuth FAQ</a>
-     * @see <a href="http://oauth.net/core/1.0/#auth_step1">OAuth Core 1.0 - 6.1.  Obtaining an Unauthorized Request Token</a>
-     */
-    public RequestToken getOAuthRequestToken() throws TwitterException {
-        return http.getOAuthRequestToken();
-    }
-
-    public RequestToken getOAuthRequestToken(String callback_url) throws TwitterException {
-        return http.getOauthRequestToken(callback_url);
-    }
-
-    /**
-     * Retrieves an access token assosiated with the supplied request token.
-     * @param requestToken the request token
-     * @return access token associsted with the supplied request token.
-     * @throws TwitterException when Twitter service or network is unavailable, or the user has not authorized
-     * @see <a href="http://apiwiki.twitter.com/OAuth-FAQ#Howlongdoesanaccesstokenlast">Twitter API Wiki - How long does an access token last?</a>
-     * @see <a href="http://oauth.net/core/1.0/#auth_step2">OAuth Core 1.0 - 6.2.  Obtaining User Authorization</a>
-     * @since Twitter 2.0.0
-     */
-    public synchronized AccessToken getOAuthAccessToken(RequestToken requestToken) throws TwitterException {
-        return http.getOAuthAccessToken(requestToken);
-    }
-
-    /**
-     * Retrieves an access token assosiated with the supplied request token and sets userId.
-     * @param requestToken the request token
-     * @param pin pin
-     * @return access token associsted with the supplied request token.
-     * @throws TwitterException when Twitter service or network is unavailable, or the user has not authorized
-     * @see <a href="http://apiwiki.twitter.com/OAuth-FAQ#Howlongdoesanaccesstokenlast">Twitter API Wiki - How long does an access token last?</a>
-     * @see <a href="http://oauth.net/core/1.0/#auth_step2">OAuth Core 1.0 - 6.2.  Obtaining User Authorization</a>
-     * @since Twitter 2.0.8
-     */
-    public synchronized AccessToken getOAuthAccessToken(RequestToken requestToken, String pin) throws TwitterException {
-        AccessToken accessToken = http.getOAuthAccessToken(requestToken, pin);
-        setUserId(accessToken.getScreenName());
-        return accessToken;
-    }
-
-    /**
-     * Retrieves an access token assosiated with the supplied request token and sets userId.
-     * @param token request token
-     * @param tokenSecret request token secret
-     * @return access token associsted with the supplied request token.
-     * @throws TwitterException when Twitter service or network is unavailable, or the user has not authorized
-     * @see <a href="http://apiwiki.twitter.com/OAuth-FAQ#Howlongdoesanaccesstokenlast">Twitter API Wiki - How long does an access token last?</a>
-     * @see <a href="http://oauth.net/core/1.0/#auth_step2">OAuth Core 1.0 - 6.2.  Obtaining User Authorization</a>
-     * @since Twitter 2.0.1
-     */
-    public synchronized AccessToken getOAuthAccessToken(String token, String tokenSecret) throws TwitterException {
-        AccessToken accessToken = http.getOAuthAccessToken(token, tokenSecret);
-        setUserId(accessToken.getScreenName());
-        return accessToken;
-    }
-
-    /**
-     * Retrieves an access token assosiated with the supplied request token.
-     * @param token request token
-     * @param tokenSecret request token secret
-     * @param oauth_verifier oauth_verifier or pin
-     * @return access token associsted with the supplied request token.
-     * @throws TwitterException when Twitter service or network is unavailable, or the user has not authorized
-     * @see <a href="http://apiwiki.twitter.com/OAuth-FAQ#Howlongdoesanaccesstokenlast">Twitter API Wiki - How long does an access token last?</a>
-     * @see <a href="http://oauth.net/core/1.0/#auth_step2">OAuth Core 1.0 - 6.2.  Obtaining User Authorization</a>
-     * @since Twitter 2.0.8
-     */
-    public synchronized AccessToken getOAuthAccessToken(String token
-            , String tokenSecret, String oauth_verifier) throws TwitterException {
-        return http.getOAuthAccessToken(token, tokenSecret, oauth_verifier);
-    }
-
-    /**
-     * Sets the access token
-     * @param accessToken accessToken
-     * @since Twitter 2.0.0
-     */
-    public void setOAuthAccessToken(AccessToken accessToken){
-        this.http.setOAuthAccessToken(accessToken);
-    }
-
-    /**
-     * Sets the access token
-     * @param token token
-     * @param tokenSecret token secret
-     * @since Twitter 2.0.0
-     */
-    public void setOAuthAccessToken(String token, String tokenSecret) {
-        setOAuthAccessToken(new AccessToken(token, tokenSecret));
-    }
-
-
-    /**
-     * Issues an HTTP GET request.
-     *
-     * @param url          the request url
-     * @param authenticate if true, the request will be sent with BASIC authentication header
-     * @return the response
-     * @throws TwitterException when Twitter service or network is unavailable
-     */
-
-    private Response get(String url, boolean authenticate) throws TwitterException {
-        return get(url, null, authenticate);
-    }
-
-    /**
-     * Issues an HTTP GET request.
-     *
-     * @param url          the request url
-     * @param authenticate if true, the request will be sent with BASIC authentication header
-     * @param name1        the name of the first parameter
-     * @param value1       the value of the first parameter
-     * @return the response
-     * @throws TwitterException when Twitter service or network is unavailable
-     */
-
-    protected Response get(String url, String name1, String value1, boolean authenticate) throws TwitterException {
-        return get(url, new PostParameter[]{new PostParameter(name1, value1)}, authenticate);
-    }
-
-    /**
-     * Issues an HTTP GET request.
-     *
-     * @param url          the request url
-     * @param name1        the name of the first parameter
-     * @param value1       the value of the first parameter
-     * @param name2        the name of the second parameter
-     * @param value2       the value of the second parameter
-     * @param authenticate if true, the request will be sent with BASIC authentication header
-     * @return the response
-     * @throws TwitterException when Twitter service or network is unavailable
-     */
-
-    protected Response get(String url, String name1, String value1, String name2, String value2, boolean authenticate) throws TwitterException {
-        return get(url, new PostParameter[]{new PostParameter(name1, value1), new PostParameter(name2, value2)}, authenticate);
-    }
-
-    /**
-     * Issues an HTTP GET request.
-     *
-     * @param url          the request url
-     * @param params       the request parameters
-     * @param authenticate if true, the request will be sent with BASIC authentication header
-     * @return the response
-     * @throws TwitterException when Twitter service or network is unavailable
-     */
-    protected Response get(String url, PostParameter[] params, boolean authenticate) throws TwitterException {
-        if (null != params && params.length > 0) {
-            url += "?" + HttpClient.encodeParameters(params);
+    protected String getScreenName() throws TwitterException, IllegalStateException {
+        if(null != screenName){
+            return screenName;
         }
-        return http.get(url, authenticate);
+        if (!auth.isEnabled()) {
+            throw new IllegalStateException(
+                    "Neither user ID/password combination nor OAuth consumer key/secret combination supplied");
+        }
+        if (auth instanceof BasicAuthorization) {
+            screenName = ((BasicAuthorization) auth).getUserId();
+            if (-1 != screenName.indexOf("@")) {
+                screenName = null;
+            }
+        }
+        // retrieve the screen name if this instance is authenticated with OAuth or email address
+        return screenName = this.verifyCredentials().getScreenName();
     }
 
-    /**
-     * Issues an HTTP GET request.
-     *
-     * @param url          the request url
-     * @param params       the request parameters
-     * @param paging controls pagination
-     * @param authenticate if true, the request will be sent with BASIC authentication header
-     * @return the response
-     * @throws TwitterException when Twitter service or network is unavailable
-     */
-    protected Response get(String url, PostParameter[] params, Paging paging, boolean authenticate) throws TwitterException {
-        if (null != paging) {
-            List<PostParameter> pagingParams = new ArrayList<PostParameter>(4);
-            if (-1 != paging.getMaxId()) {
-                pagingParams.add(new PostParameter("max_id", String.valueOf(paging.getMaxId())));
-            }
-            if (-1 != paging.getSinceId()) {
-                pagingParams.add(new PostParameter("since_id", String.valueOf(paging.getSinceId())));
-            }
-            if (-1 != paging.getPage()) {
-                pagingParams.add(new PostParameter("page", String.valueOf(paging.getPage())));
-            }
-            if (-1 != paging.getCount()) {
-                if (-1 != url.indexOf("search")) {
-                    // search api takes "rpp"
-                    // http://apiwiki.twitter.com/Twitter-Search-API-Method%3A-search
-                    pagingParams.add(new PostParameter("rpp", String.valueOf(paging.getCount())));
-                } else {
-                    pagingParams.add(new PostParameter("count", String.valueOf(paging.getCount())));
-                }
-            }
-            PostParameter[] newparams = null;
-            PostParameter[] arrayPagingParams = pagingParams.toArray(new PostParameter[pagingParams.size()]);
-            if (null != params) {
-                newparams = new PostParameter[params.length + pagingParams.size()];
-                System.arraycopy(params, 0, newparams, 0, params.length);
-                System.arraycopy(arrayPagingParams, 0, newparams, params.length, pagingParams.size());
-            } else {
-                if (0 != arrayPagingParams.length) {
-                    String encodedParams = HttpClient.encodeParameters(arrayPagingParams);
-                    if (-1 != url.indexOf("?")) {
-                        url += "&" + encodedParams;
-                    } else {
-                        url += "?" + encodedParams;
-                    }
-                }
-            }
-            return get(url, newparams, authenticate);
+    private HttpParameter[] mergeParameters(HttpParameter[] params1, HttpParameter[] params2){
+        if(null != params1 && null != params2){
+            HttpParameter[] params = new HttpParameter[params1.length + params2.length];
+            System.arraycopy(params1,0,params,0,params1.length);
+            System.arraycopy(params2,0,params,params1.length,params2.length);
+            return params;
+        }
+        if(null == params1 && null == params2){
+            return new HttpParameter[0];
+        }
+        if (null != params1) {
+            return params1;
         } else {
-            return get(url, params, authenticate);
+            return params2;
         }
     }
 
+
     /**
-     * Returns tweets that match a specified query.
-     * <br>This method calls http://search.twitter.com/search
-     * @param query - the search condition
-     * @return the result
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 1.1.7
-     * @see <a href="http://apiwiki.twitter.com/Twitter-Search-API-Method%3A-search">Twitter API Wiki / Twitter Search API Method: search</a>
+     * {@inheritDoc}
      */
     public QueryResult search(Query query) throws TwitterException {
-        try{
-        return new QueryResult(get(searchBaseURL + "search.json", query.asPostParameters(), false), this);
-        }catch(TwitterException te){
-            if(404 == te.getStatusCode()){
-                return new QueryResult(query);
-            }else{
+        try {
+            return new QueryResultJSONImpl(http.get(conf.getSearchBaseURL() + "search.json", query.asPostParameters(), null));
+        } catch (TwitterException te) {
+            if (404 == te.getStatusCode()) {
+                return new QueryResultJSONImpl(query);
+            } else {
                 throw te;
             }
         }
     }
 
     /**
-     * Returns the top ten topics that are currently trending on Twitter.  The response includes the time of the request, the name of each trend, and the url to the <a href="http://search.twitter.com/">Twitter Search</a> results page for that topic.
-     * <br>This method calls http://search.twitter.com/trends
-     * @return the result
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.2
-     * @see <a href="http://apiwiki.twitter.com/Twitter-Search-API-Method%3A-trends">Twitter Search API Method: trends</a>
+     * {@inheritDoc}
      */
     public Trends getTrends() throws TwitterException {
-        return Trends.constructTrends(get(searchBaseURL + "trends.json", false));
+        return TrendsJSONImpl.createTrends(http.get(conf.getSearchBaseURL() + "trends.json"));
     }
 
     /**
-     * Returns the current top 10 trending topics on Twitter.  The response includes the time of the request, the name of each trending topic, and query used on <a href="http://search.twitter.com/">Twitter Search</a> results page for that topic.
-     * <br>This method calls http://search.twitter.com/trends/current
-     * @return the result
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.2
-     * @see <a href="http://apiwiki.twitter.com/Twitter-Search-API-Method%3A-trends">Twitter Search API Method: trends</a>
+     * {@inheritDoc}
      */
     public Trends getCurrentTrends() throws TwitterException {
-        return Trends.constructTrendsList(get(searchBaseURL + "trends/current.json"
-                , false)).get(0);
+        return TrendsJSONImpl.createTrendsList(http.get(conf.getSearchBaseURL() + "trends/current.json")).get(0);
     }
 
     /**
-     * Returns the current top 10 trending topics on Twitter.  The response includes the time of the request, the name of each trending topic, and query used on <a href="http://search.twitter.com/">Twitter Search</a> results page for that topic.
-     * <br>This method calls http://search.twitter.com/trends/current
-     * @param excludeHashTags Setting this to true will remove all hashtags from the trends list.
-     * @return the result
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.2
-     * @see <a href="http://apiwiki.twitter.com/Twitter-Search-API-Method%3A-trends">Twitter Search API Method: trends</a>
+     * {@inheritDoc}
      */
     public Trends getCurrentTrends(boolean excludeHashTags) throws TwitterException {
-        return Trends.constructTrendsList(get(searchBaseURL + "trends/current.json"
-                + (excludeHashTags ? "?exclude=hashtags" : ""), false)).get(0);
+        return TrendsJSONImpl.createTrendsList(http.get(conf.getSearchBaseURL() + "trends/current.json"
+                + (excludeHashTags ? "?exclude=hashtags" : ""))).get(0);
     }
 
-
     /**
-     * Returns the top 20 trending topics for each hour in a given day.
-     * <br>This method calls http://search.twitter.com/trends/daily
-     * @return the result
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.2
-     * @see <a href="http://apiwiki.twitter.com/Twitter-Search-API-Method%3A-trends-daily">Twitter Search API Method: trends daily</a>
+     * {@inheritDoc}
      */
     public List<Trends> getDailyTrends() throws TwitterException {
-        return Trends.constructTrendsList(get(searchBaseURL + "trends/daily.json", false));
+        return TrendsJSONImpl.createTrendsList(http.get(conf.getSearchBaseURL() + "trends/daily.json"));
     }
 
     /**
-     * Returns the top 20 trending topics for each hour in a given day.
-     * <br>This method calls http://search.twitter.com/trends/daily
-     * @param date Permits specifying a start date for the report.
-     * @param excludeHashTags Setting this to true will remove all hashtags from the trends list.
-     * @return the result
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.2
-     * @see <a href="http://apiwiki.twitter.com/Twitter-Search-API-Method%3A-trends-daily">Twitter Search API Method: trends daily</a>
+     * {@inheritDoc}
      */
     public List<Trends> getDailyTrends(Date date, boolean excludeHashTags) throws TwitterException {
-        return Trends.constructTrendsList(get(searchBaseURL
+        return TrendsJSONImpl.createTrendsList(http.get(conf.getSearchBaseURL()
                 + "trends/daily.json?date=" + toDateStr(date)
-                + (excludeHashTags ? "&exclude=hashtags" : ""), false));
+                + (excludeHashTags ? "&exclude=hashtags" : "")));
     }
 
-    private String toDateStr(Date date){
-        if(null == date){
+    private String toDateStr(Date date) {
+        if (null == date) {
             date = new Date();
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -431,970 +230,844 @@ public class Twitter extends TwitterSupport implements java.io.Serializable {
     }
 
     /**
-     * Returns the top 30 trending topics for each day in a given week.
-     * <br>This method calls http://search.twitter.com/trends/weekly
-     * @return the result
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.2
-     * @see <a href="http://apiwiki.twitter.com/Twitter-Search-API-Method%3A-trends-weekly">Twitter Search API Method: trends weekly</a>
+     * {@inheritDoc}
      */
     public List<Trends> getWeeklyTrends() throws TwitterException {
-        return Trends.constructTrendsList(get(searchBaseURL
-                + "trends/weekly.json", false));
+        return TrendsJSONImpl.createTrendsList(http.get(conf.getSearchBaseURL()
+                + "trends/weekly.json"));
     }
 
     /**
-     * Returns the top 30 trending topics for each day in a given week.
-     * <br>This method calls http://search.twitter.com/trends/weekly
-     * @param date Permits specifying a start date for the report.
-     * @param excludeHashTags Setting this to true will remove all hashtags from the trends list.
-     * @return the result
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.2
-     * @see <a href="http://apiwiki.twitter.com/Twitter-Search-API-Method%3A-trends-weekly">Twitter Search API Method: trends weekly</a>
+     * {@inheritDoc}
      */
     public List<Trends> getWeeklyTrends(Date date, boolean excludeHashTags) throws TwitterException {
-        return Trends.constructTrendsList(get(searchBaseURL
+        return TrendsJSONImpl.createTrendsList(http.get(conf.getSearchBaseURL()
                 + "trends/weekly.json?date=" + toDateStr(date)
-                + (excludeHashTags ? "&exclude=hashtags" : ""), false));
+                + (excludeHashTags ? "&exclude=hashtags" : "")));
     }
 
     /* Status Methods */
 
     /**
-     * Returns the 20 most recent statuses from non-protected users who have set a custom user icon.
-     * <br>This method calls http://twitter.com/statuses/public_timeline
-     *
-     * @return list of statuses of the Public Timeline
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-public_timeline">Twitter API Wiki / Twitter REST API Method: statuses public_timeline</a>
+     * {@inheritDoc}
      */
-    public List<Status> getPublicTimeline() throws
+    public ResponseList<Status> getPublicTimeline() throws
             TwitterException {
-        return Status.constructStatuses(get(getBaseURL() +
-                "statuses/public_timeline.xml", false), this);
-    }
-    
-    /**
-     * Returns only public statuses with an ID greater than (that is, more recent than) the specified ID.
-     * <br>This method calls http://twitter.com/statuses/public_timeline
-     *
-     * @param sinceID returns only public statuses with an ID greater than (that is, more recent than) the specified ID
-     * @return the 20 most recent statuses
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-public_timeline">Twitter API Wiki / Twitter REST API Method: statuses public_timeline</a>
-     */
-    public List<Status> getPublicTimeline(long sinceID) throws
-            TwitterException {
-        return Status.constructStatuses(get(getBaseURL() +
-                "statuses/public_timeline.xml", null, new Paging((long) sinceID)
-                , false), this);
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL() +
+                "statuses/public_timeline.json", auth));
     }
 
     /**
-     * Returns the 20 most recent statuses, including retweets, posted by the authenticating user and that user's friends. This is the equivalent of /timeline/home on the Web.
-     * <br>This method calls http://twitter.com/statuses/home_timeline
-     *
-     * @return list of the home Timeline
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-home_timeline">Twitter API Wiki / Twitter REST API Method: statuses home_timeline</a>
-     * @since Twitter4J 2.0.10
+     * {@inheritDoc}
      */
-    public List<Status> getHomeTimeline() throws
+    public ResponseList<Status> getHomeTimeline() throws
             TwitterException {
-        return Status.constructStatuses(get(getBaseURL() + "statuses/home_timeline.xml", true), this);
+        ensureAuthorizationEnabled();
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL() + "statuses/home_timeline.json", auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResponseList<Status> getHomeTimeline(Paging paging) throws
+            TwitterException {
+        ensureAuthorizationEnabled();
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL() + "statuses/home_timeline.json", paging.asPostParameterArray(), auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResponseList<Status> getFriendsTimeline() throws
+            TwitterException {
+        ensureAuthorizationEnabled();
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL() + "statuses/friends_timeline.json", auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResponseList<Status> getFriendsTimeline(Paging paging) throws
+            TwitterException {
+        ensureAuthorizationEnabled();
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL()
+                + "statuses/friends_timeline.json", paging.asPostParameterArray(), auth));
     }
 
 
     /**
-     * Returns the 20 most recent statuses, including retweets, posted by the authenticating user and that user's friends. This is the equivalent of /timeline/home on the Web.
-     * <br>This method calls http://twitter.com/statuses/home_timeline
-     *
-     * @param paging controls pagination
-     * @return list of the home Timeline
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-home_timeline">Twitter API Wiki / Twitter REST API Method: statuses home_timeline</a>
-     * @since Twitter4J 2.0.10
+     * {@inheritDoc}
      */
-    public List<Status> getHomeTimeline(Paging paging) throws
-            TwitterException {
-        return Status.constructStatuses(get(getBaseURL() + "statuses/home_timeline.xml", null, paging, true), this);
-    }
-
-    /**
-     * Returns the 20 most recent statuses posted in the last 24 hours from the authenticating1 user and that user's friends.
-     * It's also possible to request another user's friends_timeline via the id parameter below.
-     * <br>This method calls http://twitter.com/statuses/friends_timeline
-     *
-     * @return list of the Friends Timeline
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-friends_timeline">Twitter API Wiki / Twitter REST API Method: statuses friends_timeline</a>
-     */
-    public List<Status> getFriendsTimeline() throws
-            TwitterException {
-        return Status.constructStatuses(get(getBaseURL() + "statuses/friends_timeline.xml", true), this);
-    }
-
-    /**
-     * Returns the 20 most recent statuses posted in the last 24 hours from the specified userid.
-     * <br>This method calls http://twitter.com/statuses/friends_timeline
-     *
-     * @param paging controls pagination
-     * @return list of the Friends Timeline
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.1
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-friends_timeline">Twitter API Wiki / Twitter REST API Method: statuses friends_timeline</a>
-     */
-    public List<Status> getFriendsTimeline(Paging paging) throws
-            TwitterException {
-        return Status.constructStatuses(get(getBaseURL() + "statuses/friends_timeline.xml",null, paging, true), this);
-    }
-
-    /**
-     * Returns the most recent statuses posted in the last 24 hours from the specified userid.
-     * <br>This method calls http://twitter.com/statuses/user_timeline
-     *
-     * @param id    specifies the ID or screen name of the user for whom to return the user_timeline
-     * @param paging controls pagenation
-     * @return list of the user Timeline
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.1
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-friends_timeline">Twitter API Wiki / Twitter REST API Method: statuses friends_timeline</a>
-     */
-    public List<Status> getUserTimeline(String id, Paging paging)
+    public ResponseList<Status> getUserTimeline(String screenName, Paging paging)
             throws TwitterException {
-        return Status.constructStatuses(get(getBaseURL() + "statuses/user_timeline/" + id + ".xml",
-                null, paging, http.isAuthenticationEnabled()), this);
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL()
+                + "statuses/user_timeline.json",
+                mergeParameters(new HttpParameter[]{new HttpParameter("screen_name", screenName)}
+                , paging.asPostParameterArray()), auth));
     }
 
     /**
-     * Returns the most recent statuses posted in the last 24 hours from the specified userid.
-     * <br>This method calls http://twitter.com/statuses/user_timeline
-     *
-     * @param id specifies the ID or screen name of the user for whom to return the user_timeline
-     * @return the 20 most recent statuses posted in the last 24 hours from the user
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-friends_timeline">Twitter API Wiki / Twitter REST API Method: statuses friends_timeline</a>
+     * {@inheritDoc}
      */
-    public List<Status> getUserTimeline(String id) throws TwitterException {
-        return Status.constructStatuses(get(getBaseURL() + "statuses/user_timeline/" + id + ".xml", http.isAuthenticationEnabled()), this);
+    public ResponseList<Status> getUserTimeline(int userId, Paging paging)
+            throws TwitterException {
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL()
+                + "statuses/user_timeline.json",
+                mergeParameters(new HttpParameter[]{new HttpParameter("user_id", userId)}
+                , paging.asPostParameterArray()), auth));
     }
 
     /**
-     * Returns the most recent statuses posted in the last 24 hours from the authenticating user.
-     * <br>This method calls http://twitter.com/statuses/user_timeline
-     *
-     * @return the 20 most recent statuses posted in the last 24 hours from the user
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-friends_timeline">Twitter API Wiki / Twitter REST API Method: statuses friends_timeline</a>
+     * {@inheritDoc}
      */
-    public List<Status> getUserTimeline() throws
+    public ResponseList<Status> getUserTimeline(String screenName) throws TwitterException {
+        return getUserTimeline(screenName, new Paging());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResponseList<Status> getUserTimeline(int user_id) throws TwitterException {
+        return getUserTimeline(user_id, new Paging());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResponseList<Status> getUserTimeline() throws
             TwitterException {
-        return Status.constructStatuses(get(getBaseURL() + "statuses/user_timeline.xml"
-                , true), this);
+        return getUserTimeline(new Paging());
     }
 
     /**
-     * Returns the most recent statuses posted in the last 24 hours from the authenticating user.
-     * <br>This method calls http://twitter.com/statuses/user_timeline
-     *
-     * @param paging controls pagination
-     * @return the 20 most recent statuses posted in the last 24 hours from the user
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-friends_timeline">Twitter API Wiki / Twitter REST API Method: statuses friends_timeline</a>
-     * @since Twitter4J 2.0.1
+     * {@inheritDoc}
      */
-    public List<Status> getUserTimeline(Paging paging) throws
+    public ResponseList<Status> getUserTimeline(Paging paging) throws
             TwitterException {
-        return Status.constructStatuses(get(getBaseURL() + "statuses/user_timeline.xml"
-                , null, paging, true), this);
+        ensureAuthorizationEnabled();
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL() +
+                "statuses/user_timeline.json", paging.asPostParameterArray(), auth));
     }
 
     /**
-     * Returns the 20 most recent mentions (status containing @username) for the authenticating user.
-     * <br>This method calls http://twitter.com/statuses/mentions
-     *
-     * @return the 20 most recent replies
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.1
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-mentions">Twitter API Wiki / Twitter REST API Method: statuses mentions</a>
+     * {@inheritDoc}
      */
-    public List<Status> getMentions() throws TwitterException {
-        return Status.constructStatuses(get(getBaseURL() + "statuses/mentions.xml",
-                null, true), this);
+    public ResponseList<Status> getMentions() throws TwitterException {
+        ensureAuthorizationEnabled();
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL() +
+                "statuses/mentions.json", auth));
     }
 
     /**
-     * Returns the 20 most recent mentions (status containing @username) for the authenticating user.
-     * <br>This method calls http://twitter.com/statuses/mentions
-     *
-     * @param paging controls pagination
-     * @return the 20 most recent replies
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.1
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-mentions">Twitter API Wiki / Twitter REST API Method: statuses mentions</a>
+     * {@inheritDoc}
      */
-    public List<Status> getMentions(Paging paging) throws TwitterException {
-        return Status.constructStatuses(get(getBaseURL() + "statuses/mentions.xml",
-                null, paging, true), this);
+    public ResponseList<Status> getMentions(Paging paging) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL()
+                + "statuses/mentions.json", paging.asPostParameterArray(), auth));
     }
 
     /**
-     * Returns the 20 most recent retweets posted by the authenticating user.
-     * <br>This method calls http://twitter.com/statuses/retweeted_by_me
-     *
-     * @return the 20 most recent retweets posted by the authenticating user
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.10
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-retweeted_by_me">Twitter API Wiki / Twitter REST API Method: statuses/retweeted_by_me</a>
+     * {@inheritDoc}
      */
-    public List<Status> getRetweetedByMe() throws TwitterException {
-        return Status.constructStatuses(get(getBaseURL() + "statuses/retweeted_by_me.xml",
-                null, true), this);
+    public ResponseList<Status> getRetweetedByMe() throws TwitterException {
+        ensureAuthorizationEnabled();
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL()
+                + "statuses/retweeted_by_me.json", auth));
     }
 
     /**
-     * Returns the 20 most recent retweets posted by the authenticating user.
-     * <br>This method calls http://twitter.com/statuses/retweeted_by_me
-     *
-     * @param paging controls pagination
-     * @return the 20 most recent retweets posted by the authenticating user
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.10
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-retweeted_by_me">Twitter API Wiki / Twitter REST API Method: statuses/retweeted_by_me</a>
+     * {@inheritDoc}
      */
-    public List<Status> getRetweetedByMe(Paging paging) throws TwitterException {
-        return Status.constructStatuses(get(getBaseURL() + "statuses/retweeted_by_me.xml",
-                null, paging, true), this);
+    public ResponseList<Status> getRetweetedByMe(Paging paging) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL()
+                + "statuses/retweeted_by_me.json", paging.asPostParameterArray(), auth));
     }
 
     /**
-     * Returns the 20 most recent retweets posted by the authenticating user's friends.
-     * <br>This method calls http://twitter.com/statuses/retweeted_to_me
-     *
-     * @return the 20 most recent retweets posted by the authenticating user's friends.
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.10
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-retweeted_to_me">Twitter API Wiki / Twitter REST API Method: statuses/retweeted_to_me</a>
+     * {@inheritDoc}
      */
-    public List<Status> getRetweetedToMe() throws TwitterException {
-        return Status.constructStatuses(get(getBaseURL() + "statuses/retweeted_to_me.xml",
-                null, true), this);
+    public ResponseList<Status> getRetweetedToMe() throws TwitterException {
+        ensureAuthorizationEnabled();
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL()
+                + "statuses/retweeted_to_me.json", auth));
     }
 
     /**
-     * Returns the 20 most recent retweets posted by the authenticating user's friends.
-     * <br>This method calls http://twitter.com/statuses/retweeted_to_me
-     *
-     * @param paging controls pagination
-     * @return the 20 most recent retweets posted by the authenticating user's friends.
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.10
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-retweeted_to_me">Twitter API Wiki / Twitter REST API Method: statuses/retweeted_to_me</a>
+     * {@inheritDoc}
      */
-    public List<Status> getRetweetedToMe(Paging paging) throws TwitterException {
-        return Status.constructStatuses(get(getBaseURL() + "statuses/retweeted_to_me.xml",
-                null, paging, true), this);
+    public ResponseList<Status> getRetweetedToMe(Paging paging) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL() +
+                "statuses/retweeted_to_me.json", paging.asPostParameterArray(), auth));
     }
 
     /**
-     * Returns the 20 most recent tweets of the authenticated user that have been retweeted by others.
-     * <br>This method calls http://twitter.com/statuses/retweets_of_me
-     *
-     * @return the 20 most recent tweets of the authenticated user that have been retweeted by others.
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.10
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-retweets_of_me">Twitter API Wiki / Twitter REST API Method: statuses/retweets_of_me</a>
+     * {@inheritDoc}
      */
-    public List<Status> getRetweetsOfMe() throws TwitterException {
-        return Status.constructStatuses(get(getBaseURL() + "statuses/retweets_of_me.xml",
-                null, true), this);
+    public ResponseList<Status> getRetweetsOfMe() throws TwitterException {
+        ensureAuthorizationEnabled();
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL()
+                + "statuses/retweets_of_me.json", auth));
     }
 
     /**
-     * Returns the 20 most recent tweets of the authenticated user that have been retweeted by others.
-     * <br>This method calls http://twitter.com/statuses/retweets_of_me
-     *
-     * @param paging controls pagination
-     * @return the 20 most recent tweets of the authenticated user that have been retweeted by others.
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.10
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-retweets_of_me">Twitter API Wiki / Twitter REST API Method: statuses/retweets_of_me</a>
+     * {@inheritDoc}
      */
-    public List<Status> getRetweetsOfMe(Paging paging) throws TwitterException {
-        return Status.constructStatuses(get(getBaseURL() + "statuses/retweets_of_me.xml",
-                null, paging, true), this);
+    public ResponseList<Status> getRetweetsOfMe(Paging paging) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL()
+                + "statuses/retweets_of_me.json", paging.asPostParameterArray(), auth));
     }
 
     /**
-     * Returns a single status, specified by the id parameter. The status's author will be returned inline.
-     * <br>This method calls http://twitter.com/statuses/show
-     *
-     * @param id the numerical ID of the status you're trying to retrieve
-     * @return a single status
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.1
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses%C2%A0show">Twitter API Wiki / Twitter REST API Method: statuses show</a>
+     * {@inheritDoc}
      */
     public Status showStatus(long id) throws TwitterException {
-        return new Status(get(getBaseURL() + "statuses/show/" + id + ".xml", false), this);
+        return new StatusJSONImpl(http.get(conf.getRestBaseURL() + "statuses/show/" + id + ".json", auth));
     }
 
     /**
-     * Updates the user's status.
-     * The text will be trimed if the length of the text is exceeding 160 characters.
-     * <br>This method calls http://twitter.com/statuses/update
-     *
-     * @param status the text of your status update
-     * @return the latest status
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.1
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses%C2%A0update">Twitter API Wiki / Twitter REST API Method: statuses update</a>
+     * {@inheritDoc}
      */
     public Status updateStatus(String status) throws TwitterException {
-        return new Status(http.post(getBaseURL() + "statuses/update.xml",
-                new PostParameter[]{new PostParameter("status", status), new PostParameter("source", source)}, true), this);
+        ensureAuthorizationEnabled();
+        return new StatusJSONImpl(http.post(conf.getRestBaseURL() + "statuses/update.json",
+                new HttpParameter[]{new HttpParameter("status", status), new HttpParameter("source", conf.getSource())}, auth));
     }
 
     /**
-     * Updates the user's status.
-     * The text will be trimed if the length of the text is exceeding 160 characters.
-     * <br>This method calls http://twitter.com/statuses/update
-     *
-     * @param status    the text of your status update
-     * @param latitude  The location's latitude that this tweet refers to.
-     * @param longitude The location's longitude that this tweet refers to.
-     * @return the latest status
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses%C2%A0update">Twitter API Wiki / Twitter REST API Method: statuses update</a>
-     * @since Twitter4J 2.0.10
+     * {@inheritDoc}
      */
-    public Status updateStatus(String status, double latitude, double longitude) throws TwitterException {
-        return new Status(http.post(getBaseURL() + "statuses/update.xml",
-                new PostParameter[]{new PostParameter("status", status),
-                        new PostParameter("lat", latitude),
-                        new PostParameter("long", longitude),
-                        new PostParameter("source", source)}, true), this);
+    public Status updateStatus(String status, GeoLocation location) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new StatusJSONImpl(http.post(conf.getRestBaseURL() + "statuses/update.json",
+                new HttpParameter[]{new HttpParameter("status", status),
+                        new HttpParameter("lat", location.getLatitude()),
+                        new HttpParameter("long", location.getLongitude()),
+                        new HttpParameter("source", conf.getSource())}, auth));
     }
 
     /**
-     * Updates the user's status.
-     * The text will be trimed if the length of the text is exceeding 160 characters.
-     * <br>This method calls http://twitter.com/statuses/update
-     *
-     * @param status            the text of your status update
-     * @param inReplyToStatusId The ID of an existing status that the status to be posted is in reply to.  This implicitly sets the in_reply_to_user_id attribute of the resulting status to the user ID of the message being replied to.  Invalid/missing status IDs will be ignored.
-     * @return the latest status
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.1
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses%C2%A0update">Twitter API Wiki / Twitter REST API Method: statuses update</a>
+     * {@inheritDoc}
      */
     public Status updateStatus(String status, long inReplyToStatusId) throws TwitterException {
-        return new Status(http.post(getBaseURL() + "statuses/update.xml",
-                new PostParameter[]{new PostParameter("status", status), new PostParameter("in_reply_to_status_id", String.valueOf(inReplyToStatusId)), new PostParameter("source", source)}, true), this);
+        ensureAuthorizationEnabled();
+        return new StatusJSONImpl(http.post(conf.getRestBaseURL() + "statuses/update.json",
+                new HttpParameter[]{new HttpParameter("status", status), new HttpParameter("in_reply_to_status_id", inReplyToStatusId), new HttpParameter("source", conf.getSource())}, auth));
     }
 
     /**
-     * Updates the user's status.
-     * The text will be trimed if the length of the text is exceeding 160 characters.
-     * <br>This method calls http://twitter.com/statuses/update
-     *
-     * @param status            the text of your status update
-     * @param inReplyToStatusId The ID of an existing status that the status to be posted is in reply to.  This implicitly sets the in_reply_to_user_id attribute of the resulting status to the user ID of the message being replied to.  Invalid/missing status IDs will be ignored.
-     * @param latitude          The location's latitude that this tweet refers to.
-     * @param longitude         The location's longitude that this tweet refers to.
-     * @return the latest status
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses%C2%A0update">Twitter API Wiki / Twitter REST API Method: statuses update</a>
-     * @since Twitter4J 2.0.10
+     * {@inheritDoc}
      */
     public Status updateStatus(String status, long inReplyToStatusId
-            , double latitude, double longitude) throws TwitterException {
-        return new Status(http.post(getBaseURL() + "statuses/update.xml",
-                new PostParameter[]{new PostParameter("status", status),
-                        new PostParameter("lat", latitude),
-                        new PostParameter("long", longitude),
-                        new PostParameter("in_reply_to_status_id",
-                                String.valueOf(inReplyToStatusId)),
-                        new PostParameter("source", source)}, true), this);
+            , GeoLocation location) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new StatusJSONImpl(http.post(conf.getRestBaseURL() + "statuses/update.json",
+                new HttpParameter[]{new HttpParameter("status", status),
+                        new HttpParameter("lat", location.getLatitude()),
+                        new HttpParameter("long", location.getLongitude()),
+                        new HttpParameter("in_reply_to_status_id",inReplyToStatusId),
+                        new HttpParameter("source", conf.getSource())}, auth));
     }
 
     /**
-     * Destroys the status specified by the required ID parameter.  The authenticating user must be the author of the specified status.
-     * <br>This method calls http://twitter.com/statuses/destroy
-     *
-     * @param statusId The ID of the status to destroy.
-     * @return the deleted status
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since 1.0.5
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses%C2%A0destroy">Twitter API Wiki / Twitter REST API Method: statuses destroy</a>
+     * {@inheritDoc}
      */
     public Status destroyStatus(long statusId) throws TwitterException {
-        return new Status(http.post(getBaseURL() + "statuses/destroy/" + statusId + ".xml",
-                new PostParameter[0], true), this);
+        ensureAuthorizationEnabled();
+        return new StatusJSONImpl(http.post(conf.getRestBaseURL()
+                + "statuses/destroy/" + statusId + ".json", auth));
     }
 
     /**
-     * Retweets a tweet. Requires the id parameter of the tweet you are retweeting. Returns the original tweet with retweet details embedded.
-     * <br>This method calls http://twitter.com/statuses/retweet
-     *
-     * @param statusId The ID of the status to retweet.
-     * @return the retweeted status
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.10
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-retweet">Twitter API Wiki / Twitter REST API Method: statuses retweet</a>
+     * {@inheritDoc}
      */
     public Status retweetStatus(long statusId) throws TwitterException {
-        return new Status(http.post(getBaseURL() + "statuses/retweet/" + statusId + ".xml",
-                new PostParameter[0], true), this);
+        ensureAuthorizationEnabled();
+        return new StatusJSONImpl(http.post(conf.getRestBaseURL() + "statuses/retweet/" + statusId + ".json",
+                new HttpParameter[]{new HttpParameter("source", conf.getSource())}, auth));
     }
 
     /**
-     * Returns up to 100 of the first retweets of a given tweet.
-     * <br>This method calls http://twitter.com/statuses/retweets
-     *
-     * @param statusId The numerical ID of the tweet you want the retweets of.
-     * @return the retweets of a given tweet
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.10
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses-retweets">Twitter API Wiki / Twitter REST API Method: statuses retweets</a>
+     * {@inheritDoc}
      */
-    public List<RetweetDetails> getRetweets(long statusId) throws TwitterException {
-        return RetweetDetails.createRetweetDetails(get(getBaseURL()
-                + "statuses/retweets/" + statusId + ".xml", true), this);
-    }
-
-    /**
-     * Returns extended information of a given user, specified by ID or screen name as per the required id parameter below.  This information includes design settings, so third party developers can theme their widgets according to a given user's preferences.
-     * <br>This method calls http://twitter.com/users/show
-     *
-     * @param id the ID or screen name of the user for whom to request the detail
-     * @return User
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-users%C2%A0show">Twitter API Wiki / Twitter REST API Method: users show</a>
-     * @since Twitter4J 2.0.9
-     */
-    public User showUser(String id) throws TwitterException {
-        return new User(get(getBaseURL() + "users/show/" + id + ".xml"
-                , http.isAuthenticationEnabled()), this);
+    public ResponseList<Status> getRetweets(long statusId) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL()
+                + "statuses/retweets/" + statusId + ".json", auth));
     }
 
     /* User Methods */
 
     /**
-     * Returns the specified user's friends, each with current status inline.
-     * <br>This method calls http://twitter.com/statuses/friends
-     *
-     * @return the list of friends
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses%C2%A0friends">Twitter API Wiki / Twitter REST API Method: statuses friends</a>
-     * @since Twitter4J 2.0.9
+     * {@inheritDoc}
      */
-    public List<User> getFriendsStatuses() throws TwitterException {
-        return User.constructUsers(get(getBaseURL() + "statuses/friends.xml", true), this);
+    public User showUser(String screenName) throws TwitterException {
+        return new UserJSONImpl(http.get(conf.getRestBaseURL() + "users/show.json?screen_name="
+                + screenName, auth));
     }
 
     /**
-     * Returns the specified user's friends, each with current status inline.
-     * <br>This method calls http://twitter.com/statuses/friends
-     *
-     * @param paging controls pagination
-     * @return the list of friends
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.9
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses%C2%A0friends">Twitter API Wiki / Twitter REST API Method: statuses friends</a>
+     * {@inheritDoc}
      */
-    public List<User> getFriendsStatuses(Paging paging) throws TwitterException {
-        return User.constructUsers(get(getBaseURL() + "statuses/friends.xml", null,
-                paging, true), this);
+    public User showUser(int userId) throws TwitterException {
+        return new UserJSONImpl(http.get(conf.getRestBaseURL() + "users/show.json?user_id="
+                + userId, auth));
     }
 
     /**
-     * Returns the user's friends, each with current status inline.
-     * <br>This method calls http://twitter.com/statuses/friends
-     *
-     * @param id the ID or screen name of the user for whom to request a list of friends
-     * @return the list of friends
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses%C2%A0friends">Twitter API Wiki / Twitter REST API Method: statuses friends</a>
-     * @since Twitter4J 2.0.9
+     * {@inheritDoc}
      */
-    public List<User> getFriendsStatuses(String id) throws TwitterException {
-        return User.constructUsers(get(getBaseURL() + "statuses/friends/" + id + ".xml"
-                , false), this);
+    public ResponseList<User> searchUsers(String query, int page) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return UserJSONImpl.createUserList(http.get(conf.getRestBaseURL() +
+                "users/search.json", new HttpParameter[]{
+                new HttpParameter("q", query),
+                new HttpParameter("per_page", 20),
+                new HttpParameter("page", page)}, auth));
     }
 
     /**
-     * Returns the user's friends, each with current status inline.
-     * <br>This method calls http://twitter.com/statuses/friends
-     *
-     * @param id the ID or screen name of the user for whom to request a list of friends
-     * @param paging controls pagination
-     * @return the list of friends
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.9
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses%C2%A0friends">Twitter API Wiki / Twitter REST API Method: statuses friends</a>
+     * {@inheritDoc}
      */
-    public List<User> getFriendsStatuses(String id, Paging paging) throws TwitterException {
-        return User.constructUsers(get(getBaseURL() + "statuses/friends/" + id + ".xml"
-                , null, paging, false), this);
+    public PagableResponseList<User> getFriendsStatuses() throws TwitterException {
+        return getFriendsStatuses(-1l);
     }
 
     /**
-     * Returns the authenticating user's followers, each with current status inline. They are ordered by the order in which they joined Twitter (this is going to be changed).
-     * <br>This method calls http://twitter.com/statuses/followers
-     *
-     * @return List
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses%C2%A0followers">Twitter API Wiki / Twitter REST API Method: statuses followers</a>
-     * @since Twitter4J 2.0.9
+     * {@inheritDoc}
      */
-    public List<User> getFollowersStatuses() throws TwitterException {
-        return User.constructUsers(get(getBaseURL() + "statuses/followers.xml", true), this);
+    public PagableResponseList<User> getFriendsStatuses(long cursor) throws TwitterException {
+        return UserJSONImpl.createPagableUserList(http.get(conf.getRestBaseURL()
+                + "statuses/friends.json?cursor=" + cursor, auth));
     }
 
     /**
-     * Returns the authenticating user's followers, each with current status inline. They are ordered by the order in which they joined Twitter (this is going to be changed).
-     * <br>This method calls http://twitter.com/statuses/followers
-     *
-     * @param paging controls pagination
-     * @return List
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.9
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses%C2%A0followers">Twitter API Wiki / Twitter REST API Method: statuses followers</a>
+     * {@inheritDoc}
      */
-    public List<User> getFollowersStatuses(Paging paging) throws TwitterException {
-        return User.constructUsers(get(getBaseURL() + "statuses/followers.xml", null
-                , paging, true), this);
+    public PagableResponseList<User> getFriendsStatuses(String screenName) throws TwitterException {
+        return getFriendsStatuses(screenName, -1l);
     }
 
     /**
-     * Returns the authenticating user's followers, each with current status inline. They are ordered by the order in which they joined Twitter (this is going to be changed).
-     * <br>This method calls http://twitter.com/statuses/followers
-     *
-     * @param id The ID or screen name of the user for whom to request a list of followers.
-     * @return List
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.9
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses%C2%A0followers">Twitter API Wiki / Twitter REST API Method: statuses followers</a>
+     * {@inheritDoc}
      */
-    public List<User> getFollowersStatuses(String id) throws TwitterException {
-        return User.constructUsers(get(getBaseURL() + "statuses/followers/" + id + ".xml", true), this);
+    public PagableResponseList<User> getFriendsStatuses(int userId) throws TwitterException {
+        return getFriendsStatuses(userId, -1l);
     }
 
     /**
-     * Returns the authenticating user's followers, each with current status inline. They are ordered by the order in which they joined Twitter (this is going to be changed).
-     * <br>This method calls http://twitter.com/statuses/followers
-     *
-     * @param id   The ID or screen name of the user for whom to request a list of followers.
-     * @param paging controls pagination
-     * @return List
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.9
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses%C2%A0followers">Twitter API Wiki / Twitter REST API Method: statuses followers</a>
+     * {@inheritDoc}
      */
-    public List<User> getFollowersStatuses(String id, Paging paging) throws TwitterException {
-        return User.constructUsers(get(getBaseURL() + "statuses/followers/" + id +
-                ".xml", null, paging, true), this);
+    public PagableResponseList<User> getFriendsStatuses(String screenName, long cursor) throws TwitterException {
+        return UserJSONImpl.createPagableUserList(http.get(conf.getRestBaseURL()
+                + "statuses/friends.json?screen_name=" + screenName + "&cursor="
+                + cursor, auth));
     }
 
     /**
-     * Returns a list of the users currently featured on the site with their current statuses inline.
-     *
-     * @return List of User
-     * @throws TwitterException when Twitter service or network is unavailable
+     * {@inheritDoc}
      */
-    public List<User> getFeatured() throws TwitterException {
-        return User.constructUsers(get(getBaseURL() + "statuses/featured.xml", true), this);
+    public PagableResponseList<User> getFriendsStatuses(int userId, long cursor) throws TwitterException {
+        return UserJSONImpl.createPagableUserList(http.get(conf.getRestBaseURL()
+                + "statuses/friends.json?user_id=" + userId + "&cursor=" + cursor
+                , null, auth));
     }
 
     /**
-     * Returns a list of the direct messages sent to the authenticating user.
-     * <br>This method calls http://twitter.com/direct_messages
-     *
-     * @return List
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-direct_messages">Twitter API Wiki / Twitter REST API Method: direct_messages</a>
+     * {@inheritDoc}
      */
-    public List<DirectMessage> getDirectMessages() throws TwitterException {
-        return DirectMessage.constructDirectMessages(get(getBaseURL() + "direct_messages.xml", true), this);
+    public PagableResponseList<User> getFollowersStatuses() throws TwitterException {
+        return getFollowersStatuses(-1l);
     }
 
     /**
-     * Returns a list of the direct messages sent to the authenticating user.
-     * <br>This method calls http://twitter.com/direct_messages
-     *
-     * @param paging controls pagination
-     * @return List
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-direct_messages">Twitter API Wiki / Twitter REST API Method: direct_messages</a>
+     * {@inheritDoc}
      */
-    public List<DirectMessage> getDirectMessages(Paging paging) throws TwitterException {
-        return DirectMessage.constructDirectMessages(get(getBaseURL()
-                + "direct_messages.xml", null, paging, true), this);
+    public PagableResponseList<User> getFollowersStatuses(long cursor) throws TwitterException {
+        return UserJSONImpl.createPagableUserList(http.get(conf.getRestBaseURL()
+                + "statuses/followers.json?cursor=" + cursor, auth));
     }
 
     /**
-     * Returns a list of the direct messages sent by the authenticating user.
-     * <br>This method calls http://twitter.com/direct_messages/sent
-     *
-     * @return List
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-direct_messages%C2%A0sent">Twitter API Wiki / Twitter REST API Method: direct_messages sent</a>
+     * {@inheritDoc}
      */
-    public List<DirectMessage> getSentDirectMessages() throws
+    public PagableResponseList<User> getFollowersStatuses(String screenName) throws TwitterException {
+        return getFollowersStatuses(screenName, -1l);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PagableResponseList<User> getFollowersStatuses(int userId) throws TwitterException {
+        return getFollowersStatuses(userId, -1l);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PagableResponseList<User> getFollowersStatuses(String screenName, long cursor) throws TwitterException {
+        return UserJSONImpl.createPagableUserList(http.get(conf.getRestBaseURL()
+                + "statuses/followers.json?screen_name=" + screenName
+                + "&cursor=" + cursor, auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PagableResponseList<User> getFollowersStatuses(int userId, long cursor) throws TwitterException {
+        return UserJSONImpl.createPagableUserList(http.get(conf.getRestBaseURL()
+                + "statuses/followers.json?user_id=" + userId + "&cursor=" + cursor, auth));
+    }
+
+    /*List Methods*/
+
+    /**
+     * {@inheritDoc}
+     */
+    public UserList createUserList(String listName, boolean isPublicList, String description) throws TwitterException {
+        ensureAuthorizationEnabled();
+        List<HttpParameter> httpParams = new ArrayList<HttpParameter>();
+        httpParams.add(new HttpParameter("name", listName));
+        httpParams.add(new HttpParameter("mode", isPublicList ? "public" : "private"));
+        if (description != null) {
+            httpParams.add(new HttpParameter("description", description));
+        }
+        return new UserListJSONImpl(http.post(conf.getRestBaseURL() + getScreenName() +
+                "/lists.json",
+                httpParams.toArray(new HttpParameter[httpParams.size()]),
+                auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public UserList updateUserList(int listId, String newListName, boolean isPublicList, String newDescription) throws TwitterException {
+        ensureAuthorizationEnabled();
+        List<HttpParameter> httpParams = new ArrayList<HttpParameter>();
+        if (newListName != null) {
+            httpParams.add(new HttpParameter("name", newListName));
+        }
+        httpParams.add(new HttpParameter("mode", isPublicList ? "public" : "private"));
+        if (newDescription != null) {
+            httpParams.add(new HttpParameter("description", newDescription));
+        }
+        return new UserListJSONImpl(http.post(conf.getRestBaseURL() + getScreenName() + "/lists/"
+                + listId + ".json", httpParams.toArray(new HttpParameter[httpParams.size()]), auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PagableResponseList<UserList> getUserLists(String listOwnerScreenName, long cursor) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return UserListJSONImpl.createUserListList(http.get(conf.getRestBaseURL() +
+                listOwnerScreenName + "/lists.json?cursor=" + cursor, auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public UserList showUserList(String listOwnerScreenName, int id) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserListJSONImpl(http.get(conf.getRestBaseURL() + listOwnerScreenName + "/lists/"
+                + id + ".json", auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public UserList destroyUserList(int listId) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserListJSONImpl(http.delete(conf.getRestBaseURL() + getScreenName() +
+                "/lists/" + listId + ".json", auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResponseList<Status> getUserListStatuses(String listOwnerScreenName, int id, Paging paging) throws TwitterException {
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL() + listOwnerScreenName +
+                "/lists/" + id + "/statuses.json", paging.asPostParameterArray(Paging.SMCP, Paging.PER_PAGE), auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PagableResponseList<UserList> getUserListMemberships(String listOwnerScreenName, long cursor) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return UserListJSONImpl.createUserListList(http.get(conf.getRestBaseURL() +
+                listOwnerScreenName + "/lists/memberships.json?cursor=" + cursor, auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public PagableResponseList<UserList> getUserListSubscriptions(String listOwnerScreenName, long cursor) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return UserListJSONImpl.createUserListList(http.get(conf.getRestBaseURL() +
+                listOwnerScreenName + "/lists/subscriptions.json?cursor=" + cursor, auth));
+    }
+
+    /*List Members Methods*/
+
+    /**
+     * {@inheritDoc}
+     */
+    public PagableResponseList<User> getUserListMembers(String listOwnerScreenName, int listId
+            , long cursor) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return UserJSONImpl.createPagableUserList(http.get(conf.getRestBaseURL() +
+                listOwnerScreenName + "/" + listId + "/members.json?cursor=" + cursor, auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public UserList addUserListMember(int listId, int userId) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserListJSONImpl(http.post(conf.getRestBaseURL() + getScreenName() +
+                "/" + listId + "/members.json?id=" + userId, auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public UserList deleteUserListMember(int listId, int userId) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserListJSONImpl(http.delete(conf.getRestBaseURL() + getScreenName() +
+                "/" + listId + "/members.json?id=" + userId, auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public User checkUserListMembership(String listOwnerScreenName, int listId, int userId) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserJSONImpl(http.get(conf.getRestBaseURL() + listOwnerScreenName + "/" + listId
+                + "/members/" + userId + ".json", auth));
+    }
+
+    /*List Subscribers Methods*/
+
+    /**
+     * {@inheritDoc}
+     */
+    public PagableResponseList<User> getUserListSubscribers(String listOwnerScreenName
+            , int listId, long cursor) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return UserJSONImpl.createPagableUserList(http.get(conf.getRestBaseURL() +
+                listOwnerScreenName + "/" + listId + "/subscribers.json?cursor=" + cursor, auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public UserList subscribeUserList(String listOwnerScreenName, int listId) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserListJSONImpl(http.post(conf.getRestBaseURL() + listOwnerScreenName +
+                "/" + listId + "/subscribers.json", auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public UserList unsubscribeUserList(String listOwnerScreenName, int listId) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserListJSONImpl(http.delete(conf.getRestBaseURL() + listOwnerScreenName +
+                "/" + listId + "/subscribers.json?id=" + verifyCredentials().getId(), auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public User checkUserListSubscription(String listOwnerScreenName, int listId, int userId) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserJSONImpl(http.get(conf.getRestBaseURL() + listOwnerScreenName + "/" + listId
+                + "/subscribers/" + userId + ".json", auth));
+    }
+
+    /*Direct Message Methods */
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResponseList<DirectMessage> getDirectMessages() throws TwitterException {
+        ensureAuthorizationEnabled();
+        return DirectMessageJSONImpl.createDirectMessageList(http.get(conf.getRestBaseURL() + "direct_messages.json", auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResponseList<DirectMessage> getDirectMessages(Paging paging) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return DirectMessageJSONImpl.createDirectMessageList(http.get(conf.getRestBaseURL()
+                + "direct_messages.json", paging.asPostParameterArray(), auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResponseList<DirectMessage> getSentDirectMessages() throws
             TwitterException {
-        return DirectMessage.constructDirectMessages(get(getBaseURL() +
-                "direct_messages/sent.xml", new PostParameter[0], true), this);
+        ensureAuthorizationEnabled();
+        return DirectMessageJSONImpl.createDirectMessageList(http.get(conf.getRestBaseURL() +
+                "direct_messages/sent.json", auth));
     }
 
     /**
-     * Returns a list of the direct messages sent by the authenticating user.
-     * <br>This method calls http://twitter.com/direct_messages/sent
-     *
-     * @param paging controls pagination
-     * @return List
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.1
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-direct_messages%C2%A0sent">Twitter API Wiki / Twitter REST API Method: direct_messages sent</a>
+     * {@inheritDoc}
      */
-    public List<DirectMessage> getSentDirectMessages(Paging paging) throws
+    public ResponseList<DirectMessage> getSentDirectMessages(Paging paging) throws
             TwitterException {
-        return DirectMessage.constructDirectMessages(get(getBaseURL() +
-                "direct_messages/sent.xml", new PostParameter[0],paging, true), this);
+        ensureAuthorizationEnabled();
+        return DirectMessageJSONImpl.createDirectMessageList(http.get(conf.getRestBaseURL() +
+                "direct_messages/sent.json", paging.asPostParameterArray(), auth));
     }
 
     /**
-     * Sends a new direct message to the specified user from the authenticating user.  Requires both the user and text parameters below.
-     * The text will be trimed if the length of the text is exceeding 140 characters.
-     * <br>This method calls http://twitter.com/direct_messages/new
-     *
-     * @param id   the ID or screen name of the user to whom send the direct message
-     * @param text String
-     * @return DirectMessage
-     * @throws TwitterException when Twitter service or network is unavailable
-     @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-direct_messages%C2%A0new">Twitter API Wiki / Twitter REST API Method: direct_messages new</a>
+     * {@inheritDoc}
      */
-    public DirectMessage sendDirectMessage(String id,
-                                                        String text) throws TwitterException {
-        return new DirectMessage(http.post(getBaseURL() + "direct_messages/new.xml",
-                new PostParameter[]{new PostParameter("user", id),
-                        new PostParameter("text", text)}, true), this);
+    public DirectMessage sendDirectMessage(String screenName, String text) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new DirectMessageJSONImpl(http.post(conf.getRestBaseURL() + "direct_messages/new.json",
+                new HttpParameter[]{new HttpParameter("screen_name", screenName),
+                        new HttpParameter("text", text)}, auth));
     }
 
     /**
-     * Destroys the direct message specified in the required ID parameter.  The authenticating user must be the recipient of the specified direct message.
-     * <br>This method calls http://twitter.com/direct_messages/destroy
-     *
-     * @param id the ID of the direct message to destroy
-     * @return the deleted direct message
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-direct_messages%C2%A0destroy">Twitter API Wiki / Twitter REST API Method: direct_messages destroy</a>
-     * @since Twitter4J 2.0.1
+     * {@inheritDoc}
+     */
+    public DirectMessage sendDirectMessage(int userId, String text)
+            throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new DirectMessageJSONImpl(http.post(conf.getRestBaseURL() + "direct_messages/new.json",
+                new HttpParameter[]{new HttpParameter("user_id", userId),
+                        new HttpParameter("text", text)}, auth));
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public DirectMessage destroyDirectMessage(int id) throws
             TwitterException {
-        return new DirectMessage(http.post(getBaseURL() +
-                "direct_messages/destroy/" + id + ".xml", new PostParameter[0], true), this);
+        ensureAuthorizationEnabled();
+        return new DirectMessageJSONImpl(http.post(conf.getRestBaseURL() +
+                "direct_messages/destroy/" + id + ".json", auth));
     }
 
     /**
-     * Befriends the user specified in the ID parameter as the authenticating user.  Returns the befriended user in the requested format when successful.  Returns a string describing the failure condition when unsuccessful.
-     *
-     * @param id the ID or screen name of the user to be befriended
-     * @return the befriended user
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.1
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-friendships%C2%A0create">Twitter API Wiki / Twitter REST API Method: friendships create</a>
+     * {@inheritDoc}
      */
-    public User createFriendship(String id) throws TwitterException {
-        return new User(http.post(getBaseURL() + "friendships/create/" + id + ".xml", new PostParameter[0], true), this);
+    public User createFriendship(String screenName) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserJSONImpl(http.post(conf.getRestBaseURL() + "friendships/create.json?screen_name=" + screenName, auth));
     }
 
     /**
-     * Befriends the user specified in the ID parameter as the authenticating user.  Returns the befriended user in the requested format when successful.  Returns a string describing the failure condition when unsuccessful.
-     *
-     * @param id the ID or screen name of the user to be befriended
-     * @param follow Enable notifications for the target user in addition to becoming friends.
-     * @return the befriended user
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.2
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-friendships%C2%A0create">Twitter API Wiki / Twitter REST API Method: friendships create</a>
+     * {@inheritDoc}
      */
-    public User createFriendship(String id, boolean follow) throws TwitterException {
-        return new User(http.post(getBaseURL() + "friendships/create/" + id + ".xml"
-                , new PostParameter[]{new PostParameter("follow"
-                        , String.valueOf(follow))}, true)
-                , this);
+    public User createFriendship(int userId) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserJSONImpl(http.post(conf.getRestBaseURL() + "friendships/create.json?user_id=" + userId, auth));
     }
 
     /**
-     * Discontinues friendship with the user specified in the ID parameter as the authenticating user.  Returns the un-friended user in the requested format when successful.  Returns a string describing the failure condition when unsuccessful.
-     *
-     * @param id the ID or screen name of the user for whom to request a list of friends
-     * @return User
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.1
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-friendships%C2%A0destroy">Twitter API Wiki / Twitter REST API Method: friendships destroy</a>
+     * {@inheritDoc}
      */
-    public User destroyFriendship(String id) throws TwitterException {
-        return new User(http.post(getBaseURL() + "friendships/destroy/" + id + ".xml", new PostParameter[0], true), this);
+    public User createFriendship(String screenName, boolean follow) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserJSONImpl(http.post(conf.getRestBaseURL() + "friendships/create.json?screen_name=" + screenName
+                + "&follow=" + follow, auth));
     }
-    
+
     /**
-     * Tests if a friendship exists between two users.
-     *
-     * @param userA The ID or screen_name of the first user to test friendship for.
-     * @param userB The ID or screen_name of the second user to test friendship for.
-     * @return if a friendship exists between two users.
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.1
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-friendships-exists">Twitter API Wiki / Twitter REST API Method: friendships exists</a>
+     * {@inheritDoc}
+     */
+    public User createFriendship(int userId, boolean follow) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserJSONImpl(http.post(conf.getRestBaseURL() + "friendships/create.json?user_id=" + userId
+                + "&follow=" + follow, auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public User destroyFriendship(String screenName) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserJSONImpl(http.post(conf.getRestBaseURL() + "friendships/destroy.json?screen_name="
+                + screenName, auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public User destroyFriendship(int userId) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserJSONImpl(http.post(conf.getRestBaseURL() + "friendships/destroy.json?user_id="
+                + userId, auth));
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public boolean existsFriendship(String userA, String userB) throws TwitterException {
-        return -1 != get(getBaseURL() + "friendships/exists.xml", "user_a", userA, "user_b", userB, true).
+        return -1 != http.get(conf.getRestBaseURL() + "friendships/exists.json",
+                getParameterArray("user_a", userA, "user_b", userB), auth).
                 asString().indexOf("true");
     }
 
     /**
-     * Returns an array of numeric IDs for every user the authenticating user is following.
-     * @return an array of numeric IDs for every user the authenticating user is following
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.0
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-friends%C2%A0ids">Twitter API Wiki / Twitter REST API Method: friends ids</a>
+     * {@inheritDoc}
+     */
+    public Relationship showFriendship(String sourceScreenName, String targetScreenName) throws TwitterException {
+        return new RelationshipJSONImpl(http.get(conf.getRestBaseURL() + "friendships/show.json",
+                getParameterArray("source_screen_name", sourceScreenName,
+                        "target_screen_name", targetScreenName), auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Relationship showFriendship(int sourceId, int targetId) throws TwitterException {
+        return new RelationshipJSONImpl(http.get(conf.getRestBaseURL() + "friendships/show.json",
+                getParameterArray("source_id", sourceId, "target_id", targetId), auth));
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public IDs getFriendsIDs() throws TwitterException {
         return getFriendsIDs(-1l);
     }
 
     /**
-     * Returns an array of numeric IDs for every user the authenticating user is following.
-     * @param cursor  Specifies the page number of the results beginning at 1. A single page contains 5000 ids. This is recommended for users with large ID lists. If not provided all ids are returned.
-     * @return an array of numeric IDs for every user the authenticating user is following
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.10
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-friends%C2%A0ids">Twitter API Wiki / Twitter REST API Method: friends ids</a>
+     * {@inheritDoc}
      */
     public IDs getFriendsIDs(long cursor) throws TwitterException {
-        return new IDs(get(getBaseURL() + "friends/ids.xml?cursor=" + cursor, true));
+        return IDsJSONImpl.getFriendsIDs(http.get(conf.getRestBaseURL() + "friends/ids.json?cursor=" + cursor, auth));
     }
 
     /**
-     * Returns an array of numeric IDs for every user the specified user is following.<br>
-     * all IDs are attempted to be returned, but large sets of IDs will likely fail with timeout errors.
-     * @param userId Specfies the ID of the user for whom to return the friends list.
-     * @return an array of numeric IDs for every user the specified user is following
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.0
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-friends%C2%A0ids">Twitter API Wiki / Twitter REST API Method: friends ids</a>
+     * {@inheritDoc}
      */
     public IDs getFriendsIDs(int userId) throws TwitterException {
         return getFriendsIDs(userId, -1l);
     }
 
     /**
-     * Returns an array of numeric IDs for every user the specified user is following.
-     * @param userId Specifies the ID of the user for whom to return the friends list.
-     * @param cursor  Specifies the page number of the results beginning at 1. A single page contains 5000 ids. This is recommended for users with large ID lists. If not provided all ids are returned.
-     * @return an array of numeric IDs for every user the specified user is following
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.10
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-friends%C2%A0ids">Twitter API Wiki / Twitter REST API Method: friends ids</a>
+     * {@inheritDoc}
      */
     public IDs getFriendsIDs(int userId, long cursor) throws TwitterException {
-        return new IDs(get(getBaseURL() + "friends/ids.xml?user_id=" + userId +
-                "&cursor=" + cursor, true));
+        return IDsJSONImpl.getFriendsIDs(http.get(conf.getRestBaseURL() + "friends/ids.json?user_id=" + userId +
+                "&cursor=" + cursor, auth));
     }
 
     /**
-     * Returns an array of numeric IDs for every user the specified user is following.
-     * @param screenName Specfies the screen name of the user for whom to return the friends list.
-     * @return an array of numeric IDs for every user the specified user is following
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.0
-     * @see <a href="http://apiwiki.twitter.com/REST-API-Documentation#friends/ids">Twitter API Wiki / REST API Documentation - Social Graph Methods - friends/ids</a>
+     * {@inheritDoc}
      */
     public IDs getFriendsIDs(String screenName) throws TwitterException {
         return getFriendsIDs(screenName, -1l);
     }
 
     /**
-     * Returns an array of numeric IDs for every user the specified user is following.
-     * @param screenName Specfies the screen name of the user for whom to return the friends list.
-     * @param cursor  Specifies the page number of the results beginning at 1. A single page contains 5000 ids. This is recommended for users with large ID lists. If not provided all ids are returned.
-     * @return an array of numeric IDs for every user the specified user is following
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.10
-     * @see <a href="http://apiwiki.twitter.com/REST-API-Documentation#friends/ids">Twitter API Wiki / REST API Documentation - Social Graph Methods - friends/ids</a>
+     * {@inheritDoc}
      */
     public IDs getFriendsIDs(String screenName, long cursor) throws TwitterException {
-        return new IDs(get(getBaseURL() + "friends/ids.xml?screen_name=" + screenName
-                + "&cursor=" + cursor, true));
+        return IDsJSONImpl.getFriendsIDs(http.get(conf.getRestBaseURL() + "friends/ids.json?screen_name=" + screenName
+                + "&cursor=" + cursor, auth));
     }
 
     /**
-     * Returns an array of numeric IDs for every user the specified user is followed by.
-     * @return The ID or screen_name of the user to retrieve the friends ID list for.
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.0
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-followers%C2%A0ids">Twitter API Wiki / Twitter REST API Method: followers ids</a>
+     * {@inheritDoc}
      */
     public IDs getFollowersIDs() throws TwitterException {
         return getFollowersIDs(-1l);
     }
 
     /**
-     * Returns an array of numeric IDs for every user the specified user is followed by.
-     * @return The ID or screen_name of the user to retrieve the friends ID list for.
-     * @param cursor  Specifies the page number of the results beginning at 1. A single page contains 5000 ids. This is recommended for users with large ID lists. If not provided all ids are returned.
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.10
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-followers%C2%A0ids">Twitter API Wiki / Twitter REST API Method: followers ids</a>
+     * {@inheritDoc}
      */
     public IDs getFollowersIDs(long cursor) throws TwitterException {
-        return new IDs(get(getBaseURL() + "followers/ids.xml?cursor=" + cursor
-                , true));
+        return IDsJSONImpl.getFriendsIDs(http.get(conf.getRestBaseURL() + "followers/ids.json?cursor=" + cursor
+                , auth));
     }
 
     /**
-     * Returns an array of numeric IDs for every user the specified user is followed by.
-     * @param userId Specfies the ID of the user for whom to return the followers list.
-     * @return The ID or screen_name of the user to retrieve the friends ID list for.
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.0
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-followers%C2%A0ids">Twitter API Wiki / Twitter REST API Method: followers ids</a>
+     * {@inheritDoc}
      */
     public IDs getFollowersIDs(int userId) throws TwitterException {
         return getFollowersIDs(userId, -1l);
     }
 
     /**
-     * Returns an array of numeric IDs for every user the specified user is followed by.
-     * @param userId Specifies the ID of the user for whom to return the followers list.
-     * @param cursor  Specifies the page number of the results beginning at 1. A single page contains 5000 ids. This is recommended for users with large ID lists. If not provided all ids are returned.
-     * @return The ID or screen_name of the user to retrieve the friends ID list for.
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.10
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-followers%C2%A0ids">Twitter API Wiki / Twitter REST API Method: followers ids</a>
+     * {@inheritDoc}
      */
     public IDs getFollowersIDs(int userId, long cursor) throws TwitterException {
-        return new IDs(get(getBaseURL() + "followers/ids.xml?user_id=" + userId
-                + "&cursor=" + cursor, true));
+        return IDsJSONImpl.getFriendsIDs(http.get(conf.getRestBaseURL() + "followers/ids.json?user_id=" + userId
+                + "&cursor=" + cursor, auth));
     }
 
     /**
-     * Returns an array of numeric IDs for every user the specified user is followed by.
-     * @param screenName Specfies the screen name of the user for whom to return the followers list.
-     * @return The ID or screen_name of the user to retrieve the friends ID list for.
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.0
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-followers%C2%A0ids">Twitter API Wiki / Twitter REST API Method: followers ids</a>
+     * {@inheritDoc}
      */
     public IDs getFollowersIDs(String screenName) throws TwitterException {
         return getFollowersIDs(screenName, -1l);
     }
 
     /**
-     * Returns an array of numeric IDs for every user the specified user is followed by.
-     * @param screenName Specfies the screen name of the user for whom to return the followers list.
-     * @param cursor  Specifies the page number of the results beginning at 1. A single page contains 5000 ids. This is recommended for users with large ID lists. If not provided all ids are returned.
-     * @return The ID or screen_name of the user to retrieve the friends ID list for.
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.10
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-followers%C2%A0ids">Twitter API Wiki / Twitter REST API Method: followers ids</a>
+     * {@inheritDoc}
      */
     public IDs getFollowersIDs(String screenName, long cursor) throws TwitterException {
-        return new IDs(get(getBaseURL() + "followers/ids.xml?screen_name="
-                + screenName + "&cursor=" + cursor, true));
+        return IDsJSONImpl.getFriendsIDs(http.get(conf.getRestBaseURL() + "followers/ids.json?screen_name="
+                + screenName + "&cursor=" + cursor, auth));
     }
 
     /**
-     * Returns an HTTP 200 OK response code and a representation of the requesting user if authentication was successful; returns a 401 status code and an error message if not.  Use this method to test if supplied user credentials are valid.
-     *
-     * @return user
-     * @since Twitter4J 2.0.0
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-account%C2%A0verify_credentials">Twitter API Wiki / Twitter REST API Method: account verify_credentials</a>
+     * {@inheritDoc}
      */
     public User verifyCredentials() throws TwitterException {
-        return new User(get(getBaseURL() + "account/verify_credentials.xml"
-                , true), this);
+        return new UserJSONImpl(http.get(conf.getRestBaseURL() + "account/verify_credentials.json"
+                , auth));
     }
 
     /**
-     * Sets values that users are able to set under the "Account" tab of their settings page. Only the parameters specified(non-null) will be updated.
-     *
-     * @param name Optional. Maximum of 20 characters.
-     * @param email Optional. Maximum of 40 characters. Must be a valid email address.
-     * @param url Optional. Maximum of 100 characters. Will be prepended with "http://" if not present.
-     * @param location Optional. Maximum of 30 characters. The contents are not normalized or geocoded in any way.
-     * @param description Optional. Maximum of 160 characters.
-     * @return the updated user
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.2
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-account%C2%A0update_profile">Twitter REST API Documentation &gt; Account Methods &gt; account/update_location</a>
+     * {@inheritDoc}
      */
     public User updateProfile(String name, String email, String url
             , String location, String description) throws TwitterException {
-        List<PostParameter> profile = new ArrayList<PostParameter>(5);
+        ensureAuthorizationEnabled();
+        List<HttpParameter> profile = new ArrayList<HttpParameter>(5);
         addParameterToList(profile, "name", name);
         addParameterToList(profile, "email", email);
         addParameterToList(profile, "url", url);
         addParameterToList(profile, "location", location);
         addParameterToList(profile, "description", description);
-        return new User(http.post(getBaseURL() + "account/update_profile.xml"
-                , profile.toArray(new PostParameter[profile.size()]), true), this);
+        return new UserJSONImpl(http.post(conf.getRestBaseURL() + "account/update_profile.json"
+                , profile.toArray(new HttpParameter[profile.size()]), auth));
     }
 
     /**
-     * Returns the remaining number of API requests available to the requesting user before the API limit is reached for the current hour. Calls to rate_limit_status do not count against the rate limit.  If authentication credentials are provided, the rate limit status for the authenticating user is returned.  Otherwise, the rate limit status for the requester's IP address is returned.<br>
-     *
-     * @return the rate limit status
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 1.1.4
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-account%C2%A0rate_limit_status">Twitter API Wiki / Twitter REST API Method: account rate_limit_status</a>
+     * {@inheritDoc}
      */
-    public RateLimitStatus rateLimitStatus() throws TwitterException {
-        return new RateLimitStatus(http.get(getBaseURL() + "account/rate_limit_status.xml", null != getUserId() && null != getPassword()));
-    }
-
-    public final static Device IM = new Device("im");
-    public final static Device SMS = new Device("sms");
-    public final static Device NONE = new Device("none");
-
-    static class Device {
-        final String DEVICE;
-
-        public Device(String device) {
-            DEVICE = device;
-        }
+    public RateLimitStatus getRateLimitStatus() throws TwitterException {
+        return RateLimitStatusJSONImpl.createFromJSONResponse(http.get(conf.getRestBaseURL() + "account/rate_limit_status.json", auth));
     }
 
     /**
-     * Sets which device Twitter delivers updates to for the authenticating user.  Sending none as the device parameter will disable IM or SMS updates.
-     *
-     * @param device new Delivery device. Must be one of: IM, SMS, NONE.
-     * @return the updated user
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 1.0.4
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-account%C2%A0update_delivery_device">Twitter API Wiki / Twitter REST API Method: account update_delivery_device</a>
+     * {@inheritDoc}
      */
-    public User updateDeliverlyDevice(Device device) throws TwitterException {
-        return new User(http.post(getBaseURL() + "account/update_delivery_device.xml", new PostParameter[]{new PostParameter("device", device.DEVICE)}, true), this);
+    public User updateDeliveryDevice(Device device) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserJSONImpl(http.post(conf.getRestBaseURL() + "account/update_delivery_device.json", new HttpParameter[]{new HttpParameter("device", device.getName())}, auth));
     }
 
 
     /**
-     * Sets one or more hex values that control the color scheme of the authenticating user's profile page on twitter.com.  These values are also returned in the getUserDetail() method.
-     * @param profileBackgroundColor optional, can be null
-     * @param profileTextColor optional, can be null
-     * @param profileLinkColor optional, can be null
-     * @param profileSidebarFillColor optional, can be null
-     * @param profileSidebarBorderColor optional, can be null
-     * @return the updated user
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.0
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-account%C2%A0update_profile_colors">Twitter API Wiki / Twitter REST API Method: account update_profile_colors</a>
+     * {@inheritDoc}
      */
     public User updateProfileColors(
             String profileBackgroundColor,
@@ -1403,7 +1076,8 @@ public class Twitter extends TwitterSupport implements java.io.Serializable {
             String profileSidebarFillColor,
             String profileSidebarBorderColor)
             throws TwitterException {
-        List<PostParameter> colors = new ArrayList<PostParameter>(5);
+        ensureAuthorizationEnabled();
+        List<HttpParameter> colors = new ArrayList<HttpParameter>(5);
         addParameterToList(colors, "profile_background_color"
                 , profileBackgroundColor);
         addParameterToList(colors, "profile_text_color"
@@ -1414,165 +1088,189 @@ public class Twitter extends TwitterSupport implements java.io.Serializable {
                 , profileSidebarFillColor);
         addParameterToList(colors, "profile_sidebar_border_color"
                 , profileSidebarBorderColor);
-        return new User(http.post(getBaseURL() +
-                "account/update_profile_colors.xml",
-                colors.toArray(new PostParameter[colors.size()]), true), this);
+        return new UserJSONImpl(http.post(conf.getRestBaseURL() +
+                "account/update_profile_colors.json",
+                colors.toArray(new HttpParameter[colors.size()]), auth));
     }
 
-    private void addParameterToList(List<PostParameter> colors,
-                                      String paramName, String color) {
-        if(null != color){
-            colors.add(new PostParameter(paramName,color));
+    private void addParameterToList(List<HttpParameter> colors,
+                                    String paramName, String color) {
+        if (null != color) {
+            colors.add(new HttpParameter(paramName, color));
         }
     }
 
     /**
-     * Returns the 20 most recent favorite statuses for the authenticating user or user specified by the ID parameter in the requested format.
-     *
-     * @return List<Status>
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-favorites">Twitter API Wiki / Twitter REST API Method: favorites</a>
-     * @since Twitter4J 2.0.1
+     * {@inheritDoc}
      */
-    public List<Status> getFavorites() throws TwitterException {
-        return Status.constructStatuses(get(getBaseURL() + "favorites.xml", new PostParameter[0], true), this);
+    public User updateProfileImage(File image) throws TwitterException {
+        checkFileValidity(image);
+        ensureAuthorizationEnabled();
+        return new UserJSONImpl(http.post(conf.getRestBaseURL()
+                + "account/update_profile_image.json",
+                new HttpParameter[]{new HttpParameter("image", image)}, auth));
     }
 
     /**
-     * Returns the 20 most recent favorite statuses for the authenticating user or user specified by the ID parameter in the requested format.
-     *
-     * @param page the number of page
-     * @return List<Status>
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-favorites">Twitter API Wiki / Twitter REST API Method: favorites</a>
-     * @since Twitter4J 2.0.1
+     * {@inheritDoc}
      */
-    public List<Status> getFavorites(int page) throws TwitterException {
-        return Status.constructStatuses(get(getBaseURL() + "favorites.xml", "page", String.valueOf(page), true), this);
+    public User updateProfileBackgroundImage(File image, boolean tile)
+            throws TwitterException {
+        ensureAuthorizationEnabled();
+        checkFileValidity(image);
+        return new UserJSONImpl(http.post(conf.getRestBaseURL()
+                + "account/update_profile_background_image.json",
+                new HttpParameter[]{new HttpParameter("image", image),
+                        new HttpParameter("tile", tile)}, auth));
     }
 
     /**
-     * Returns the 20 most recent favorite statuses for the authenticating user or user specified by the ID parameter in the requested format.
+     * Check the existence, and the type of the specified file.
      *
-     * @param id the ID or screen name of the user for whom to request a list of favorite statuses
-     * @return List<Status>
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-favorites">Twitter API Wiki / Twitter REST API Method: favorites</a>
-     * @since Twitter4J 2.0.1
+     * @param image image to be uploaded
+     * @throws TwitterException when the specified file is not found (FileNotFoundException will be nested)
+     *                          , or when the specified file object is not representing a file(IOException will be nested).
      */
-    public List<Status> getFavorites(String id) throws TwitterException {
-        return Status.constructStatuses(get(getBaseURL() + "favorites/" + id + ".xml", new PostParameter[0], true), this);
+    private void checkFileValidity(File image) throws TwitterException {
+        if (!image.exists()) {
+            //noinspection ThrowableInstanceNeverThrown
+            throw new TwitterException(new FileNotFoundException(image + " is not found."));
+        }
+        if (!image.isFile()) {
+            //noinspection ThrowableInstanceNeverThrown
+            throw new TwitterException(new IOException(image + " is not a file."));
+        }
     }
 
     /**
-     * Returns the 20 most recent favorite statuses for the authenticating user or user specified by the ID parameter in the requested format.
-     *
-     * @param id   the ID or screen name of the user for whom to request a list of favorite statuses
-     * @param page the number of page
-     * @return List<Status>
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.1
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-favorites">Twitter API Wiki / Twitter REST API Method: favorites</a>
+     * {@inheritDoc}
      */
-    public List<Status> getFavorites(String id, int page) throws TwitterException {
-        return Status.constructStatuses(get(getBaseURL() + "favorites/" + id + ".xml", "page", String.valueOf(page), true), this);
+    public ResponseList<Status> getFavorites() throws TwitterException {
+        ensureAuthorizationEnabled();
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL()
+                + "favorites.json", auth));
     }
 
     /**
-     * Favorites the status specified in the ID parameter as the authenticating user.  Returns the favorite status when successful.
-     *
-     * @param id the ID of the status to favorite
-     * @return Status
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-favorites%C2%A0create">Twitter API Wiki / Twitter REST API Method: favorites create</a>
+     * {@inheritDoc}
+     */
+    public ResponseList<Status> getFavorites(int page) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL() + "favorites.json"
+                , new HttpParameter[]{new HttpParameter("page", page)}, auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResponseList<Status> getFavorites(String id) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL() +
+                "favorites/" + id + ".json", auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ResponseList<Status> getFavorites(String id, int page) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return StatusJSONImpl.createStatusList(http.get(conf.getRestBaseURL() + "favorites/" + id + ".json",
+                getParameterArray("page", page), auth));
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public Status createFavorite(long id) throws TwitterException {
-        return new Status(http.post(getBaseURL() + "favorites/create/" + id + ".xml", true), this);
+        ensureAuthorizationEnabled();
+        return new StatusJSONImpl(http.post(conf.getRestBaseURL() + "favorites/create/" + id + ".json", auth));
     }
 
     /**
-     * Un-favorites the status specified in the ID parameter as the authenticating user.  Returns the un-favorited status in the requested format when successful.
-     *
-     * @param id the ID of the status to un-favorite
-     * @return Status
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-favorites%C2%A0destroy">Twitter API Wiki / Twitter REST API Method: favorites destroy</a>
+     * {@inheritDoc}
      */
     public Status destroyFavorite(long id) throws TwitterException {
-        return new Status(http.post(getBaseURL() + "favorites/destroy/" + id + ".xml", true), this);
+        ensureAuthorizationEnabled();
+        return new StatusJSONImpl(http.post(conf.getRestBaseURL() + "favorites/destroy/" + id + ".json", auth));
     }
 
     /**
-     * Enables notifications for updates from the specified user to the authenticating user.  Returns the specified user when successful.
-     *
-     * @param id String
-     * @return User
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.1
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-notifications%C2%A0follow">Twitter API Wiki / Twitter REST API Method: notifications follow</a>
+     * {@inheritDoc}
      */
-    public User enableNotification(String id) throws TwitterException {
-        return new User(http.post(getBaseURL() + "notifications/follow/" + id + ".xml", true), this);
+    public User enableNotification(String screenName) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserJSONImpl(http.post(conf.getRestBaseURL() + "notifications/follow.json?screen_name=" + screenName, auth));
     }
 
     /**
-     * Disables notifications for updates from the specified user to the authenticating user.  Returns the specified user when successful.
-     *
-     * @param id String
-     * @return User
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.1
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-notifications%C2%A0leave">Twitter API Wiki / Twitter REST API Method: notifications leave</a>
+     * {@inheritDoc}
      */
-    public User disableNotification(String id) throws TwitterException {
-        return new User(http.post(getBaseURL() + "notifications/leave/" + id + ".xml", true), this);
+    public User enableNotification(int userId) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserJSONImpl(http.post(conf.getRestBaseURL() + "notifications/follow.json?userId=" + userId, auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public User disableNotification(String screenName) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserJSONImpl(http.post(conf.getRestBaseURL() + "notifications/leave.json?screen_name=" + screenName, auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public User disableNotification(int userId) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserJSONImpl(http.post(conf.getRestBaseURL() + "notifications/leave.json?user_id=" + userId, auth));
     }
 
     /* Block Methods */
-    
+
     /**
-     * Blocks the user specified in the ID parameter as the authenticating user.  Returns the blocked user in the requested format when successful.
-     *
-     * @param id the ID or screen_name of the user to block
-     * @return the blocked user
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.1
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-blocks%C2%A0create">Twitter API Wiki / Twitter REST API Method: blocks create</a>
+     * {@inheritDoc}
      */
-    public User createBlock(String id) throws TwitterException {
-        return new User(http.post(getBaseURL() + "blocks/create/" + id + ".xml", true), this);
+    public User createBlock(String screenName) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserJSONImpl(http.post(conf.getRestBaseURL() + "blocks/create.json?screen_name=" + screenName, auth));
     }
 
     /**
-     * Un-blocks the user specified in the ID parameter as the authenticating user.  Returns the un-blocked user in the requested format when successful.
-     *
-     * @param id the ID or screen_name of the user to block
-     * @return the unblocked user
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.1
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-blocks%C2%A0destroy">Twitter API Wiki / Twitter REST API Method: blocks destroy</a>
+     * {@inheritDoc}
      */
-    public User destroyBlock(String id) throws TwitterException {
-        return new User(http.post(getBaseURL() + "blocks/destroy/" + id + ".xml", true), this);
+    public User createBlock(int userId) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserJSONImpl(http.post(conf.getRestBaseURL() + "blocks/create.json?user_id=" + userId, auth));
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public User destroyBlock(String screen_name) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserJSONImpl(http.post(conf.getRestBaseURL() + "blocks/destroy.json?screen_name=" + screen_name, auth));
+    }
 
     /**
-     * Tests if a friendship exists between two users.
-     * <br>This method calls http://twitter.com/blocks/exists/id.xml
-     *
-     * @param id The ID or screen_name of the potentially blocked user.
-     * @return  if the authenticating user is blocking a target user
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.4
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-blocks-exists">Twitter API Wiki / Twitter REST API Method: blocks exists</a>
+     * {@inheritDoc}
      */
-    public boolean existsBlock(String id) throws TwitterException {
-        try{
-            return -1 == get(getBaseURL() + "blocks/exists/" + id + ".xml", true).
+    public User destroyBlock(int userId) throws TwitterException {
+        ensureAuthorizationEnabled();
+        return new UserJSONImpl(http.post(conf.getRestBaseURL() + "blocks/destroy.json?user_id=" + userId, auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean existsBlock(String screenName) throws TwitterException {
+        ensureAuthorizationEnabled();
+        try {
+            // @todo this method looks to be always returning false as it's expecting an XML format.
+            return -1 == http.get(conf.getRestBaseURL() + "blocks/exists.json?screen_name=" + screenName, auth).
                     asString().indexOf("<error>You are not blocking this user.</error>");
-        }catch(TwitterException te){
-            if(te.getStatusCode() == 404){
+        } catch (TwitterException te) {
+            if (te.getStatusCode() == 404) {
                 return false;
             }
             throw te;
@@ -1580,154 +1278,233 @@ public class Twitter extends TwitterSupport implements java.io.Serializable {
     }
 
     /**
-     * Returns a list of user objects that the authenticating user is blocking.
-     * <br>This method calls http://twitter.com/blocks/blocking.xml
-     *
-     * @return a list of user objects that the authenticating user
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.4
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-blocks-blocking">Twitter API Wiki / Twitter REST API Method: blocks blocking</a>
+     * {@inheritDoc}
      */
-    public List<User> getBlockingUsers() throws
-            TwitterException {
-        return User.constructUsers(get(getBaseURL() +
-                "blocks/blocking.xml", true), this);
+    public boolean existsBlock(int userId) throws TwitterException {
+        ensureAuthorizationEnabled();
+        try {
+            return -1 == http.get(conf.getRestBaseURL() + "blocks/exists.json?user_id=" + userId, auth).
+                    asString().indexOf("<error>You are not blocking this user.</error>");
+        } catch (TwitterException te) {
+            if (te.getStatusCode() == 404) {
+                return false;
+            }
+            throw te;
+        }
     }
 
     /**
-     * Returns a list of user objects that the authenticating user is blocking.
-     * <br>This method calls http://twitter.com/blocks/blocking.xml
-     *
-     * @param page the number of page
-     * @return a list of user objects that the authenticating user
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.4
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-blocks-blocking">Twitter API Wiki / Twitter REST API Method: blocks blocking</a>
+     * {@inheritDoc}
      */
-    public List<User> getBlockingUsers(int page) throws
+    public ResponseList<User> getBlockingUsers() throws
             TwitterException {
-        return User.constructUsers(get(getBaseURL() +
-                "blocks/blocking.xml?page=" + page, true), this);
+        ensureAuthorizationEnabled();
+        return UserJSONImpl.createUserList(http.get(conf.getRestBaseURL() +
+                "blocks/blocking.json", auth));
     }
 
     /**
-     * Returns an array of numeric user ids the authenticating user is blocking.
-     * <br>This method calls http://twitter.com/blocks/blocking/ids
-     * @return Returns an array of numeric user ids the authenticating user is blocking.
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.4
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-blocks-blocking-ids">Twitter API Wiki / Twitter REST API Method: blocks blocking ids</a>
+     * {@inheritDoc}
+     */
+    public ResponseList<User> getBlockingUsers(int page) throws
+            TwitterException {
+        ensureAuthorizationEnabled();
+        return UserJSONImpl.createUserList(http.get(conf.getRestBaseURL() +
+                "blocks/blocking.json?page=" + page, auth));
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public IDs getBlockingUsersIDs() throws TwitterException {
-        return new IDs(get(getBaseURL() + "blocks/blocking/ids.xml", true));
+        ensureAuthorizationEnabled();
+        return IDsJSONImpl.getBlockIDs(http.get(conf.getRestBaseURL() + "blocks/blocking/ids.json", auth));
+    }
+
+    /* Spam Reporting Methods */
+
+    /**
+     * {@inheritDoc}
+     */
+    public User reportSpam(int userId) throws TwitterException{
+        ensureAuthorizationEnabled();
+        return new UserJSONImpl(http.post(conf.getRestBaseURL() + "report_spam.json?user_id=" + userId, auth));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public User reportSpam(String screenName) throws TwitterException{
+        ensureAuthorizationEnabled();
+        return new UserJSONImpl(http.post(conf.getRestBaseURL() + "report_spam.json?screenName=" + screenName, auth));
     }
 
     /* Saved Searches Methods */
+
     /**
-     * Returns the authenticated user's saved search queries.
-     * <br>This method calls http://twitter.com/saved_searches.json
-     * @return Returns an array of numeric user ids the authenticating user is blocking.
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.8
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-saved_searches">Twitter API Wiki / Twitter REST API Method: saved_searches</a>
+     * {@inheritDoc}
      */
     public List<SavedSearch> getSavedSearches() throws TwitterException {
-        return SavedSearch.constructSavedSearches(get(getBaseURL() + "saved_searches.json", true));
+        ensureAuthorizationEnabled();
+        return SavedSearchJSONImpl.createSavedSearchList(http.get(conf.getRestBaseURL() + "saved_searches.json", auth));
     }
 
     /**
-     * Retrieve the data for a saved search owned by the authenticating user specified by the given id.
-     * <br>This method calls http://twitter.com/saved_searches/show/id.json
-     * @param id The id of the saved search to be retrieved.
-     * @return the data for a saved search
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.8
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-saved_searches-show">Twitter API Wiki / Twitter REST API Method: saved_searches show</a>
+     * {@inheritDoc}
      */
     public SavedSearch showSavedSearch(int id) throws TwitterException {
-        return new SavedSearch(get(getBaseURL() + "saved_searches/show/" + id
-                + ".json", true));
+        ensureAuthorizationEnabled();
+        return new SavedSearchJSONImpl(http.get(conf.getRestBaseURL() + "saved_searches/show/" + id
+                + ".json", auth));
     }
 
     /**
-     * Retrieve the data for a saved search owned by the authenticating user specified by the given id.
-     * <br>This method calls http://twitter.com/saved_searches/saved_searches/create.json
-     * @return the data for a created saved search
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.8
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-saved_searches-create">Twitter API Wiki / Twitter REST API Method: saved_searches create</a>
+     * {@inheritDoc}
      */
     public SavedSearch createSavedSearch(String query) throws TwitterException {
-        return new SavedSearch(http.post(getBaseURL() + "saved_searches/create.json"
-                , new PostParameter[]{new PostParameter("query", query)}, true));
+        ensureAuthorizationEnabled();
+        return new SavedSearchJSONImpl(http.post(conf.getRestBaseURL() + "saved_searches/create.json"
+                , new HttpParameter[]{new HttpParameter("query", query)}, auth));
     }
 
     /**
-     * Destroys a saved search for the authenticated user. The search specified by id must be owned by the authenticating user.
-     * <br>This method calls http://twitter.com/saved_searches/destroy/id.json
-     * @param id The id of the saved search to be deleted.
-     * @return the data for a destroyed saved search
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 2.0.8
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-saved_searches-destroy">Twitter API Wiki / Twitter REST API Method: saved_searches destroy</a>
+     * {@inheritDoc}
      */
     public SavedSearch destroySavedSearch(int id) throws TwitterException {
-        return new SavedSearch(http.post(getBaseURL() + "saved_searches/destroy/" + id
-                + ".json", true));
+        ensureAuthorizationEnabled();
+        return new SavedSearchJSONImpl(http.post(conf.getRestBaseURL()
+                + "saved_searches/destroy/" + id + ".json", auth));
     }
 
     /* Help Methods */
+
     /**
-     * Returns the string "ok" in the requested format with a 200 OK HTTP status code.
-     *
-     * @return true if the API is working
-     * @throws TwitterException when Twitter service or network is unavailable
-     * @since Twitter4J 1.0.4
-     * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-help%C2%A0test">Twitter API Wiki / Twitter REST API Method: help test</a>
+     * {@inheritDoc}
      */
     public boolean test() throws TwitterException {
-        return -1 != get(getBaseURL() + "help/test.xml", false).
+        return -1 != http.get(conf.getRestBaseURL() + "help/test.json").
                 asString().indexOf("ok");
     }
 
+    /* OAuth support methods */
 
-    private SimpleDateFormat format = new SimpleDateFormat(
-            "EEE, d MMM yyyy HH:mm:ss z", Locale.ENGLISH);
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Twitter twitter = (Twitter) o;
-
-        if (!baseURL.equals(twitter.baseURL)) return false;
-        if (!format.equals(twitter.format)) return false;
-        if (!http.equals(twitter.http)) return false;
-        if (!searchBaseURL.equals(twitter.searchBaseURL)) return false;
-        if (!source.equals(twitter.source)) return false;
-
-        return true;
+    private OAuthSupport getOAuth() {
+        if (!(auth instanceof OAuthSupport)) {
+            throw new IllegalStateException(
+                    "OAuth consumer key/secret combination not supplied");
+        }
+        return (OAuthSupport)auth;
     }
 
-    @Override
-    public int hashCode() {
-        int result = http.hashCode();
-        result = 31 * result + baseURL.hashCode();
-        result = 31 * result + searchBaseURL.hashCode();
-        result = 31 * result + source.hashCode();
-        result = 31 * result + format.hashCode();
-        return result;
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized void setOAuthConsumer(String consumerKey, String consumerSecret){
+        if (auth instanceof NullAuthorization) {
+            auth = new OAuthAuthorization(conf, consumerKey, consumerSecret);
+        }else if(auth instanceof BasicAuthorization){
+            throw new IllegalStateException("Basic authenticated instance.");
+        }else if(auth instanceof OAuthAuthorization){
+            throw new IllegalStateException("consumer key/secret pair already set.");
+        }
+    }
+
+    // implementation for OAuthSupport interface
+    /**
+     * @throws IllegalStateException when AccessToken has already been retrieved or set
+     */
+    public RequestToken getOAuthRequestToken() throws TwitterException {
+        return getOAuthRequestToken(null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public RequestToken getOAuthRequestToken(String callbackUrl) throws TwitterException {
+        return getOAuth().getOAuthRequestToken(callbackUrl);
+    }
+
+    protected String screenName = null;
+
+    /**
+     * {@inheritDoc}
+     */
+    public AccessToken getOAuthAccessToken() throws TwitterException {
+        AccessToken oauthAccessToken = getOAuth().getOAuthAccessToken();
+        screenName = oauthAccessToken.getScreenName();
+        return oauthAccessToken;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public AccessToken getOAuthAccessToken(String oauthVerifier) throws TwitterException {
+        AccessToken oauthAccessToken = getOAuth().getOAuthAccessToken(oauthVerifier);
+        screenName = oauthAccessToken.getScreenName();
+        return oauthAccessToken;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized AccessToken getOAuthAccessToken(RequestToken requestToken) throws TwitterException {
+        OAuthSupport oauth = getOAuth();
+        AccessToken oauthAccessToken = oauth.getOAuthAccessToken(requestToken);
+        screenName = oauthAccessToken.getScreenName();
+        return oauthAccessToken;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized AccessToken getOAuthAccessToken(RequestToken requestToken, String oauthVerifier) throws TwitterException {
+        return getOAuth().getOAuthAccessToken(requestToken, oauthVerifier);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setOAuthAccessToken(AccessToken accessToken) {
+        getOAuth().setOAuthAccessToken(accessToken);
+    }
+
+    public synchronized AccessToken getOAuthAccessToken(String token, String tokenSecret) throws TwitterException {
+        return getOAuth().getOAuthAccessToken(new RequestToken(token,tokenSecret));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public synchronized AccessToken getOAuthAccessToken(String token
+            , String tokenSecret, String pin) throws TwitterException {
+        return getOAuthAccessToken(new RequestToken(token, tokenSecret), pin);
+    }
+
+    /**
+     * Sets the access token
+     *
+     * @param token access token
+     * @param tokenSecret access token secret
+     * @since Twitter 2.0.0
+     * @deprecated Use Twitter getInstance(AccessToken accessToken)
+     * @throws IllegalStateException when AccessToken has already been retrieved or set
+     */
+    public void setOAuthAccessToken(String token, String tokenSecret) {
+        getOAuth().setOAuthAccessToken(new AccessToken(token, tokenSecret));
+    }
+
+    /**
+     * tests if the instance is authenticated by Basic
+     * @return returns true if the instance is authenticated by Basic
+     */
+    public boolean isOAuthEnabled() {
+        return auth instanceof OAuthAuthorization && auth.isEnabled();
     }
 
     @Override
     public String toString() {
         return "Twitter{" +
-                "http=" + http +
-                ", baseURL='" + baseURL + '\'' +
-                ", searchBaseURL='" + searchBaseURL + '\'' +
-                ", source='" + source + '\'' +
-                ", format=" + format +
+                "auth='" + auth + '\'' +
                 '}';
     }
 }

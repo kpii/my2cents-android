@@ -29,6 +29,8 @@ package twitter4j;
 import java.util.LinkedList;
 import java.util.List;
 
+import twitter4j.conf.Configuration;
+
 /**
  *
  * @author Yusuke Yamamoto - yusuke at mac.com
@@ -36,11 +38,11 @@ import java.util.List;
 /*package*/ class Dispatcher {
     private ExecuteThread[] threads;
     private List<Runnable> q = new LinkedList<Runnable> ();
-    public Dispatcher(String name){
-        this(name,1);
+    public Dispatcher(Configuration conf, String name){
+        this(conf, name, 1);
     }
-    public Dispatcher(String name, int threadcount) {
-        threads = new ExecuteThread[threadcount];
+    public Dispatcher(Configuration conf, String name, int threadCount) {
+        threads = new ExecuteThread[threadCount];
         for (int i = 0; i < threads.length; i++) {
             threads[i] = new ExecuteThread(name,this, i);
             threads[i].setDaemon(true);

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="?android:attr/listPreferredItemHeight"
+	android:padding="6dip">
+	<ImageView
+		android:layout_width="wrap_content"
+		android:id="@+id/tweet_avatar"
+		android:layout_marginRight="5px"
+		android:layout_height="wrap_content"
+		android:maxWidth="48px"
+		android:maxHeight="48px"
+		android:adjustViewBounds="true" />
+	<TextView
+		android:id="@+id/tweet_author"
+		android:layout_height="wrap_content"
+		android:layout_toRightOf="@id/tweet_avatar"
+		android:layout_width="wrap_content"
+		android:textSize="@dimen/comment_username_text"
+		android:textColor="#3366aa" />
+	<TextView
+		android:layout_height="wrap_content"
+		android:id="@+id/tweet_sent"
+		android:layout_toRightOf="@id/tweet_author"
+		android:layout_width="wrap_content"
+		android:paddingLeft="10px"
+		android:textSize="@dimen/comment_sent_text"
+		android:textColor="#6699aa"></TextView>
+	<TextView
+		android:layout_width="fill_parent"
+		android:ellipsize="marquee"
+		android:id="@+id/tweet_message"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/tweet_author"
+		android:layout_toRightOf="@id/tweet_avatar" />
+</RelativeLayout>
