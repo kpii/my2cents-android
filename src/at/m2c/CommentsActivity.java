@@ -10,9 +10,9 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import twitter4j.GeoLocation;
 import twitter4j.Status;
 import twitter4j.Tweet;
-import twitter4j.TweetJSONImpl;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -47,6 +47,7 @@ import at.m2c.data.DataManager;
 import at.m2c.util.GpsManager;
 import at.m2c.util.NetworkManager;
 import at.m2c.util.ProviderManager;
+import at.m2c.util.RelativeTime;
 
 public final class CommentsActivity extends ListActivity {
 	
@@ -190,16 +191,13 @@ public final class CommentsActivity extends ListActivity {
 		protected Void doInBackground(List<Tweet>... params) {			
 			URL url = null;
 			for (Tweet tweet : params[0]) {
-				if (avatarMap.containsKey(tweet.getFromUser())) {
-					tweet.setProfileImage(avatarMap.get(tweet.getFromUser()));
-				} else {
+				if (!avatarMap.containsKey(tweet.getFromUser())) {
 					try {
 						url = new URL(tweet.getProfileImageUrl());
 					} catch (MalformedURLException e) {
 						Log.e(this.toString(), e.toString());
 					}
-					tweet.setProfileImage(NetworkManager.getRemoteImage(url));
-					avatarMap.put(tweet.getFromUser(), tweet.getProfileImage());
+					avatarMap.put(tweet.getFromUser(), NetworkManager.getRemoteImage(url));
 				}
 				publishProgress();
 			}
@@ -299,26 +297,27 @@ public final class CommentsActivity extends ListActivity {
 						l = GpsManager.getGPS(locationManager);
 					}
 					
-					Status status = ProviderManager.updateStatus(message, l);
-					if (status != null) {
-						Tweet comment = new TweetJSONImpl(status);
-						if (comment != null) {
-							if (avatarMap.containsKey(comment.getFromUser())) {
-								comment.setProfileImage(avatarMap.get(comment.getFromUser()));
-							} else {
-								URL url = null;
-								try {
-									url = new URL(comment.getProfileImageUrl());
-								} catch (MalformedURLException e) {
-									Log.e(this.toString(), e.toString());
-								}
-								comment.setProfileImage(NetworkManager.getRemoteImage(url));
-								avatarMap.put(comment.getFromUser(), comment.getProfileImage());
-							}
-							tweets.add(0, comment);
-						}
-						runOnUiThread(commentPosted);
-					}
+					GeoLocation location = new GeoLocation(l.getLatitude(), l.getLongitude());
+					Status status = ProviderManager.updateStatus(message, location);
+//					if (status != null) {
+//						Tweet comment = new TweetJSONImpl(status);
+//						if (comment != null) {
+//							if (avatarMap.containsKey(comment.getFromUser())) {
+//								comment.setProfileImage(avatarMap.get(comment.getFromUser()));
+//							} else {
+//								URL url = null;
+//								try {
+//									url = new URL(comment.getProfileImageUrl());
+//								} catch (MalformedURLException e) {
+//									Log.e(this.toString(), e.toString());
+//								}
+//								comment.setProfileImage(NetworkManager.getRemoteImage(url));
+//								avatarMap.put(comment.getFromUser(), comment.getProfileImage());
+//							}
+//							tweets.add(0, comment);
+//						}
+//						runOnUiThread(commentPosted);
+//					}
 
 					runOnUiThread(dismissProgressDialog);
 				}
@@ -443,12 +442,12 @@ public final class CommentsActivity extends ListActivity {
 
 				TextView sentTextView = (TextView) view.findViewById(R.id.tweet_sent);
 				if (sentTextView != null) {
-					sentTextView.setText(comment.getRelativeTime());
+					sentTextView.setText(RelativeTime.getDifference(comment.getCreatedAt().getTime()));
 				}
 
 				ImageView avatarImageView = (ImageView) view.findViewById(R.id.tweet_avatar);
 				if (avatarImageView != null) {
-					avatarImageView.setImageBitmap(comment.getProfileImage());
+					avatarImageView.setImageBitmap(avatarMap.get(comment.getFromUser()));
 				}
 			}
 			return view;

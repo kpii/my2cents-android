@@ -26,7 +26,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j.api;
 
-import android.location.Location;
+import twitter4j.GeoLocation;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.TwitterException;
@@ -73,7 +73,7 @@ public interface StatusMethods
 	 * @since Twitter4J 2.0.10
 	 * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses%C2%A0update">Twitter API Wiki / Twitter REST API Method: statuses update</a>
 	 */
-	Status updateStatus(String status, Location location) throws TwitterException;
+	Status updateStatus(String status, GeoLocation location) throws TwitterException;
 
 	/**
 	 * Updates the user's status.
@@ -103,7 +103,7 @@ public interface StatusMethods
 	 * @since Twitter4J 2.0.10
 	 * @see <a href="http://apiwiki.twitter.com/Twitter-REST-API-Method%3A-statuses%C2%A0update">Twitter API Wiki / Twitter REST API Method: statuses update</a>
 	 */
-	Status updateStatus(String status, long inReplyToStatusId, Location location)
+	Status updateStatus(String status, long inReplyToStatusId, GeoLocation location)
 			throws TwitterException;
 
 	/**

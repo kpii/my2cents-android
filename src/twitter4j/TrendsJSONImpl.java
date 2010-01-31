@@ -47,7 +47,7 @@ import twitter4j.http.HttpResponse;
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.0.2
  */
-/*package*/ class TrendsJSONImpl implements Trends, java.io.Serializable {
+/*package*/ final class TrendsJSONImpl implements Trends, java.io.Serializable {
     private Date asOf;
     private Date trendAt;
     private Trend[] trends;

@@ -24,23 +24,14 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package twitter4j;
+package twitter4j.http;
 
-/**
- * @author Andrew Hedges - andrew.hedges at gmail.com
- */
-public interface RateLimitStatusListener {
+import java.util.Map;
 
+public interface HttpClientWrapperConfiguration extends HttpClientConfiguration{
     /**
-     * Called when the response contains rate limit status.
-     * @param event rate limit status event.
+     *
+     * @return request headers
      */
-	public void onRateLimitStatus(RateLimitStatusEvent event);
-
-    /**
-     * Called when the account or IP address is hitting the rate limit.<br>
-     * onRateLimitStatus will be also called before this event.
-     * @param event rate limit status event.
-     */
-	public void onRateLimitReached(RateLimitStatusEvent event);
+    Map<String, String> getRequestHeaders();
 }

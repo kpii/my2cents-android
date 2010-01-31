@@ -26,21 +26,62 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j;
 
+import twitter4j.conf.Configuration;
+import twitter4j.http.Authorization;
+
 /**
- * @author Andrew Hedges - andrew.hedges at gmail.com
+ * A factory class for TwitterFactory.<br>
+ * An instance of this class is completely thread safe and can be re-used and used concurrently.<br>
+ * Note that TwitterStream is NOT compatible with Google App Engine as GAE is not capable of handling requests longer than 30 seconds.
+ *
+ * @author Yusuke Yamamoto - yusuke at mac.com
+ * @since Twitter4J 2.1.0
  */
-public interface RateLimitStatusListener {
+public class TwitterStreamFactory extends TwitterFactoryBase<TwitterStream>{
+    private static final long serialVersionUID = 8146074704915782233L;
+    private StatusListener listener = null;
 
     /**
-     * Called when the response contains rate limit status.
-     * @param event rate limit status event.
+     * {@inheritDoc}
      */
-	public void onRateLimitStatus(RateLimitStatusEvent event);
+    public TwitterStreamFactory() {
+        super();
+    }
 
     /**
-     * Called when the account or IP address is hitting the rate limit.<br>
-     * onRateLimitStatus will be also called before this event.
-     * @param event rate limit status event.
+     * {@inheritDoc}
      */
-	public void onRateLimitReached(RateLimitStatusEvent event);
+    public TwitterStreamFactory(StatusListener listener) {
+        super();
+        this.listener = listener;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    TwitterStreamFactory(Configuration conf) {
+        super(conf);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public TwitterStreamFactory(String configTreePath) {
+        super(configTreePath);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public TwitterStreamFactory(String configTreePath, StatusListener listener) {
+        super(configTreePath);
+        this.listener = listener;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected TwitterStream getInstance(Configuration conf, Authorization auth) {
+        return new TwitterStream(conf, auth, listener);
+    }
 }

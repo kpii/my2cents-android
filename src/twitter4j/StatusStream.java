@@ -34,15 +34,15 @@ import java.io.InputStreamReader;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import twitter4j.conf.Configuration;
 import twitter4j.http.HttpResponse;
+import twitter4j.logging.Logger;
 
 /**
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.0.4
  */
 public class StatusStream {
-    private static final boolean DEBUG = Configuration.getInstance().isDebug();
+    private static final Logger logger = Logger.getLogger();
 
     private boolean streamAlive = true;
     private BufferedReader br;
@@ -70,7 +70,7 @@ public class StatusStream {
             String line;
             line = br.readLine();
             if (null != line && line.length() > 0) {
-                log("received:", line);
+                logger.debug("received:", line);
                 try {
                     JSONObject json = new JSONObject(line);
                     if (!json.isNull("text")) {
@@ -100,18 +100,6 @@ public class StatusStream {
         br.close();
         if (null != response) {
             response.disconnect();
-        }
-    }
-
-    private void log(String message) {
-        if (DEBUG) {
-            System.out.println("[" + new java.util.Date() + "]" + message);
-        }
-    }
-
-    private void log(String message, String message2) {
-        if (DEBUG) {
-            log(message + message2);
         }
     }
 }

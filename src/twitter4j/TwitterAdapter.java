@@ -120,6 +120,11 @@ public class TwitterAdapter implements TwitterListener {
     /*User Methods*/
     public void gotUserDetail(User user){
     }
+    /**
+     * @since Twitter4J 2.1.0
+     */
+    public void searchedUser(ResponseList<User> userList) {
+    }
 
     public void gotFriendsStatuses(PagableResponseList<User> users){
     }
@@ -307,11 +312,14 @@ public class TwitterAdapter implements TwitterListener {
     /**
      * @since Twitter4J 2.0.4
      */
-    public void gotBlockingUsersIDs(IDs blockingUsersIDs){
+    public void gotBlockingUsersIDs(IDs blockingUsersIDs) {
     }
 
     /*Spam Reporting Methods*/
-    //reportSpam()
+
+    public void reportedSpam(User reportedSpammer) throws TwitterException {
+    }
+
 
     /*Saved Searches Methods*/
     //getSavedSearches()

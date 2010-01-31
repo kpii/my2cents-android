@@ -43,7 +43,7 @@ import twitter4j.http.HttpResponse;
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.0.8
  */
-/*package*/ class SavedSearchJSONImpl extends TwitterResponseImpl implements SavedSearch {
+/*package*/ final class SavedSearchJSONImpl extends TwitterResponseImpl implements SavedSearch {
 
     private Date createdAt;
     private String query;

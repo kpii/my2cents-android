@@ -34,6 +34,5 @@ package twitter4j.api;
  *
  * http://yusuke.homeip.net/jira/browse/TFJ-233
  */
-public interface LocalTrendsMethodsAsync
-{
+public interface LocalTrendsMethodsAsync {
 }

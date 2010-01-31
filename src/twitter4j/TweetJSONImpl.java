@@ -34,20 +34,14 @@ import static twitter4j.ParseUtil.getUnescapedString;
 
 import java.util.Date;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.graphics.Bitmap;
-import android.location.Location;
-import at.m2c.util.Helper;
-import at.m2c.util.RelativeTime;
 
 /**
  * A data class representing a Tweet in the search response
  *
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
-/*package*/public class TweetJSONImpl implements Tweet, java.io.Serializable {
+/*package*/ final class TweetJSONImpl implements Tweet, java.io.Serializable {
     private String text;
     private int toUserId = -1;
     private String toUser = null;
@@ -58,21 +52,10 @@ import at.m2c.util.RelativeTime;
     private String source;
     private String profileImageUrl;
     private Date createdAt;
-    
-    private String relativeTime;
-    private Bitmap profileImage;
 
-    private Location geoLocation = null;
+    private GeoLocation geoLocation = null;
     private static final long serialVersionUID = 4299736733993211587L;
 
-    public TweetJSONImpl(Status status) {
-    	fromUser = status.getUser().getScreenName();
-    	profileImageUrl = status.getUser().getProfileImageURL().toString();
-    	createdAt = status.getCreatedAt();
-    	relativeTime = RelativeTime.getDifference(createdAt.getTime());
-    	text = status.getText();
-    }
-    
     /*package*/ TweetJSONImpl(JSONObject tweet) throws TwitterException {
         text = getUnescapedString("text", tweet);
         toUserId = getInt("to_user_id", tweet);
@@ -84,8 +67,7 @@ import at.m2c.util.RelativeTime;
         source = getUnescapedString("source", tweet);
         profileImageUrl = getUnescapedString("profile_image_url", tweet);
         createdAt = getDate("created_at", tweet, "EEE, dd MMM yyyy HH:mm:ss z");
-        relativeTime = RelativeTime.getDifference(createdAt.getTime());
-        geoLocation = Helper.getLocationInstance(tweet);
+        geoLocation = GeoLocation.getInstance(tweet);
     }
 
     /**
@@ -161,7 +143,7 @@ import at.m2c.util.RelativeTime;
     /**
      * {@inheritDoc}
      */
-    public Location getGeoLocation() {
+    public GeoLocation getGeoLocation() {
         return geoLocation;
     }
 
@@ -209,16 +191,4 @@ import at.m2c.util.RelativeTime;
                 ", geoLocation=" + geoLocation +
                 '}';
     }
-    
-    public String getRelativeTime() {
-		return relativeTime;
-	}
-
-	public void setProfileImage(Bitmap profileImage) {
-		this.profileImage = profileImage;
-	}
-
-	public Bitmap getProfileImage() {
-		return profileImage;
-	}
 }

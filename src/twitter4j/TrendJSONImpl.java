@@ -37,7 +37,7 @@ import org.json.JSONObject;
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.0.2
  */
-/*package*/ class TrendJSONImpl implements Trend, java.io.Serializable {
+/*package*/ final class TrendJSONImpl implements Trend, java.io.Serializable {
     private String name;
     private String url = null;
     private String query = null;

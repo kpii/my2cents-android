@@ -24,14 +24,27 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package twitter4j.http;
+package twitter4j.conf;
 
-import java.util.Map;
-
-public interface HttpRequestFactoryConfiguration {
+/**
+ * @author Yusuke Yamamoto - yusuke at mac.com
+ */
+public interface ConfigurationFactory {
     /**
-     *
-     * @return request headers
+     * returns the root configuration
+     * @return root configuration
      */
-    Map<String, String> getRequestHeaders();
+    Configuration getInstance();
+
+    /**
+     * returns the configuration specified by the path
+     * @param configTreePath the path
+     * @return the configuratoin
+     */
+    Configuration getInstance(String configTreePath);
+
+    /**
+     * clean up resources acquired by this factory.
+     */
+    void dispose();
 }

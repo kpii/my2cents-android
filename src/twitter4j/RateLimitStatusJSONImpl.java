@@ -41,7 +41,7 @@ import twitter4j.http.HttpResponse;
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @see <a href="http://apiwiki.twitter.com/Rate-limiting">Twitter API Wiki / Rate limiting</a>
  */
-/*package*/ class RateLimitStatusJSONImpl implements RateLimitStatus, java.io.Serializable {
+/*package*/ final class RateLimitStatusJSONImpl implements RateLimitStatus, java.io.Serializable {
 
     private int remainingHits;
     private int hourlyLimit;

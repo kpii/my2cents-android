@@ -26,21 +26,63 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j;
 
+import twitter4j.conf.Configuration;
+import twitter4j.conf.ConfigurationContext;
+import twitter4j.http.Authorization;
+import twitter4j.http.BasicAuthorization;
+import twitter4j.http.NullAuthorization;
+
 /**
- * @author Andrew Hedges - andrew.hedges at gmail.com
+ * A FactoryBase class which supports Basic Authorization
+ *
+ * @author Yusuke Yamamoto - yusuke at mac.com
  */
-public interface RateLimitStatusListener {
+abstract class TwitterFactoryBase<T> implements java.io.Serializable {
+    protected final Configuration conf;
 
     /**
-     * Called when the response contains rate limit status.
-     * @param event rate limit status event.
+     * Creates a Factory
      */
-	public void onRateLimitStatus(RateLimitStatusEvent event);
+    protected TwitterFactoryBase() {
+        this.conf = ConfigurationContext.getInstance();
+    }
 
     /**
-     * Called when the account or IP address is hitting the rate limit.<br>
-     * onRateLimitStatus will be also called before this event.
-     * @param event rate limit status event.
+     * Creates a Factory with a specified config tree path.
+     *
+     * @param configTreePath the path
      */
-	public void onRateLimitReached(RateLimitStatusEvent event);
+    protected TwitterFactoryBase(String configTreePath) {
+        this.conf = ConfigurationContext.getInstance(configTreePath);
+    }
+
+    protected TwitterFactoryBase(Configuration conf) {
+        this.conf = conf;
+    }
+
+    /**
+     * Returns a instance.
+     *
+     * @return default singleton instance
+     */
+    public T getInstance() {
+        return getInstance(conf, NullAuthorization.getInstance());
+    }
+
+    public T getInstance(Authorization auth) {
+        return getInstance(conf, auth);
+    }
+
+    /**
+     * Returns a Basic Authenticated instance.
+     *
+     * @param screenName screen name 
+     * @param password password
+     * @return an instance
+     */
+    public T getInstance(String screenName, String password) {
+        return getInstance(new BasicAuthorization(screenName, password));
+    }
+
+    protected abstract T getInstance(Configuration conf, Authorization auth);
 }

@@ -73,8 +73,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 	private static final float BEEP_VOLUME = 0.15f;
 	private static final long VIBRATE_DURATION = 200L;
 
-	private static final String PACKAGE_NAME = "at.m2c";
-
 	private CaptureActivityHandler handler;
 
 	private ViewfinderView viewfinderView;
@@ -292,7 +290,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 	 */
 	private void showHelpOnFirstLaunch() {
 		try {
-			PackageInfo info = getPackageManager().getPackageInfo(PACKAGE_NAME, 0);
+			PackageInfo info = getPackageManager().getPackageInfo(this.getPackageName(), 0);
 			int currentVersion = info.versionCode;
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 			int lastVersion = prefs.getInt(PreferencesActivity.KEY_HELP_VERSION_SHOWN, 0);

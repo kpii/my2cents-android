@@ -29,8 +29,6 @@ package twitter4j;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.location.Location;
-
 import twitter4j.http.HttpParameter;
 
 /**
@@ -184,7 +182,7 @@ public class Query {
      * @param radius radius
      * @param unit Query.MILES or Query.KILOMETERS
      */
-    public void setGeoCode(Location location, double radius
+    public void setGeoCode(GeoLocation location, double radius
             , String unit) {
         this.geocode = location.getLatitude() + "," + location.getLongitude() + "," + radius + unit;
     }
@@ -197,7 +195,7 @@ public class Query {
      * @return the instance
      * @since Twitter4J 2.1.0
      */
-    public Query geoCode(Location location, double radius
+    public Query geoCode(GeoLocation location, double radius
             , String unit) {
         setGeoCode(location, radius, unit);
         return this;

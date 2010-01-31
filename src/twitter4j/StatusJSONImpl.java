@@ -38,16 +38,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.location.Location;
-import at.m2c.util.Helper;
-
 import twitter4j.http.HttpResponse;
 
 /**
  * A data class representing one single status of a user.
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
-/*package*/ class StatusJSONImpl extends TwitterResponseImpl implements Status, java.io.Serializable {
+/*package*/ final class StatusJSONImpl extends TwitterResponseImpl implements Status, java.io.Serializable {
 
     private Date createdAt;
     private long id;
@@ -58,7 +55,7 @@ import twitter4j.http.HttpResponse;
     private int inReplyToUserId;
     private boolean isFavorited;
     private String inReplyToScreenName;
-    private Location geoLocation = null;
+    private GeoLocation geoLocation = null;
 
     private Status retweetedStatus;
     private static final long serialVersionUID = 1608000492860584608L;
@@ -90,7 +87,7 @@ import twitter4j.http.HttpResponse;
         } catch (JSONException jsone) {
             throw new TwitterException(jsone);
         }
-        geoLocation = Helper.getLocationInstance(json);
+        geoLocation = GeoLocation.getInstance(json);
         if (!json.isNull("retweeted_status")) {
             try {
                 retweetedStatus = new StatusJSONImpl(json.getJSONObject("retweeted_status"));
@@ -183,7 +180,7 @@ import twitter4j.http.HttpResponse;
      * @return returns The location that this tweet refers to if available (can be null)
      * @since Twitter4J 2.1.0
      */
-    public Location getGeoLocation(){
+    public GeoLocation getGeoLocation(){
         return geoLocation;
     }
 

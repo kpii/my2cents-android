@@ -2,6 +2,7 @@ package at.m2c.util;
 
 import java.util.List;
 
+import twitter4j.GeoLocation;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Status;
@@ -10,7 +11,6 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.User;
-import android.location.Location;
 import android.util.Log;
 
 public final class ProviderManager {
@@ -25,11 +25,12 @@ public final class ProviderManager {
 	
 
 	public final static void Initialize(String username, String password)
-	{		
-		twitter = TwitterFactory.getBasicAuthenticatedInstance(username, password);
+	{
+		TwitterFactory factory = new TwitterFactory();
+		twitter = factory.getInstance(username, password);
 	}
 
-	public final static Status updateStatus(String statusText, Location location) {
+	public final static Status updateStatus(String statusText, GeoLocation location) {
 		try {
 			if (location != null)
 				return twitter.updateStatus(statusText, location);

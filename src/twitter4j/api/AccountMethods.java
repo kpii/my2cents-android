@@ -26,12 +26,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j.api;
 
+import java.io.File;
+
 import twitter4j.Device;
 import twitter4j.RateLimitStatus;
 import twitter4j.TwitterException;
 import twitter4j.User;
-
-import java.io.File;
 /**
  * @author Joern Huxhorn - jhuxhorn at googlemail.com
  */

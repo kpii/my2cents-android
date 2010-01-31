@@ -28,9 +28,6 @@ package twitter4j;
 
 import java.util.Date;
 
-import android.graphics.Bitmap;
-import android.location.Location;
-
 /**
  * A data class representing a Tweet in the search response
  *
@@ -115,10 +112,6 @@ public interface Tweet extends java.io.Serializable {
      * @return returns The location that this tweet refers to if available (can be null)
      * @since Twitter4J 2.1.0
      */
-    Location getGeoLocation();
-    
-    String getRelativeTime();
-	void setProfileImage(Bitmap profileImage);
-	Bitmap getProfileImage();
+    GeoLocation getGeoLocation();
 
 }

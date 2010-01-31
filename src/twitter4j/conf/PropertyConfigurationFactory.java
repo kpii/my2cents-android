@@ -24,23 +24,39 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package twitter4j;
+package twitter4j.conf;
 
 /**
- * @author Andrew Hedges - andrew.hedges at gmail.com
+ * ConfigurationFactory implementation for PropertyConfiguration.
+ * Currently getInstance calls concrete constructor each time. No caching at all.
+ *
+ * @author Yusuke Yamamoto - yusuke at mac.com
  */
-public interface RateLimitStatusListener {
+class PropertyConfigurationFactory implements ConfigurationFactory{
+    private static final PropertyConfiguration ROOT_CONFIGURATION;
+    static{
+        ROOT_CONFIGURATION = new PropertyConfiguration();
+    }
 
     /**
-     * Called when the response contains rate limit status.
-     * @param event rate limit status event.
+     * {@inheritDoc}
      */
-	public void onRateLimitStatus(RateLimitStatusEvent event);
+    public Configuration getInstance() {
+        return ROOT_CONFIGURATION;
+    }
+
+    // It may be preferable to cache the config instance
+    /**
+     * {@inheritDoc}
+     */
+    public Configuration getInstance(String configTreePath) {
+        return new PropertyConfiguration(configTreePath);
+    }
 
     /**
-     * Called when the account or IP address is hitting the rate limit.<br>
-     * onRateLimitStatus will be also called before this event.
-     * @param event rate limit status event.
+     * {@inheritDoc}
      */
-	public void onRateLimitReached(RateLimitStatusEvent event);
+    public void dispose(){
+        // nothing to do for property based configuration
+    }
 }

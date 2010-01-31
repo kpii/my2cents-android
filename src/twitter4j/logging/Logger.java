@@ -24,23 +24,41 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package twitter4j;
+package twitter4j.logging;
+
+import twitter4j.conf.ConfigurationContext;
 
 /**
- * @author Andrew Hedges - andrew.hedges at gmail.com
+ * @author Yusuke Yamamoto - yusuke at mac.com
+ * @since Twitter4J 2.1.0
  */
-public interface RateLimitStatusListener {
+public final class Logger {
+    private static final boolean DEBUG = ConfigurationContext.getInstance().isDebugEnabled();
+    private static final Logger SINGLETON = new Logger();
+    private Logger() {
+        //@todo will wrap SLF4J / commons-logging / jul l8er @TFJ-148
+    }
 
-    /**
-     * Called when the response contains rate limit status.
-     * @param event rate limit status event.
-     */
-	public void onRateLimitStatus(RateLimitStatusEvent event);
+    public static Logger getLogger(){
+        //@todo detect the class name from the stacktrace @TFJ-148
+        return SINGLETON;
+    }
 
-    /**
-     * Called when the account or IP address is hitting the rate limit.<br>
-     * onRateLimitStatus will be also called before this event.
-     * @param event rate limit status event.
-     */
-	public void onRateLimitReached(RateLimitStatusEvent event);
+    public boolean isDebugEnabled() {
+        return DEBUG;
+    }
+
+    public void debug(String message) {
+        if (DEBUG) {
+            //@todo include class name in the message @TFJ-148
+            System.out.println("[" + new java.util.Date() + "]" + message);
+        }
+    }
+
+    public void debug(String message, String message2) {
+        if (DEBUG) {
+            debug(message + message2);
+        }
+    }
+
 }

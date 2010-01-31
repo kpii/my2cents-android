@@ -32,47 +32,83 @@ import twitter4j.http.BasicAuthorization;
 import twitter4j.http.NullAuthorization;
 
 /**
+ * Base class of Twitter / AsyncTwitter / TwitterStream supports Basic Authorization.
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
-abstract class TwitterSupport implements java.io.Serializable {
-    protected static final Configuration conf = Configuration.getInstance();
+abstract class TwitterBase implements java.io.Serializable {
+    protected final Configuration conf;
 
     protected Authorization auth;
     private static final long serialVersionUID = -3812176145960812140L;
 
-    /*package*/ TwitterSupport(){
-        this(conf.getUser(), conf.getPassword());
+    /*package*/ TwitterBase(Configuration conf){
+        this.conf = conf;
+        initBasicAuthorization(conf.getUser(), conf.getPassword());
     }
 
-    /*package*/ TwitterSupport(String userId, String password){
-        if (null != userId && null != password) {
-            auth = new BasicAuthorization(userId, password);
+    /*package*/ TwitterBase(Configuration conf, String userId, String password){
+        this.conf = conf;
+        initBasicAuthorization(userId, password);
+    }
+
+    private void initBasicAuthorization(String screenName, String password){
+        if (null != screenName && null != password) {
+            auth = new BasicAuthorization(screenName, password);
         }
         if(null == auth){
             auth = NullAuthorization.getInstance();
         }
     }
 
-    protected void ensureAuthenticationEnabled() {
-        if (!auth.isAuthenticationEnabled()) {
+    /*package*/ TwitterBase(Configuration conf, Authorization auth) {
+        this.conf = conf;
+        this.auth = auth;
+    }
+
+    /**
+     * tests if the instance is authenticated by Basic
+     * @return returns true if the instance is authenticated by Basic
+     */
+    public boolean isBasicAuthEnabled() {
+        return auth instanceof BasicAuthorization && auth.isEnabled();
+    }
+
+    protected void ensureAuthorizationEnabled() {
+        if (!auth.isEnabled()) {
             throw new IllegalStateException(
                     "Neither user ID/password combination nor OAuth consumer key/secret combination supplied");
         }
     }
 
-    protected void ensureBasicAuthenticationEnabled() {
+    protected void ensureBasicEnabled() {
         if (!(auth instanceof BasicAuthorization)) {
             throw new IllegalStateException(
                     "user ID/password combination not supplied");
         }
     }
 
+    protected void ensureBasicNotEnabled() {
+        if (!(auth instanceof BasicAuthorization)) {
+            throw new IllegalStateException(
+                    "user ID/password combination not supplied");
+        }
+    }
+
+    /**
+     * Returns the authorization scheme for this instance.<br>
+     * The returned type will be either of BasicAuthorization, OAuthAuthorization, or NullAuthorization
+     * @return the authorization scheme for this instance
+     */
+    public Authorization getAuthorization(){
+        return auth;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TwitterSupport)) return false;
+        if (!(o instanceof TwitterBase)) return false;
 
-        TwitterSupport that = (TwitterSupport) o;
+        TwitterBase that = (TwitterBase) o;
 
         if (!auth.equals(that.auth)) return false;
 
@@ -86,7 +122,7 @@ abstract class TwitterSupport implements java.io.Serializable {
 
     @Override
     public String toString() {
-        return "TwitterSupport{" +
+        return "TwitterBase{" +
                 "auth=" + auth +
                 '}';
     }

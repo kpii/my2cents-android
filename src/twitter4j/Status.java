@@ -28,8 +28,6 @@ package twitter4j;
 
 import java.util.Date;
 
-import android.location.Location;
-
 /**
  * A data interface representing one single status of a user.
  *
@@ -106,7 +104,7 @@ public interface Status extends TwitterResponse, java.io.Serializable {
      * @return returns The location that this tweet refers to if available (can be null)
      * @since Twitter4J 2.1.0
      */
-    Location getGeoLocation();
+    GeoLocation getGeoLocation();
 
     /**
      * Test if the status is favorited

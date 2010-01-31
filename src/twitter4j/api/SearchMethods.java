@@ -26,13 +26,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package twitter4j.api;
 
+import java.util.Date;
+import java.util.List;
+
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Trends;
 import twitter4j.TwitterException;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author Joern Huxhorn - jhuxhorn at googlemail.com

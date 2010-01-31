@@ -24,23 +24,37 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-package twitter4j;
+package twitter4j.conf;
+
 
 /**
- * @author Andrew Hedges - andrew.hedges at gmail.com
+ * Static factory of Configuration. This class wraps ConfigurationFactory implementations.<br>
+ * By default, twitter4j.conf.PropertyConfigurationFactory will be used and can be changed with -Dtwitter4j.configurationFactory system property.
+ * @author Yusuke Yamamoto - yusuke at mac.com
  */
-public interface RateLimitStatusListener {
+public class ConfigurationContext {
+    public static final String DEFAULT_CONFIGURATION_FACTORY = "twitter4j.conf.PropertyConfigurationFactory";
+    public static final String CONFIGURATION_IMPL = "twitter4j.configurationFactory";
+    private static final ConfigurationFactory factory;
 
-    /**
-     * Called when the response contains rate limit status.
-     * @param event rate limit status event.
-     */
-	public void onRateLimitStatus(RateLimitStatusEvent event);
+    static {
+        String CONFIG_IMPL = System.getProperty(CONFIGURATION_IMPL, DEFAULT_CONFIGURATION_FACTORY);
+        try {
+            factory = (ConfigurationFactory)Class.forName(CONFIG_IMPL).newInstance();
+        } catch (ClassNotFoundException cnfe) {
+            throw new AssertionError(cnfe);
+        } catch (InstantiationException ie) {
+            throw new AssertionError(ie);
+        } catch (IllegalAccessException iae) {
+            throw new AssertionError(iae);
+        }
+    }
 
-    /**
-     * Called when the account or IP address is hitting the rate limit.<br>
-     * onRateLimitStatus will be also called before this event.
-     * @param event rate limit status event.
-     */
-	public void onRateLimitReached(RateLimitStatusEvent event);
+
+    public static Configuration getInstance() {
+        return factory.getInstance();
+    }
+    public static Configuration getInstance(String configTreePath) {
+        return factory.getInstance(configTreePath);
+    }
 }

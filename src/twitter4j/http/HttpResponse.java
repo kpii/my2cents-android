@@ -45,7 +45,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import twitter4j.TwitterException;
-import twitter4j.conf.Configuration;
+import twitter4j.logging.Logger;
 
 /**
  * A data class representing HTTP Response
@@ -53,7 +53,7 @@ import twitter4j.conf.Configuration;
  * @author Yusuke Yamamoto - yusuke at mac.com
  */
 public class HttpResponse {
-    private static final boolean DEBUG = Configuration.getInstance().isDebug();
+    private static final Logger logger = Logger.getLogger();
 
     private static ThreadLocal<DocumentBuilder> builders =
             new ThreadLocal<DocumentBuilder>() {
@@ -140,7 +140,7 @@ public class HttpResponse {
                     buf.append(line).append("\n");
                 }
                 this.responseAsString = buf.toString();
-                log(responseAsString);
+                logger.debug(responseAsString);
                 stream.close();
                 con.disconnect();
                 streamConsumed = true;
@@ -228,17 +228,5 @@ public class HttpResponse {
                 ", is=" + is +
                 ", con=" + con +
                 '}';
-    }
-
-    private void log(String message) {
-        if (DEBUG) {
-            System.out.println("[" + new java.util.Date() + "]" + message);
-        }
-    }
-
-    private void log(String message, String message2) {
-        if (DEBUG) {
-            log(message + message2);
-        }
     }
 }

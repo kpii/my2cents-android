@@ -30,44 +30,54 @@ import twitter4j.conf.Configuration;
 import twitter4j.http.Authorization;
 
 /**
- * A factory class for Twitter.
- * <br>An instance of this class is completely thread safe and can be re-used and used concurrently.
+ * A factory class for AsyncTwitter.<br>
+ * An instance of this class is completely thread safe and can be re-used and used concurrently.<br>
+ * Note that currently AsyncTwitter is NOT compatible with Google App Engine as it is maintaining threads internally.
  *
  * @author Yusuke Yamamoto - yusuke at mac.com
  * @since Twitter4J 2.1.0
  */
-public final class TwitterFactory extends TwitterFactoryOAuthSupportBase<Twitter> implements java.io.Serializable {
-    private static final long serialVersionUID = 5193900138477709155L;
+public final class AsyncTwitterFactory extends TwitterFactoryOAuthSupportBase<AsyncTwitter> implements java.io.Serializable {
+    private TwitterListener listener;
+    private static final long serialVersionUID = -2565686715640816219L;
 
     /**
-     * Creates a TwitterFactory with the root configuration.
+     * Creates a AsyncTwitterFactory with the root configuration, with no listener. AsyncTwitter instances will not perform callbacks when using this constructor.
      */
-    public TwitterFactory() {
+    public AsyncTwitterFactory() {
         super();
-    }
-
-    TwitterFactory(Configuration conf) {
-        super(conf);
+        this.listener = new TwitterAdapter();
     }
 
     /**
-     * Creates a TwitterFactory with a specified config tree
+     * Creates a AsyncTwitterFactory with the root configuration, with given listener
+     * @param listener listener
+     */
+    public AsyncTwitterFactory(TwitterListener listener) {
+        super();
+        this.listener = listener;
+    }
+
+    /**
+     * Creates a AsyncTwitterFactory with a specified config tree, with given listener
      * @param configTreePath the path
+     * @param listener listener
      */
-    public TwitterFactory(String configTreePath) {
+    public AsyncTwitterFactory(String configTreePath, TwitterListener listener) {
         super(configTreePath);
+        this.listener = listener;
     }
 
     /**
      * {@inheritDoc}
      */
-    protected Twitter getInstance(Configuration conf, Authorization auth) {
-        return new Twitter(conf, auth);
+    protected AsyncTwitter getInstance(Configuration conf, Authorization auth) {
+        return new AsyncTwitter(conf, auth, listener);
     }
     /**
      * {@inheritDoc}
      */
-    protected Twitter getOAuthSupportInstance(Configuration conf, Authorization auth) {
-        return new Twitter(conf, auth);
+    protected AsyncTwitter getOAuthSupportInstance(Configuration conf, Authorization auth){
+        return new AsyncTwitter(conf, auth, listener);
     }
 }
