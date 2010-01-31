@@ -15,7 +15,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "DatabaseHelper";
 	/** The name of the database file on the file system */
-    private static final String DATABASE_NAME = "Database";
+    private static final String DATABASE_NAME = "My2CentsDb";
     /** The version of the database that this class understands. */
     private static final int DATABASE_VERSION = 1;
     
@@ -31,12 +31,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "provider TEXT,"
                 + "name TEXT,"
                 + "image BLOB);");
+        
+        db.execSQL("CREATE TABLE history ("
+                + "_id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + "productId TEXT,"
+                + "provider TEXT,"
+                + "name TEXT,"
+                + "image BLOB);");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
         db.execSQL("DROP TABLE IF EXISTS favorites");
+        db.execSQL("DROP TABLE IF EXISTS history");
         onCreate(db);
     }
     
@@ -77,5 +85,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void clearFavorites() {
     	SQLiteDatabase db = getWritableDatabase();
     	db.delete("favorites", null, null);
+    }
+    
+    
+    public void addHistoryItem(ProductInfo product) {
+    	if ((product == null) || (product.getProductName() == null) || (product.getProductName().equals(""))) return;
+    	
+    	SQLiteDatabase db = getWritableDatabase();
+    	
+    	Cursor cursor = db.rawQuery("SELECT * FROM favorites WHERE productId=?", new String[] {product.getProductId()});
+    	if (cursor.getCount() > 0) {
+    		return;
+    	}
+        
+        ContentValues map = new ContentValues();
+        
+        map.put("productId", product.getProductId());
+        map.put("provider", product.getProductInfoProvider().toString());
+        map.put("name", product.getProductName());
+        
+        Bitmap image = product.getProductImage();
+        if (image != null) {
+        	map.put("image", Helper.getBitmapAsByteArray(image));
+        }
+        
+        try{
+            db.insert("favorites", null, map);
+        } catch (SQLException e) {
+            Log.e(TAG, e.toString());
+        }
+    }
+    
+    public Cursor getHistory() {
+    	SQLiteDatabase db = getWritableDatabase();
+    	String query = "SELECT * FROM history ORDER BY _id DESC";
+    	return db.rawQuery(query, null);
+    }
+    
+    public void clearHistory() {
+    	SQLiteDatabase db = getWritableDatabase();
+    	db.delete("history", null, null);
     }
 }

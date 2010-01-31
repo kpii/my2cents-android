@@ -16,26 +16,26 @@ import android.widget.SimpleCursorAdapter;
 import at.my2c.data.DataManager;
 import at.my2c.util.Helper;
 
-public final class FavoritesActivity extends ListActivity {
+public final class HistoryActivity extends ListActivity {
 
-	private FavoritesAdapter adapter;
+	private HistoryAdapter adapter;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.favorites);
+		setContentView(R.layout.history);
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		
-		Cursor cursor = DataManager.getDatabase().getFavorites();		
-		adapter = new FavoritesAdapter(this,
-        		R.layout.favorite_item,
+		Cursor cursor = DataManager.getDatabase().getHistory();		
+		adapter = new HistoryAdapter(this,
+        		R.layout.history_item,
         		cursor,
                 new String[] { "productId", "provider", "name" },
-                new int[] { R.id.favorite_code, R.id.favorite_provider, R.id.favorite_name });
+                new int[] { R.id.history_code, R.id.history_provider, R.id.history_name });
 		
         setListAdapter(adapter);
 	}
@@ -55,7 +55,7 @@ public final class FavoritesActivity extends ListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.favorites_menu, menu);
+		inflater.inflate(R.menu.history_menu, menu);
 		return true;
 	}
 
@@ -68,7 +68,7 @@ public final class FavoritesActivity extends ListActivity {
 				return true;
 			}
 			case R.id.clearFavoritesMenuItem: {
-				DataManager.getDatabase().clearFavorites();
+				DataManager.getDatabase().clearHistory();
 				adapter.getCursor().requery();
 				return true;
 			}
@@ -88,9 +88,9 @@ public final class FavoritesActivity extends ListActivity {
 	}
 	
 	
-	private class FavoritesAdapter extends SimpleCursorAdapter {
+	private class HistoryAdapter extends SimpleCursorAdapter {
 
-		public FavoritesAdapter(Context context, int layout, Cursor cursor, String[] from, int[] to) {
+		public HistoryAdapter(Context context, int layout, Cursor cursor, String[] from, int[] to) {
 			super(context, layout, cursor, from, to);
 		}
 		
@@ -98,7 +98,7 @@ public final class FavoritesActivity extends ListActivity {
 		public void bindView(View view, Context context, Cursor cursor) {
 			 byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex("image"));
 			 Bitmap bitmap = Helper.getByteArrayAsBitmap(bitmapArray);
-			 ImageView imageView = (ImageView) view.findViewById(R.id.favorite_image);
+			 ImageView imageView = (ImageView) view.findViewById(R.id.history_image);
 			 imageView.setImageBitmap(bitmap);
 			 
 			 super.bindView(view, context, cursor);
