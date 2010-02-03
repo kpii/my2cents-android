@@ -78,7 +78,7 @@ public final class AccountActivity extends Activity {
 			progressDialog.dismiss();
 			
 			if (credentialsCorrect) {
-				Toast.makeText(AccountActivity.this, "Login Correct.", Toast.LENGTH_SHORT).show();
+				Toast.makeText(AccountActivity.this, R.string.message_login_correct, Toast.LENGTH_SHORT).show();
 				
 				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(AccountActivity.this);
 				SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -93,7 +93,7 @@ public final class AccountActivity extends Activity {
 				setResult(RESULT_OK, result);
 				finish();
 			} else {
-				Toast.makeText(AccountActivity.this, "Login Incorrect.", Toast.LENGTH_SHORT).show();
+				Toast.makeText(AccountActivity.this, R.string.message_login_incorrect, Toast.LENGTH_SHORT).show();
 				return;
 			}
 		}
@@ -110,7 +110,7 @@ public final class AccountActivity extends Activity {
 			
 			ProviderManager.Initialize(username, password);
 			
-			progressDialog = ProgressDialog.show(AccountActivity.this, "User Account", "Checking Credentials...", true);
+			progressDialog = ProgressDialog.show(AccountActivity.this, getString(R.string.progress_dialog_account_title), getString(R.string.progress_dialog_checking_credentials), true);
 			new Thread(null, checkCredentials, "CredentialsVerifier").start();
 		}
 	};

@@ -16,11 +16,11 @@ public final class SearchActivity extends Activity {
 		
 		setContentView(R.layout.search_dialog);
 
-		Button doneButton = (Button) findViewById(R.id.doneButton);
-		doneButton.setOnClickListener(doneListener);
+		Button searchButton = (Button) findViewById(R.id.searchButton);
+		searchButton.setOnClickListener(searchListener);
 	}
 
-	private final Button.OnClickListener doneListener = new Button.OnClickListener() {
+	private final Button.OnClickListener searchListener = new Button.OnClickListener() {
 		public void onClick(View view) {
 			EditText editor = (EditText) findViewById(R.id.barcodeInputEditText);
 

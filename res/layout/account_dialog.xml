@@ -3,12 +3,12 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical"
 	android:layout_height="fill_parent"
-	android:padding="10dp" android:layout_width="fill_parent">
-
+	android:padding="10dp"
+	android:layout_width="fill_parent">
 	<TextView
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="Username" />
+		android:text="@string/account_dialog_username" />
 	<EditText
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"
@@ -18,7 +18,7 @@
 	<TextView
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="Password"></TextView>
+		android:text="@string/account_dialog_password"></TextView>
 	<EditText
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"
@@ -28,7 +28,7 @@
 	<CheckBox
 		android:layout_height="wrap_content"
 		android:id="@+id/showPasswordCheckBox"
-		android:text="Show Password"
+		android:text="@string/account_dialog_show_password"
 		android:layout_width="fill_parent"></CheckBox>
 	<LinearLayout
 		android:layout_height="wrap_content"
@@ -38,13 +38,15 @@
 		android:layout_marginTop="10px">
 		<Button
 			android:layout_height="wrap_content"
-			android:text="Done"
+			android:text="@string/button_done"
 			android:id="@+id/accountDoneButton"
-			android:layout_width="wrap_content" android:width="110sp"></Button>
+			android:layout_width="wrap_content"
+			android:width="110sp"></Button>
 		<Button
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:id="@+id/accountCancelButton"
-			android:text="Cancel" android:width="110sp"></Button>
+			android:text="@string/button_cancel"
+			android:width="110sp"></Button>
 	</LinearLayout>
 </LinearLayout>

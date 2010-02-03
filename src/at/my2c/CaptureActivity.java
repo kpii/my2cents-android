@@ -365,7 +365,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 	  private void displayFrameworkBugMessageAndExit() {
 	    AlertDialog.Builder builder = new AlertDialog.Builder(this);
 	    builder.setTitle(getString(R.string.app_name));
-	    builder.setMessage("Sorry, the Android camera encountered a problem. You may need to restart the device.");
+	    builder.setMessage(getString(R.string.error_message_camera_problem));
 	    builder.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
 	      public void onClick(DialogInterface dialogInterface, int i) {
 	        finish();

@@ -105,7 +105,7 @@ public final class MainActivity extends ListActivity {
 		
 		NetworkManager.checkNetworkAvailability(this);
 		if (!NetworkManager.isNetworkAvailable()) {
-			Toast.makeText(this, "No Network Connection", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
 			return;
 		}
 		
@@ -115,7 +115,7 @@ public final class MainActivity extends ListActivity {
 		String action = intent == null ? null : intent.getAction();
 		if (intent != null && action != null) {
 			if (action.equals(Intents.ACTION)) {
-				setTitle("my2cents :: " + DataManager.getSearchTerm());
+				setTitle(getString(R.string.main_activity_title_prefix) + DataManager.getSearchTerm());
 				
 				new GetProductInfo().execute(DataManager.getSearchTerm());
 				new GetComments().execute(PreferencesActivity.TagPrefix + DataManager.getSearchTerm());
@@ -127,7 +127,7 @@ public final class MainActivity extends ListActivity {
 
 		@Override
 		protected void onPreExecute() {
-			progressDialog = ProgressDialog.show(MainActivity.this, null, "Loading comments...", true);
+			progressDialog = ProgressDialog.show(MainActivity.this, null, getString(R.string.progress_dialog_loading_comments), true);
 	    }
 		
 		@Override
@@ -176,7 +176,7 @@ public final class MainActivity extends ListActivity {
 				progressDialog.dismiss();
 				
 				TextView notificationTextView = (TextView) findViewById(R.id.commentsNotificationTextView);
-				notificationTextView.setText("No comments yet. Be the first one to add your 2 cents on this product!");
+				notificationTextView.setText(R.string.notification_message_no_comments);
 				notificationLayout.setVisibility(View.VISIBLE);
 			}
 	    }
@@ -244,7 +244,7 @@ public final class MainActivity extends ListActivity {
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(selectedComment.getText())
-		       .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+		       .setPositiveButton(R.string.button_close, new DialogInterface.OnClickListener() {
 		           public void onClick(DialogInterface dialog, int id) {
 		                dialog.dismiss();
 		           }
@@ -469,7 +469,7 @@ public final class MainActivity extends ListActivity {
 			}
 			else {
 				TextView notificationTextView = (TextView) findViewById(R.id.notificationTextView);
-				notificationTextView.setText("No products found.");
+				notificationTextView.setText(R.string.notification_message_no_products_found);
 				notificationLayout.setVisibility(View.VISIBLE);
 				productInfoLayout.setVisibility(View.GONE);
 			}
@@ -481,7 +481,7 @@ public final class MainActivity extends ListActivity {
 
 		@Override
 		protected void onPreExecute() {
-			progressDialog = ProgressDialog.show(MainActivity.this, null, "Sending...", true);
+			progressDialog = ProgressDialog.show(MainActivity.this, null, getString(R.string.progress_dialog_sending), true);
 	    }
 		
 		@Override
@@ -517,7 +517,7 @@ public final class MainActivity extends ListActivity {
 				
 				EditText commentEditor = (EditText) findViewById(R.id.comment_edittext);
 				commentEditor.setText("");
-				Toast.makeText(MainActivity.this, "Comment posted successfully", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainActivity.this, R.string.message_comment_posted_successfully, Toast.LENGTH_SHORT).show();
 			}
 
 			progressDialog.dismiss();

@@ -92,7 +92,7 @@
 			android:id="@+id/login_button"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:text="Please login to comment" />
+			android:text="@string/button_login_invitation" />
 	</LinearLayout>
 	<LinearLayout
 		android:layout_width="fill_parent"
@@ -116,7 +116,7 @@
 				android:maxLength="120" />
 			<Button
 				android:id="@+id/comment_send_button"
-				android:text="Send"
+				android:text="@string/button_send"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content" />
 		</LinearLayout>
@@ -126,6 +126,6 @@
 			android:spacing="5px"
 			android:id="@+id/comment_tag_gallery"
 			android:longClickable="true"
-			android:unselectedAlpha="0.3"></Gallery>
+			android:unselectedAlpha="0.3" />
 	</LinearLayout>
 </LinearLayout>

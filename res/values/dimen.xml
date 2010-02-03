@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 <dimen name="product_info_text">14sp</dimen>
-<dimen name="toggle_button_text">14sp</dimen>
+
 <dimen name="comment_username_text">14sp</dimen>
 <dimen name="comment_sent_text">12sp</dimen>
 </resources>

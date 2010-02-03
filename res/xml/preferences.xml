@@ -3,21 +3,21 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<!-- USER CREDENTIALS -->
 	<PreferenceCategory
-		android:title="User Account">
+		android:title="@string/preferences_category_account">
 		<Preference
-			android:title="Account"
+			android:title="@string/preferences_account"
 			android:key="account_preference"
-			android:summary="Twitter Account"></Preference>
+			android:summary="@string/preferences_account_summary" />
 	</PreferenceCategory>
 
 	<!-- SETTINGS -->
 	<PreferenceCategory
-		android:title="Additional Options">
+		android:title="@string/preferences_category_additional_options">
 		<CheckBoxPreference
 			android:key="gps_enabled"
-			android:title="Location"
-			android:summary="Use my location"
-			android:defaultValue="false"></CheckBoxPreference>
+			android:title="@string/preferences_location"
+			android:summary="@string/preferences_location_summary"
+			android:defaultValue="false" />
 		<CheckBoxPreference
 			android:key="preferences_play_beep"
 			android:defaultValue="true"
