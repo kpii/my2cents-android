@@ -31,4 +31,8 @@
 			android:defaultValue="true"
 			android:title="@string/preferences_copy_to_clipboard_title" />
 	</PreferenceCategory>
+<PreferenceCategory android:title="OAuth">
+<EditTextPreference android:title="Token" android:key="oauth_token"></EditTextPreference>
+<EditTextPreference android:title="Secret Token" android:key="oauth_secret_token"></EditTextPreference>
+</PreferenceCategory>
 </PreferenceScreen>

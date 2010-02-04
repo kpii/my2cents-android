@@ -20,6 +20,9 @@ public final class PreferencesActivity extends PreferenceActivity implements OnS
 
 	public static final String TWITTER_USERNAME = "twitter_username";
 	public static final String TWITTER_PASSWORD = "twitter_password";
+	
+	public static final String OAUTH_TOKEN = "oauth_token";
+	public static final String OAUTH_TOKEN_SECRET = "oauth_token_secret";
 
 	static final String KEY_PLAY_BEEP = "preferences_play_beep";
 	static final String KEY_VIBRATE = "preferences_vibrate";
@@ -49,6 +52,9 @@ public final class PreferencesActivity extends PreferenceActivity implements OnS
 		public boolean onPreferenceClick(Preference preference) {
 			Intent intent = new Intent(getBaseContext(), AccountActivity.class);
 			startActivityForResult(intent, ACCOUNT_ACTIVITY_CODE);
+			
+//			Intent intent = new Intent(getBaseContext(), AuthorizationActivity.class);
+//			startActivityForResult(intent, ACCOUNT_ACTIVITY_CODE);
 			return true;
 		}
 	};

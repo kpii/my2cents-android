@@ -75,7 +75,7 @@ public final class AccountActivity extends Activity {
 			EditText passwordEditText = (EditText) findViewById(R.id.passwordEditText);
 			password = passwordEditText.getText().toString();
 			
-			ProviderManager.Initialize(username, password);
+			ProviderManager.InitializeBasic(username, password);
 			
 			new CheckAccount().execute();
 		}
