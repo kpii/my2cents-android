@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.InputType;
@@ -35,7 +36,6 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import at.my2c.util.ProviderManager;
 
 public final class AccountActivity extends Activity {
-	private boolean credentialsCorrect;
 	private ProgressDialog progressDialog;
 	
 	private String username;
@@ -65,39 +65,6 @@ public final class AccountActivity extends Activity {
 		CheckBox showPasswordCheckBox = (CheckBox) findViewById(R.id.showPasswordCheckBox);
 		showPasswordCheckBox.setOnCheckedChangeListener(showPasswordListener);
 	}
-	
-	private Runnable checkCredentials = new Runnable() {
-		public void run() {
-			credentialsCorrect = ProviderManager.verifyCredentials();
-			runOnUiThread(checkingComplete);
-		}
-	};
-	
-	private Runnable checkingComplete = new Runnable() {
-		public void run() {			
-			progressDialog.dismiss();
-			
-			if (credentialsCorrect) {
-				Toast.makeText(AccountActivity.this, R.string.message_login_correct, Toast.LENGTH_SHORT).show();
-				
-				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(AccountActivity.this);
-				SharedPreferences.Editor editor = sharedPreferences.edit();
-				editor.putString(PreferencesActivity.TWITTER_USERNAME, username);
-				editor.putString(PreferencesActivity.TWITTER_PASSWORD, password);
-				
-				editor.putBoolean(PreferencesActivity.IS_COMMENTING_POSSIBLE, ProviderManager.isCommentingPossible());
-
-			    editor.commit();
-				
-				Intent result = new Intent(getIntent().getAction());
-				setResult(RESULT_OK, result);
-				finish();
-			} else {
-				Toast.makeText(AccountActivity.this, R.string.message_login_incorrect, Toast.LENGTH_SHORT).show();
-				return;
-			}
-		}
-	};
 
 	private final OnClickListener doneListener = new OnClickListener() {
 		public void onClick(View view) {
@@ -110,8 +77,7 @@ public final class AccountActivity extends Activity {
 			
 			ProviderManager.Initialize(username, password);
 			
-			progressDialog = ProgressDialog.show(AccountActivity.this, getString(R.string.progress_dialog_account_title), getString(R.string.progress_dialog_checking_credentials), true);
-			new Thread(null, checkCredentials, "CredentialsVerifier").start();
+			new CheckAccount().execute();
 		}
 	};
 	
@@ -136,4 +102,42 @@ public final class AccountActivity extends Activity {
 			}
 		}
 	};
+	
+	
+	private class CheckAccount extends AsyncTask<Void, Void, Boolean> {
+
+		@Override
+		protected void onPreExecute() {
+			progressDialog = ProgressDialog.show(AccountActivity.this, getString(R.string.progress_dialog_account_title), getString(R.string.progress_dialog_checking_credentials), true);
+	    }
+		
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			return ProviderManager.verifyCredentials();
+		}
+		
+		@Override
+		protected void onPostExecute(Boolean isLoginCorrect) {
+			progressDialog.dismiss();
+			
+			if (isLoginCorrect) {
+				Toast.makeText(AccountActivity.this, R.string.message_login_correct, Toast.LENGTH_SHORT).show();
+				
+				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(AccountActivity.this);
+				SharedPreferences.Editor editor = sharedPreferences.edit();
+				editor.putString(PreferencesActivity.TWITTER_USERNAME, username);
+				editor.putString(PreferencesActivity.TWITTER_PASSWORD, password);
+				
+				editor.putBoolean(PreferencesActivity.IS_COMMENTING_POSSIBLE, ProviderManager.isCommentingPossible());
+
+			    editor.commit();
+				
+				Intent result = new Intent(getIntent().getAction());
+				setResult(RESULT_OK, result);
+				finish();
+			} else {
+				Toast.makeText(AccountActivity.this, R.string.message_login_incorrect, Toast.LENGTH_SHORT).show();
+			}
+	    }
+	}
 }
