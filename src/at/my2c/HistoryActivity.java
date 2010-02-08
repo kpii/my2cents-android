@@ -19,6 +19,7 @@ import at.my2c.util.Helper;
 public final class HistoryActivity extends ListActivity {
 
 	private HistoryAdapter adapter;
+	private Cursor cursor;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -30,7 +31,7 @@ public final class HistoryActivity extends ListActivity {
 	protected void onResume() {
 		super.onResume();
 		
-		Cursor cursor = DataManager.getDatabase().getHistory();		
+		cursor = DataManager.getDatabase().getHistory();		
 		adapter = new HistoryAdapter(this,
         		R.layout.history_item,
         		cursor,
@@ -38,6 +39,12 @@ public final class HistoryActivity extends ListActivity {
                 new int[] { R.id.history_code, R.id.history_provider, R.id.history_name });
 		
         setListAdapter(adapter);
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+        cursor.close();
 	}
 
 	@Override

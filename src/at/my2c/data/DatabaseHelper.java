@@ -59,6 +59,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     	if (cursor.getCount() > 0) {
     		return;
     	}
+    	cursor.close();
         
         ContentValues map = new ContentValues();
         
@@ -101,6 +102,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     	if (cursor.getCount() > 100) {
     		db.delete("history", "_id = (SELECT MIN(_id) FROM history)", null);
     	}
+    	cursor.close();
         
         ContentValues map = new ContentValues();
         
