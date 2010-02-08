@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 import twitter4j.GeoLocation;
 import twitter4j.Tweet;
 import twitter4j.TweetJSONImpl;
-import twitter4j.http.AccessToken;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -108,8 +107,7 @@ public final class MainActivity extends ListActivity {
 	protected void onStart() {
 		super.onStart();
 		
-		NetworkManager.checkNetworkAvailability(this);
-		if (!NetworkManager.isNetworkAvailable()) {
+		if (!NetworkManager.isNetworkAvailable(this)) {
 			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
 			return;
 		}
@@ -216,7 +214,7 @@ public final class MainActivity extends ListActivity {
 	protected void onResume() {
 		super.onResume();
 		
-		if (!NetworkManager.isNetworkAvailable()) {
+		if (!NetworkManager.isNetworkAvailable(this)) {
 			return;
 		}
 		

@@ -19,21 +19,14 @@ import android.util.Log;
 public final class NetworkManager {
 
 	private static final String TAG = "NetworkManager";
-	private static boolean isNetworkAvailable;
-
-	public static void checkNetworkAvailability(Context context) {
-		isNetworkAvailable = false;
-		ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		if (connectivity != null) {
-			NetworkInfo[] info = connectivity.getAllNetworkInfo();
-			if (info != null) {
-				for (int i = 0; i < info.length; i++) {
-					if (info[i].getState() == NetworkInfo.State.CONNECTED) {
-						isNetworkAvailable = true;
-					}
-				}
-			}
+	
+	public static boolean isNetworkAvailable(Context context) {
+		ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo info = connectivityManager.getActiveNetworkInfo();
+		if (info == null || !info.isConnected()) {
+			return false;
 		}
+		return true;
 	}
 
 	public static Bitmap getRemoteImage(final URL url) {
@@ -122,13 +115,5 @@ public final class NetworkManager {
 		}
 		
 		return output.toString();
-	}
-
-	public static void setNetworkAvailable(boolean isNetworkAvailable) {
-		NetworkManager.isNetworkAvailable = isNetworkAvailable;
-	}
-
-	public static boolean isNetworkAvailable() {
-		return isNetworkAvailable;
 	}
 }
