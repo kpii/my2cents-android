@@ -91,8 +91,8 @@ class ConfigurationBase implements Configuration, java.io.Serializable {
         setHttpStreamingReadTimeout(60*5*1000);
         setHttpRetryCount(0);
         setHttpRetryIntervalSecs(1);
-        setOAuthConsumerKey("8nHfoqkJrbj8FhSLX631ig");
-        setOAuthConsumerSecret("PsNHCdOqiBZY1GgoDrjtC5BokFT3G7loolNq8KYvmw");
+        setOAuthConsumerKey("LAFxqUB51z5j5zBp2qYCFA");
+        setOAuthConsumerSecret("y2IhpsBaovR96tUVqplOHbTd7UxRUUmfrxFNaevlzA");
         setOAuthAccessToken(null);
         setOAuthAccessTokenSecret(null);
         setAsyncNumThreads(1);
