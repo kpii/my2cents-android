@@ -13,6 +13,8 @@ import java.util.regex.Pattern;
 import twitter4j.GeoLocation;
 import twitter4j.Tweet;
 import twitter4j.TweetJSONImpl;
+import twitter4j.TwitterException;
+import twitter4j.http.AccessToken;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -102,13 +104,18 @@ public final class MainActivity extends ListActivity {
 		registerForContextMenu(productInfoLayout);
 
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		String username = preferences.getString(PreferencesActivity.TWITTER_USERNAME, "");
-		String password = preferences.getString(PreferencesActivity.TWITTER_PASSWORD, "");
-		ProviderManager.InitializeBasic(username, password);
-//		ProviderManager.InitializeOAuth();
-//		String token = preferences.getString(PreferencesActivity.OAUTH_TOKEN, "");
-//		String tokenSecret = preferences.getString(PreferencesActivity.OAUTH_TOKEN_SECRET, "");
-//		ProviderManager.setAccessToken(new AccessToken(token, tokenSecret));
+		boolean useOauth = preferences.getBoolean(PreferencesActivity.USE_OAUTH, true);
+		if (useOauth) {
+			String token = preferences.getString(PreferencesActivity.OAUTH_TOKEN, "");
+			String tokenSecret = preferences.getString(PreferencesActivity.OAUTH_TOKEN_SECRET, "");
+			ProviderManager.InitializeOAuth();
+			ProviderManager.setAccessToken(new AccessToken(token, tokenSecret));
+		}
+		else {
+			String username = preferences.getString(PreferencesActivity.TWITTER_USERNAME, "");
+			String password = preferences.getString(PreferencesActivity.TWITTER_PASSWORD, "");
+			ProviderManager.InitializeBasic(username, password);
+		}
 	}
 	
 	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {

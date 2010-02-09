@@ -1,13 +1,17 @@
 package at.my2c;
 
+import twitter4j.TwitterException;
+import twitter4j.http.RequestToken;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.preference.Preference.OnPreferenceClickListener;
+import at.my2c.util.ProviderManager;
 
 public final class PreferencesActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	
@@ -21,6 +25,7 @@ public final class PreferencesActivity extends PreferenceActivity implements OnS
 	public static final String TWITTER_USERNAME = "twitter_username";
 	public static final String TWITTER_PASSWORD = "twitter_password";
 	
+	public static final String USE_OAUTH = "preferences_use_oauth";	
 	public static final String OAUTH_TOKEN = "oauth_token";
 	public static final String OAUTH_TOKEN_SECRET = "oauth_token_secret";
 
@@ -50,11 +55,17 @@ public final class PreferencesActivity extends PreferenceActivity implements OnS
 	
 	private final OnPreferenceClickListener onAccountPreferenceClickListener = new OnPreferenceClickListener() {
 		public boolean onPreferenceClick(Preference preference) {
-			Intent intent = new Intent(getBaseContext(), AccountActivity.class);
-			startActivityForResult(intent, ACCOUNT_ACTIVITY_CODE);
+			PreferenceScreen preferences = getPreferenceScreen();
+			boolean useOauth = preferences.getSharedPreferences().getBoolean(USE_OAUTH, true);
 			
-//			Intent intent = new Intent(getBaseContext(), AuthorizationActivity.class);
-//			startActivityForResult(intent, ACCOUNT_ACTIVITY_CODE);
+			if (useOauth) {
+				Intent intent = new Intent(getBaseContext(), AuthorizationActivity.class);
+				startActivityForResult(intent, ACCOUNT_ACTIVITY_CODE);
+			}
+			else {
+				Intent intent = new Intent(getBaseContext(), AccountActivity.class);
+				startActivityForResult(intent, ACCOUNT_ACTIVITY_CODE);
+			}			
 			return true;
 		}
 	};
