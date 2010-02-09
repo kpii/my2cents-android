@@ -14,10 +14,7 @@ import twitter4j.User;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationContext;
 import twitter4j.http.AccessToken;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import at.my2c.AuthorizationActivity;
 
 public final class ProviderManager {
 
@@ -33,12 +30,14 @@ public final class ProviderManager {
 
 	public final static void InitializeBasic(String username, String password)
 	{
+		System.setProperty("http.keepAlive", "false");
 		TwitterFactory factory = new TwitterFactory();
 		twitter = factory.getInstance(username, password);
 	}
 	
 	public final static void InitializeOAuth()
 	{
+		System.setProperty("http.keepAlive", "false");
 		TwitterFactory factory = new TwitterFactory();
 		Configuration config = ConfigurationContext.getInstance();
 		twitter = factory.getInstance();
