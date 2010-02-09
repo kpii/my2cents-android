@@ -12,18 +12,6 @@
 		android:fadingEdge="vertical"
 		android:fadingEdgeLength="16dip"
 		android:id="@+id/oauthWebView" />
-	<TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:textColor="#FFF"
-		android:text="Please enter pin code:"
-		android:layout_gravity="center_horizontal" />
-	<EditText
-		android:layout_height="wrap_content"
-		android:layout_width="fill_parent"
-		android:imeOptions="flagNoEnterAction"
-		android:inputType="number"
-		android:id="@+id/pinEditText" />
 	<Button
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"

@@ -100,6 +100,7 @@
 		<activity
 			android:name="AuthorizationActivity"
 			android:screenOrientation="user"
+			android:launchMode="singleInstance"
 			android:label="my2cents - Twitter Account">
 			<intent-filter>
 				<action

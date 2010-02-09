@@ -11,8 +11,6 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.User;
-import twitter4j.conf.Configuration;
-import twitter4j.conf.ConfigurationContext;
 import twitter4j.http.AccessToken;
 import android.util.Log;
 
@@ -21,10 +19,7 @@ public final class ProviderManager {
 	private final static String TAG = "ProviderManager";
 
 	private static Twitter twitter;
-	private static AccessToken accessToken;
-	
 	private static boolean isCommentingPossible;
-	
 	private final static int numberOfResults = 30;
 	
 
@@ -35,13 +30,11 @@ public final class ProviderManager {
 		twitter = factory.getInstance(username, password);
 	}
 	
-	public final static void InitializeOAuth()
+	public final static void InitializeOAuth(AccessToken accessToken)
 	{
 		System.setProperty("http.keepAlive", "false");
 		TwitterFactory factory = new TwitterFactory();
-		Configuration config = ConfigurationContext.getInstance();
-		twitter = factory.getInstance();
-//		twitter.setOAuthConsumer(config.getOAuthConsumerKey(), config.getOAuthConsumerSecret());
+		twitter = factory.getOAuthAuthorizedInstance(accessToken);
 	}
 
 	public final static Status updateStatus(String statusText, GeoLocation location) {
@@ -96,14 +89,5 @@ public final class ProviderManager {
 
 	public static boolean isCommentingPossible() {
 		return isCommentingPossible;
-	}
-
-	public static void setAccessToken(AccessToken accessToken) {
-		ProviderManager.accessToken = accessToken;
-		twitter.setOAuthAccessToken(accessToken);
-	}
-
-	public static AccessToken getAccessToken() {
-		return accessToken;
 	}
 }

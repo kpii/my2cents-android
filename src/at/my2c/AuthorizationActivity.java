@@ -16,28 +16,41 @@
 
 package at.my2c;
 
-import twitter4j.TwitterException;
+import oauth.signpost.OAuthProvider;
+import oauth.signpost.basic.DefaultOAuthProvider;
+import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
+import oauth.signpost.exception.OAuthCommunicationException;
+import oauth.signpost.exception.OAuthExpectationFailedException;
+import oauth.signpost.exception.OAuthMessageSignerException;
+import oauth.signpost.exception.OAuthNotAuthorizedException;
 import twitter4j.http.AccessToken;
-import twitter4j.http.RequestToken;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.Toast;
 import at.my2c.util.ProviderManager;
 
 public final class AuthorizationActivity extends Activity {
 	
 	private final static String TAG = "AuthorizationActivity";
-	public final String CALLBACK_URL = "myapp://oauth";
-	private static final String OAUTH_VERIFIER = "oauth_verifier";
-	private RequestToken requestToken;
+
+	private OAuthProvider provider;
+	private CommonsHttpOAuthConsumer consumer;
+	private AccessToken accessToken;
+	private ProgressDialog progressDialog;
+
+	public final static String CONSUMER_KEY = "LAFxqUB51z5j5zBp2qYCFA";
+	public final static String CONSUMER_SECRET = "y2IhpsBaovR96tUVqplOHbTd7UxRUUmfrxFNaevlzA";
+	private final static String CALLBACK_URL = "myapp://oauth";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,15 +60,27 @@ public final class AuthorizationActivity extends Activity {
 		Button doneButton = (Button) findViewById(R.id.enterPinButton);
 		doneButton.setOnClickListener(mDoneListener);
 		
-		ProviderManager.InitializeOAuth();
+		askOAuth();
+	}
+	
+	/**
+	 * Open the browser and asks the user to authorize the app.
+	 * Afterwards, we redirect the user back here!
+	 */
+	private void askOAuth() {
 		try {
-			requestToken = ProviderManager.getTwitter().getOAuthRequestToken(CALLBACK_URL);
-
-			WebView webView = (WebView) findViewById(R.id.oauthWebView);
-			webView.loadUrl(requestToken.getAuthorizationURL());
+			consumer = new CommonsHttpOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+			provider = new DefaultOAuthProvider("http://twitter.com/oauth/request_token",
+												"http://twitter.com/oauth/access_token",
+												"http://twitter.com/oauth/authorize");
+			String authUrl = provider.retrieveRequestToken(consumer, CALLBACK_URL);
 			
-		} catch (TwitterException e) {
-			Log.e(TAG, e.toString());
+//			this.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(authUrl)));
+			
+			WebView webView = (WebView) findViewById(R.id.oauthWebView);
+			webView.loadUrl(authUrl);
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage());
 		}
 	}
 	
@@ -67,49 +92,80 @@ public final class AuthorizationActivity extends Activity {
 	 */
 	@Override
 	protected void onNewIntent(Intent intent) {
+
 		super.onNewIntent(intent);
 
 		Uri uri = intent.getData();
 		if (uri != null && uri.toString().startsWith(CALLBACK_URL)) {
 
-			String verifier = uri.getQueryParameter(OAUTH_VERIFIER);
-			AccessToken accessToken = null;
+			String verifier = uri.getQueryParameter(oauth.signpost.OAuth.OAUTH_VERIFIER);
+
+			// this will populate token and token_secret in consumer
 			try {
-				accessToken = ProviderManager.getTwitter().getOAuthAccessToken(verifier);
-			} catch (TwitterException e) {
+				provider.retrieveAccessToken(consumer, verifier);
+			} catch (OAuthMessageSignerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (OAuthNotAuthorizedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (OAuthExpectationFailedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (OAuthCommunicationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			ProviderManager.getTwitter().setOAuthAccessToken(accessToken);
 			
-			SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(AuthorizationActivity.this);
-			SharedPreferences.Editor editor = sharedPreferences.edit();
-			editor.putString(PreferencesActivity.OAUTH_TOKEN, accessToken.getToken());
-			editor.putString(PreferencesActivity.OAUTH_TOKEN_SECRET, accessToken.getTokenSecret());
-		    editor.commit();
+			// TODO: you might want to store token and token_secret in you app settings!!!!!!!!
+			accessToken = new AccessToken(consumer.getToken(), consumer.getTokenSecret());
+			
+			// initialize Twitter4J
+			ProviderManager.InitializeOAuth(accessToken);
+			
+			new CheckAccount().execute();
+		    
 		}
-		
-		finish();
 	}
 
 	private final Button.OnClickListener mDoneListener = new Button.OnClickListener() {
 		public void onClick(View view) {
-			EditText pinEditor = (EditText) findViewById(R.id.pinEditText);
-			String pin = pinEditor.getText().toString();
+			finish();
+		}
+	};
+	
+	private class CheckAccount extends AsyncTask<Void, Void, Boolean> {
+
+		@Override
+		protected void onPreExecute() {
+			progressDialog = ProgressDialog.show(AuthorizationActivity.this, getString(R.string.progress_dialog_account_title), getString(R.string.progress_dialog_checking_credentials), true);
+	    }
+		
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			return ProviderManager.verifyCredentials();
+		}
+		
+		@Override
+		protected void onPostExecute(Boolean isLoginCorrect) {
+			progressDialog.dismiss();
 			
-			try {
-				AccessToken accessToken = ProviderManager.getTwitter().getOAuthAccessToken(requestToken, pin);
-				ProviderManager.setAccessToken(accessToken);
+			if (isLoginCorrect) {
+				Toast.makeText(AuthorizationActivity.this, R.string.message_login_correct, Toast.LENGTH_SHORT).show();
 				
 				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(AuthorizationActivity.this);
 				SharedPreferences.Editor editor = sharedPreferences.edit();
 				editor.putString(PreferencesActivity.OAUTH_TOKEN, accessToken.getToken());
 				editor.putString(PreferencesActivity.OAUTH_TOKEN_SECRET, accessToken.getTokenSecret());
-			    editor.commit();
-			} catch (TwitterException e) {
-				Log.e(TAG, e.toString());
+				editor.putBoolean(PreferencesActivity.IS_COMMENTING_POSSIBLE, ProviderManager.isCommentingPossible());
+				editor.commit();
+				
+				Intent result = new Intent(getIntent().getAction());
+				setResult(RESULT_OK, result);
+			} else {
+				Toast.makeText(AuthorizationActivity.this, R.string.message_login_incorrect, Toast.LENGTH_SHORT).show();
 			}
 			finish();
-		}
-	};
+	    }
+	}
 }

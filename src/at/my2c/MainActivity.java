@@ -59,6 +59,8 @@ import at.my2c.util.RelativeTime;
 public final class MainActivity extends ListActivity {
 
 	private final static int ACCOUNT_ACTIVITY_CODE = 0;
+	
+	private SharedPreferences preferences;
 
 	private volatile boolean shutdownRequested;
 	
@@ -103,13 +105,14 @@ public final class MainActivity extends ListActivity {
 		ViewGroup productInfoLayout = (ViewGroup) findViewById(R.id.ProductInfoLayout);
 		registerForContextMenu(productInfoLayout);
 
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		
+		preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		boolean useOauth = preferences.getBoolean(PreferencesActivity.USE_OAUTH, true);
 		if (useOauth) {
 			String token = preferences.getString(PreferencesActivity.OAUTH_TOKEN, "");
 			String tokenSecret = preferences.getString(PreferencesActivity.OAUTH_TOKEN_SECRET, "");
-			ProviderManager.InitializeOAuth();
-			ProviderManager.setAccessToken(new AccessToken(token, tokenSecret));
+			ProviderManager.InitializeOAuth(new AccessToken(token, tokenSecret));
 		}
 		else {
 			String username = preferences.getString(PreferencesActivity.TWITTER_USERNAME, "");
@@ -261,9 +264,7 @@ public final class MainActivity extends ListActivity {
 			return;
 		}
 		
-		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		
-		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		gpsEnabled = preferences.getBoolean(PreferencesActivity.GPS_ENABLED, false);
 		
 		boolean isCommentingPossible = preferences.getBoolean(PreferencesActivity.IS_COMMENTING_POSSIBLE, false);
@@ -315,8 +316,15 @@ public final class MainActivity extends ListActivity {
 	
 	private final Button.OnClickListener loginListener = new Button.OnClickListener() {
 		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), AccountActivity.class);
-			startActivityForResult(intent, ACCOUNT_ACTIVITY_CODE);
+			boolean useOauth = preferences.getBoolean(PreferencesActivity.USE_OAUTH, true);
+			if (useOauth) {
+				Intent intent = new Intent(getBaseContext(), AuthorizationActivity.class);
+				startActivityForResult(intent, ACCOUNT_ACTIVITY_CODE);
+			}
+			else {
+				Intent intent = new Intent(getBaseContext(), AccountActivity.class);
+				startActivityForResult(intent, ACCOUNT_ACTIVITY_CODE);
+			}
 		}
 	};
 
