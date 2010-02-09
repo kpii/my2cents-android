@@ -19,6 +19,7 @@ import at.my2c.util.Helper;
 public final class FavoritesActivity extends ListActivity {
 
 	private FavoritesAdapter adapter;
+	private Cursor cursor;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -30,7 +31,7 @@ public final class FavoritesActivity extends ListActivity {
 	protected void onResume() {
 		super.onResume();
 		
-		Cursor cursor = DataManager.getDatabase().getFavorites();		
+		cursor = DataManager.getDatabase().getFavorites();		
 		adapter = new FavoritesAdapter(this,
         		R.layout.favorite_item,
         		cursor,
@@ -38,6 +39,12 @@ public final class FavoritesActivity extends ListActivity {
                 new int[] { R.id.favorite_code, R.id.favorite_provider, R.id.favorite_name });
 		
         setListAdapter(adapter);
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+        cursor.close();
 	}
 
 	@Override

@@ -37,6 +37,9 @@
 	<string name="menu_preferences">Preferences</string>
 	<string name="menu_info">Info</string>
 	<string name="menu_clear_history">Clear History</string>
+	
+	<string name="product_context_menu_show_details">Show Product Details</string>
+	<string name="product_context_menu_add_to_favorites">Add To Favorites</string>
 
 	<string name="msg_default_status">Place a barcode inside the viewfinder rectangle to scan it.</string>
 

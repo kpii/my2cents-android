@@ -23,16 +23,19 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -71,6 +74,8 @@ public final class MainActivity extends ListActivity {
 	private TagAdapter tagsAdapter;
 
 	private HashMap<String, Bitmap> avatarMap = new HashMap<String, Bitmap>();
+	
+	private ProductInfo productInfo;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -92,6 +97,9 @@ public final class MainActivity extends ListActivity {
 
 		Button sendCommentButton = (Button) findViewById(R.id.comment_send_button);
 		sendCommentButton.setOnClickListener(sendCommentListener);
+		
+		ViewGroup productInfoLayout = (ViewGroup) findViewById(R.id.ProductInfoLayout);
+		registerForContextMenu(productInfoLayout);
 
 		SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		String username = preferences.getString(PreferencesActivity.TWITTER_USERNAME, "");
@@ -101,6 +109,34 @@ public final class MainActivity extends ListActivity {
 //		String token = preferences.getString(PreferencesActivity.OAUTH_TOKEN, "");
 //		String tokenSecret = preferences.getString(PreferencesActivity.OAUTH_TOKEN_SECRET, "");
 //		ProviderManager.setAccessToken(new AccessToken(token, tokenSecret));
+	}
+	
+	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, view, menuInfo);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.product_context_menu, menu);
+	}
+	
+	public boolean onContextItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.productDetailContextMenuItem: {
+				if (productInfo != null) {
+					if (productInfo.getDetailPageUrl() != null) {
+						Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse(productInfo.getDetailPageUrl()));  
+						startActivity(viewIntent);
+					}					
+				}				
+				return true;
+			}
+//			case R.id.productAddToFavoritesContextMenuItem: {
+//				if (productInfo != null) {
+//					DataManager.getDatabase().addFavoriteItem(productInfo);
+//				}				
+//				return true;
+//			}
+			default:
+				return super.onContextItemSelected(item);
+		}		
 	}
 	
 	@Override
@@ -454,6 +490,7 @@ public final class MainActivity extends ListActivity {
 	        ViewGroup productInfoLayout = (ViewGroup) findViewById(R.id.ProductInfoLayout);
 				
 	        if (product != null) {
+	        	productInfo = product;
 	        	
 	        	notificationLayout.setVisibility(View.GONE);
 	        	productInfoLayout.setVisibility(View.VISIBLE);
@@ -471,6 +508,8 @@ public final class MainActivity extends ListActivity {
 				productImageView.setImageBitmap(product.getProductImage());
 			}
 			else {
+				productInfo = null;
+				
 				TextView notificationTextView = (TextView) findViewById(R.id.notificationTextView);
 				notificationTextView.setText(R.string.notification_message_no_products_found);
 				notificationLayout.setVisibility(View.VISIBLE);

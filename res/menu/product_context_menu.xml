@@ -3,11 +3,8 @@
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
 		android:id="@+id/productDetailContextMenuItem"
-		android:title="Show Product Details"
-		android:icon="@android:drawable/ic_menu_info_details" />
-		
-	<item
-		android:id="@+id/productAddToFavoritesContextMenuItem"
-		android:title="Add To Favorites"
-		android:icon="@android:drawable/ic_menu_info_details" />
+		android:title="@string/product_context_menu_show_details" />
+<!--	<item-->
+<!--		android:id="@+id/productAddToFavoritesContextMenuItem"-->
+<!--		android:title="@string/product_context_menu_add_to_favorites" />-->
 </menu>
