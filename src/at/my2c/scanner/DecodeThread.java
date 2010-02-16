@@ -42,21 +42,24 @@ import com.google.zxing.common.HybridBinarizer;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 final class DecodeThread extends Thread {
+
   public static final String BARCODE_BITMAP = "barcode_bitmap";
   private static final String TAG = "DecodeThread";
 
   private Handler handler;
   private final CaptureActivity activity;
   private final MultiFormatReader multiFormatReader;
-  private final ResultPointCallback resultPointCallback;
 
-  DecodeThread(CaptureActivity activity, ResultPointCallback resultPointCallback) {
+  DecodeThread(CaptureActivity activity,
+               ResultPointCallback resultPointCallback) {
     this.activity = activity;
     multiFormatReader = new MultiFormatReader();
-    this.resultPointCallback = resultPointCallback;
+    Hashtable<DecodeHintType, Object> hints = new Hashtable<DecodeHintType, Object>(2);
 
-    // The prefs can't change while the thread is running, so pick them up once here.
-    setDecodeProductMode();
+    hints.put(DecodeHintType.POSSIBLE_FORMATS, CaptureActivity.PRODUCT_FORMATS);
+    hints.put(DecodeHintType.NEED_RESULT_POINT_CALLBACK, resultPointCallback);
+
+    multiFormatReader.setHints(hints);
   }
 
   Handler getHandler() {
@@ -82,56 +85,6 @@ final class DecodeThread extends Thread {
     Looper.loop();
   }
 
-  private void setDecodeProductMode() {
-    doSetDecodeMode(BarcodeFormat.UPC_A,
-                    BarcodeFormat.UPC_E,
-                    BarcodeFormat.EAN_13,
-                    BarcodeFormat.EAN_8);
-  }
-
-  /**
-   * Select the 1D formats we want this client to decode by hand.
-   */
-  private void setDecode1DMode() {
-    doSetDecodeMode(BarcodeFormat.UPC_A,
-                    BarcodeFormat.UPC_E,
-                    BarcodeFormat.EAN_13,
-                    BarcodeFormat.EAN_8,
-                    BarcodeFormat.CODE_39,
-                    BarcodeFormat.CODE_128,
-                    BarcodeFormat.ITF);
-  }
-
-  private void setDecodeQRMode() {
-    doSetDecodeMode(BarcodeFormat.QR_CODE);
-  }
-
-  /**
-   * Instead of calling setHints(null), which would allow new formats to sneak in, we
-   * explicitly set which formats are available.
-   */
-  private void setDecodeAllMode() {
-    doSetDecodeMode(BarcodeFormat.UPC_A,
-                    BarcodeFormat.UPC_E,
-                    BarcodeFormat.EAN_13,
-                    BarcodeFormat.EAN_8,
-                    BarcodeFormat.CODE_39,
-                    BarcodeFormat.CODE_128,
-                    BarcodeFormat.ITF,
-                    BarcodeFormat.QR_CODE);
-  }
-
-  private void doSetDecodeMode(BarcodeFormat... formats) {
-    Hashtable<DecodeHintType, Object> hints = new Hashtable<DecodeHintType, Object>(3);
-    Vector<BarcodeFormat> vector = new Vector<BarcodeFormat>(formats.length);
-    for (BarcodeFormat format : formats) {
-      vector.addElement(format);
-    }
-    hints.put(DecodeHintType.POSSIBLE_FORMATS, vector);
-    hints.put(DecodeHintType.NEED_RESULT_POINT_CALLBACK, resultPointCallback);
-    multiFormatReader.setHints(hints);
-  }
-
   /**
    * Decode the data within the viewfinder rectangle, and time how long it took. For efficiency,
    * reuse the same reader objects from one decode to the next.
@@ -149,6 +102,8 @@ final class DecodeThread extends Thread {
       rawResult = multiFormatReader.decodeWithState(bitmap);
     } catch (ReaderException re) {
       // continue
+    } finally {
+      multiFormatReader.reset();
     }
 
     if (rawResult != null) {

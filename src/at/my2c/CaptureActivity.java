@@ -17,6 +17,7 @@
 package at.my2c;
 
 import java.io.IOException;
+import java.util.Vector;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -83,15 +84,25 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 	private boolean vibrate;
 	private boolean copyToClipboard;
 	private final OnCompletionListener beepListener = new BeepListener();
+	
+	public static final Vector<BarcodeFormat> PRODUCT_FORMATS;
+	static {
+	    PRODUCT_FORMATS = new Vector<BarcodeFormat>(5);
+	    PRODUCT_FORMATS.add(BarcodeFormat.UPC_A);
+	    PRODUCT_FORMATS.add(BarcodeFormat.UPC_E);
+	    PRODUCT_FORMATS.add(BarcodeFormat.EAN_13);
+	    PRODUCT_FORMATS.add(BarcodeFormat.EAN_8);
+	    PRODUCT_FORMATS.add(BarcodeFormat.RSS14);
+	  }
 
 	public ViewfinderView getViewfinderView() {
-	    return viewfinderView;
-	  }
+		return viewfinderView;
+	}
 
-	  public Handler getHandler() {
-	    return handler;
-	  }
-	
+	public Handler getHandler() {
+		return handler;
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -172,28 +183,28 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.searchMenuItem: {
-				Intent intent = new Intent(this, SearchActivity.class);
-				startActivity(intent);
-				return true;
-			}
-			case R.id.historyMenuItem: {
-				Intent intent = new Intent(this, HistoryActivity.class);
-				startActivity(intent);
-				return true;
-			}
-			case R.id.preferencesMenuItem: {
-				Intent intent = new Intent(this, PreferencesActivity.class);
-				startActivity(intent);
-				return true;
-			}
-			case R.id.infoMenuItem: {
-				Intent intent = new Intent(this, HelpActivity.class);
-				startActivity(intent);
-				return true;
-			}
-			default:
-				return super.onOptionsItemSelected(item);
+		case R.id.searchMenuItem: {
+			Intent intent = new Intent(this, SearchActivity.class);
+			startActivity(intent);
+			return true;
+		}
+		case R.id.historyMenuItem: {
+			Intent intent = new Intent(this, HistoryActivity.class);
+			startActivity(intent);
+			return true;
+		}
+		case R.id.preferencesMenuItem: {
+			Intent intent = new Intent(this, PreferencesActivity.class);
+			startActivity(intent);
+			return true;
+		}
+		case R.id.infoMenuItem: {
+			Intent intent = new Intent(this, HelpActivity.class);
+			startActivity(intent);
+			return true;
+		}
+		default:
+			return super.onOptionsItemSelected(item);
 		}
 	}
 
@@ -235,7 +246,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
 		handleDecodeInternally(rawResult, barcode);
 	}
-
+	
 	/**
 	   * Superimpose a line for 1D or dots for 2D to highlight the key features of the barcode.
 	   *
@@ -274,7 +285,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 		if (rawResult.getBarcodeFormat().equals(BarcodeFormat.UPC_A)) {
 			productCode = "0" + productCode;
 		}
-		
+
 		DataManager.setSearchTerm(productCode);
 
 		if (copyToClipboard) {
@@ -343,36 +354,36 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 	}
 
 	private void initCamera(SurfaceHolder surfaceHolder) {
-	    try {
-	      CameraManager.get().openDriver(surfaceHolder);
-	    } catch (IOException ioe) {
-	      Log.w(TAG, ioe);
-	      displayFrameworkBugMessageAndExit();
-	      return;
-	    } catch (RuntimeException e) {
-	      // Barcode Scanner has seen crashes in the wild of this variety:
-	      // java.?lang.?RuntimeException: Fail to connect to camera service
-	      Log.e(TAG, e.toString());
-	      displayFrameworkBugMessageAndExit();
-	      return;
-	    }
-	    if (handler == null) {
-	      boolean beginScanning = lastResult == null;
-	      handler = new CaptureActivityHandler(this, beginScanning);
-	    }
-	  }
+		try {
+			CameraManager.get().openDriver(surfaceHolder);
+		} catch (IOException ioe) {
+			Log.w(TAG, ioe);
+			displayFrameworkBugMessageAndExit();
+			return;
+		} catch (RuntimeException e) {
+			// Barcode Scanner has seen crashes in the wild of this variety:
+			// java.?lang.?RuntimeException: Fail to connect to camera service
+			Log.e(TAG, e.toString());
+			displayFrameworkBugMessageAndExit();
+			return;
+		}
+		if (handler == null) {
+			boolean beginScanning = lastResult == null;
+			handler = new CaptureActivityHandler(this, beginScanning);
+		}
+	}
 
-	  private void displayFrameworkBugMessageAndExit() {
-	    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	    builder.setTitle(getString(R.string.app_name));
-	    builder.setMessage(getString(R.string.error_message_camera_problem));
-	    builder.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
-	      public void onClick(DialogInterface dialogInterface, int i) {
-	        finish();
-	      }
-	    });
-	    builder.show();
-	  }
+	private void displayFrameworkBugMessageAndExit() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(getString(R.string.app_name));
+		builder.setMessage(getString(R.string.error_message_camera_problem));
+		builder.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialogInterface, int i) {
+				finish();
+			}
+		});
+		builder.show();
+	}
 
 	private void resetStatusView() {
 		viewfinderView.setVisibility(View.VISIBLE);
@@ -384,8 +395,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 	}
 
 	public void drawViewfinder() {
-	    viewfinderView.drawViewfinder();
-	  }
+		viewfinderView.drawViewfinder();
+	}
 
 	/**
 	 * When the beep has finished playing, rewind to queue up another one.
