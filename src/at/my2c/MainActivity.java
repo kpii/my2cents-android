@@ -186,47 +186,53 @@ public final class MainActivity extends ListActivity {
 		
 		@Override
 		protected void onPostExecute(List<Tweet> result) {
-			tweets = result;
-	         
-			ViewGroup notificationLayout = (ViewGroup) findViewById(R.id.CommentsNotificationLayout);
-			
-			tweetsAdapter.clear();
-			tagsAdapter.clear();
-			
-			String productTag = PreferencesActivity.ProductCodePrefix + DataManager.getSearchTerm();
-			if (tweets != null && tweets.size() > 0) {
-				notificationLayout.setVisibility(View.GONE);
-				
-				Set<String> tags = new TreeSet<String>();
-				for (Tweet comment : tweets) {
-					tweetsAdapter.add(comment);
-					
-					String text = comment.getText().replace(productTag, "");
-					if (text.contains("#")) {
-						Pattern p = Pattern.compile("#[A-Za-z0-9]+");						
-						Matcher m = p.matcher(text);
-						while (m.find()) {
-							tags.add(m.group());
-						}
-					}
-				}
-				
-				for (String tag : tags) {
-					tagsAdapter.add(tag);
-				}
-				
-				tweetsAdapter.notifyDataSetChanged();
-				
+			if (result == null) {
 				progressDialog.dismiss();
-				
-				new GetProfileImages().execute(tweetsAdapter.items);
+				Toast.makeText(MainActivity.this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
 			}
 			else {
-				progressDialog.dismiss();
+				tweets = result;
+		         
+				ViewGroup notificationLayout = (ViewGroup) findViewById(R.id.CommentsNotificationLayout);
 				
-				TextView notificationTextView = (TextView) findViewById(R.id.commentsNotificationTextView);
-				notificationTextView.setText(R.string.notification_message_no_comments);
-				notificationLayout.setVisibility(View.VISIBLE);
+				tweetsAdapter.clear();
+				tagsAdapter.clear();
+				
+				String productTag = PreferencesActivity.ProductCodePrefix + DataManager.getSearchTerm();
+				if (tweets.size() > 0) {
+					notificationLayout.setVisibility(View.GONE);
+					
+					Set<String> tags = new TreeSet<String>();
+					for (Tweet comment : tweets) {
+						tweetsAdapter.add(comment);
+						
+						String text = comment.getText().replace(productTag, "");
+						if (text.contains("#")) {
+							Pattern p = Pattern.compile("#[A-Za-z0-9]+");						
+							Matcher m = p.matcher(text);
+							while (m.find()) {
+								tags.add(m.group());
+							}
+						}
+					}
+					
+					for (String tag : tags) {
+						tagsAdapter.add(tag);
+					}
+					
+					tweetsAdapter.notifyDataSetChanged();
+					
+					progressDialog.dismiss();
+					
+					new GetProfileImages().execute(tweetsAdapter.items);
+				}
+				else {
+					progressDialog.dismiss();
+					
+					TextView notificationTextView = (TextView) findViewById(R.id.commentsNotificationTextView);
+					notificationTextView.setText(R.string.notification_message_no_comments);
+					notificationLayout.setVisibility(View.VISIBLE);
+				}
 			}
 	    }
 	}

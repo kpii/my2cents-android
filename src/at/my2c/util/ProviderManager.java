@@ -57,13 +57,11 @@ public final class ProviderManager {
 		QueryResult queryResult = null;
 		try {
 			queryResult = twitter.search(query);
+			return queryResult.getTweets();
 		} catch (TwitterException e) {
 			Log.e(TAG, e.toString());
+			return null;
 		}
-		
-		List<Tweet> items = queryResult.getTweets();
-		
-		return items;
 	}
 	
 	public final static boolean verifyCredentials() {
