@@ -9,8 +9,8 @@
 		android:id="@+id/tweet_avatar"
 		android:layout_marginRight="5px"
 		android:layout_height="wrap_content"
-		android:maxWidth="48px"
-		android:maxHeight="48px"
+		android:maxWidth="73px"
+		android:maxHeight="73px"
 		android:adjustViewBounds="true" />
 	<TextView
 		android:id="@+id/tweet_author"

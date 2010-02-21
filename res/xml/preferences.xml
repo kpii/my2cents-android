@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
 	xmlns:android="http://schemas.android.com/apk/res/android">
-	<!-- USER CREDENTIALS -->
 	<PreferenceCategory
-		android:title="@string/preferences_category_account">
-		<Preference
-			android:title="@string/preferences_account"
-			android:key="account_preference"
-			android:summary="@string/preferences_account_summary" />
-	</PreferenceCategory>
-
-	<!-- SETTINGS -->
-	<PreferenceCategory
-		android:title="@string/preferences_category_additional_options">
+		android:title="Online Social Networks">
 		<CheckBoxPreference
-			android:key="gps_enabled"
-			android:title="@string/preferences_location"
-			android:summary="@string/preferences_location_summary"
-			android:defaultValue="false" />
-		<CheckBoxPreference
-			android:key="preferences_play_beep"
-			android:defaultValue="true"
-			android:title="@string/preferences_play_beep_title" />
-		<CheckBoxPreference
-			android:key="preferences_vibrate"
 			android:defaultValue="false"
-			android:title="@string/preferences_vibrate_title" />
+			android:key="@string/settings_login_twitter"
+			android:title="@string/settings_login_twitter"
+			android:summaryOff="@string/settings_login_twitter_desc_out"
+			android:summaryOn="@string/settings_login_twitter_desc_in" />
 		<CheckBoxPreference
-			android:key="preferences_copy_to_clipboard"
-			android:defaultValue="true"
-			android:title="@string/preferences_copy_to_clipboard_title" />
+			android:defaultValue="false"
+			android:key="@string/settings_location"
+			android:title="@string/settings_location"
+			android:summaryOn="@string/settings_location_desc_on"
+			android:summaryOff="@string/settings_location_desc_off"
+			android:dependency="@string/settings_login_twitter" />
 	</PreferenceCategory>
-
+	<PreferenceCategory
+		android:title="When a barcode is found\u2026">
+		<CheckBoxPreference
+			android:defaultValue="true"
+			android:key="@string/settings_play_beep"
+			android:title="@string/settings_play_beep" />
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:key="@string/settings_vibrate"
+			android:title="@string/settings_vibrate" />
+		<CheckBoxPreference
+			android:defaultValue="true"
+			android:key="@string/settings_copy_to_clipboard"
+			android:title="@string/settings_copy_to_clipboard" />
+	</PreferenceCategory>
 </PreferenceScreen>

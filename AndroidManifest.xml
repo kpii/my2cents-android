@@ -17,14 +17,16 @@
 		android:anyDensity="true" />
 	<application
 		android:label="@string/app_name"
+		android:theme="@android:style/Theme.Light.NoTitleBar"
 		android:debuggable="true"
 		android:name="My2CentsApplication"
-		android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
 		android:icon="@drawable/birdy">
 		<activity
 			android:screenOrientation="landscape"
+			android:launchMode="singleTop"
+			android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
 			android:configChanges="orientation|keyboardHidden"
-			android:name="CaptureActivity">
+			android:name=".CaptureActivity">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.MAIN" />
@@ -33,8 +35,8 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="MainActivity"
-			android:theme="@android:style/Theme.Light"
+			android:name=".CommentsActivity"
+			android:launchMode="singleTop"
 			android:configChanges="orientation|keyboardHidden">
 			<intent-filter>
 				<action
@@ -44,7 +46,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="FavoritesActivity">
+			android:name=".HistoryActivity">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.VIEW" />
@@ -53,43 +55,8 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="HistoryActivity"
-			android:theme="@android:style/Theme.Light"
-			android:label="my2cents History">
-			<intent-filter>
-				<action
-					android:name="android.intent.action.VIEW" />
-				<category
-					android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-		</activity>
-		<activity
-			android:name="PreferencesActivity"
-			android:label="@string/preferences_name">
-			<intent-filter>
-				<action
-					android:name="android.intent.action.VIEW" />
-				<category
-					android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-		</activity>
-		<activity
-			android:screenOrientation="user"
-			android:theme="@android:style/Theme.Dialog"
-			android:label="my2cents - Search for products"
-			android:name="SearchActivity">
-			<intent-filter>
-				<action
-					android:name="android.intent.action.VIEW" />
-				<category
-					android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-		</activity>
-		<activity
-			android:name="AuthorizationActivity"
-			android:screenOrientation="user"
-			android:launchMode="singleInstance"
-			android:label="my2cents - Twitter Account">
+			android:name=".SettingsActivity"
+			android:launchMode="singleInstance">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.VIEW" />
@@ -103,7 +70,18 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="HelpActivity"
+			android:screenOrientation="user"
+			android:label="my2cents - Search for products"
+			android:name=".SearchActivity" android:theme="@android:style/Theme.Dialog">
+			<intent-filter>
+				<action
+					android:name="android.intent.action.VIEW" />
+				<category
+					android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".HelpActivity"
 			android:screenOrientation="user">
 			<intent-filter>
 				<action

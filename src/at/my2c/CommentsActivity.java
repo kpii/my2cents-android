@@ -52,13 +52,13 @@ import at.my2c.data.ProductInfoManager;
 import at.my2c.util.GpsManager;
 import at.my2c.util.NetworkManager;
 
-public final class MainActivity extends ListActivity {
+public final class CommentsActivity extends ListActivity {
 
 	private final static int ACCOUNT_ACTIVITY_CODE = 0;
 	
-	private SharedPreferences preferences;
+	private SharedPreferences settings;
 	
-	private boolean locationEnabled;
+	private boolean shareLocation;
 	
 	private LocationManager locationManager;
 
@@ -74,12 +74,17 @@ public final class MainActivity extends ListActivity {
 	public static HashMap<String, Bitmap> avatarMap = new HashMap<String, Bitmap>();
 	
 	private ProductInfo productInfo;
+	
+	private TextView statusTextView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+		
+		setContentView(R.layout.comments);
 
+		statusTextView = (TextView) findViewById(R.id.StatusTextView);
+		
 		comments = new ArrayList<Comment>();
 		commentsAdapter = new CommentsAdapter(this, R.layout.comment_item, comments);
 		setListAdapter(commentsAdapter);
@@ -101,9 +106,10 @@ public final class MainActivity extends ListActivity {
 
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		
-		preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		String token = preferences.getString(PreferencesActivity.OAUTH_TOKEN, "");
-		String tokenSecret = preferences.getString(PreferencesActivity.OAUTH_TOKEN_SECRET, "");
+		settings = PreferenceManager.getDefaultSharedPreferences(this);
+		String token = settings.getString(getString(R.string.settings_token),"");
+		String tokenSecret = settings.getString(getString(R.string.settings_token_secret),"");
+		
 		CommentsManager.InitializeOAuth(new AccessToken(token, tokenSecret));
 	}
 	
@@ -151,7 +157,7 @@ public final class MainActivity extends ListActivity {
 				setTitle(getString(R.string.main_activity_title_prefix) + DataManager.getSearchTerm());
 				
 				new GetProductInfoTask().execute(DataManager.getSearchTerm());
-				new GetCommentsTask().execute(PreferencesActivity.TagPrefix + DataManager.getSearchTerm());
+				new GetCommentsTask().execute(SettingsActivity.TagPrefix + DataManager.getSearchTerm());
 			}
 		}
 	}
@@ -160,7 +166,7 @@ public final class MainActivity extends ListActivity {
 
 		@Override
 		protected void onPreExecute() {
-			progressDialog = ProgressDialog.show(MainActivity.this, null, getString(R.string.progress_dialog_loading_comments), true);
+			progressDialog = ProgressDialog.show(CommentsActivity.this, null, getString(R.string.progress_dialog_loading_comments), true);
 	    }
 		
 		@Override
@@ -172,7 +178,7 @@ public final class MainActivity extends ListActivity {
 		protected void onPostExecute(List<Comment> result) {
 			if (result == null) {
 				progressDialog.dismiss();
-				Toast.makeText(MainActivity.this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
+				Toast.makeText(CommentsActivity.this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
 			}
 			else {
 				comments = result;
@@ -182,7 +188,7 @@ public final class MainActivity extends ListActivity {
 				commentsAdapter.clear();
 				tagsAdapter.clear();
 				
-				String productTag = PreferencesActivity.ProductCodePrefix + DataManager.getSearchTerm();
+				String productTag = SettingsActivity.ProductCodePrefix + DataManager.getSearchTerm();
 				if (comments.size() > 0) {
 					notificationLayout.setVisibility(View.GONE);
 					
@@ -248,11 +254,8 @@ public final class MainActivity extends ListActivity {
 			return;
 		}
 		
-		
-		locationEnabled = preferences.getBoolean(PreferencesActivity.GPS_ENABLED, false);
-		
-		boolean isCommentingPossible = preferences.getBoolean(PreferencesActivity.IS_COMMENTING_POSSIBLE, false);
-		CommentsManager.setCommentingPossible(isCommentingPossible);
+		shareLocation = settings.getBoolean(getString(R.string.settings_location), false);
+		CommentsManager.setCommentingPossible(true);
 		
 		updateCommentUI();
 		
@@ -300,7 +303,7 @@ public final class MainActivity extends ListActivity {
 	
 	private final Button.OnClickListener loginListener = new Button.OnClickListener() {
 		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), AuthorizationActivity.class);
+			Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
 			startActivityForResult(intent, ACCOUNT_ACTIVITY_CODE);
 		}
 	};
@@ -310,7 +313,7 @@ public final class MainActivity extends ListActivity {
 			EditText commentEditor = (EditText) findViewById(R.id.comment_edittext);
 			String message = commentEditor.getText().toString() +
 				" " +
-				PreferencesActivity.ProductCodePrefix +
+				SettingsActivity.ProductCodePrefix +
 				DataManager.getSearchTerm();
 			
 			new PostComment().execute(message);
@@ -326,7 +329,7 @@ public final class MainActivity extends ListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.main_menu, menu);
+		inflater.inflate(R.menu.comments_menu, menu);
 		return true;
 	}
 
@@ -348,8 +351,8 @@ public final class MainActivity extends ListActivity {
 				startActivity(intent);
 				return true;
 			}
-			case R.id.preferencesMenuItem: {
-				Intent intent = new Intent(this, PreferencesActivity.class);
+			case R.id.settingsMenuItem: {
+				Intent intent = new Intent(this, SettingsActivity.class);
 				startActivity(intent);
 				return true;
 			}
@@ -406,13 +409,12 @@ public final class MainActivity extends ListActivity {
 		@Override
 		protected void onPostExecute(ProductInfo product) {
 	         
-	        ViewGroup notificationLayout = (ViewGroup) findViewById(R.id.NotificationLayout);
 	        ViewGroup productInfoLayout = (ViewGroup) findViewById(R.id.ProductInfoLayout);
 				
 	        if (product != null) {
 	        	productInfo = product;
 	        	
-	        	notificationLayout.setVisibility(View.GONE);
+	        	statusTextView.setText(R.string.status_product_information_found);
 	        	productInfoLayout.setVisibility(View.VISIBLE);
 				
 	        	TextView productNameTextView = (TextView) findViewById(R.id.product_name_textview);
@@ -430,9 +432,7 @@ public final class MainActivity extends ListActivity {
 			else {
 				productInfo = null;
 				
-				TextView notificationTextView = (TextView) findViewById(R.id.notificationTextView);
-				notificationTextView.setText(R.string.notification_message_no_products_found);
-				notificationLayout.setVisibility(View.VISIBLE);
+				statusTextView.setText(R.string.status_product_information_not_found);
 				productInfoLayout.setVisibility(View.GONE);
 			}
 	    }
@@ -443,13 +443,13 @@ public final class MainActivity extends ListActivity {
 
 		@Override
 		protected void onPreExecute() {
-			progressDialog = ProgressDialog.show(MainActivity.this, null, getString(R.string.progress_dialog_sending), true);
+			progressDialog = ProgressDialog.show(CommentsActivity.this, null, getString(R.string.progress_dialog_sending), true);
 	    }
 		
 		@Override
 		protected Comment doInBackground(String... params) {
 			
-			Comment comment = (locationEnabled) ? 
+			Comment comment = (shareLocation) ? 
 				CommentsManager.sendComment(params[0], GpsManager.getGPS(locationManager)) :
 				CommentsManager.sendComment(params[0], null);
 			
@@ -473,7 +473,7 @@ public final class MainActivity extends ListActivity {
 				
 				EditText commentEditor = (EditText) findViewById(R.id.comment_edittext);
 				commentEditor.setText("");
-				Toast.makeText(MainActivity.this, R.string.message_comment_posted_successfully, Toast.LENGTH_SHORT).show();
+				Toast.makeText(CommentsActivity.this, R.string.message_comment_posted_successfully, Toast.LENGTH_SHORT).show();
 			}
 
 			progressDialog.dismiss();

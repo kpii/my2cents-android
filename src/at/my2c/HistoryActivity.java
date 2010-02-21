@@ -53,7 +53,7 @@ public final class HistoryActivity extends ListActivity {
 		String searchTerm = cursor.getString(1);
 		DataManager.setSearchTerm(searchTerm);
 		
-		Intent intent = new Intent(this, MainActivity.class);
+		Intent intent = new Intent(this, CommentsActivity.class);
 		intent.setAction(Intents.ACTION);
 		startActivity(intent);
 	}
@@ -84,8 +84,8 @@ public final class HistoryActivity extends ListActivity {
 				adapter.getCursor().requery();
 				return true;
 			}
-			case R.id.preferencesMenuItem: {
-				Intent intent = new Intent(this, PreferencesActivity.class);
+			case R.id.settingsMenuItem: {
+				Intent intent = new Intent(this, SettingsActivity.class);
 				startActivity(intent);
 				return true;
 			}

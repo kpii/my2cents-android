@@ -27,7 +27,7 @@ public final class SearchActivity extends Activity {
 			String searchTerm = editor.getText().toString();
 			DataManager.setSearchTerm(searchTerm);
 
-			Intent intent = new Intent(view.getContext(), MainActivity.class);
+			Intent intent = new Intent(view.getContext(), CommentsActivity.class);
 			intent.setAction(Intents.ACTION);
 			startActivity(intent);
 

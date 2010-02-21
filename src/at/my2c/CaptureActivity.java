@@ -56,6 +56,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
 	private static final float BEEP_VOLUME = 0.15f;
 	private static final long VIBRATE_DURATION = 200L;
+	
+	private SharedPreferences settings;
 
 	private CaptureActivityHandler handler;
 
@@ -89,6 +91,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		settings = PreferenceManager.getDefaultSharedPreferences(this);
 
 		Window window = getWindow();
 		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -123,10 +127,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
 		resetStatusView();
 
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		playBeep = prefs.getBoolean(PreferencesActivity.KEY_PLAY_BEEP, true);
-		vibrate = prefs.getBoolean(PreferencesActivity.KEY_VIBRATE, false);
-		copyToClipboard = prefs.getBoolean(PreferencesActivity.KEY_COPY_TO_CLIPBOARD, true);
+		playBeep = settings.getBoolean(getString(R.string.settings_play_beep), true);
+		vibrate = settings.getBoolean(getString(R.string.settings_vibrate), false);
+		copyToClipboard = settings.getBoolean(getString(R.string.settings_copy_to_clipboard), true);
 		initBeepSound();
 	}
 
@@ -176,8 +179,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 			startActivity(intent);
 			return true;
 		}
-		case R.id.preferencesMenuItem: {
-			Intent intent = new Intent(this, PreferencesActivity.class);
+		case R.id.settingsMenuItem: {
+			Intent intent = new Intent(this, SettingsActivity.class);
 			startActivity(intent);
 			return true;
 		}
@@ -276,7 +279,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 			clipboard.setText(productCode);
 		}
 
-		Intent intent = new Intent(this, MainActivity.class);
+		Intent intent = new Intent(this, CommentsActivity.class);
 		intent.setAction(Intents.ACTION);
 		startActivity(intent);
 	}
@@ -291,10 +294,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 		try {
 			PackageInfo info = getPackageManager().getPackageInfo(this.getPackageName(), 0);
 			int currentVersion = info.versionCode;
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-			int lastVersion = prefs.getInt(PreferencesActivity.KEY_HELP_VERSION_SHOWN, 0);
+			int lastVersion = settings.getInt(getString(R.string.settings_first_start), 0);
 			if (currentVersion > lastVersion) {
-				prefs.edit().putInt(PreferencesActivity.KEY_HELP_VERSION_SHOWN, currentVersion).commit();
+				settings.edit().putInt(getString(R.string.settings_first_start), currentVersion).commit();
 				Intent intent = new Intent(Intent.ACTION_VIEW);
 				intent.setClassName(this, HelpActivity.class.getName());
 				startActivity(intent);
@@ -371,7 +373,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 	private void resetStatusView() {
 		viewfinderView.setVisibility(View.VISIBLE);
 
-		TextView textView = (TextView) findViewById(R.id.status_text_view);
+		TextView textView = (TextView) findViewById(R.id.StatusTextView);
 		textView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
 		textView.setTextSize(14.0f);
 		lastResult = null;

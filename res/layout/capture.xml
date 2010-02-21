@@ -33,11 +33,11 @@
 			android:padding="4px"
 			android:gravity="center">
 			<TextView
-				android:id="@+id/status_text_view"
+				android:id="@+id/StatusTextView"
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:layout_gravity="left|center_vertical"
-				android:text="@string/msg_default_status"
+				android:text="@string/scanner_default_status"
 				android:textColor="@color/status_text"
 				android.textSize="14sp" />
 		</LinearLayout>

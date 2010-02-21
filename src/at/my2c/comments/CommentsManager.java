@@ -18,7 +18,7 @@ import twitter4j.User;
 import twitter4j.http.AccessToken;
 import android.location.Location;
 import android.util.Log;
-import at.my2c.AuthorizationActivity;
+import at.my2c.SettingsActivity;
 
 public final class CommentsManager {
 
@@ -36,7 +36,7 @@ public final class CommentsManager {
 	public final static void InitializeOAuth(AccessToken accessToken)
 	{
 		TwitterFactory factory = new TwitterFactory();
-		provider = factory.getOAuthAuthorizedInstance(AuthorizationActivity.CONSUMER_KEY, AuthorizationActivity.CONSUMER_SECRET, accessToken);
+		provider = factory.getOAuthAuthorizedInstance(SettingsActivity.CONSUMER_KEY, SettingsActivity.CONSUMER_SECRET, accessToken);
 	}
 
 	public final static Comment sendComment(String text, Location location) {

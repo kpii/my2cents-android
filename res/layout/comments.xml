@@ -4,26 +4,42 @@
 	android:orientation="vertical"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
-	<LinearLayout
-		android:layout_height="wrap_content"
+	<RelativeLayout
 		android:layout_width="fill_parent"
-		android:id="@+id/NotificationLayout"
-		android:background="@drawable/comment_editor_background"
-		android:padding="5sp"
-		android:visibility="gone">
+		android:background="#ACBC1A"
+		android:orientation="horizontal"
+		android:layout_height="wrap_content">
 		<TextView
-			android:id="@+id/notificationTextView"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			android:textColor="@color/result_minor_text"
+			android:text="@string/app_name"
+			android:layout_height="wrap_content"
+			android:textColor="#FFF"
 			android:textStyle="bold"
-			android:typeface="monospace">
-		</TextView>
-	</LinearLayout>
+			android:padding="5px"
+			android:textSize="25sp"
+			android:layout_width="wrap_content"
+			android:id="@+id/TextViewAppName"></TextView>
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textColor="#FFF"
+			android:padding="0px"
+			android:textSize="10sp"
+			android:layout_alignBaseline="@+id/TextViewAppName"
+			android:layout_marginLeft="125sp"
+			android:text="@string/app_notes" android:id="@+id/TextViewAppNotes"></TextView>
+	</RelativeLayout>
+	<TextView
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:background="#4F722E"
+		android:textColor="#FFF"
+		android:padding="5px"
+		android:textSize="14sp"
+		android:id="@+id/InfoTextView"></TextView>
+	
 	<RelativeLayout
 		android:id="@+id/ProductInfoLayout"
 		android:visibility="gone"
-		android:background="@drawable/comment_editor_background"
 		android:layout_width="fill_parent"
 		android:layout_height="?android:attr/listPreferredItemHeight"
 		android:padding="6dip">
@@ -85,7 +101,6 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/LoginLayout"
-		android:background="@drawable/comment_editor_background"
 		android:orientation="vertical"
 		android:visibility="gone">
 		<Button
@@ -98,7 +113,6 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:id="@+id/CommentLayout"
-		android:background="@drawable/comment_editor_background"
 		android:orientation="vertical"
 		android:visibility="gone">
 		<LinearLayout
@@ -128,4 +142,12 @@
 			android:longClickable="true"
 			android:unselectedAlpha="0.3" />
 	</LinearLayout>
+	<TextView
+		android:textColor="#FFF"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:textSize="11sp"
+		android:padding="3px"
+		android:gravity="center_horizontal"
+		android:background="#ACBC1A" android:id="@+id/StatusTextView"></TextView>
 </LinearLayout>
