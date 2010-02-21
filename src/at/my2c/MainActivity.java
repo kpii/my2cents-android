@@ -425,9 +425,9 @@ public final class MainActivity extends ListActivity {
 
 		private List<Comment> items;
 
-		public CommentsAdapter(Context context, int textViewResourceId, List<Comment> tweets) {
-			super(context, textViewResourceId, tweets);
-			this.items = tweets;
+		public CommentsAdapter(Context context, int textViewResourceId, List<Comment> comments) {
+			super(context, textViewResourceId, comments);
+			this.items = comments;
 		}
 
 		@Override
