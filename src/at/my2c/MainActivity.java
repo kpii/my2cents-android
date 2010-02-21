@@ -27,7 +27,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,7 +34,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
@@ -45,13 +43,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemLongClickListener;
 import at.my2c.comments.Comment;
+import at.my2c.comments.CommentsAdapter;
 import at.my2c.comments.CommentsManager;
+import at.my2c.comments.TagsAdapter;
 import at.my2c.data.DataManager;
 import at.my2c.data.ProductInfo;
 import at.my2c.data.ProductInfoManager;
 import at.my2c.util.GpsManager;
 import at.my2c.util.NetworkManager;
-import at.my2c.util.RelativeTime;
 
 public final class MainActivity extends ListActivity {
 
@@ -70,9 +69,9 @@ public final class MainActivity extends ListActivity {
 	private CommentsAdapter commentsAdapter;
 
 	private ArrayList<String> tags;
-	private TagAdapter tagsAdapter;
+	private TagsAdapter tagsAdapter;
 
-	private HashMap<String, Bitmap> avatarMap = new HashMap<String, Bitmap>();
+	public static HashMap<String, Bitmap> avatarMap = new HashMap<String, Bitmap>();
 	
 	private ProductInfo productInfo;
 
@@ -86,7 +85,7 @@ public final class MainActivity extends ListActivity {
 		setListAdapter(commentsAdapter);
 
 		tags = new ArrayList<String>();
-		tagsAdapter = new TagAdapter(this, R.layout.tag_item, tags);
+		tagsAdapter = new TagsAdapter(this, R.layout.tag_item, tags);
 		tagsGallery = (Gallery) findViewById(R.id.comment_tag_gallery);
 		tagsGallery.setAdapter(tagsAdapter);
 		tagsGallery.setOnItemLongClickListener(tagsLongClickListener);
@@ -159,13 +158,13 @@ public final class MainActivity extends ListActivity {
 			if (action.equals(Intents.ACTION)) {
 				setTitle(getString(R.string.main_activity_title_prefix) + DataManager.getSearchTerm());
 				
-				new GetProductInfo().execute(DataManager.getSearchTerm());
-				new GetComments().execute(PreferencesActivity.TagPrefix + DataManager.getSearchTerm());
+				new GetProductInfoTask().execute(DataManager.getSearchTerm());
+				new GetCommentsTask().execute(PreferencesActivity.TagPrefix + DataManager.getSearchTerm());
 			}
 		}
 	}
 	
-	private class GetComments extends AsyncTask<String, Void, List<Comment>> {
+	private class GetCommentsTask extends AsyncTask<String, Void, List<Comment>> {
 
 		@Override
 		protected void onPreExecute() {
@@ -217,7 +216,7 @@ public final class MainActivity extends ListActivity {
 					
 					progressDialog.dismiss();
 					
-					new GetProfileImages().execute(commentsAdapter.items);
+					new GetProfileImagesTask().execute(comments);
 				}
 				else {
 					progressDialog.dismiss();
@@ -230,7 +229,7 @@ public final class MainActivity extends ListActivity {
 	    }
 	}
 	
-	private class GetProfileImages extends AsyncTask<List<Comment>, Void, Void> {
+	private class GetProfileImagesTask extends AsyncTask<List<Comment>, Void, Void> {
 		
 		@Override
 		protected Void doInBackground(List<Comment>... params) {			
@@ -280,7 +279,7 @@ public final class MainActivity extends ListActivity {
 
 	@Override
 	public void onListItemClick(ListView parent, View v, int position, long id) {
-		Comment selectedComment = commentsAdapter.items.get(position);
+		Comment selectedComment = comments.get(position);
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(selectedComment.getText())
@@ -391,80 +390,9 @@ public final class MainActivity extends ListActivity {
 			}
 		}
 	}
-
-	private class TagAdapter extends ArrayAdapter<String> {
-
-		private ArrayList<String> items;
-
-		public TagAdapter(Context context, int textViewResourceId, ArrayList<String> tags) {
-			super(context, textViewResourceId, tags);
-			this.items = tags;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-
-			View view = convertView;
-			if (view == null) {
-				LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				view = inflator.inflate(R.layout.tag_item, null);
-			}
-
-			String tag = items.get(position);
-			if (tag != null) {
-				TextView tagTextView = (TextView) view.findViewById(R.id.tag_textview);
-				if (tagTextView != null) {
-					tagTextView.setText(tag);
-				}
-			}
-			return view;
-		}
-	}
-
-	private class CommentsAdapter extends ArrayAdapter<Comment> {
-
-		private List<Comment> items;
-
-		public CommentsAdapter(Context context, int textViewResourceId, List<Comment> comments) {
-			super(context, textViewResourceId, comments);
-			this.items = comments;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-
-			View view = convertView;
-			if (view == null) {
-				LayoutInflater inflator = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				view = inflator.inflate(R.layout.comment_item, null);
-			}
-
-			Comment comment = items.get(position);
-			if (comment != null) {
-				TextView authorTextView = (TextView) view.findViewById(R.id.tweet_author);
-				authorTextView.setText(comment.getUser());
-
-				TextView messageTextView = (TextView) view.findViewById(R.id.tweet_message);
-				if (messageTextView != null) {
-					messageTextView.setText(comment.getText());
-				}
-
-				TextView sentTextView = (TextView) view.findViewById(R.id.tweet_sent);
-				if (sentTextView != null) {
-					sentTextView.setText(RelativeTime.getDifference(comment.getCreatedAt().getTime()));
-				}
-
-				ImageView avatarImageView = (ImageView) view.findViewById(R.id.tweet_avatar);
-				if (avatarImageView != null) {
-					avatarImageView.setImageBitmap(avatarMap.get(comment.getUser()));
-				}
-			}
-			return view;
-		}
-	}
 	
 	
-	private class GetProductInfo extends AsyncTask<String, Void, ProductInfo> {
+	private class GetProductInfoTask extends AsyncTask<String, Void, ProductInfo> {
 
 		@Override
 		protected ProductInfo doInBackground(String... params) {
