@@ -1,17 +1,14 @@
+
 package at.my2c;
 
-import twitter4j.TwitterException;
-import twitter4j.http.RequestToken;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.preference.Preference.OnPreferenceClickListener;
-import at.my2c.util.ProviderManager;
 
 public final class PreferencesActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	

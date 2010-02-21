@@ -1,3 +1,4 @@
+
 package at.my2c;
 
 import android.app.Activity;
@@ -17,7 +18,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import at.my2c.util.ProviderManager;
+import at.my2c.comments.CommentsManager;
 
 public final class AccountActivity extends Activity {
 	private ProgressDialog progressDialog;
@@ -59,7 +60,7 @@ public final class AccountActivity extends Activity {
 			EditText passwordEditText = (EditText) findViewById(R.id.passwordEditText);
 			password = passwordEditText.getText().toString();
 			
-			ProviderManager.InitializeBasic(username, password);
+			CommentsManager.InitializeBasic(username, password);
 			
 			new CheckAccount().execute();
 		}
@@ -97,7 +98,7 @@ public final class AccountActivity extends Activity {
 		
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			return ProviderManager.verifyCredentials();
+			return CommentsManager.verifyCredentials();
 		}
 		
 		@Override
@@ -112,7 +113,7 @@ public final class AccountActivity extends Activity {
 				editor.putString(PreferencesActivity.TWITTER_USERNAME, username);
 				editor.putString(PreferencesActivity.TWITTER_PASSWORD, password);
 				
-				editor.putBoolean(PreferencesActivity.IS_COMMENTING_POSSIBLE, ProviderManager.isCommentingPossible());
+				editor.putBoolean(PreferencesActivity.IS_COMMENTING_POSSIBLE, CommentsManager.isCommentingPossible());
 
 			    editor.commit();
 				

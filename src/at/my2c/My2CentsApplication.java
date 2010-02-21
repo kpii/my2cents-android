@@ -1,5 +1,5 @@
-package at.my2c;
 
+package at.my2c;
 
 import android.app.Application;
 import at.my2c.data.DataManager;

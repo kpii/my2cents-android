@@ -1,3 +1,4 @@
+
 package at.my2c;
 
 import java.net.MalformedURLException;
@@ -10,10 +11,6 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import twitter4j.GeoLocation;
-import twitter4j.Tweet;
-import twitter4j.TweetJSONImpl;
-import twitter4j.TwitterException;
 import twitter4j.http.AccessToken;
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -23,7 +20,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -48,12 +44,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemLongClickListener;
+import at.my2c.comments.Comment;
+import at.my2c.comments.CommentsManager;
 import at.my2c.data.DataManager;
 import at.my2c.data.ProductInfo;
 import at.my2c.data.ProductInfoManager;
 import at.my2c.util.GpsManager;
 import at.my2c.util.NetworkManager;
-import at.my2c.util.ProviderManager;
 import at.my2c.util.RelativeTime;
 
 public final class MainActivity extends ListActivity {
@@ -61,18 +58,16 @@ public final class MainActivity extends ListActivity {
 	private final static int ACCOUNT_ACTIVITY_CODE = 0;
 	
 	private SharedPreferences preferences;
-
-	private volatile boolean shutdownRequested;
 	
-	private boolean gpsEnabled;
+	private boolean locationEnabled;
 	
 	private LocationManager locationManager;
 
 	private Gallery tagsGallery;
 
 	private ProgressDialog progressDialog;
-	private List<Tweet> tweets;
-	private TweetsAdapter tweetsAdapter;
+	private List<Comment> comments;
+	private CommentsAdapter commentsAdapter;
 
 	private ArrayList<String> tags;
 	private TagAdapter tagsAdapter;
@@ -86,9 +81,9 @@ public final class MainActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		tweets = new ArrayList<Tweet>();
-		tweetsAdapter = new TweetsAdapter(this, R.layout.comment_item, tweets);
-		setListAdapter(tweetsAdapter);
+		comments = new ArrayList<Comment>();
+		commentsAdapter = new CommentsAdapter(this, R.layout.comment_item, comments);
+		setListAdapter(commentsAdapter);
 
 		tags = new ArrayList<String>();
 		tagsAdapter = new TagAdapter(this, R.layout.tag_item, tags);
@@ -112,12 +107,12 @@ public final class MainActivity extends ListActivity {
 		if (useOauth) {
 			String token = preferences.getString(PreferencesActivity.OAUTH_TOKEN, "");
 			String tokenSecret = preferences.getString(PreferencesActivity.OAUTH_TOKEN_SECRET, "");
-			ProviderManager.InitializeOAuth(new AccessToken(token, tokenSecret));
+			CommentsManager.InitializeOAuth(new AccessToken(token, tokenSecret));
 		}
 		else {
 			String username = preferences.getString(PreferencesActivity.TWITTER_USERNAME, "");
 			String password = preferences.getString(PreferencesActivity.TWITTER_PASSWORD, "");
-			ProviderManager.InitializeBasic(username, password);
+			CommentsManager.InitializeBasic(username, password);
 		}
 	}
 	
@@ -157,8 +152,6 @@ public final class MainActivity extends ListActivity {
 			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
 			return;
 		}
-		
-		shutdownRequested = false;
 
 		Intent intent = getIntent();
 		String action = intent == null ? null : intent.getAction();
@@ -172,7 +165,7 @@ public final class MainActivity extends ListActivity {
 		}
 	}
 	
-	private class GetComments extends AsyncTask<String, Void, List<Tweet>> {
+	private class GetComments extends AsyncTask<String, Void, List<Comment>> {
 
 		@Override
 		protected void onPreExecute() {
@@ -180,31 +173,31 @@ public final class MainActivity extends ListActivity {
 	    }
 		
 		@Override
-		protected List<Tweet> doInBackground(String... params) {
-			return ProviderManager.search(params[0]);
+		protected List<Comment> doInBackground(String... params) {
+			return CommentsManager.searchComments(params[0]);
 		}
 		
 		@Override
-		protected void onPostExecute(List<Tweet> result) {
+		protected void onPostExecute(List<Comment> result) {
 			if (result == null) {
 				progressDialog.dismiss();
 				Toast.makeText(MainActivity.this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
 			}
 			else {
-				tweets = result;
+				comments = result;
 		         
 				ViewGroup notificationLayout = (ViewGroup) findViewById(R.id.CommentsNotificationLayout);
 				
-				tweetsAdapter.clear();
+				commentsAdapter.clear();
 				tagsAdapter.clear();
 				
 				String productTag = PreferencesActivity.ProductCodePrefix + DataManager.getSearchTerm();
-				if (tweets.size() > 0) {
+				if (comments.size() > 0) {
 					notificationLayout.setVisibility(View.GONE);
 					
 					Set<String> tags = new TreeSet<String>();
-					for (Tweet comment : tweets) {
-						tweetsAdapter.add(comment);
+					for (Comment comment : comments) {
+						commentsAdapter.add(comment);
 						
 						String text = comment.getText().replace(productTag, "");
 						if (text.contains("#")) {
@@ -220,11 +213,11 @@ public final class MainActivity extends ListActivity {
 						tagsAdapter.add(tag);
 					}
 					
-					tweetsAdapter.notifyDataSetChanged();
+					commentsAdapter.notifyDataSetChanged();
 					
 					progressDialog.dismiss();
 					
-					new GetProfileImages().execute(tweetsAdapter.items);
+					new GetProfileImages().execute(commentsAdapter.items);
 				}
 				else {
 					progressDialog.dismiss();
@@ -237,19 +230,13 @@ public final class MainActivity extends ListActivity {
 	    }
 	}
 	
-	private class GetProfileImages extends AsyncTask<List<Tweet>, Void, Void> {
+	private class GetProfileImages extends AsyncTask<List<Comment>, Void, Void> {
 		
 		@Override
-		protected Void doInBackground(List<Tweet>... params) {			
-			URL url = null;
-			for (Tweet tweet : params[0]) {
-				if (!avatarMap.containsKey(tweet.getFromUser())) {
-					try {
-						url = new URL(tweet.getProfileImageUrl());
-					} catch (MalformedURLException e) {
-						Log.e(this.toString(), e.toString());
-					}
-					avatarMap.put(tweet.getFromUser(), NetworkManager.getRemoteImage(url));
+		protected Void doInBackground(List<Comment>... params) {			
+			for (Comment comment : params[0]) {
+				if (!avatarMap.containsKey(comment.getUser())) {
+					avatarMap.put(comment.getUser(), NetworkManager.getRemoteImage(comment.getUserProfileImageUrl()));
 				}
 				publishProgress();
 			}
@@ -258,7 +245,7 @@ public final class MainActivity extends ListActivity {
 		
 		@Override
 		protected void onProgressUpdate(Void... progress) {
-			tweetsAdapter.notifyDataSetChanged();
+			commentsAdapter.notifyDataSetChanged();
 	    }
 	}
 
@@ -271,15 +258,15 @@ public final class MainActivity extends ListActivity {
 		}
 		
 		
-		gpsEnabled = preferences.getBoolean(PreferencesActivity.GPS_ENABLED, false);
+		locationEnabled = preferences.getBoolean(PreferencesActivity.GPS_ENABLED, false);
 		
 		boolean isCommentingPossible = preferences.getBoolean(PreferencesActivity.IS_COMMENTING_POSSIBLE, false);
-		ProviderManager.setCommentingPossible(isCommentingPossible);
+		CommentsManager.setCommentingPossible(isCommentingPossible);
 		
 		updateCommentUI();
 		
-		if (tweetsAdapter.getCount() > 0)
-			tweetsAdapter.notifyDataSetChanged();
+		if (commentsAdapter.getCount() > 0)
+			commentsAdapter.notifyDataSetChanged();
 	}
 
 	private final OnItemLongClickListener tagsLongClickListener = new OnItemLongClickListener() {
@@ -293,7 +280,7 @@ public final class MainActivity extends ListActivity {
 
 	@Override
 	public void onListItemClick(ListView parent, View v, int position, long id) {
-		Tweet selectedComment = tweetsAdapter.items.get(position);
+		Comment selectedComment = commentsAdapter.items.get(position);
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(selectedComment.getText())
@@ -310,7 +297,7 @@ public final class MainActivity extends ListActivity {
 		ViewGroup commentLayout = (ViewGroup) findViewById(R.id.CommentLayout);
 		ViewGroup loginLayout = (ViewGroup) findViewById(R.id.LoginLayout);
 		
-		if (!ProviderManager.isCommentingPossible()) {
+		if (!CommentsManager.isCommentingPossible()) {
 			commentLayout.setVisibility(View.GONE);
 			loginLayout.setVisibility(View.VISIBLE);
 		}
@@ -349,7 +336,6 @@ public final class MainActivity extends ListActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		shutdownRequested = true;
 	}
 
 	@Override
@@ -435,11 +421,11 @@ public final class MainActivity extends ListActivity {
 		}
 	}
 
-	private class TweetsAdapter extends ArrayAdapter<Tweet> {
+	private class CommentsAdapter extends ArrayAdapter<Comment> {
 
-		private List<Tweet> items;
+		private List<Comment> items;
 
-		public TweetsAdapter(Context context, int textViewResourceId, List<Tweet> tweets) {
+		public CommentsAdapter(Context context, int textViewResourceId, List<Comment> tweets) {
 			super(context, textViewResourceId, tweets);
 			this.items = tweets;
 		}
@@ -453,10 +439,10 @@ public final class MainActivity extends ListActivity {
 				view = inflator.inflate(R.layout.comment_item, null);
 			}
 
-			Tweet comment = items.get(position);
+			Comment comment = items.get(position);
 			if (comment != null) {
 				TextView authorTextView = (TextView) view.findViewById(R.id.tweet_author);
-				authorTextView.setText(comment.getFromUser());
+				authorTextView.setText(comment.getUser());
 
 				TextView messageTextView = (TextView) view.findViewById(R.id.tweet_message);
 				if (messageTextView != null) {
@@ -470,7 +456,7 @@ public final class MainActivity extends ListActivity {
 
 				ImageView avatarImageView = (ImageView) view.findViewById(R.id.tweet_avatar);
 				if (avatarImageView != null) {
-					avatarImageView.setImageBitmap(avatarMap.get(comment.getFromUser()));
+					avatarImageView.setImageBitmap(avatarMap.get(comment.getUser()));
 				}
 			}
 			return view;
@@ -540,7 +526,7 @@ public final class MainActivity extends ListActivity {
 	}
 	
 	
-	private class PostComment extends AsyncTask<String, Void, twitter4j.Status> {
+	private class PostComment extends AsyncTask<String, Void, Comment> {
 
 		@Override
 		protected void onPreExecute() {
@@ -548,35 +534,29 @@ public final class MainActivity extends ListActivity {
 	    }
 		
 		@Override
-		protected twitter4j.Status doInBackground(String... params) {
+		protected Comment doInBackground(String... params) {
 			
-			GeoLocation location = null;
-			if (gpsEnabled && (locationManager != null)) {
-				Location l = GpsManager.getGPS(locationManager);
-				if (l != null) {
-					location = new GeoLocation(l.getLatitude(), l.getLongitude());
+			Comment comment = (locationEnabled) ? 
+				CommentsManager.sendComment(params[0], GpsManager.getGPS(locationManager)) :
+				CommentsManager.sendComment(params[0], null);
+			
+			if (comment != null) {
+				if (!avatarMap.containsKey(comment.getUser())) {
+					avatarMap.put(comment.getUser(), NetworkManager.getRemoteImage(comment.getUserProfileImageUrl()));
 				}
 			}
 			
-			twitter4j.Status status = ProviderManager.updateStatus(params[0], location);
-			
-			if (status != null) {
-				if (!avatarMap.containsKey(status.getUser().getScreenName())) {
-					avatarMap.put(status.getUser().getScreenName(), NetworkManager.getRemoteImage(status.getUser().getProfileImageURL()));
-				}
-			}
-			
-			return status;
+			return comment;
 		}
 		
 		@Override
-		protected void onPostExecute(twitter4j.Status status) {
-			if (status != null) {
+		protected void onPostExecute(Comment comment) {
+			if (comment != null) {
 				ViewGroup notificationLayout = (ViewGroup) findViewById(R.id.CommentsNotificationLayout);
 				notificationLayout.setVisibility(View.GONE);
 				
-				tweetsAdapter.insert(new TweetJSONImpl(status), 0);
-				tweetsAdapter.notifyDataSetChanged();
+				commentsAdapter.insert(comment, 0);
+				commentsAdapter.notifyDataSetChanged();
 				
 				EditText commentEditor = (EditText) findViewById(R.id.comment_edittext);
 				commentEditor.setText("");

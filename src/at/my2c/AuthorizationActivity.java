@@ -21,7 +21,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.Toast;
-import at.my2c.util.ProviderManager;
+import at.my2c.comments.CommentsManager;
 
 public final class AuthorizationActivity extends Activity {
 	
@@ -103,7 +103,7 @@ public final class AuthorizationActivity extends Activity {
 			accessToken = new AccessToken(consumer.getToken(), consumer.getTokenSecret());
 			
 			// initialize Twitter4J
-			ProviderManager.InitializeOAuth(accessToken);
+			CommentsManager.InitializeOAuth(accessToken);
 			
 			new CheckAccount().execute();
 		    
@@ -125,7 +125,7 @@ public final class AuthorizationActivity extends Activity {
 		
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			return ProviderManager.verifyCredentials();
+			return CommentsManager.verifyCredentials();
 		}
 		
 		@Override
@@ -139,7 +139,7 @@ public final class AuthorizationActivity extends Activity {
 				SharedPreferences.Editor editor = sharedPreferences.edit();
 				editor.putString(PreferencesActivity.OAUTH_TOKEN, accessToken.getToken());
 				editor.putString(PreferencesActivity.OAUTH_TOKEN_SECRET, accessToken.getTokenSecret());
-				editor.putBoolean(PreferencesActivity.IS_COMMENTING_POSSIBLE, ProviderManager.isCommentingPossible());
+				editor.putBoolean(PreferencesActivity.IS_COMMENTING_POSSIBLE, CommentsManager.isCommentingPossible());
 				editor.commit();
 				
 				Intent result = new Intent(getIntent().getAction());

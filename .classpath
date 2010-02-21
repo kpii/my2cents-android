@@ -4,6 +4,7 @@
 	<classpathentry kind="lib" path="libs/core.jar"/>
 	<classpathentry kind="lib" path="libs/signpost-core-1.2.jar"/>
 	<classpathentry kind="lib" path="libs/signpost-commonshttp4-1.2.jar"/>
+	<classpathentry kind="lib" path="libs/twitterj-core.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="output" path="bin"/>
