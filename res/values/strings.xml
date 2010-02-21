@@ -46,7 +46,6 @@
 	<string name="preferences_category_account">User Account</string>
 	<string name="preferences_account">Account</string>
 	<string name="preferences_account_summary">Twitter Account</string>
-	<string name="preferences_use_oauth">Use OAuth</string>
 	
 	<string name="preferences_category_additional_options">Additional Options</string>
 	<string name="preferences_location">Location</string>

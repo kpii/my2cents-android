@@ -86,18 +86,6 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="AccountActivity"
-			android:screenOrientation="user"
-			android:theme="@android:style/Theme.Dialog"
-			android:label="my2cents - Twitter Account">
-			<intent-filter>
-				<action
-					android:name="android.intent.action.VIEW" />
-				<category
-					android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-		</activity>
-		<activity
 			android:name="AuthorizationActivity"
 			android:screenOrientation="user"
 			android:launchMode="singleInstance"

@@ -18,11 +18,7 @@ public final class PreferencesActivity extends PreferenceActivity implements OnS
 	
 	public final static String TagPrefix = "#";
 	public final static String ProductCodePrefix = "#my2c #";
-
-	public static final String TWITTER_USERNAME = "twitter_username";
-	public static final String TWITTER_PASSWORD = "twitter_password";
 	
-	public static final String USE_OAUTH = "preferences_use_oauth";	
 	public static final String OAUTH_TOKEN = "oauth_token";
 	public static final String OAUTH_TOKEN_SECRET = "oauth_token_secret";
 
@@ -52,17 +48,8 @@ public final class PreferencesActivity extends PreferenceActivity implements OnS
 	
 	private final OnPreferenceClickListener onAccountPreferenceClickListener = new OnPreferenceClickListener() {
 		public boolean onPreferenceClick(Preference preference) {
-			PreferenceScreen preferences = getPreferenceScreen();
-			boolean useOauth = preferences.getSharedPreferences().getBoolean(USE_OAUTH, true);
-			
-			if (useOauth) {
-				Intent intent = new Intent(getBaseContext(), AuthorizationActivity.class);
-				startActivityForResult(intent, ACCOUNT_ACTIVITY_CODE);
-			}
-			else {
-				Intent intent = new Intent(getBaseContext(), AccountActivity.class);
-				startActivityForResult(intent, ACCOUNT_ACTIVITY_CODE);
-			}			
+			Intent intent = new Intent(getBaseContext(), AuthorizationActivity.class);
+			startActivityForResult(intent, ACCOUNT_ACTIVITY_CODE);			
 			return true;
 		}
 	};

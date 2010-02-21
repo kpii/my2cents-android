@@ -54,8 +54,6 @@ import com.google.zxing.client.result.ResultParser;
  */
 public final class CaptureActivity extends Activity implements SurfaceHolder.Callback {
 
-	private static final String TAG = "CaptureActivity";
-
 	private static final float BEEP_VOLUME = 0.15f;
 	private static final long VIBRATE_DURATION = 200L;
 
@@ -302,7 +300,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 				startActivity(intent);
 			}
 		} catch (PackageManager.NameNotFoundException e) {
-			Log.w(TAG, e);
+			Log.w(CaptureActivity.class.getName(), e);
 		}
 	}
 
@@ -342,13 +340,13 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 		try {
 			CameraManager.get().openDriver(surfaceHolder);
 		} catch (IOException ioe) {
-			Log.w(TAG, ioe);
+			Log.w(CaptureActivity.class.getName(), ioe);
 			displayFrameworkBugMessageAndExit();
 			return;
 		} catch (RuntimeException e) {
 			// Barcode Scanner has seen crashes in the wild of this variety:
 			// java.?lang.?RuntimeException: Fail to connect to camera service
-			Log.e(TAG, e.toString());
+			Log.e(CaptureActivity.class.getName(), e.toString());
 			displayFrameworkBugMessageAndExit();
 			return;
 		}

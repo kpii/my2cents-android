@@ -102,17 +102,9 @@ public final class MainActivity extends ListActivity {
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		
 		preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean useOauth = preferences.getBoolean(PreferencesActivity.USE_OAUTH, true);
-		if (useOauth) {
-			String token = preferences.getString(PreferencesActivity.OAUTH_TOKEN, "");
-			String tokenSecret = preferences.getString(PreferencesActivity.OAUTH_TOKEN_SECRET, "");
-			CommentsManager.InitializeOAuth(new AccessToken(token, tokenSecret));
-		}
-		else {
-			String username = preferences.getString(PreferencesActivity.TWITTER_USERNAME, "");
-			String password = preferences.getString(PreferencesActivity.TWITTER_PASSWORD, "");
-			CommentsManager.InitializeBasic(username, password);
-		}
+		String token = preferences.getString(PreferencesActivity.OAUTH_TOKEN, "");
+		String tokenSecret = preferences.getString(PreferencesActivity.OAUTH_TOKEN_SECRET, "");
+		CommentsManager.InitializeOAuth(new AccessToken(token, tokenSecret));
 	}
 	
 	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
@@ -308,15 +300,8 @@ public final class MainActivity extends ListActivity {
 	
 	private final Button.OnClickListener loginListener = new Button.OnClickListener() {
 		public void onClick(View view) {
-			boolean useOauth = preferences.getBoolean(PreferencesActivity.USE_OAUTH, true);
-			if (useOauth) {
-				Intent intent = new Intent(getBaseContext(), AuthorizationActivity.class);
-				startActivityForResult(intent, ACCOUNT_ACTIVITY_CODE);
-			}
-			else {
-				Intent intent = new Intent(getBaseContext(), AccountActivity.class);
-				startActivityForResult(intent, ACCOUNT_ACTIVITY_CODE);
-			}
+			Intent intent = new Intent(getBaseContext(), AuthorizationActivity.class);
+			startActivityForResult(intent, ACCOUNT_ACTIVITY_CODE);
 		}
 	};
 

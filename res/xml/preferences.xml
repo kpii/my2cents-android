@@ -8,10 +8,6 @@
 			android:title="@string/preferences_account"
 			android:key="account_preference"
 			android:summary="@string/preferences_account_summary" />
-		<CheckBoxPreference
-			android:key="preferences_use_oauth"
-			android:defaultValue="true"
-			android:title="@string/preferences_use_oauth" />
 	</PreferenceCategory>
 
 	<!-- SETTINGS -->
