@@ -1,7 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<dimen name="product_info_text">14sp</dimen>
+	<dimen name="comment_username_text">14sp</dimen>
+	<dimen name="comment_sent_text">12sp</dimen>
+	
+	<dimen name="header_text">25sp</dimen>
+	<dimen name="header_sub_text">10sp</dimen>
+	<dimen name="info_text">14sp</dimen>
+	<dimen name="status_text">11sp</dimen>
+	
+	<dimen name="header_padding">5px</dimen>
+	<dimen name="header_sub_padding">0px</dimen>
+	<dimen name="info_padding">5px</dimen>
+	<dimen name="status_padding">3px</dimen>
+	
+	<dimen name="no_comments_text">14sp</dimen>
+	<dimen name="no_comments_padding">5sp</dimen>
+	
+	<dimen name="product_layout_padding">6sp</dimen>
+	<dimen name="product_name_text">14sp</dimen>
+	<dimen name="product_info_provider_text">10sp</dimen>
 
-<dimen name="comment_username_text">14sp</dimen>
-<dimen name="comment_sent_text">12sp</dimen>
+	<dimen name="comment_editor_padding">3sp</dimen>	
+	
+	<dimen name="tab_gallery_spacing">5px</dimen>
+	
+	<dimen name="product_image_max_size">90px</dimen>
 </resources>

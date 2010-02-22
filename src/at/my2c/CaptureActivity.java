@@ -48,10 +48,6 @@ import com.google.zxing.ResultPoint;
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.ResultParser;
 
-/**
- * The barcode reader activity itself. This is loosely based on the
- * CameraPreview example included in the Android SDK.
- */
 public final class CaptureActivity extends Activity implements SurfaceHolder.Callback {
 
 	private static final float BEEP_VOLUME = 0.15f;
@@ -99,7 +95,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 		setContentView(R.layout.capture);
 
 		CameraManager.init(getApplication());
-		viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
+		viewfinderView = (ViewfinderView) findViewById(R.id.ViewfinderView);
 		handler = null;
 		lastResult = null;
 		hasSurface = false;
@@ -111,7 +107,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 	protected void onResume() {
 		super.onResume();
 
-		SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
+		SurfaceView surfaceView = (SurfaceView) findViewById(R.id.PreviewSurfaceView);
 		SurfaceHolder surfaceHolder = surfaceView.getHolder();
 		if (hasSurface) {
 			// The activity was paused but not stopped, so the surface still

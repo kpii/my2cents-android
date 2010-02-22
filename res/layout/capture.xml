@@ -4,12 +4,12 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 	<SurfaceView
-		android:id="@+id/preview_view"
+		android:id="@+id/PreviewSurfaceView"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:layout_centerInParent="true" />
 	<at.my2c.scanner.ViewfinderView
-		android:id="@+id/viewfinder_view"
+		android:id="@+id/ViewfinderView"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:background="@color/transparent" />
@@ -38,7 +38,7 @@
 				android:layout_height="wrap_content"
 				android:layout_gravity="left|center_vertical"
 				android:text="@string/scanner_default_status"
-				android:textColor="@color/status_text"
+				android:textColor="@color/scanner_status_text"
 				android.textSize="14sp" />
 		</LinearLayout>
 	</LinearLayout>

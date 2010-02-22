@@ -36,7 +36,7 @@ public final class HistoryActivity extends ListActivity {
         		R.layout.history_item,
         		cursor,
                 new String[] { "productCode", "time", "name" },
-                new int[] { R.id.history_code, R.id.history_provider, R.id.history_name });
+                new int[] { R.id.HistoryProductCodeTextView, R.id.HistoryProductInfoProviderTextView, R.id.HistoryProductNameTextView });
 		
         setListAdapter(adapter);
 	}
@@ -111,7 +111,7 @@ public final class HistoryActivity extends ListActivity {
 			 byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex("image"));
 			 if (bitmapArray != null) {
 				 Bitmap bitmap = Helper.getByteArrayAsBitmap(bitmapArray);
-				 ImageView imageView = (ImageView) view.findViewById(R.id.history_image);
+				 ImageView imageView = (ImageView) view.findViewById(R.id.HistoryImageView);
 				 imageView.setImageBitmap(bitmap);
 			 }
 			 super.bindView(view, context, cursor);

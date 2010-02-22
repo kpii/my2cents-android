@@ -27,10 +27,8 @@ public class TagsAdapter extends ArrayAdapter<String> {
 
 		String tag = getItem(position);
 		if (tag != null) {
-			TextView tagTextView = (TextView) view.findViewById(R.id.tag_textview);
-			if (tagTextView != null) {
-				tagTextView.setText(tag);
-			}
+			TextView tagTextView = (TextView) view.findViewById(R.id.TagTextView);
+			tagTextView.setText(tag);
 		}
 		return view;
 	}

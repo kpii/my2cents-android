@@ -30,23 +30,17 @@ public class CommentsAdapter extends ArrayAdapter<Comment> {
 
 		Comment comment = getItem(position);
 		if (comment != null) {
-			TextView authorTextView = (TextView) view.findViewById(R.id.tweet_author);
+			TextView authorTextView = (TextView) view.findViewById(R.id.CommentAuthorTextView);
 			authorTextView.setText(comment.getUser());
 
-			TextView messageTextView = (TextView) view.findViewById(R.id.tweet_message);
-			if (messageTextView != null) {
-				messageTextView.setText(comment.getText());
-			}
+			TextView messageTextView = (TextView) view.findViewById(R.id.CommentTextView);
+			messageTextView.setText(comment.getText());
 
-			TextView sentTextView = (TextView) view.findViewById(R.id.tweet_sent);
-			if (sentTextView != null) {
-				sentTextView.setText(RelativeTime.getDifference(comment.getCreatedAt().getTime()));
-			}
+			TextView sentTextView = (TextView) view.findViewById(R.id.CommentSentTextView);
+			sentTextView.setText(RelativeTime.getDifference(comment.getCreatedAt().getTime()));
 
-			ImageView avatarImageView = (ImageView) view.findViewById(R.id.tweet_avatar);
-			if (avatarImageView != null) {
-				avatarImageView.setImageBitmap(CommentsActivity.avatarMap.get(comment.getUser()));
-			}
+			ImageView avatarImageView = (ImageView) view.findViewById(R.id.CommentImageView);
+			avatarImageView.setImageBitmap(CommentsActivity.avatarMap.get(comment.getUser()));
 		}
 		return view;
 	}

@@ -6,23 +6,23 @@
 	android:padding="6dip">
 	<ImageView
 		android:layout_width="wrap_content"
-		android:id="@+id/tweet_avatar"
+		android:id="@+id/CommentImageView"
 		android:layout_marginRight="5px"
 		android:layout_height="wrap_content"
 		android:maxWidth="73px"
 		android:maxHeight="73px"
 		android:adjustViewBounds="true" />
 	<TextView
-		android:id="@+id/tweet_author"
+		android:id="@+id/CommentAuthorTextView"
 		android:layout_height="wrap_content"
-		android:layout_toRightOf="@id/tweet_avatar"
+		android:layout_toRightOf="@id/CommentImageView"
 		android:layout_width="wrap_content"
 		android:textSize="@dimen/comment_username_text"
 		android:textColor="#3366aa" />
 	<TextView
 		android:layout_height="wrap_content"
-		android:id="@+id/tweet_sent"
-		android:layout_toRightOf="@id/tweet_author"
+		android:id="@+id/CommentSentTextView"
+		android:layout_toRightOf="@id/CommentAuthorTextView"
 		android:layout_width="wrap_content"
 		android:paddingLeft="10px"
 		android:textSize="@dimen/comment_sent_text"
@@ -30,8 +30,8 @@
 	<TextView
 		android:layout_width="fill_parent"
 		android:ellipsize="marquee"
-		android:id="@+id/tweet_message"
+		android:id="@+id/CommentTextView"
 		android:layout_height="wrap_content"
-		android:layout_below="@id/tweet_author"
-		android:layout_toRightOf="@id/tweet_avatar" />
+		android:layout_below="@id/CommentAuthorTextView"
+		android:layout_toRightOf="@id/CommentImageView" />
 </RelativeLayout>

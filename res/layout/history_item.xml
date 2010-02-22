@@ -6,24 +6,24 @@
 	android:padding="6dip">
 	<ImageView
 		android:layout_width="wrap_content"
-		android:id="@+id/history_image"
 		android:layout_marginRight="5px"
 		android:layout_height="wrap_content"
 		android:adjustViewBounds="true"
 		android:visibility="visible"
 		android:maxHeight="90px"
-		android:maxWidth="90px" />
+		android:maxWidth="90px"
+		android:id="@+id/HistoryImageView" />
 	<TextView
-		android:id="@+id/history_code"
+		android:id="@+id/HistoryProductCodeTextView"
 		android:layout_height="wrap_content"
-		android:layout_toRightOf="@id/history_image"
 		android:layout_width="wrap_content"
 		android:textSize="@dimen/comment_username_text"
-		android:textColor="#3366aa" />
+		android:textColor="#3366aa"
+		android:layout_toRightOf="@id/HistoryImageView" />
 	<TextView
 		android:layout_height="wrap_content"
-		android:id="@+id/history_provider"
-		android:layout_toRightOf="@id/history_code"
+		android:id="@+id/HistoryProductInfoProviderTextView"
+		android:layout_toRightOf="@id/HistoryProductCodeTextView"
 		android:layout_width="wrap_content"
 		android:paddingLeft="10px"
 		android:textSize="@dimen/comment_sent_text"
@@ -31,8 +31,8 @@
 	<TextView
 		android:layout_width="fill_parent"
 		android:ellipsize="marquee"
-		android:id="@+id/history_name"
+		android:id="@+id/HistoryProductNameTextView"
 		android:layout_height="wrap_content"
-		android:layout_below="@id/history_code"
-		android:layout_toRightOf="@id/history_image" />
+		android:layout_below="@id/HistoryProductCodeTextView"
+		android:layout_toRightOf="@id/HistoryImageView" />
 </RelativeLayout>

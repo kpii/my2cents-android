@@ -91,14 +91,14 @@ public final class CommentsActivity extends ListActivity {
 
 		tags = new ArrayList<String>();
 		tagsAdapter = new TagsAdapter(this, R.layout.tag_item, tags);
-		tagsGallery = (Gallery) findViewById(R.id.comment_tag_gallery);
+		tagsGallery = (Gallery) findViewById(R.id.TagsGallery);
 		tagsGallery.setAdapter(tagsAdapter);
 		tagsGallery.setOnItemLongClickListener(tagsLongClickListener);
 		
-		Button loginButton = (Button) findViewById(R.id.login_button);
+		Button loginButton = (Button) findViewById(R.id.LoginButton);
 		loginButton.setOnClickListener(loginListener);
 
-		Button sendCommentButton = (Button) findViewById(R.id.comment_send_button);
+		Button sendCommentButton = (Button) findViewById(R.id.SendButton);
 		sendCommentButton.setOnClickListener(sendCommentListener);
 		
 		ViewGroup productInfoLayout = (ViewGroup) findViewById(R.id.ProductInfoLayout);
@@ -182,15 +182,12 @@ public final class CommentsActivity extends ListActivity {
 			}
 			else {
 				comments = result;
-		         
-				ViewGroup notificationLayout = (ViewGroup) findViewById(R.id.CommentsNotificationLayout);
 				
 				commentsAdapter.clear();
 				tagsAdapter.clear();
 				
 				String productTag = SettingsActivity.ProductCodePrefix + DataManager.getSearchTerm();
 				if (comments.size() > 0) {
-					notificationLayout.setVisibility(View.GONE);
 					
 					Set<String> tags = new TreeSet<String>();
 					for (Comment comment : comments) {
@@ -218,10 +215,6 @@ public final class CommentsActivity extends ListActivity {
 				}
 				else {
 					progressDialog.dismiss();
-					
-					TextView notificationTextView = (TextView) findViewById(R.id.commentsNotificationTextView);
-					notificationTextView.setText(R.string.notification_message_no_comments);
-					notificationLayout.setVisibility(View.VISIBLE);
 				}
 			}
 	    }
@@ -266,7 +259,7 @@ public final class CommentsActivity extends ListActivity {
 	private final OnItemLongClickListener tagsLongClickListener = new OnItemLongClickListener() {
 		public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
 			String text = tagsAdapter.getItem(position);
-			EditText commentEditor = (EditText) findViewById(R.id.comment_edittext);
+			EditText commentEditor = (EditText) findViewById(R.id.CommentEditText);
 			commentEditor.append(text);
 			return true;
 		}
@@ -288,7 +281,7 @@ public final class CommentsActivity extends ListActivity {
 	}
 	
 	private void updateCommentUI() {
-		ViewGroup commentLayout = (ViewGroup) findViewById(R.id.CommentLayout);
+		ViewGroup commentLayout = (ViewGroup) findViewById(R.id.CommentEditorLayout);
 		ViewGroup loginLayout = (ViewGroup) findViewById(R.id.LoginLayout);
 		
 		if (!CommentsManager.isCommentingPossible()) {
@@ -310,7 +303,7 @@ public final class CommentsActivity extends ListActivity {
 
 	private final Button.OnClickListener sendCommentListener = new Button.OnClickListener() {
 		public void onClick(View view) {
-			EditText commentEditor = (EditText) findViewById(R.id.comment_edittext);
+			EditText commentEditor = (EditText) findViewById(R.id.CommentEditText);
 			String message = commentEditor.getText().toString() +
 				" " +
 				SettingsActivity.ProductCodePrefix +
@@ -416,17 +409,14 @@ public final class CommentsActivity extends ListActivity {
 	        	
 	        	statusTextView.setText(R.string.status_product_information_found);
 	        	productInfoLayout.setVisibility(View.VISIBLE);
-				
-	        	TextView productNameTextView = (TextView) findViewById(R.id.product_name_textview);
-				productNameTextView.setText(product.getProductId());
 
-				TextView productInfoProviderTextView = (TextView) findViewById(R.id.product_info_provider_textview);
+				TextView productInfoProviderTextView = (TextView) findViewById(R.id.ProductInfoProviderTextView);
 				productInfoProviderTextView.setText(product.getProductInfoProvider().toString());
 
-				TextView productDescriptionTextView = (TextView) findViewById(R.id.product_description_textview);
-				productDescriptionTextView.setText(product.getProductName());
+				TextView productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
+				productNameTextView.setText(product.getProductName());
 				
-				ImageView productImageView = (ImageView) findViewById(R.id.product_imageview);
+				ImageView productImageView = (ImageView) findViewById(R.id.ProductImageView);
 				productImageView.setImageBitmap(product.getProductImage());
 			}
 			else {
@@ -465,13 +455,11 @@ public final class CommentsActivity extends ListActivity {
 		@Override
 		protected void onPostExecute(Comment comment) {
 			if (comment != null) {
-				ViewGroup notificationLayout = (ViewGroup) findViewById(R.id.CommentsNotificationLayout);
-				notificationLayout.setVisibility(View.GONE);
 				
 				commentsAdapter.insert(comment, 0);
 				commentsAdapter.notifyDataSetChanged();
 				
-				EditText commentEditor = (EditText) findViewById(R.id.comment_edittext);
+				EditText commentEditor = (EditText) findViewById(R.id.CommentEditText);
 				commentEditor.setText("");
 				Toast.makeText(CommentsActivity.this, R.string.message_comment_posted_successfully, Toast.LENGTH_SHORT).show();
 			}

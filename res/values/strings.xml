@@ -55,13 +55,15 @@
 	<string name="message_authorize">Please authorize my2cents to use your Twitter account</string>
 	<string name="message_connection_error">Warning: cannot connect to server!</string>
 	<string name="message_please_wait">Please wait...</string>
+	<string name="message_no_comments">No comments yet. Be the first one to add your 2 cents!</string>
+	
+	<string name="comments_header">People's thoughts on the product</string>
 	
 	<string name="status_product_information_not_found">Product information not found</string>
     <string name="status_product_information_found">Product information found</string>
     <string name="message_comment_posted_successfully">Comment posted successfully</string>
     <string name="progress_dialog_sending">Sending...</string>
     <string name="notification_message_no_products_found">No products found.</string>
-    <string name="notification_message_no_comments">No comments yet. Be the first one to add your 2 cents on this product!</string>
     <string name="main_activity_title_prefix">my2cents :: </string>
     <string name="progress_dialog_loading_comments">Loading comments...</string>
     <string name="error_message_no_network_connection">No Network Connection</string>

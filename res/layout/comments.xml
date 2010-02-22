@@ -6,97 +6,86 @@
 	android:layout_height="fill_parent">
 	<RelativeLayout
 		android:layout_width="fill_parent"
-		android:background="#ACBC1A"
 		android:orientation="horizontal"
-		android:layout_height="wrap_content">
+		android:layout_height="wrap_content"
+		android:background="@color/header_backgroung">
 		<TextView
 			android:text="@string/app_name"
 			android:layout_height="wrap_content"
-			android:textColor="#FFF"
 			android:textStyle="bold"
-			android:padding="5px"
-			android:textSize="25sp"
 			android:layout_width="wrap_content"
-			android:id="@+id/TextViewAppName"></TextView>
+			android:id="@+id/AppNameTextView"
+			android:textColor="@color/header_text"
+			android:textSize="@dimen/header_text"
+			android:padding="@dimen/header_padding"></TextView>
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textColor="#FFF"
-			android:padding="0px"
-			android:textSize="10sp"
-			android:layout_alignBaseline="@+id/TextViewAppName"
+			android:layout_alignBaseline="@+id/AppNameTextView"
 			android:layout_marginLeft="125sp"
-			android:text="@string/app_notes" android:id="@+id/TextViewAppNotes"></TextView>
+			android:text="@string/app_notes"
+			android:id="@+id/AppNotesTextView"
+			android:textColor="@color/header_text"
+			android:textSize="@dimen/header_sub_text"
+			android:padding="@dimen/header_sub_padding"></TextView>
 	</RelativeLayout>
 	<TextView
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:background="#4F722E"
-		android:textColor="#FFF"
-		android:padding="5px"
-		android:textSize="14sp"
-		android:id="@+id/InfoTextView"></TextView>
-	
+		android:id="@+id/InfoTextView"
+		android:background="@color/info_backgroung"
+		android:textColor="@color/info_text"
+		android:textSize="@dimen/info_text"
+		android:padding="@dimen/info_padding" android:text="@string/comments_header"></TextView>
 	<RelativeLayout
 		android:id="@+id/ProductInfoLayout"
-		android:visibility="gone"
 		android:layout_width="fill_parent"
 		android:layout_height="?android:attr/listPreferredItemHeight"
-		android:padding="6dip">
+		android:visibility="gone"
+		android:padding="@dimen/product_layout_padding" android:background="@color/product_info_background">
 		<ImageView
 			android:layout_width="wrap_content"
-			android:id="@+id/product_imageview"
 			android:layout_marginRight="5px"
 			android:layout_height="wrap_content"
-			android:maxWidth="90px"
-			android:maxHeight="90px"
-			android:adjustViewBounds="true" />
-		<TextView
-			android:id="@+id/product_name_textview"
-			android:layout_height="wrap_content"
-			android:layout_toRightOf="@id/product_imageview"
-			android:layout_width="wrap_content"
-			android:textSize="@dimen/comment_username_text"
-			android:textColor="#3366aa" />
-		<TextView
-			android:layout_height="wrap_content"
-			android:id="@+id/product_info_provider_textview"
-			android:layout_toRightOf="@id/product_name_textview"
-			android:layout_width="wrap_content"
-			android:paddingLeft="10px"
-			android:textSize="@dimen/comment_sent_text"
-			android:textColor="#6699aa"></TextView>
+			android:adjustViewBounds="true"
+			android:id="@+id/ProductImageView"
+			android:maxHeight="@dimen/product_image_max_size"
+			android:maxWidth="@dimen/product_image_max_size" />
 		<TextView
 			android:layout_width="fill_parent"
 			android:ellipsize="marquee"
-			android:id="@+id/product_description_textview"
 			android:layout_height="wrap_content"
-			android:layout_below="@id/product_name_textview"
-			android:layout_toRightOf="@id/product_imageview" />
-	</RelativeLayout>
-	<LinearLayout
-		android:layout_height="wrap_content"
-		android:layout_width="fill_parent"
-		android:id="@+id/CommentsNotificationLayout"
-		android:padding="5sp"
-		android:visibility="gone">
+			android:layout_toRightOf="@id/ProductImageView"
+			android:id="@+id/ProductNameTextView"
+			android:textSize="@dimen/product_name_text"
+			android:textColor="@color/product_name_text" />
 		<TextView
-			android:id="@+id/commentsNotificationTextView"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			android:textColor="@color/result_minor_text"
-			android:textStyle="bold"
-			android:typeface="monospace"></TextView>
-	</LinearLayout>
+			android:layout_height="wrap_content"
+			android:layout_width="wrap_content"
+			android:paddingLeft="10px"
+			android:id="@+id/ProductInfoProviderTextView"
+			android:layout_toRightOf="@id/ProductImageView"
+			android:layout_below="@id/ProductNameTextView"
+			android:textSize="@dimen/product_info_provider_text"
+			android:textColor="@color/product_info_provider_text"></TextView>
+	</RelativeLayout>
 	<ListView
 		android:id="@+id/android:list"
 		android:layout_width="fill_parent"
 		android:layout_weight="1"
 		android:scrollbars="vertical"
-		android:layout_height="80px"
 		android:choiceMode="none"
-		android:clickable="false">
+		android:clickable="false"
+		android:layout_height="fill_parent">
 	</ListView>
+	<TextView
+		android:id="@id/android:empty"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:text="@string/message_no_comments"
+		android:gravity="center"
+		android:textSize="@dimen/no_comments_text"
+		android:padding="@dimen/no_comments_padding" />
 	<LinearLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
@@ -104,50 +93,50 @@
 		android:orientation="vertical"
 		android:visibility="gone">
 		<Button
-			android:id="@+id/login_button"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
-			android:text="@string/button_login_invitation" />
+			android:text="@string/button_login_invitation"
+			android:id="@+id/LoginButton" />
 	</LinearLayout>
 	<LinearLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:id="@+id/CommentLayout"
 		android:orientation="vertical"
-		android:visibility="gone">
+		android:visibility="gone" android:id="@+id/CommentEditorLayout" android:background="@color/comment_editor_background" android:padding="@dimen/comment_editor_padding">
 		<LinearLayout
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
 			android:orientation="horizontal"
 			android:gravity="center_vertical">
 			<EditText
-				android:id="@+id/comment_edittext"
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:imeOptions="actionSend|flagNoEnterAction"
 				android:inputType="textCapSentences|textAutoCorrect|textMultiLine|textImeMultiLine|textShortMessage"
 				android:layout_weight="1"
-				android:maxLength="120" />
+				android:maxLength="120"
+				android:id="@+id/CommentEditText" />
 			<Button
-				android:id="@+id/comment_send_button"
 				android:text="@string/button_send"
 				android:layout_width="wrap_content"
-				android:layout_height="wrap_content" />
+				android:layout_height="wrap_content"
+				android:id="@+id/SendButton" />
 		</LinearLayout>
 		<Gallery
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
-			android:spacing="5px"
-			android:id="@+id/comment_tag_gallery"
 			android:longClickable="true"
-			android:unselectedAlpha="0.3" />
+			android:unselectedAlpha="0.3"
+			android:id="@+id/TagsGallery"
+			android:spacing="@dimen/tab_gallery_spacing" />
 	</LinearLayout>
 	<TextView
-		android:textColor="#FFF"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:textSize="11sp"
-		android:padding="3px"
 		android:gravity="center_horizontal"
-		android:background="#ACBC1A" android:id="@+id/StatusTextView"></TextView>
+		android:id="@+id/StatusTextView"
+		android:background="@color/status_backgroung"
+		android:textColor="@color/status_text"
+		android:textSize="@dimen/status_text"
+		android:padding="@dimen/status_padding"></TextView>
 </LinearLayout>
