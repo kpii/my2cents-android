@@ -24,15 +24,18 @@
 	
 	<color name="product_info_background">#B3CC99</color>
 	<color name="product_name_text">#FFF</color>
-	<color name="product_info_provider_text">#6699aa</color>
+	<color name="product_manufacturer_text">#99CCCC</color>
+	<color name="product_details_text">#99CCAA</color>
 	
 	<color name="comment_text">#000000</color>
 	<color name="comment_author_text">#3366aa</color>
 	<color name="comment_sent_text">#6699aa</color>
 	
+	<color name="tag_text">#FFFFFF</color>
+	
 	<color name="history_text">#000000</color>
 	<color name="history_code_text">#3366aa</color>
 	<color name="history_time_text">#6699aa</color>
 	
-	<color name="comment_editor_background">#B3CC99</color>
+	<color name="comment_editor_background">#71B771</color>
 </resources>

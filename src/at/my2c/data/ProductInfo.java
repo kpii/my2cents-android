@@ -8,7 +8,7 @@ public final class ProductInfo {
 	private String productCode;
 	private String productName;
 	private String productDescription;
-	private ProductInfoProvider productInfoProvider;
+	private String manufacturer;
 	private String detailPageUrl;
 	private String productImageUrl;
 	private Bitmap productImage;
@@ -41,12 +41,12 @@ public final class ProductInfo {
 		return productDescription;
 	}
 
-	public void setProductInfoProvider(ProductInfoProvider productInfoProvider) {
-		this.productInfoProvider = productInfoProvider;
+	public void setManufacturer(String manufacturer) {
+		this.manufacturer = manufacturer;
 	}
 
-	public ProductInfoProvider getProductInfoProvider() {
-		return productInfoProvider;
+	public String getManufacturer() {
+		return manufacturer;
 	}
 
 	public void setProductImageUrl(String productImageUrl) {

@@ -4,6 +4,8 @@
 	<dimen name="comment_author_text">12sp</dimen>
 	<dimen name="comment_sent_text">10sp</dimen>
 	
+	<dimen name="tag_text">12sp</dimen>
+	
 	<dimen name="history_text">14sp</dimen>
 	<dimen name="history_code_text">12sp</dimen>
 	<dimen name="history_time_text">10sp</dimen>
@@ -13,25 +15,26 @@
 	<dimen name="info_text">14sp</dimen>
 	<dimen name="status_text">11sp</dimen>
 	
-	<dimen name="header_padding">5px</dimen>
-	<dimen name="header_sub_padding">0px</dimen>
-	<dimen name="info_padding">5px</dimen>
-	<dimen name="status_padding">3px</dimen>
+	<dimen name="header_padding">5dip</dimen>
+	<dimen name="header_sub_padding">0dip</dimen>
+	<dimen name="info_padding">5dip</dimen>
+	<dimen name="status_padding">3dip</dimen>
 	
 	<dimen name="no_comments_text">14sp</dimen>
-	<dimen name="no_comments_padding">5sp</dimen>
+	<dimen name="no_comments_padding">5dip</dimen>
 	
 	<dimen name="no_history_text">14sp</dimen>
-	<dimen name="no_history_padding">5sp</dimen>
+	<dimen name="no_history_padding">5dip</dimen>
 	
-	<dimen name="product_layout_padding">6sp</dimen>
+	<dimen name="product_layout_padding">6dip</dimen>
 	<dimen name="product_name_text">14sp</dimen>
-	<dimen name="product_info_provider_text">10sp</dimen>
+	<dimen name="product_manufacturer_text">12sp</dimen>
+	<dimen name="product_details_text">10sp</dimen>
 
-	<dimen name="comment_editor_padding">3sp</dimen>	
+	<dimen name="comment_editor_padding">3dip</dimen>	
 	
-	<dimen name="tab_gallery_spacing">5px</dimen>
+	<dimen name="tab_gallery_spacing">5dip</dimen>
 	
-	<dimen name="product_image_max_size">90sp</dimen>
-	<dimen name="profile_image_max_size">73sp</dimen>
+	<dimen name="product_image_max_size">90dip</dimen>
+	<dimen name="profile_image_max_size">73dip</dimen>
 </resources>

@@ -18,9 +18,7 @@ import org.w3c.dom.NodeList;
 
 import at.my2c.util.AwsSignedRequestsHelper;
 
-
 public final class ProductInfoManager {
-	private final static String TAG = "ProductInfoManager";
 	
 	/*
      * Your AWS Access Key ID, as taken from the AWS Your Account page.
@@ -58,7 +56,7 @@ public final class ProductInfoManager {
         
         Map<String, String> params = new HashMap<String, String>();
         params.put("Service", "AWSECommerceService");
-        params.put("Version", "2009-10-01");
+        params.put("Version", "2009-11-01");
         params.put("Operation", "ItemLookup");
         params.put("Condition", "All");
         params.put("IdType", "EAN");
@@ -88,9 +86,10 @@ public final class ProductInfoManager {
             		
             		String productId = element.getElementsByTagName("ASIN").item(0).getLastChild().getNodeValue();
             		ProductInfo productInfo = new ProductInfo(productId);
-            		
             		productInfo.setProductCode(searchTerm);
-                    productInfo.setProductInfoProvider(ProductInfoProvider.Amazon);
+            		
+            		String manufacturer = element.getElementsByTagName("Manufacturer").item(0).getLastChild().getNodeValue();
+                    productInfo.setManufacturer(manufacturer);
                     
                     String detailPageUrl = element.getElementsByTagName("DetailPageURL").item(0).getLastChild().getNodeValue();
                     productInfo.setDetailPageUrl(detailPageUrl);
@@ -98,7 +97,7 @@ public final class ProductInfoManager {
                     String title = element.getElementsByTagName("Title").item(0).getLastChild().getNodeValue();
                     productInfo.setProductName(title);
                     
-                    String imageUrlString = element.getElementsByTagName("ThumbnailImage").item(0).getChildNodes().item(0).getLastChild().getNodeValue();
+                    String imageUrlString = element.getElementsByTagName("MediumImage").item(0).getChildNodes().item(0).getLastChild().getNodeValue();
                     productInfo.setProductImageUrl(imageUrlString);
                     
                     items.add(productInfo);
@@ -122,7 +121,7 @@ public final class ProductInfoManager {
         
         Map<String, String> params = new HashMap<String, String>();
         params.put("Service", "AWSECommerceService");
-        params.put("Version", "2009-10-01");
+        params.put("Version", "2009-11-01");
         params.put("Operation", "ItemLookup");
         params.put("Condition", "All");
         params.put("IdType", "EAN");
@@ -151,9 +150,10 @@ public final class ProductInfoManager {
             		
             		String productId = element.getElementsByTagName("ASIN").item(0).getLastChild().getNodeValue();
             		productInfo = new ProductInfo(productId);
-            		
             		productInfo.setProductCode(searchTerm);
-                    productInfo.setProductInfoProvider(ProductInfoProvider.Amazon);
+            		
+            		String manufacturer = element.getElementsByTagName("Manufacturer").item(0).getLastChild().getNodeValue();
+                    productInfo.setManufacturer(manufacturer);
                     
                     String detailPageUrl = element.getElementsByTagName("DetailPageURL").item(0).getLastChild().getNodeValue();
                     productInfo.setDetailPageUrl(detailPageUrl);
@@ -161,7 +161,7 @@ public final class ProductInfoManager {
                     String title = element.getElementsByTagName("Title").item(0).getLastChild().getNodeValue();
                     productInfo.setProductName(title);
                     
-                    String imageUrlString = element.getElementsByTagName("ThumbnailImage").item(0).getChildNodes().item(0).getLastChild().getNodeValue();
+                    String imageUrlString = element.getElementsByTagName("MediumImage").item(0).getChildNodes().item(0).getLastChild().getNodeValue();
                     productInfo.setProductImageUrl(imageUrlString);
                     
                     break;

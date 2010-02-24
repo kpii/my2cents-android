@@ -37,39 +37,42 @@
 		android:textColor="@color/info_text"
 		android:textSize="@dimen/info_text"
 		android:padding="@dimen/info_padding"
-		android:text="@string/comments_header"></TextView>
+		android:text="@string/comments_header" android:visibility="gone"></TextView>
 	<RelativeLayout
-		android:id="@+id/ProductInfoLayout"
 		android:layout_width="fill_parent"
-		android:layout_height="?android:attr/listPreferredItemHeight"
-		android:visibility="gone"
-		android:padding="@dimen/product_layout_padding"
-		android:background="@color/product_info_background">
+		android:layout_height="wrap_content"
+		android:padding="@dimen/product_layout_padding" android:background="@color/info_backgroung">
 		<ImageView
 			android:layout_width="wrap_content"
-			android:layout_marginRight="5px"
+			android:layout_marginRight="6dip"
 			android:layout_height="wrap_content"
 			android:adjustViewBounds="true"
 			android:id="@+id/ProductImageView"
 			android:maxHeight="@dimen/product_image_max_size"
-			android:maxWidth="@dimen/product_image_max_size" />
+			android:maxWidth="@dimen/product_image_max_size"
+			android:src="@android:drawable/ic_menu_help" />
 		<TextView
 			android:layout_width="fill_parent"
-			android:ellipsize="marquee"
 			android:layout_height="wrap_content"
 			android:layout_toRightOf="@id/ProductImageView"
 			android:id="@+id/ProductNameTextView"
 			android:textSize="@dimen/product_name_text"
-			android:textColor="@color/product_name_text" />
+			android:textColor="@color/product_name_text" android:layout_marginBottom="5dip"/>
 		<TextView
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
-			android:paddingLeft="10px"
-			android:id="@+id/ProductInfoProviderTextView"
+			android:id="@+id/ProductManufacturerTextView"
 			android:layout_toRightOf="@id/ProductImageView"
 			android:layout_below="@id/ProductNameTextView"
-			android:textSize="@dimen/product_info_provider_text"
-			android:textColor="@color/product_info_provider_text"></TextView>
+			android:textSize="@dimen/product_manufacturer_text"
+			android:textColor="@color/product_manufacturer_text" />
+		<TextView
+			android:layout_height="wrap_content"
+			android:id="@+id/ProductDetailsTextView"
+			android:text="@string/product_details"
+			android:textSize="@dimen/product_details_text"
+			android:textColor="@color/product_details_text" android:gravity="right" android:layout_width="fill_parent" android:layout_toRightOf="@id/ProductManufacturerTextView" android:layout_below="@id/ProductNameTextView"/>
+		
 	</RelativeLayout>
 	<ListView
 		android:id="@+id/android:list"
@@ -143,5 +146,5 @@
 		android:background="@color/status_backgroung"
 		android:textColor="@color/status_text"
 		android:textSize="@dimen/status_text"
-		android:padding="@dimen/status_padding"></TextView>
+		android:padding="@dimen/status_padding" android:visibility="gone"></TextView>
 </LinearLayout>

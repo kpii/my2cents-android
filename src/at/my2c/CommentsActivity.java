@@ -98,14 +98,14 @@ public final class CommentsActivity extends ListActivity {
 		tagsGallery.setAdapter(tagsAdapter);
 		tagsGallery.setOnItemLongClickListener(tagsLongClickListener);
 		
+		TextView productDetailsTextView = (TextView) findViewById(R.id.ProductDetailsTextView);
+		productDetailsTextView.setOnClickListener(productDetailsListener);
+		
 		Button loginButton = (Button) findViewById(R.id.LoginButton);
 		loginButton.setOnClickListener(loginListener);
 
 		Button sendCommentButton = (Button) findViewById(R.id.SendButton);
 		sendCommentButton.setOnClickListener(sendCommentListener);
-		
-		ViewGroup productInfoLayout = (ViewGroup) findViewById(R.id.ProductInfoLayout);
-		registerForContextMenu(productInfoLayout);
 
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		
@@ -116,33 +116,16 @@ public final class CommentsActivity extends ListActivity {
 		CommentsManager.InitializeOAuth(new AccessToken(token, tokenSecret));
 	}
 	
-	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, view, menuInfo);
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.product_context_menu, menu);
-	}
-	
-	public boolean onContextItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.productDetailContextMenuItem: {
-				if (productInfo != null) {
-					if (productInfo.getDetailPageUrl() != null) {
-						Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse(productInfo.getDetailPageUrl()));  
-						startActivity(viewIntent);
-					}					
-				}				
-				return true;
+	private final TextView.OnClickListener productDetailsListener = new TextView.OnClickListener() {
+		public void onClick(View view) {
+			if (productInfo != null) {
+				if (productInfo.getDetailPageUrl() != null) {
+					Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse(productInfo.getDetailPageUrl()));  
+					startActivity(viewIntent);
+				}					
 			}
-//			case R.id.productAddToFavoritesContextMenuItem: {
-//				if (productInfo != null) {
-//					DataManager.getDatabase().addFavoriteItem(productInfo);
-//				}				
-//				return true;
-//			}
-			default:
-				return super.onContextItemSelected(item);
-		}		
-	}
+		}
+	};
 	
 	@Override
 	protected void onStart() {
@@ -408,18 +391,14 @@ public final class CommentsActivity extends ListActivity {
 		}
 		
 		@Override
-		protected void onPostExecute(ProductInfo product) {
-	         
-	        ViewGroup productInfoLayout = (ViewGroup) findViewById(R.id.ProductInfoLayout);
-				
+		protected void onPostExecute(ProductInfo product) {				
 	        if (product != null) {
 	        	productInfo = product;
 	        	
 	        	statusTextView.setText(R.string.status_product_information_found);
-	        	productInfoLayout.setVisibility(View.VISIBLE);
 
-				TextView productInfoProviderTextView = (TextView) findViewById(R.id.ProductInfoProviderTextView);
-				productInfoProviderTextView.setText(product.getProductInfoProvider().toString());
+				TextView productManufacturerTextView = (TextView) findViewById(R.id.ProductManufacturerTextView);
+				productManufacturerTextView.setText(product.getManufacturer());
 
 				TextView productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
 				productNameTextView.setText(product.getProductName());
@@ -431,7 +410,6 @@ public final class CommentsActivity extends ListActivity {
 				productInfo = null;
 				
 				statusTextView.setText(R.string.status_product_information_not_found);
-				productInfoLayout.setVisibility(View.GONE);
 			}
 	    }
 	}

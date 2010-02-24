@@ -59,6 +59,8 @@
 	<string name="history_header">History of the scanned products</string>
 	<string name="settings_header">Settings</string>
 	
+	<string name="product_details">Show product details</string>
+	
 	<string name="status_product_information_not_found">Product information not found</string>
     <string name="status_product_information_found">Product information found</string>
     <string name="message_comment_posted_successfully">Comment posted successfully</string>
