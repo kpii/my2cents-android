@@ -55,6 +55,7 @@ public final class HistoryActivity extends ListActivity {
 		
 		Intent intent = new Intent(this, CommentsActivity.class);
 		intent.setAction(Intents.ACTION);
+		intent.putExtra(CommentsActivity.UPDATE_HISTORY, false);
 		startActivity(intent);
 	}
 

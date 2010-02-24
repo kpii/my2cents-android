@@ -56,6 +56,9 @@ public final class CommentsActivity extends ListActivity {
 
 	private final static int ACCOUNT_ACTIVITY_CODE = 0;
 	
+	private boolean updateHistory;
+	public final static String UPDATE_HISTORY = "UpdateHistory";
+	
 	private SharedPreferences settings;
 	
 	private boolean shareLocation;
@@ -154,6 +157,7 @@ public final class CommentsActivity extends ListActivity {
 		String action = intent == null ? null : intent.getAction();
 		if (intent != null && action != null) {
 			if (action.equals(Intents.ACTION)) {
+				updateHistory = intent.getBooleanExtra(UPDATE_HISTORY, true);
 				setTitle(getString(R.string.main_activity_title_prefix) + DataManager.getSearchTerm());
 				
 				new GetProductInfoTask().execute(DataManager.getSearchTerm());
@@ -388,12 +392,16 @@ public final class CommentsActivity extends ListActivity {
 				}
 				product.setProductImage(NetworkManager.getRemoteImage(url));
 				
-				DataManager.getDatabase().addHistoryItem(product);
+				if (updateHistory) {
+					DataManager.getDatabase().addHistoryItem(product);
+				}
 			}
 			else {
-				ProductInfo emptyProduct = new ProductInfo(params[0]);
-				emptyProduct.setProductCode(params[0]);
-				DataManager.getDatabase().addHistoryItem(emptyProduct);
+				if (updateHistory) {
+					ProductInfo dummyProduct = new ProductInfo(params[0]);
+					dummyProduct.setProductCode(params[0]);
+					DataManager.getDatabase().addHistoryItem(dummyProduct);
+				}
 			}
 			
 			return product;
