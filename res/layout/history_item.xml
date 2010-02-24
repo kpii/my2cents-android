@@ -5,34 +5,42 @@
 	android:layout_height="?android:attr/listPreferredItemHeight"
 	android:padding="6dip">
 	<ImageView
+		android:id="@+id/HistoryImageView"
 		android:layout_width="wrap_content"
-		android:layout_marginRight="5px"
-		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentBottom="true"
+		android:layout_marginRight="6dip"
+		android:maxWidth="@dimen/product_image_max_size"
+		android:maxHeight="@dimen/product_image_max_size"
 		android:adjustViewBounds="true"
-		android:visibility="visible"
-		android:maxHeight="90px"
-		android:maxWidth="90px"
-		android:id="@+id/HistoryImageView" />
+		android:layout_height="wrap_content" />
+	<TextView
+		android:id="@+id/HistoryProductNameTextView"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_toRightOf="@id/HistoryImageView"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentTop="true"
+		android:ellipsize="marquee"
+		android:textColor="@color/history_text"
+		android:textSize="@dimen/history_text" />
 	<TextView
 		android:id="@+id/HistoryProductCodeTextView"
-		android:layout_height="wrap_content"
-		android:layout_width="wrap_content"
-		android:textSize="@dimen/comment_username_text"
-		android:textColor="#3366aa"
-		android:layout_toRightOf="@id/HistoryImageView" />
-	<TextView
-		android:layout_height="wrap_content"
-		android:id="@+id/HistoryProductInfoProviderTextView"
-		android:layout_toRightOf="@id/HistoryProductCodeTextView"
-		android:layout_width="wrap_content"
-		android:paddingLeft="10px"
-		android:textSize="@dimen/comment_sent_text"
-		android:textColor="#6699aa"></TextView>
-	<TextView
-		android:layout_width="fill_parent"
+		android:layout_toRightOf="@id/HistoryImageView"
+		android:textSize="@dimen/history_code_text"
+		android:textColor="@color/history_code_text"
 		android:ellipsize="marquee"
-		android:id="@+id/HistoryProductNameTextView"
+		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_below="@id/HistoryProductCodeTextView"
-		android:layout_toRightOf="@id/HistoryImageView" />
+		android:layout_below="@id/HistoryProductNameTextView" />
+	<TextView
+		android:id="@+id/HistoryTimeTextView"
+		android:layout_height="wrap_content"
+		android:layout_toRightOf="@id/HistoryProductCodeTextView"
+		android:textSize="@dimen/history_time_text"
+		android:textColor="@color/history_time_text"
+		android:layout_alignBaseline="@id/HistoryProductCodeTextView"
+		android:layout_below="@id/HistoryProductNameTextView"
+		android:layout_width="fill_parent"
+		android:gravity="right"></TextView>
 </RelativeLayout>

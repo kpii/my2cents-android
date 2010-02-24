@@ -26,5 +26,13 @@
 	<color name="product_name_text">#FFF</color>
 	<color name="product_info_provider_text">#6699aa</color>
 	
+	<color name="comment_text">#000000</color>
+	<color name="comment_author_text">#3366aa</color>
+	<color name="comment_sent_text">#6699aa</color>
+	
+	<color name="history_text">#000000</color>
+	<color name="history_code_text">#3366aa</color>
+	<color name="history_time_text">#6699aa</color>
+	
 	<color name="comment_editor_background">#B3CC99</color>
 </resources>

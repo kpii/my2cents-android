@@ -2,7 +2,6 @@
 <resources>
 	<string name="app_name">my2cents</string>
 	<string name="app_notes">by ETH Zurich</string>
-	<string name="app_settings">Settings</string>
 	<string name="app_url">http://my2c.at</string>
 	
 	<string name="button_back">Back</string>
@@ -25,9 +24,6 @@
 	<string name="product_context_menu_add_to_favorites">Add To Favorites</string>
 
 	<string name="scanner_default_status">Place a barcode inside the viewfinder rectangle to scan it.</string>
-	
-	<string name="history_empty">The history of scanned items is empty. After scanning barcodes you will see a list of the scanned items here.
-	\nGo to the menu and click on the 'Scan' button to start scanning.</string>
 	
 	<string name="search_dialog_enter_code">Enter product code:</string>
 	
@@ -56,8 +52,12 @@
 	<string name="message_connection_error">Warning: cannot connect to server!</string>
 	<string name="message_please_wait">Please wait...</string>
 	<string name="message_no_comments">No comments yet. Be the first one to add your 2 cents!</string>
+	<string name="message_no_history">The history of scanned products is empty. After scanning barcodes you will see a list of the scanned items here.</string>
 	
 	<string name="comments_header">People's thoughts on the product</string>
+	<string name="help_header">Helpful Tips</string>
+	<string name="history_header">History of the scanned products</string>
+	<string name="settings_header">Settings</string>
 	
 	<string name="status_product_information_not_found">Product information not found</string>
     <string name="status_product_information_found">Product information found</string>

@@ -192,7 +192,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	}
 	
 	private void backToMain() {
-		Intent main = new Intent(this, SettingsActivity.class);
+		Intent main = new Intent(this, CaptureActivity.class);
 		main.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(main);
 		finish();

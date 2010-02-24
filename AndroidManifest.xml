@@ -23,7 +23,7 @@
 		android:icon="@drawable/birdy">
 		<activity
 			android:screenOrientation="landscape"
-			android:launchMode="singleTop"
+			android:launchMode="singleInstance"
 			android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
 			android:configChanges="orientation|keyboardHidden"
 			android:name=".CaptureActivity">
@@ -72,7 +72,8 @@
 		<activity
 			android:screenOrientation="user"
 			android:label="my2cents - Search for products"
-			android:name=".SearchActivity" android:theme="@android:style/Theme.Dialog">
+			android:name=".SearchActivity"
+			android:theme="@android:style/Theme.Dialog">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.VIEW" />

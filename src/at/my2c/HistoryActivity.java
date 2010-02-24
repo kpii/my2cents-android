@@ -36,7 +36,7 @@ public final class HistoryActivity extends ListActivity {
         		R.layout.history_item,
         		cursor,
                 new String[] { "productCode", "time", "name" },
-                new int[] { R.id.HistoryProductCodeTextView, R.id.HistoryProductInfoProviderTextView, R.id.HistoryProductNameTextView });
+                new int[] { R.id.HistoryProductCodeTextView, R.id.HistoryTimeTextView, R.id.HistoryProductNameTextView });
 		
         setListAdapter(adapter);
 	}

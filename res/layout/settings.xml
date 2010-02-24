@@ -5,40 +5,39 @@
 	android:orientation="vertical"
 	android:layout_height="fill_parent">
 	<RelativeLayout
-		xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="fill_parent"
-		android:background="#ACBC1A"
 		android:orientation="horizontal"
-		android:layout_height="wrap_content">
+		android:layout_height="wrap_content"
+		android:background="@color/header_backgroung">
 		<TextView
 			android:text="@string/app_name"
-			android:id="@+id/TextViewAppName"
 			android:layout_height="wrap_content"
-			android:textColor="#FFF"
 			android:textStyle="bold"
-			android:padding="5px"
-			android:textSize="25sp"
-			android:layout_width="wrap_content"></TextView>
+			android:layout_width="wrap_content"
+			android:id="@+id/AppNameTextView"
+			android:textColor="@color/header_text"
+			android:textSize="@dimen/header_text"
+			android:padding="@dimen/header_padding"></TextView>
 		<TextView
-			android:id="@+id/TextViewVersion"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textColor="#FFF"
-			android:padding="0px"
-			android:textSize="10sp"
-			android:layout_alignBaseline="@+id/TextViewAppName"
+			android:layout_alignBaseline="@+id/AppNameTextView"
 			android:layout_marginLeft="125sp"
-			android:text="@string/app_notes"></TextView>
+			android:text="@string/app_notes"
+			android:id="@+id/AppNotesTextView"
+			android:textColor="@color/header_text"
+			android:textSize="@dimen/header_sub_text"
+			android:padding="@dimen/header_sub_padding"></TextView>
 	</RelativeLayout>
 	<TextView
-		android:text="@string/app_settings"
-		android:id="@+id/TextViewSubtitle"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:background="#4F722E"
-		android:textColor="#FFF"
-		android:padding="5px"
-		android:textSize="14sp"></TextView>
+		android:id="@+id/InfoTextView"
+		android:background="@color/info_backgroung"
+		android:textColor="@color/info_text"
+		android:textSize="@dimen/info_text"
+		android:padding="@dimen/info_padding"
+		android:text="@string/settings_header"></TextView>
 	<ListView
 		android:id="@android:id/list"
 		android:layout_width="fill_parent"

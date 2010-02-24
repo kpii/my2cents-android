@@ -36,13 +36,15 @@
 		android:background="@color/info_backgroung"
 		android:textColor="@color/info_text"
 		android:textSize="@dimen/info_text"
-		android:padding="@dimen/info_padding" android:text="@string/comments_header"></TextView>
+		android:padding="@dimen/info_padding"
+		android:text="@string/comments_header"></TextView>
 	<RelativeLayout
 		android:id="@+id/ProductInfoLayout"
 		android:layout_width="fill_parent"
 		android:layout_height="?android:attr/listPreferredItemHeight"
 		android:visibility="gone"
-		android:padding="@dimen/product_layout_padding" android:background="@color/product_info_background">
+		android:padding="@dimen/product_layout_padding"
+		android:background="@color/product_info_background">
 		<ImageView
 			android:layout_width="wrap_content"
 			android:layout_marginRight="5px"
@@ -102,7 +104,10 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
-		android:visibility="gone" android:id="@+id/CommentEditorLayout" android:background="@color/comment_editor_background" android:padding="@dimen/comment_editor_padding">
+		android:visibility="gone"
+		android:id="@+id/CommentEditorLayout"
+		android:background="@color/comment_editor_background"
+		android:padding="@dimen/comment_editor_padding">
 		<LinearLayout
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"

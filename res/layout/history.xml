@@ -4,21 +4,53 @@
 	android:orientation="vertical"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
+	<RelativeLayout
+		android:layout_width="fill_parent"
+		android:orientation="horizontal"
+		android:layout_height="wrap_content"
+		android:background="@color/header_backgroung">
+		<TextView
+			android:text="@string/app_name"
+			android:layout_height="wrap_content"
+			android:textStyle="bold"
+			android:layout_width="wrap_content"
+			android:id="@+id/AppNameTextView"
+			android:textColor="@color/header_text"
+			android:textSize="@dimen/header_text"
+			android:padding="@dimen/header_padding"></TextView>
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignBaseline="@+id/AppNameTextView"
+			android:layout_marginLeft="125sp"
+			android:text="@string/app_notes"
+			android:id="@+id/AppNotesTextView"
+			android:textColor="@color/header_text"
+			android:textSize="@dimen/header_sub_text"
+			android:padding="@dimen/header_sub_padding"></TextView>
+	</RelativeLayout>
+	<TextView
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/InfoTextView"
+		android:background="@color/info_backgroung"
+		android:textColor="@color/info_text"
+		android:textSize="@dimen/info_text"
+		android:padding="@dimen/info_padding"
+		android:text="@string/history_header"></TextView>
 	<ListView
 		android:id="@+id/android:list"
 		android:layout_width="fill_parent"
 		android:layout_weight="1"
 		android:scrollbars="vertical"
-		android:layout_height="80px"
 		android:choiceMode="none"
-		android:clickable="false">
+		android:clickable="false" android:layout_height="fill_parent">
 	</ListView>
 	<TextView
 		android:id="@id/android:empty"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
-		android:text="@string/history_empty"
+		android:text="@string/message_no_history"
 		android:gravity="center"
-		android:textSize="15px"
-		android:padding="5px" />
+		android:textSize="@dimen/no_history_text" android:padding="@dimen/no_history_padding"/>
 </LinearLayout>

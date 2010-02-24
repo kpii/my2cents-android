@@ -12,6 +12,40 @@
 	android:layout_height="fill_parent"
 	android:background="@color/help_view"
 	android:orientation="vertical">
+	<RelativeLayout
+		android:layout_width="fill_parent"
+		android:orientation="horizontal"
+		android:layout_height="wrap_content"
+		android:background="@color/header_backgroung">
+		<TextView
+			android:text="@string/app_name"
+			android:layout_height="wrap_content"
+			android:textStyle="bold"
+			android:layout_width="wrap_content"
+			android:id="@+id/AppNameTextView"
+			android:textColor="@color/header_text"
+			android:textSize="@dimen/header_text"
+			android:padding="@dimen/header_padding"></TextView>
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignBaseline="@+id/AppNameTextView"
+			android:layout_marginLeft="125sp"
+			android:text="@string/app_notes"
+			android:id="@+id/AppNotesTextView"
+			android:textColor="@color/header_text"
+			android:textSize="@dimen/header_sub_text"
+			android:padding="@dimen/header_sub_padding"></TextView>
+	</RelativeLayout>
+	<TextView
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/InfoTextView"
+		android:background="@color/info_backgroung"
+		android:textColor="@color/info_text"
+		android:textSize="@dimen/info_text"
+		android:padding="@dimen/info_padding"
+		android:text="@string/help_header"></TextView>
 	<WebView
 		android:id="@+id/help_contents"
 		android:layout_width="fill_parent"
