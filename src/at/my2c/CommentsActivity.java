@@ -26,13 +26,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -235,9 +233,8 @@ public final class CommentsActivity extends ListActivity {
 		}
 		
 		shareLocation = settings.getBoolean(getString(R.string.settings_location), false);
-		CommentsManager.setCommentingPossible(true);
 		
-		updateCommentUI();
+		checkCommenting();
 		
 		if (commentsAdapter.getCount() > 0)
 			commentsAdapter.notifyDataSetChanged();
@@ -267,15 +264,17 @@ public final class CommentsActivity extends ListActivity {
 		alert.show();
 	}
 	
-	private void updateCommentUI() {
+	private void checkCommenting() {
 		ViewGroup commentLayout = (ViewGroup) findViewById(R.id.CommentEditorLayout);
 		ViewGroup loginLayout = (ViewGroup) findViewById(R.id.LoginLayout);
 		
-		if (!CommentsManager.isCommentingPossible()) {
+		String token = settings.getString(this.getResources().getString(R.string.settings_token),"");
+		String tokenSecret = settings.getString(this.getResources().getString(R.string.settings_token_secret),"");
+		
+		if (token.equals("") && tokenSecret.equals("")) {
 			commentLayout.setVisibility(View.GONE);
 			loginLayout.setVisibility(View.VISIBLE);
-		}
-		else {
+		} else {
 			loginLayout.setVisibility(View.GONE);
 			commentLayout.setVisibility(View.VISIBLE);
 		}
@@ -343,19 +342,6 @@ public final class CommentsActivity extends ListActivity {
 			}
 			default:
 				return super.onOptionsItemSelected(item);
-		}
-	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		switch (requestCode) {
-			case ACCOUNT_ACTIVITY_CODE: {
-				if (resultCode == RESULT_OK) {
-					updateCommentUI();
-				}
-				break;
-			}
 		}
 	}
 	

@@ -23,7 +23,6 @@ import at.my2c.SettingsActivity;
 public final class CommentsManager {
 
 	private static Twitter provider;
-	private static boolean isCommentingPossible;
 	private final static int numberOfResults = 30;
 	
 
@@ -105,25 +104,15 @@ public final class CommentsManager {
 	public final static boolean verifyCredentials() {
 		try {
 			User user = provider.verifyCredentials();
-			setCommentingPossible(!user.isProtected());
 			return true;
 		} catch (TwitterException e) {
 			if (e.getStatusCode() != 401)
 				Log.e(CommentsManager.class.getName(), e.toString());
-			setCommentingPossible(false);
 			return false;
 		}
 	}
 
 	public final static Twitter getProvider() {
 		return provider;
-	}
-
-	public static void setCommentingPossible(boolean isPossible) {
-		isCommentingPossible = isPossible;
-	}
-
-	public static boolean isCommentingPossible() {
-		return isCommentingPossible;
 	}
 }

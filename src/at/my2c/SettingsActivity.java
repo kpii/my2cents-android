@@ -120,8 +120,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 				// store/update tokens in settings
 				storeTokens(consumer.getToken(), consumer.getTokenSecret());
 				
-//				new CheckAccountTask().execute();
-				
 			} catch (Exception e) {
 				Log.e(SettingsActivity.class.getName(), e.getMessage());
 				Toast.makeText(this, R.string.message_connection_error, Toast.LENGTH_LONG).show();
