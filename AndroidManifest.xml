@@ -22,6 +22,17 @@
 		android:name="My2CentsApplication"
 		android:icon="@drawable/birdy">
 		<activity
+			android:name=".MainActivity"
+			android:launchMode="singleTop"
+			android:configChanges="orientation|keyboardHidden">
+			<intent-filter>
+				<action
+					android:name="android.intent.action.MAIN" />
+				<category
+					android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		<activity
 			android:screenOrientation="landscape"
 			android:launchMode="singleInstance"
 			android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
@@ -29,9 +40,9 @@
 			android:name=".CaptureActivity">
 			<intent-filter>
 				<action
-					android:name="android.intent.action.MAIN" />
+					android:name="android.intent.action.VIEW" />
 				<category
-					android:name="android.intent.category.LAUNCHER" />
+					android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
 		<activity

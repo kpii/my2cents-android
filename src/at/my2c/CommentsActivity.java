@@ -51,8 +51,6 @@ import at.my2c.util.GpsManager;
 import at.my2c.util.NetworkManager;
 
 public final class CommentsActivity extends ListActivity {
-
-	private final static int ACCOUNT_ACTIVITY_CODE = 0;
 	
 	private boolean updateHistory;
 	public final static String UPDATE_HISTORY = "UpdateHistory";
@@ -63,17 +61,15 @@ public final class CommentsActivity extends ListActivity {
 	
 	private LocationManager locationManager;
 
-	private ProgressDialog progressDialog;
 	private List<Comment> comments;
 	private CommentsAdapter commentsAdapter;
 
 	private ArrayList<String> tags;
 	private TagsAdapter tagsAdapter;
-
-	public static HashMap<String, Bitmap> avatarMap = new HashMap<String, Bitmap>();
 	
 	private ProductInfo productInfo;
 	
+	private ProgressDialog progressDialog;
 	private Gallery tagsGallery;
 	private TextView statusTextView;
 	private TextView productDetailsTextView;
@@ -110,10 +106,6 @@ public final class CommentsActivity extends ListActivity {
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
-		String token = settings.getString(getString(R.string.settings_token),"");
-		String tokenSecret = settings.getString(getString(R.string.settings_token_secret),"");
-		
-		CommentsManager.InitializeOAuth(new AccessToken(token, tokenSecret));
 	}
 	
 	private final TextView.OnClickListener productDetailsListener = new TextView.OnClickListener() {
@@ -141,10 +133,9 @@ public final class CommentsActivity extends ListActivity {
 		if (intent != null && action != null) {
 			if (action.equals(Intents.ACTION)) {
 				updateHistory = intent.getBooleanExtra(UPDATE_HISTORY, true);
-				setTitle(getString(R.string.main_activity_title_prefix) + DataManager.getSearchTerm());
 				
 				new GetProductInfoTask().execute(DataManager.getSearchTerm());
-				new GetCommentsTask().execute(SettingsActivity.TagPrefix + DataManager.getSearchTerm());
+				new GetCommentsTask().execute(SettingsActivity.TAG_PREFIX + DataManager.getSearchTerm());
 			}
 		}
 	}
@@ -173,7 +164,7 @@ public final class CommentsActivity extends ListActivity {
 				commentsAdapter.clear();
 				tagsAdapter.clear();
 				
-				String productTag = SettingsActivity.ProductCodePrefix + DataManager.getSearchTerm();
+				String productTag = SettingsActivity.PRODUCT_CODE_PREFIX + DataManager.getSearchTerm();
 				if (comments.size() > 0) {
 					
 					Set<String> tags = new TreeSet<String>();
@@ -214,8 +205,8 @@ public final class CommentsActivity extends ListActivity {
 		@Override
 		protected Void doInBackground(List<Comment>... params) {			
 			for (Comment comment : params[0]) {
-				if (!avatarMap.containsKey(comment.getUser())) {
-					avatarMap.put(comment.getUser(), NetworkManager.getRemoteImage(comment.getUserProfileImageUrl()));
+				if (!CommentsManager.imagesMap.containsKey(comment.getUser())) {
+					CommentsManager.imagesMap.put(comment.getUser(), NetworkManager.getRemoteImage(comment.getUserProfileImageUrl()));
 				}
 				publishProgress();
 			}
@@ -287,7 +278,7 @@ public final class CommentsActivity extends ListActivity {
 	private final Button.OnClickListener loginListener = new Button.OnClickListener() {
 		public void onClick(View view) {
 			Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
-			startActivityForResult(intent, ACCOUNT_ACTIVITY_CODE);
+			startActivity(intent);
 		}
 	};
 
@@ -296,7 +287,7 @@ public final class CommentsActivity extends ListActivity {
 			EditText commentEditor = (EditText) findViewById(R.id.CommentEditText);
 			String message = commentEditor.getText().toString() +
 				" " +
-				SettingsActivity.ProductCodePrefix +
+				SettingsActivity.PRODUCT_CODE_PREFIX +
 				DataManager.getSearchTerm();
 			
 			new PostComment().execute(message);
@@ -430,8 +421,8 @@ public final class CommentsActivity extends ListActivity {
 				CommentsManager.sendComment(params[0], null);
 			
 			if (comment != null) {
-				if (!avatarMap.containsKey(comment.getUser())) {
-					avatarMap.put(comment.getUser(), NetworkManager.getRemoteImage(comment.getUserProfileImageUrl()));
+				if (!CommentsManager.imagesMap.containsKey(comment.getUser())) {
+					CommentsManager.imagesMap.put(comment.getUser(), NetworkManager.getRemoteImage(comment.getUserProfileImageUrl()));
 				}
 			}
 			

@@ -9,12 +9,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import at.my2c.CommentsActivity;
 import at.my2c.R;
 import at.my2c.util.RelativeTime;
 
 public class CommentsAdapter extends ArrayAdapter<Comment> {
-
+	
 	public CommentsAdapter(Context context, int textViewResourceId, List<Comment> comments) {
 		super(context, textViewResourceId, comments);
 	}
@@ -40,7 +39,7 @@ public class CommentsAdapter extends ArrayAdapter<Comment> {
 			sentTextView.setText(RelativeTime.getDifference(comment.getCreatedAt().getTime()));
 
 			ImageView avatarImageView = (ImageView) view.findViewById(R.id.CommentImageView);
-			avatarImageView.setImageBitmap(CommentsActivity.avatarMap.get(comment.getUser()));
+			avatarImageView.setImageBitmap(CommentsManager.imagesMap.get(comment.getUser()));
 		}
 		return view;
 	}

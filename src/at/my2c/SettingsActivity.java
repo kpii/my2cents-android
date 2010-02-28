@@ -27,8 +27,9 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	
 	private final static String CALLBACK_URL = "myapp://oauth";
 	
-	public final static String TagPrefix = "#";
-	public final static String ProductCodePrefix = "#my2c #";
+	public final static String TAG_PREFIX = "#";
+	public final static String MY_2CENTS_TAG = "#my2c";
+	public final static String PRODUCT_CODE_PREFIX = MY_2CENTS_TAG + " #";
 
 	private OAuthProvider provider;
 	private CommonsHttpOAuthConsumer consumer;
@@ -190,7 +191,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	}
 	
 	private void backToMain() {
-		Intent main = new Intent(this, CaptureActivity.class);
+		Intent main = new Intent(this, MainActivity.class);
 		main.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		startActivity(main);
 		finish();

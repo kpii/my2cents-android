@@ -99,8 +99,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 		handler = null;
 		lastResult = null;
 		hasSurface = false;
-
-		showHelpOnFirstLaunch();
 	}
 
 	@Override
@@ -278,28 +276,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 		Intent intent = new Intent(this, CommentsActivity.class);
 		intent.setAction(Intents.ACTION);
 		startActivity(intent);
-	}
-
-	/**
-	 * We want the help screen to be shown automatically the first time a new
-	 * version of the app is run. The easiest way to do this is to check
-	 * android:versionCode from the manifest, and compare it to a value stored
-	 * as a preference.
-	 */
-	private void showHelpOnFirstLaunch() {
-		try {
-			PackageInfo info = getPackageManager().getPackageInfo(this.getPackageName(), 0);
-			int currentVersion = info.versionCode;
-			int lastVersion = settings.getInt(getString(R.string.settings_first_start), 0);
-			if (currentVersion > lastVersion) {
-				settings.edit().putInt(getString(R.string.settings_first_start), currentVersion).commit();
-				Intent intent = new Intent(Intent.ACTION_VIEW);
-				intent.setClassName(this, HelpActivity.class.getName());
-				startActivity(intent);
-			}
-		} catch (PackageManager.NameNotFoundException e) {
-			Log.w(CaptureActivity.class.getName(), e);
-		}
 	}
 
 	/**

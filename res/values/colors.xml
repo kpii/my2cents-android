@@ -16,7 +16,7 @@
 	
 	<color name="header_backgroung">#71B771</color>
 	<color name="info_backgroung">#4F9C4F</color>
-	<color name="status_backgroung">#4F9C4F</color>
+	<color name="status_backgroung">#71B771</color>
 	
 	<color name="header_text">#FFF</color>
 	<color name="info_text">#FFF</color>

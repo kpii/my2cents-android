@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<RelativeLayout
+		android:layout_width="fill_parent"
+		android:orientation="horizontal"
+		android:layout_height="wrap_content"
+		android:background="@color/header_backgroung">
+		<TextView
+			android:text="@string/app_name"
+			android:layout_height="wrap_content"
+			android:textStyle="bold"
+			android:layout_width="wrap_content"
+			android:id="@+id/AppNameTextView"
+			android:textColor="@color/header_text"
+			android:textSize="@dimen/header_text"
+			android:padding="@dimen/header_padding"></TextView>
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignBaseline="@+id/AppNameTextView"
+			android:layout_marginLeft="125sp"
+			android:text="@string/app_notes"
+			android:id="@+id/AppNotesTextView"
+			android:textColor="@color/header_text"
+			android:textSize="@dimen/header_sub_text"
+			android:padding="@dimen/header_sub_padding"></TextView>
+	</RelativeLayout>
+	<TextView
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:id="@+id/InfoTextView"
+		android:background="@color/info_backgroung"
+		android:textColor="@color/info_text"
+		android:textSize="@dimen/info_text"
+		android:padding="@dimen/info_padding" android:text="@string/main_header"></TextView>
+	
+	<ListView
+		android:layout_width="fill_parent"
+		android:layout_weight="1"
+		android:scrollbars="vertical"
+		android:choiceMode="none"
+		android:clickable="false"
+		android:layout_height="fill_parent"
+		android:id="@id/android:list">
+	</ListView>
+	<TextView
+		android:id="@id/android:empty"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:gravity="center"
+		android:padding="@dimen/no_comments_padding"
+		android:layout_weight="1" android:textSize="@dimen/no_comments_text" android:text="@string/message_no_stream"/><LinearLayout android:layout_height="wrap_content" android:orientation="horizontal" android:layout_width="fill_parent"><Button android:layout_height="wrap_content" android:id="@+id/ScanButton" android:layout_width="0dip" android:layout_weight="0.33" android:text="@string/button_scan"></Button>
+<Button android:layout_height="wrap_content" android:id="@+id/SearchButton" android:layout_width="0dip" android:layout_weight="0.33" android:text="@string/button_search"></Button>
+<Button android:layout_height="wrap_content" android:id="@+id/HistoryButton" android:layout_width="0dip" android:layout_weight="0.33" android:text="@string/button_history"></Button>
+</LinearLayout>
+	
+	
+	<TextView
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center_horizontal"
+		android:id="@+id/StatusTextView"
+		android:background="@color/status_backgroung"
+		android:textColor="@color/status_text"
+		android:textSize="@dimen/status_text"
+		android:padding="@dimen/status_padding"></TextView>
+
+</LinearLayout>

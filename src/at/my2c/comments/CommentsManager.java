@@ -4,6 +4,7 @@ package at.my2c.comments;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import twitter4j.GeoLocation;
@@ -16,12 +17,15 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.User;
 import twitter4j.http.AccessToken;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.util.Log;
 import at.my2c.SettingsActivity;
 
 public final class CommentsManager {
 
+	public static HashMap<String, Bitmap> imagesMap = new HashMap<String, Bitmap>();
+	
 	private static Twitter provider;
 	private final static int numberOfResults = 30;
 	
