@@ -37,11 +37,14 @@
 		android:textColor="@color/info_text"
 		android:textSize="@dimen/info_text"
 		android:padding="@dimen/info_padding"
-		android:text="@string/comments_header" android:visibility="gone"></TextView>
+		android:text="@string/comments_header"
+		android:visibility="gone"></TextView>
 	<RelativeLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:padding="@dimen/product_layout_padding" android:background="@color/info_backgroung">
+		android:padding="@dimen/product_layout_padding"
+		android:background="@color/info_backgroung"
+		android:id="@+id/ProductInfoLayout" android:visibility="gone">
 		<ImageView
 			android:layout_width="wrap_content"
 			android:layout_marginRight="6dip"
@@ -57,7 +60,8 @@
 			android:layout_toRightOf="@id/ProductImageView"
 			android:id="@+id/ProductNameTextView"
 			android:textSize="@dimen/product_name_text"
-			android:textColor="@color/product_name_text" android:layout_marginBottom="5dip"/>
+			android:textColor="@color/product_name_text"
+			android:layout_marginBottom="5dip" />
 		<TextView
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
@@ -71,17 +75,20 @@
 			android:id="@+id/ProductDetailsTextView"
 			android:text="@string/product_details"
 			android:textSize="@dimen/product_details_text"
-			android:textColor="@color/product_details_text" android:gravity="right" android:layout_width="fill_parent" android:layout_toRightOf="@id/ProductManufacturerTextView" android:layout_below="@id/ProductNameTextView"/>
-		
+			android:textColor="@color/product_details_text"
+			android:gravity="right"
+			android:layout_width="fill_parent"
+			android:layout_toRightOf="@id/ProductManufacturerTextView"
+			android:layout_below="@id/ProductNameTextView"/>
 	</RelativeLayout>
 	<ListView
-		android:id="@+id/android:list"
 		android:layout_width="fill_parent"
 		android:layout_weight="1"
 		android:scrollbars="vertical"
 		android:choiceMode="none"
 		android:clickable="false"
-		android:layout_height="fill_parent">
+		android:layout_height="fill_parent"
+		android:id="@id/android:list">
 	</ListView>
 	<TextView
 		android:id="@id/android:empty"
@@ -90,7 +97,8 @@
 		android:text="@string/message_no_comments"
 		android:gravity="center"
 		android:textSize="@dimen/no_comments_text"
-		android:padding="@dimen/no_comments_padding" />
+		android:padding="@dimen/no_comments_padding"
+		android:layout_weight="1" />
 	<LinearLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
@@ -103,41 +111,31 @@
 			android:text="@string/button_login_invitation"
 			android:id="@+id/LoginButton" />
 	</LinearLayout>
-	<LinearLayout
+	<RelativeLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:orientation="vertical"
-		android:visibility="gone"
 		android:id="@+id/CommentEditorLayout"
 		android:background="@color/comment_editor_background"
-		android:padding="@dimen/comment_editor_padding">
-		<LinearLayout
+		android:padding="@dimen/comment_editor_padding" android:visibility="gone">
+		<Button
+			android:text="@string/button_send"
+			android:layout_width="wrap_content"
+			android:id="@+id/SendButton" android:layout_alignParentRight="true" android:layout_height="wrap_content"/>
+		<EditText
 			android:layout_height="wrap_content"
-			android:layout_width="fill_parent"
-			android:orientation="horizontal"
-			android:gravity="center_vertical">
-			<EditText
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:imeOptions="actionSend|flagNoEnterAction"
-				android:inputType="textCapSentences|textAutoCorrect|textMultiLine|textImeMultiLine|textShortMessage"
-				android:layout_weight="1"
-				android:maxLength="120"
-				android:id="@+id/CommentEditText" />
-			<Button
-				android:text="@string/button_send"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:id="@+id/SendButton" />
-		</LinearLayout>
+			android:imeOptions="actionSend|flagNoEnterAction"
+			android:inputType="textCapSentences|textAutoCorrect|textMultiLine|textImeMultiLine|textShortMessage"
+			android:maxLength="120"
+			android:id="@+id/CommentEditText" android:layout_width="fill_parent" android:layout_toLeftOf="@id/SendButton"/>
+		
 		<Gallery
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
 			android:longClickable="true"
 			android:unselectedAlpha="0.3"
 			android:id="@+id/TagsGallery"
-			android:spacing="@dimen/tab_gallery_spacing" />
-	</LinearLayout>
+			android:spacing="@dimen/tab_gallery_spacing" android:layout_below="@id/CommentEditText"/>
+	</RelativeLayout>
 	<TextView
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
@@ -146,5 +144,6 @@
 		android:background="@color/status_backgroung"
 		android:textColor="@color/status_text"
 		android:textSize="@dimen/status_text"
-		android:padding="@dimen/status_padding" android:visibility="gone"></TextView>
+		android:padding="@dimen/status_padding"
+		android:visibility="gone"></TextView>
 </LinearLayout>

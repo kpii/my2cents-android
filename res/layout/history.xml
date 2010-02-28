@@ -39,12 +39,11 @@
 		android:padding="@dimen/info_padding"
 		android:text="@string/history_header"></TextView>
 	<ListView
-		android:id="@+id/android:list"
 		android:layout_width="fill_parent"
 		android:layout_weight="1"
 		android:scrollbars="vertical"
 		android:choiceMode="none"
-		android:clickable="false" android:layout_height="fill_parent">
+		android:clickable="false" android:layout_height="fill_parent" android:id="@id/android:list">
 	</ListView>
 	<TextView
 		android:id="@id/android:empty"

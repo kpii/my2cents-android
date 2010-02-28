@@ -63,8 +63,6 @@ public final class CommentsActivity extends ListActivity {
 	
 	private LocationManager locationManager;
 
-	private Gallery tagsGallery;
-
 	private ProgressDialog progressDialog;
 	private List<Comment> comments;
 	private CommentsAdapter commentsAdapter;
@@ -76,7 +74,10 @@ public final class CommentsActivity extends ListActivity {
 	
 	private ProductInfo productInfo;
 	
+	private Gallery tagsGallery;
 	private TextView statusTextView;
+	private TextView productDetailsTextView;
+	private View productInfoLayout;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -96,7 +97,8 @@ public final class CommentsActivity extends ListActivity {
 		tagsGallery.setAdapter(tagsAdapter);
 		tagsGallery.setOnItemLongClickListener(tagsLongClickListener);
 		
-		TextView productDetailsTextView = (TextView) findViewById(R.id.ProductDetailsTextView);
+		productInfoLayout = findViewById(R.id.ProductInfoLayout);
+		productDetailsTextView = (TextView) findViewById(R.id.ProductDetailsTextView);
 		productDetailsTextView.setOnClickListener(productDetailsListener);
 		
 		Button loginButton = (Button) findViewById(R.id.LoginButton);
@@ -188,8 +190,10 @@ public final class CommentsActivity extends ListActivity {
 						}
 					}
 					
-					for (String tag : tags) {
-						tagsAdapter.add(tag);
+					if (tags.size() > 0) {
+						for (String tag : tags) {
+							tagsAdapter.add(tag);
+						}
 					}
 					
 					commentsAdapter.notifyDataSetChanged();
@@ -345,6 +349,27 @@ public final class CommentsActivity extends ListActivity {
 		}
 	}
 	
+	private void displayProductNotFound()
+	{
+		productInfoLayout.setVisibility(View.GONE);
+		statusTextView.setText(R.string.status_product_information_not_found);
+		statusTextView.setVisibility(View.VISIBLE);
+	}
+	
+	private void displayProductFound(ProductInfo product)
+	{
+		productInfoLayout.setVisibility(View.VISIBLE);
+    	statusTextView.setVisibility(View.GONE);
+
+		TextView productManufacturerTextView = (TextView) findViewById(R.id.ProductManufacturerTextView);
+		productManufacturerTextView.setText(product.getManufacturer());
+
+		TextView productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
+		productNameTextView.setText(product.getProductName());
+		
+		ImageView productImageView = (ImageView) findViewById(R.id.ProductImageView);
+		productImageView.setImageBitmap(product.getProductImage());
+	}
 	
 	private class GetProductInfoTask extends AsyncTask<String, Void, ProductInfo> {
 
@@ -380,22 +405,11 @@ public final class CommentsActivity extends ListActivity {
 		protected void onPostExecute(ProductInfo product) {				
 	        if (product != null) {
 	        	productInfo = product;
-	        	
-	        	statusTextView.setText(R.string.status_product_information_found);
-
-				TextView productManufacturerTextView = (TextView) findViewById(R.id.ProductManufacturerTextView);
-				productManufacturerTextView.setText(product.getManufacturer());
-
-				TextView productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
-				productNameTextView.setText(product.getProductName());
-				
-				ImageView productImageView = (ImageView) findViewById(R.id.ProductImageView);
-				productImageView.setImageBitmap(product.getProductImage());
+	        	displayProductFound(product);
 			}
 			else {
 				productInfo = null;
-				
-				statusTextView.setText(R.string.status_product_information_not_found);
+				displayProductNotFound();
 			}
 	    }
 	}

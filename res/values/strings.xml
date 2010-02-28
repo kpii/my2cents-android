@@ -51,7 +51,7 @@
 	<string name="message_authorize">Please authorize my2cents to use your Twitter account</string>
 	<string name="message_connection_error">Warning: cannot connect to server!</string>
 	<string name="message_please_wait">Please wait...</string>
-	<string name="message_no_comments">No comments yet. Be the first one to add your 2 cents!</string>
+	<string name="message_no_comments">No comments yet. Add your 2 cents!</string>
 	<string name="message_no_history">The history of scanned products is empty. After scanning barcodes you will see a list of the scanned items here.</string>
 	
 	<string name="comments_header">People's thoughts on the product</string>
