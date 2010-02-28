@@ -37,7 +37,7 @@
 			android:launchMode="singleInstance"
 			android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
 			android:configChanges="orientation|keyboardHidden"
-			android:name=".CaptureActivity">
+			android:name=".ScanActivity">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.VIEW" />
@@ -46,7 +46,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".CommentsActivity"
+			android:name=".CommentActivity"
 			android:launchMode="singleTop"
 			android:configChanges="orientation|keyboardHidden">
 			<intent-filter>
@@ -82,7 +82,7 @@
 		</activity>
 		<activity
 			android:screenOrientation="user"
-			android:label="my2cents - Search for products"
+			android:label="@string/search_title"
 			android:name=".SearchActivity"
 			android:theme="@android:style/Theme.Dialog">
 			<intent-filter>

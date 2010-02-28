@@ -4,14 +4,12 @@ package at.my2c;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import twitter4j.http.AccessToken;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -19,7 +17,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -50,7 +47,7 @@ import at.my2c.data.ProductInfoManager;
 import at.my2c.util.GpsManager;
 import at.my2c.util.NetworkManager;
 
-public final class CommentsActivity extends ListActivity {
+public final class CommentActivity extends ListActivity {
 	
 	private boolean updateHistory;
 	public final static String UPDATE_HISTORY = "UpdateHistory";
@@ -79,7 +76,7 @@ public final class CommentsActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.comments);
+		setContentView(R.layout.comment);
 
 		statusTextView = (TextView) findViewById(R.id.StatusTextView);
 		
@@ -144,7 +141,7 @@ public final class CommentsActivity extends ListActivity {
 
 		@Override
 		protected void onPreExecute() {
-			progressDialog = ProgressDialog.show(CommentsActivity.this, null, getString(R.string.progress_dialog_loading_comments), true);
+			progressDialog = ProgressDialog.show(CommentActivity.this, null, getString(R.string.progress_dialog_loading_comments), true);
 	    }
 		
 		@Override
@@ -156,7 +153,7 @@ public final class CommentsActivity extends ListActivity {
 		protected void onPostExecute(List<Comment> result) {
 			if (result == null) {
 				progressDialog.dismiss();
-				Toast.makeText(CommentsActivity.this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
+				Toast.makeText(CommentActivity.this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
 			}
 			else {
 				comments = result;
@@ -295,11 +292,6 @@ public final class CommentsActivity extends ListActivity {
 	};
 
 	@Override
-	protected void onPause() {
-		super.onPause();
-	}
-
-	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getMenuInflater();
@@ -311,7 +303,7 @@ public final class CommentsActivity extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.scanMenuItem: {
-				Intent intent = new Intent(this, CaptureActivity.class);
+				Intent intent = new Intent(this, ScanActivity.class);
 				startActivity(intent);
 				return true;
 			}
@@ -410,7 +402,7 @@ public final class CommentsActivity extends ListActivity {
 
 		@Override
 		protected void onPreExecute() {
-			progressDialog = ProgressDialog.show(CommentsActivity.this, null, getString(R.string.progress_dialog_sending), true);
+			progressDialog = ProgressDialog.show(CommentActivity.this, null, getString(R.string.progress_dialog_sending), true);
 	    }
 		
 		@Override
@@ -438,7 +430,7 @@ public final class CommentsActivity extends ListActivity {
 				
 				EditText commentEditor = (EditText) findViewById(R.id.CommentEditText);
 				commentEditor.setText("");
-				Toast.makeText(CommentsActivity.this, R.string.message_comment_posted_successfully, Toast.LENGTH_SHORT).show();
+				Toast.makeText(CommentActivity.this, R.string.message_comment_posted_successfully, Toast.LENGTH_SHORT).show();
 			}
 
 			progressDialog.dismiss();

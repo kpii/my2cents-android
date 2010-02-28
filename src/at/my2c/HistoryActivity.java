@@ -42,9 +42,9 @@ public final class HistoryActivity extends ListActivity {
 	}
 	
 	@Override
-	protected void onPause() {
-		super.onPause();
+	protected void onStop() {
         cursor.close();
+        super.onStop();
 	}
 
 	@Override
@@ -53,9 +53,9 @@ public final class HistoryActivity extends ListActivity {
 		String searchTerm = cursor.getString(1);
 		DataManager.setSearchTerm(searchTerm);
 		
-		Intent intent = new Intent(this, CommentsActivity.class);
+		Intent intent = new Intent(this, CommentActivity.class);
 		intent.setAction(Intents.ACTION);
-		intent.putExtra(CommentsActivity.UPDATE_HISTORY, false);
+		intent.putExtra(CommentActivity.UPDATE_HISTORY, false);
 		startActivity(intent);
 	}
 
@@ -71,7 +71,7 @@ public final class HistoryActivity extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.scanMenuItem: {
-				Intent intent = new Intent(this, CaptureActivity.class);
+				Intent intent = new Intent(this, ScanActivity.class);
 				startActivity(intent);
 				return true;
 			}

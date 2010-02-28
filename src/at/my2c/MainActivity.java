@@ -75,7 +75,7 @@ public final class MainActivity extends ListActivity {
 	
 	private final Button.OnClickListener scanListener = new Button.OnClickListener() {
 		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), CaptureActivity.class);
+			Intent intent = new Intent(getBaseContext(), ScanActivity.class);
 			startActivity(intent);
 		}
 	};
@@ -124,7 +124,7 @@ public final class MainActivity extends ListActivity {
 				startActivity(intent);
 			}
 		} catch (PackageManager.NameNotFoundException e) {
-			Log.w(CaptureActivity.class.getName(), e);
+			Log.w(ScanActivity.class.getName(), e);
 		}
 	}
 	
@@ -214,11 +214,6 @@ public final class MainActivity extends ListActivity {
 		       });
 		AlertDialog alert = builder.create();
 		alert.show();
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
 	}
 
 	@Override

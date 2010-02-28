@@ -4,6 +4,8 @@
 	<string name="app_notes">by ETH Zurich</string>
 	<string name="app_url">http://my2c.at</string>
 	
+	<string name="search_title">Search for a product</string>
+	
 	<string name="button_back">Back</string>
 	<string name="button_cancel">Cancel</string>
 	<string name="button_close">Close</string>
@@ -14,6 +16,12 @@
 	<string name="button_history">History</string>
 	<string name="button_search">Search</string>
 	<string name="button_login_invitation">Please login to comment</string>
+	
+	<string name="radio_button_barcode">Barcode</string>
+	<string name="radio_button_title">Title</string>
+	
+	<string name="search_by_title">Search by title</string>
+	<string name="search_by_code">Search by code</string>
 
 	<string name="menu_scan">Scan</string>
 	<string name="menu_search">Search</string>
@@ -30,7 +38,7 @@
 	
 	<string name="search_dialog_enter_code">Enter product code:</string>
 	
-	<string name="error_message_camera_problem">Sorry, the Android camera encountered a problem. You may need to restart the device.</string>
+	<string name="message_camera_problem">Sorry, the Android camera encountered a problem. You may need to restart the device.</string>
 	
 	
 	
@@ -58,12 +66,12 @@
 	<string name="message_please_wait">Please wait...</string>
 	<string name="message_no_comments">No comments yet. Add your 2 cents!</string>
 	<string name="message_no_stream">No comments yet.</string>
-	<string name="message_no_history">The history of scanned products is empty. After scanning barcodes you will see a list of the scanned items here.</string>
+	<string name="message_empty_history">This list will show you products you have viewed in the past.</string>
 	
-	<string name="main_header">What are other people saying?</string>
+	<string name="main_header">What other people are saying?</string>
 	<string name="comments_header">People's thoughts on the product</string>
 	<string name="help_header">Helpful Tips</string>
-	<string name="history_header">History of the scanned products</string>
+	<string name="history_header">History of the viewed products</string>
 	<string name="settings_header">Settings</string>
 	
 	<string name="product_details">Show product details</string>

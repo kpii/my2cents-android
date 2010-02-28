@@ -23,7 +23,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import at.my2c.CaptureActivity;
+import at.my2c.ScanActivity;
 import at.my2c.R;
 
 import com.google.zxing.Result;
@@ -34,7 +34,7 @@ import com.google.zxing.Result;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class CaptureActivityHandler extends Handler {
-  private final CaptureActivity activity;
+  private final ScanActivity activity;
   private final DecodeThread decodeThread;
   private State state;
 
@@ -44,7 +44,7 @@ public final class CaptureActivityHandler extends Handler {
     DONE
   }
 
-  public CaptureActivityHandler(CaptureActivity activity,
+  public CaptureActivityHandler(ScanActivity activity,
                          boolean beginScanning) {
     this.activity = activity;
     decodeThread = new DecodeThread(activity,

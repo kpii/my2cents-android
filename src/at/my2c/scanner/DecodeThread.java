@@ -24,7 +24,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import at.my2c.CaptureActivity;
+import at.my2c.ScanActivity;
 import at.my2c.R;
 
 import com.google.zxing.BarcodeFormat;
@@ -47,16 +47,16 @@ final class DecodeThread extends Thread {
   private static final String TAG = "DecodeThread";
 
   private Handler handler;
-  private final CaptureActivity activity;
+  private final ScanActivity activity;
   private final MultiFormatReader multiFormatReader;
 
-  DecodeThread(CaptureActivity activity,
+  DecodeThread(ScanActivity activity,
                ResultPointCallback resultPointCallback) {
     this.activity = activity;
     multiFormatReader = new MultiFormatReader();
     Hashtable<DecodeHintType, Object> hints = new Hashtable<DecodeHintType, Object>(2);
 
-    hints.put(DecodeHintType.POSSIBLE_FORMATS, CaptureActivity.PRODUCT_FORMATS);
+    hints.put(DecodeHintType.POSSIBLE_FORMATS, ScanActivity.PRODUCT_FORMATS);
     hints.put(DecodeHintType.NEED_RESULT_POINT_CALLBACK, resultPointCallback);
 
     multiFormatReader.setHints(hints);

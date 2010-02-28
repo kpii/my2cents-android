@@ -9,8 +9,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -48,7 +46,7 @@ import com.google.zxing.ResultPoint;
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.ResultParser;
 
-public final class CaptureActivity extends Activity implements SurfaceHolder.Callback {
+public final class ScanActivity extends Activity implements SurfaceHolder.Callback {
 
 	private static final float BEEP_VOLUME = 0.15f;
 	private static final long VIBRATE_DURATION = 200L;
@@ -92,7 +90,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
 		Window window = getWindow();
 		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		setContentView(R.layout.capture);
+		setContentView(R.layout.scan);
 
 		CameraManager.init(getApplication());
 		viewfinderView = (ViewfinderView) findViewById(R.id.ViewfinderView);
@@ -273,7 +271,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 			clipboard.setText(productCode);
 		}
 
-		Intent intent = new Intent(this, CommentsActivity.class);
+		Intent intent = new Intent(this, CommentActivity.class);
 		intent.setAction(Intents.ACTION);
 		startActivity(intent);
 	}
@@ -314,13 +312,13 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 		try {
 			CameraManager.get().openDriver(surfaceHolder);
 		} catch (IOException ioe) {
-			Log.w(CaptureActivity.class.getName(), ioe);
+			Log.w(ScanActivity.class.getName(), ioe);
 			displayFrameworkBugMessageAndExit();
 			return;
 		} catch (RuntimeException e) {
 			// Barcode Scanner has seen crashes in the wild of this variety:
 			// java.?lang.?RuntimeException: Fail to connect to camera service
-			Log.e(CaptureActivity.class.getName(), e.toString());
+			Log.e(ScanActivity.class.getName(), e.toString());
 			displayFrameworkBugMessageAndExit();
 			return;
 		}
@@ -332,8 +330,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
 	private void displayFrameworkBugMessageAndExit() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(getString(R.string.app_name));
-		builder.setMessage(getString(R.string.error_message_camera_problem));
+		builder.setTitle(R.string.app_name);
+		builder.setMessage(R.string.message_camera_problem);
 		builder.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialogInterface, int i) {
 				finish();
