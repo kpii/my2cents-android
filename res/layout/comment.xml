@@ -52,8 +52,7 @@
 			android:adjustViewBounds="true"
 			android:id="@+id/ProductImageView"
 			android:maxHeight="@dimen/product_image_max_size"
-			android:maxWidth="@dimen/product_image_max_size"
-			android:src="@android:drawable/ic_menu_help" />
+			android:maxWidth="@dimen/product_image_max_size"/>
 		<TextView
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
@@ -61,7 +60,7 @@
 			android:id="@+id/ProductNameTextView"
 			android:textSize="@dimen/product_name_text"
 			android:textColor="@color/product_name_text"
-			android:layout_marginBottom="5dip" />
+			android:layout_marginBottom="5dip"/>
 		<TextView
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
@@ -69,7 +68,7 @@
 			android:layout_toRightOf="@id/ProductImageView"
 			android:layout_below="@id/ProductNameTextView"
 			android:textSize="@dimen/product_manufacturer_text"
-			android:textColor="@color/product_manufacturer_text" />
+			android:textColor="@color/product_manufacturer_text"/>
 		<TextView
 			android:layout_height="wrap_content"
 			android:id="@+id/ProductDetailsTextView"
@@ -101,12 +100,12 @@
 		android:layout_height="wrap_content"
 		android:id="@+id/LoginLayout"
 		android:orientation="vertical"
-		android:visibility="gone">
+		android:background="@color/comment_editor_background" android:padding="@dimen/comment_editor_padding" android:visibility="gone">
 		<Button
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:text="@string/button_login_invitation"
-			android:id="@+id/LoginButton" />
+			android:id="@+id/LoginButton"/>
 	</LinearLayout>
 	<RelativeLayout
 		android:layout_width="fill_parent"
@@ -133,14 +132,5 @@
 			android:id="@+id/TagsGallery"
 			android:spacing="@dimen/tab_gallery_spacing" android:layout_below="@id/CommentEditText"/>
 	</RelativeLayout>
-	<TextView
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:gravity="center_horizontal"
-		android:id="@+id/StatusTextView"
-		android:background="@color/status_backgroung"
-		android:textColor="@color/status_text"
-		android:textSize="@dimen/status_text"
-		android:padding="@dimen/status_padding"
-		android:visibility="gone"></TextView>
+	
 </LinearLayout>

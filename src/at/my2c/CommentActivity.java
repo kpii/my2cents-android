@@ -68,9 +68,12 @@ public final class CommentActivity extends ListActivity {
 	
 	private ProgressDialog progressDialog;
 	private Gallery tagsGallery;
-	private TextView statusTextView;
-	private TextView productDetailsTextView;
 	private View productInfoLayout;
+	
+	private ImageView productImageView;
+	private TextView productNameTextView;
+	private TextView productManufacturerTextView;
+	private TextView productDetailsTextView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -78,7 +81,9 @@ public final class CommentActivity extends ListActivity {
 		
 		setContentView(R.layout.comment);
 
-		statusTextView = (TextView) findViewById(R.id.StatusTextView);
+		productImageView = (ImageView) findViewById(R.id.ProductImageView);
+		productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
+		productManufacturerTextView = (TextView) findViewById(R.id.ProductManufacturerTextView);
 		
 		comments = new ArrayList<Comment>();
 		commentsAdapter = new CommentsAdapter(this, R.layout.comment_item, comments);
@@ -334,27 +339,28 @@ public final class CommentActivity extends ListActivity {
 	
 	private void displayProductNotFound()
 	{
-		productInfoLayout.setVisibility(View.GONE);
-		statusTextView.setText(R.string.status_product_information_not_found);
-		statusTextView.setVisibility(View.VISIBLE);
+		productNameTextView.setText(R.string.status_product_information_not_found);
+		productImageView.setImageResource(android.R.drawable.ic_menu_help);
+		productManufacturerTextView.setVisibility(View.GONE);
+		productDetailsTextView.setVisibility(View.GONE);
+		productInfoLayout.setVisibility(View.VISIBLE);
 	}
 	
 	private void displayProductFound(ProductInfo product)
 	{
-		productInfoLayout.setVisibility(View.VISIBLE);
-    	statusTextView.setVisibility(View.GONE);
-
-		TextView productManufacturerTextView = (TextView) findViewById(R.id.ProductManufacturerTextView);
-		productManufacturerTextView.setText(product.getManufacturer());
-
-		TextView productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
 		productNameTextView.setText(product.getProductName());
-		
-		ImageView productImageView = (ImageView) findViewById(R.id.ProductImageView);
 		productImageView.setImageBitmap(product.getProductImage());
+		productManufacturerTextView.setText(product.getManufacturer());
+		productManufacturerTextView.setVisibility(View.VISIBLE);
+		productDetailsTextView.setVisibility(View.VISIBLE);
+		productInfoLayout.setVisibility(View.VISIBLE);
 	}
 	
 	private class GetProductInfoTask extends AsyncTask<String, Void, ProductInfo> {
+		@Override
+		protected void onPreExecute() {
+			productInfoLayout.setVisibility(View.GONE);
+	    }
 
 		@Override
 		protected ProductInfo doInBackground(String... params) {
