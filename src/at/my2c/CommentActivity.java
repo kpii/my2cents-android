@@ -80,6 +80,8 @@ public final class CommentActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.comment);
+		
+		ProductInfoManager.UnknownProductName = getString(R.string.unknown_product);
 
 		productImageView = (ImageView) findViewById(R.id.ProductImageView);
 		productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
@@ -339,7 +341,7 @@ public final class CommentActivity extends ListActivity {
 	
 	private void displayProductNotFound()
 	{
-		productNameTextView.setText(R.string.status_product_information_not_found);
+		productNameTextView.setText(R.string.unknown_product);
 		productImageView.setImageResource(android.R.drawable.ic_menu_help);
 		productManufacturerTextView.setVisibility(View.GONE);
 		productDetailsTextView.setVisibility(View.GONE);

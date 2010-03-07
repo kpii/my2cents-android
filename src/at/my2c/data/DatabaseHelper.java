@@ -62,8 +62,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         map.put("productCode", product.getProductCode());
         map.put("time", new Date().toLocaleString());
         
-        if (product.getProductName() != null) {
+        String productName = product.getProductName();
+        if ((productName != null) && (productName != "")) {
         	map.put("name", product.getProductName());
+        }
+        else {
+        	map.put("name", ProductInfoManager.UnknownProductName);
         }
         
         Bitmap image = product.getProductImage();

@@ -13,7 +13,7 @@
 		android:maxWidth="@dimen/product_image_max_size"
 		android:maxHeight="@dimen/product_image_max_size"
 		android:adjustViewBounds="true"
-		android:layout_height="wrap_content" />
+		android:layout_height="wrap_content" android:src="@android:drawable/ic_menu_help"/>
 	<TextView
 		android:id="@+id/HistoryProductNameTextView"
 		android:layout_width="fill_parent"
@@ -21,15 +21,13 @@
 		android:layout_toRightOf="@id/HistoryImageView"
 		android:layout_alignParentRight="true"
 		android:layout_alignParentTop="true"
-		android:ellipsize="marquee"
 		android:textColor="@color/history_text"
-		android:textSize="@dimen/history_text" />
+		android:textSize="@dimen/history_text"/>
 	<TextView
 		android:id="@+id/HistoryProductCodeTextView"
 		android:layout_toRightOf="@id/HistoryImageView"
 		android:textSize="@dimen/history_code_text"
 		android:textColor="@color/history_code_text"
-		android:ellipsize="marquee"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_below="@id/HistoryProductNameTextView" />

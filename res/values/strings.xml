@@ -76,7 +76,7 @@
 	
 	<string name="product_details">Show product details</string>
 	
-	<string name="status_product_information_not_found">Unknown product</string>
+	<string name="unknown_product">Unknown product</string>
     <string name="status_product_information_found">Product information found</string>
     <string name="message_comment_posted_successfully">Comment posted successfully</string>
     <string name="progress_dialog_sending">Sending...</string>

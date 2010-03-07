@@ -20,6 +20,8 @@ import at.my2c.util.AwsSignedRequestsHelper;
 
 public final class ProductInfoManager {
 	
+	public static String UnknownProductName;
+	
 	/*
      * Your AWS Access Key ID, as taken from the AWS Your Account page.
      */
