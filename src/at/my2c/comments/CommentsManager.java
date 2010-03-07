@@ -20,7 +20,10 @@ import twitter4j.http.AccessToken;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.util.Log;
+import android.widget.Toast;
+import at.my2c.R;
 import at.my2c.SettingsActivity;
+import at.my2c.util.NetworkManager;
 
 public final class CommentsManager {
 
@@ -64,6 +67,7 @@ public final class CommentsManager {
 	}
 	
 	public final static List<Comment> searchComments(String searchTerm){
+		
 		Query query = new Query();
 		query.setQuery(searchTerm);
 		query.setRpp(numberOfResults);

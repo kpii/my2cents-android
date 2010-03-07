@@ -50,15 +50,28 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		
 		twitter_login_key = getResources().getString(R.string.settings_login_twitter);
 		twitter_login = (CheckBoxPreference)getPreferenceScreen().findPreference(twitter_login_key);
-		
-		updateUI();
 	}
 	
 	@Override
 	protected void onResume() {
 		super.onResume();
-        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-        updateUI();
+		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+        if (!areTokensStored())
+        	unsetTokens();
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+	}
+	
+	public boolean areTokensStored() {
+		String token = settings.getString(getResources().getString(R.string.settings_token),"");
+		String tokenSecret = settings.getString(getResources().getString(R.string.settings_token_secret),"");
+		if (token.equals("") || tokenSecret.equals(""))
+			return false;
+		return true;
 	}
 	
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {        
@@ -81,6 +94,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 			provider = new DefaultOAuthProvider("http://twitter.com/oauth/request_token",
 												"http://twitter.com/oauth/access_token",
 												"http://twitter.com/oauth/authorize");
+			provider.setOAuth10a(true);
 			String authUrl = provider.retrieveRequestToken(consumer, CALLBACK_URL);
 			Toast.makeText(this, R.string.message_authorize, Toast.LENGTH_LONG).show();
 			Intent oauth = new Intent(Intent.ACTION_VIEW, Uri.parse(authUrl));
@@ -88,7 +102,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		} catch (Exception e) {
 			Log.e(SettingsActivity.class.getName(), e.getMessage());
 			Toast.makeText(this, R.string.message_connection_error, Toast.LENGTH_LONG).show();
-			settings.edit().putBoolean(getResources().getString(R.string.settings_login_twitter), false).commit();
+			unsetTokens();
 		}
 	}
 	
@@ -105,43 +119,29 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 
 		Uri uri = intent.getData();
 		
-		if (uri != null && uri.toString().startsWith(CALLBACK_URL)) {
+		if (consumer != null && provider != null && uri != null && uri.toString().startsWith(CALLBACK_URL)) {
 
 			String verifier = uri.getQueryParameter(oauth.signpost.OAuth.OAUTH_VERIFIER);
-			Log.i(SettingsActivity.class.getName(), "Verifier: " + verifier);
 			
 			try {
 				// this will populate token and token_secret in consumer
 				provider.retrieveAccessToken(consumer, verifier);
 				Log.i(SettingsActivity.class.getName(), "Tokens retrieved");
 				
-				// initialize Twitter4J
-				CommentsManager.InitializeOAuth(new AccessToken(consumer.getToken(), consumer.getTokenSecret()));
-				
 				// store/update tokens in settings
 				storeTokens(consumer.getToken(), consumer.getTokenSecret());
+				
+				// initialize Twitter4J
+				CommentsManager.InitializeOAuth(new AccessToken(consumer.getToken(), consumer.getTokenSecret()));
 				
 			} catch (Exception e) {
 				Log.e(SettingsActivity.class.getName(), e.getMessage());
 				Toast.makeText(this, R.string.message_connection_error, Toast.LENGTH_LONG).show();
-				settings.edit().putBoolean(getResources().getString(R.string.settings_login_twitter), false).commit();
+				unsetTokens();
 			}
 
 		} else {
 			Log.w(SettingsActivity.class.getName(), "Callback URL not from OAUTH");
-		}
-	}
-	
-	private void updateUI() {
-		String token = settings.getString(this.getResources().getString(R.string.settings_token),"");
-		String tokenSecret = settings.getString(this.getResources().getString(R.string.settings_token_secret),"");
-		
-		if (token.equals("") && tokenSecret.equals("")) {
-			twitter_login.setTitle(R.string.settings_login_twitter);
-			twitter_login.setChecked(false);
-		} else {
-			twitter_login.setTitle(R.string.settings_login_twitter_checked);
-			twitter_login.setChecked(true);
 		}
 	}
 	
@@ -161,24 +161,34 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	}
 		
 	private void unsetTokens() {
+		getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+		
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putString(getResources().getString(R.string.settings_token), "");
 		editor.putString(getResources().getString(R.string.settings_token_secret), "");
 		editor.putString(getResources().getString(R.string.settings_user), "");
+		editor.putBoolean(twitter_login_key, false);
 		editor.commit();
 		
+		twitter_login.setChecked(false);
+		
+		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 		Log.i(SettingsActivity.class.getName(), "Tokens unset");
-		updateUI();
 	}
 	
 	private void storeTokens(String token, String tokenSecret) {
+		getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+		
 		SharedPreferences.Editor editor = settings.edit();
-		editor.putString(getResources().getString(R.string.settings_token), token).commit();
-		editor.putString(getResources().getString(R.string.settings_token_secret), tokenSecret).commit();
+		editor.putString(getResources().getString(R.string.settings_token), token);
+		editor.putString(getResources().getString(R.string.settings_token_secret), tokenSecret);
+		editor.putBoolean(twitter_login_key, true);
 		editor.commit();
 		
+		twitter_login.setChecked(true);
+		
+		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 		Log.i(SettingsActivity.class.getName(), "Tokens stored");
-		updateUI();
 	}
 	
 	@Override
