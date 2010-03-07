@@ -20,11 +20,8 @@
 	<dimen name="info_padding">5dip</dimen>
 	<dimen name="status_padding">3dip</dimen>
 	
-	<dimen name="no_comments_text">14sp</dimen>
-	<dimen name="no_comments_padding">5dip</dimen>
-	
-	<dimen name="no_history_text">14sp</dimen>
-	<dimen name="no_history_padding">5dip</dimen>
+	<dimen name="empty_list_text">14sp</dimen>
+	<dimen name="empty_list_padding">5dip</dimen>
 	
 	<dimen name="product_layout_padding">6dip</dimen>
 	<dimen name="product_name_text">14sp</dimen>

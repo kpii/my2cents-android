@@ -20,10 +20,7 @@ import twitter4j.http.AccessToken;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.util.Log;
-import android.widget.Toast;
-import at.my2c.R;
 import at.my2c.SettingsActivity;
-import at.my2c.util.NetworkManager;
 
 public final class CommentsManager {
 

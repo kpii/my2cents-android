@@ -43,12 +43,16 @@
 		android:layout_weight="1"
 		android:scrollbars="vertical"
 		android:choiceMode="none"
-		android:clickable="false" android:layout_height="fill_parent" android:id="@id/android:list">
+		android:clickable="false"
+		android:layout_height="fill_parent"
+		android:id="@id/android:list">
 	</ListView>
 	<TextView
 		android:id="@id/android:empty"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:gravity="center"
-		android:textSize="@dimen/no_history_text" android:padding="@dimen/no_history_padding" android:text="@string/message_empty_history"/>
+		android:textSize="@dimen/empty_list_text"
+		android:padding="@dimen/empty_list_padding"
+		android:text="@string/message_empty_history" />
 </LinearLayout>

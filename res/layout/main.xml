@@ -36,8 +36,8 @@
 		android:background="@color/info_backgroung"
 		android:textColor="@color/info_text"
 		android:textSize="@dimen/info_text"
-		android:padding="@dimen/info_padding" android:text="@string/main_header"></TextView>
-	
+		android:padding="@dimen/info_padding"
+		android:text="@string/main_header"></TextView>
 	<ListView
 		android:layout_width="fill_parent"
 		android:layout_weight="1"
@@ -52,13 +52,33 @@
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:gravity="center"
-		android:padding="@dimen/no_comments_padding"
-		android:layout_weight="1" android:textSize="@dimen/no_comments_text" android:text="@string/message_no_stream"/><LinearLayout android:layout_height="wrap_content" android:orientation="horizontal" android:layout_width="fill_parent"><Button android:layout_height="wrap_content" android:id="@+id/ScanButton" android:layout_width="0dip" android:layout_weight="0.33" android:text="@string/button_scan"></Button>
-<Button android:layout_height="wrap_content" android:id="@+id/SearchButton" android:layout_width="0dip" android:layout_weight="0.33" android:text="@string/button_search"></Button>
-<Button android:layout_height="wrap_content" android:id="@+id/HistoryButton" android:layout_width="0dip" android:layout_weight="0.33" android:text="@string/button_history"></Button>
-</LinearLayout>
-	
-	
+		android:padding="@dimen/empty_list_padding"
+		android:layout_weight="1"
+		android:textSize="@dimen/empty_list_text"
+		android:text="@string/message_no_stream" />
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:layout_width="fill_parent">
+		<Button
+			android:layout_height="wrap_content"
+			android:id="@+id/ScanButton"
+			android:layout_width="0dip"
+			android:layout_weight="0.33"
+			android:text="@string/button_scan"></Button>
+		<Button
+			android:layout_height="wrap_content"
+			android:id="@+id/SearchButton"
+			android:layout_width="0dip"
+			android:layout_weight="0.33"
+			android:text="@string/button_search"></Button>
+		<Button
+			android:layout_height="wrap_content"
+			android:id="@+id/HistoryButton"
+			android:layout_width="0dip"
+			android:layout_weight="0.33"
+			android:text="@string/button_history"></Button>
+	</LinearLayout>
 	<TextView
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
@@ -68,5 +88,4 @@
 		android:textColor="@color/status_text"
 		android:textSize="@dimen/status_text"
 		android:padding="@dimen/status_padding"></TextView>
-
 </LinearLayout>
