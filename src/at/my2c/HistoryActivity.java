@@ -109,13 +109,17 @@ public final class HistoryActivity extends ListActivity {
 		
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
-			 byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex("image"));
-			 if (bitmapArray != null) {
-				 Bitmap bitmap = Helper.getByteArrayAsBitmap(bitmapArray);
-				 ImageView imageView = (ImageView) view.findViewById(R.id.HistoryImageView);
-				 imageView.setImageBitmap(bitmap);
-			 }
-			 super.bindView(view, context, cursor);
+			ImageView imageView = (ImageView) view.findViewById(R.id.HistoryImageView);
+			byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex("image"));
+			if (bitmapArray != null) {
+				Bitmap bitmap = Helper.getByteArrayAsBitmap(bitmapArray);
+				imageView.setImageBitmap(bitmap);
+			}
+			else
+			{
+				imageView.setImageResource(R.drawable.warning64px);
+			}
+			super.bindView(view, context, cursor);
 		}
 	}
 }

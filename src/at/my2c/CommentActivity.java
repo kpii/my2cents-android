@@ -342,7 +342,7 @@ public final class CommentActivity extends ListActivity {
 	private void displayProductNotFound()
 	{
 		productNameTextView.setText(R.string.unknown_product);
-		productImageView.setImageResource(android.R.drawable.ic_menu_help);
+		productImageView.setImageResource(R.drawable.warning64px);
 		productManufacturerTextView.setVisibility(View.GONE);
 		productDetailsTextView.setVisibility(View.GONE);
 		productInfoLayout.setVisibility(View.VISIBLE);
@@ -351,7 +351,12 @@ public final class CommentActivity extends ListActivity {
 	private void displayProductFound(ProductInfo product)
 	{
 		productNameTextView.setText(product.getProductName());
-		productImageView.setImageBitmap(product.getProductImage());
+		
+		if (product.getProductImage() != null) 
+			productImageView.setImageBitmap(product.getProductImage());
+		else
+			productImageView.setImageResource(R.drawable.warning64px);
+		
 		productManufacturerTextView.setText(product.getManufacturer());
 		productManufacturerTextView.setVisibility(View.VISIBLE);
 		productDetailsTextView.setVisibility(View.VISIBLE);
