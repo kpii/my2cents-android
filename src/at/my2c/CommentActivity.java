@@ -42,9 +42,6 @@ public final class CommentActivity extends ListActivity {
 	
 	private static final String TAG = "CommentActivity";
 	
-	private boolean isProductBranded;
-	public final static String IS_PRODUCT_BRANDED = "IsProductBranded";
-	
 	private boolean isProductInfoAvailable;
 	
 	private boolean updateHistory;
@@ -162,7 +159,6 @@ public final class CommentActivity extends ListActivity {
 			if (action.equals(Intents.ACTION)) {
 				gtin = intent.getStringExtra(DataManager.GTIN_KEY);
 				updateHistory = intent.getBooleanExtra(UPDATE_HISTORY, true);
-				isProductBranded = intent.getBooleanExtra(IS_PRODUCT_BRANDED, false);
 				
 				getProductInfoTask = new GetProductInfoTask(this).execute(gtin);
 			}
@@ -176,29 +172,17 @@ public final class CommentActivity extends ListActivity {
 
 		@Override
 		protected void onPreExecute(Context target) {
-			if (isProductBranded) {
-				productInfo = DataManager.getDatabase().getBrandedProductInfo(gtin);
-				if (productInfo != null) {
-					isProductInfoAvailable = true;
-					displayProductFound(productInfo);
-					productInfoLayout.setVisibility(View.VISIBLE);
-				}
-				else {
-					isProductInfoAvailable = false;
-				}
+			productInfo = DataManager.getDatabase().getCachedProductInfo(gtin);
+			if (productInfo != null) {
+				isProductInfoAvailable = true;
+				displayProductFound(productInfo);
+				productInfoLayout.setVisibility(View.VISIBLE);
 			}
 			else {
-				productInfo = DataManager.getDatabase().getCachedProductInfo(gtin);
-				if (productInfo != null) {
-					isProductInfoAvailable = true;
-					displayProductFound(productInfo);
-					productInfoLayout.setVisibility(View.VISIBLE);
-				}
-				else {
-					isProductInfoAvailable = false;
-					productInfoLayout.setVisibility(View.GONE);
-				}
+				isProductInfoAvailable = false;
+				productInfoLayout.setVisibility(View.GONE);
 			}
+			
 			progressDialog = ProgressDialog.show(CommentActivity.this, null, getString(R.string.progress_dialog_loading), true);
 	    }
 
@@ -231,9 +215,7 @@ public final class CommentActivity extends ListActivity {
 			progressDialog.dismiss();
 			
 	        if (product != null) {
-	        	if (!isProductBranded) {
-	        		displayProductFound(product);
-	        	}
+	        	displayProductFound(product);
 	        	
 	        	commentsAdapter.clear();
 				tagsAdapter.clear();

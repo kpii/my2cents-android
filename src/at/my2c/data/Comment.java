@@ -3,8 +3,6 @@ package at.my2c.data;
 import java.net.URL;
 import java.util.Date;
 
-import android.location.Location;
-
 public class Comment {
 	private String user;
 	private URL userProfileImageUrl;

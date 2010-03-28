@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import at.my2c.data.BrandedProductColumns;
 import at.my2c.data.DataManager;
 import at.my2c.data.HistoryColumns;
 import at.my2c.utils.Helper;

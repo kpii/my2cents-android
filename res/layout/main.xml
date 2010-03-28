@@ -38,39 +38,33 @@
 		android:textSize="@dimen/info_text"
 		android:padding="@dimen/info_padding"
 		android:text="@string/main_header"></TextView>
-	<ListView
-		android:layout_width="fill_parent"
-		android:layout_weight="1"
-		android:scrollbars="vertical"
-		android:choiceMode="none"
-		android:clickable="false"
-		android:layout_height="fill_parent"
-		android:id="@id/android:list">
-	</ListView>
-	<TextView
-		android:id="@id/android:empty"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:gravity="center"
-		android:padding="@dimen/empty_list_padding"
-		android:layout_weight="1"
-		android:textSize="@dimen/empty_list_text"
-		android:text="@string/message_no_products" />
 	<RelativeLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:background="@color/comment_editor_background" android:paddingLeft="@dimen/comment_editor_padding" android:paddingRight="@dimen/comment_editor_padding" android:paddingTop="@dimen/comment_editor_padding">
+		android:background="@color/comment_editor_background"
+		android:paddingLeft="@dimen/comment_editor_padding"
+		android:paddingRight="@dimen/comment_editor_padding"
+		android:paddingTop="@dimen/comment_editor_padding">
 		<ImageButton
 			android:layout_width="wrap_content"
 			android:layout_alignParentRight="true"
-			android:layout_height="wrap_content" android:id="@+id/SearchImageButton" android:src="@drawable/search_icon"/>
+			android:layout_height="wrap_content"
+			android:id="@+id/SearchImageButton"
+			android:src="@drawable/search_icon" />
 		<EditText
 			android:layout_height="wrap_content"
 			android:imeOptions="flagNoEnterAction"
 			android:id="@+id/SearchEditText"
 			android:hint="@string/search_hint"
-			android:layout_width="fill_parent" android:layout_toLeftOf="@+id/SearchImageButton" android:inputType="number"/>
+			android:layout_width="fill_parent"
+			android:layout_toLeftOf="@+id/SearchImageButton"
+			android:inputType="number" />
 	</RelativeLayout>
+	<ImageView
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:src="@drawable/homebackgroundimage"
+		android:layout_weight="1" android:adjustViewBounds="true" android:layout_gravity="center"></ImageView>
 	<LinearLayout
 		android:layout_height="wrap_content"
 		android:id="@+id/ToolbarLayout"

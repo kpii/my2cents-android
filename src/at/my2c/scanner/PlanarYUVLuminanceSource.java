@@ -16,9 +16,9 @@
 
 package at.my2c.scanner;
 
-import com.google.zxing.LuminanceSource;
-
 import android.graphics.Bitmap;
+
+import com.google.zxing.LuminanceSource;
 
 /**
  * This object extends LuminanceSource around an array of YUV data returned from the camera driver,

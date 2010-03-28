@@ -23,7 +23,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 5;
     
     private static final String HISTORY_TABLE = "history";
-    private static final String BRANDED_PRODUCTS_TABLE = "branded_products";
     
     private static final int historyLimit = 100;
 
@@ -48,35 +47,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.i(DatabaseHelper.class.getName(), "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
         db.execSQL("DROP TABLE IF EXISTS " + HISTORY_TABLE);
         onCreate(db);
-    }
-    
-    
-    public void addBrandedProducts(ProductInfo[] products) {
-    	if (products == null) return;
-    	
-    	SQLiteDatabase db = getWritableDatabase();
-    	
-    	db.execSQL("DROP TABLE IF EXISTS " + BRANDED_PRODUCTS_TABLE);
-    	db.execSQL("CREATE TABLE " + BRANDED_PRODUCTS_TABLE + " ("
-                + BrandedProductColumns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + BrandedProductColumns.GTIN + " TEXT,"
-                + BrandedProductColumns.NAME + " TEXT,"
-                + BrandedProductColumns.MANUFACTURER + " TEXT,"
-                + BrandedProductColumns.IMAGE + " BLOB);");
-        
-    	for (ProductInfo product : products) {
-    		ContentValues map = new ContentValues();
-            map.put(BrandedProductColumns.GTIN, product.getGtin());
-            map.put(BrandedProductColumns.NAME, product.getName());
-            map.put(BrandedProductColumns.MANUFACTURER, product.getManufacturer());
-            map.put(BrandedProductColumns.IMAGE, Helper.getBitmapAsByteArray(product.getImage()));
-            
-            try{
-                db.insert(BRANDED_PRODUCTS_TABLE, null, map);
-            } catch (SQLException e) {
-                Log.e(TAG, e.getMessage());
-            }
-    	}
     }
     
     
@@ -127,33 +97,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void clearHistory() {
     	SQLiteDatabase db = getWritableDatabase();
     	db.delete(HISTORY_TABLE, null, null);
-    }
-    
-    public Cursor getBrandedProducts() {
-    	SQLiteDatabase db = getReadableDatabase();
-    	String query = "SELECT * FROM " + BRANDED_PRODUCTS_TABLE + " ORDER BY " + BrandedProductColumns.ID + " DESC";
-    	return db.rawQuery(query, null);
-    }
-    
-    public ProductInfo getBrandedProductInfo(String gtin) {
-    	SQLiteDatabase db = getReadableDatabase();
-    	String query = "SELECT * FROM " + BRANDED_PRODUCTS_TABLE + " WHERE " + BrandedProductColumns.GTIN + " = '" + gtin + "'";
-    	Cursor cursor = db.rawQuery(query, null);
-    	
-    	ProductInfo productInfo = null;
-    	if (cursor.moveToFirst()) {
-	    	productInfo = new ProductInfo(cursor.getString(cursor.getColumnIndex(BrandedProductColumns.GTIN)));
-	    	productInfo.setName(cursor.getString(cursor.getColumnIndex(BrandedProductColumns.NAME)));
-	    	productInfo.setManufacturer(cursor.getString(cursor.getColumnIndex(BrandedProductColumns.MANUFACTURER)));
-	    	
-	    	byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex(BrandedProductColumns.IMAGE));
-			if (bitmapArray != null) {
-				Bitmap bitmap = Helper.getByteArrayAsBitmap(bitmapArray);
-				productInfo.setImage(bitmap);
-			}
-    	}
-    	cursor.close();
-		return productInfo;
     }
     
     public ProductInfo getCachedProductInfo(String gtin) {

@@ -16,7 +16,8 @@
 
 package at.my2c.scanner;
 
-import com.google.zxing.ResultPoint;
+import java.io.IOException;
+import java.util.regex.Pattern;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
@@ -31,8 +32,7 @@ import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
 
-import java.io.IOException;
-import java.util.regex.Pattern;
+import com.google.zxing.ResultPoint;
 
 /**
  * This object wraps the Camera service object and expects to be the only one talking to it. The

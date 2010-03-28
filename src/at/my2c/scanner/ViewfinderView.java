@@ -16,6 +16,9 @@
 
 package at.my2c.scanner;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -27,9 +30,6 @@ import android.view.View;
 import at.my2c.R;
 
 import com.google.zxing.ResultPoint;
-
-import java.util.Collection;
-import java.util.HashSet;
 
 /**
  * This view is overlaid on top of the camera preview. It adds the viewfinder rectangle and partial

@@ -1,16 +1,11 @@
 
 package at.my2c;
 
-import java.util.HashMap;
-
-import android.app.ListActivity;
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -20,21 +15,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import at.my2c.data.BrandedProductColumns;
 import at.my2c.data.DataManager;
-import at.my2c.utils.Helper;
 import at.my2c.utils.NetworkManager;
 
-public final class MainActivity extends ListActivity {
+public final class MainActivity extends Activity {
 	
 	private static final String TAG = "MainActivity";
 	
 	private SharedPreferences settings;
-	private ProductAdapter adapter;
-	private Cursor cursor;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -53,15 +41,6 @@ public final class MainActivity extends ListActivity {
 		NetworkManager.setAuthToken(settings.getString(getString(R.string.settings_token),""));
 		
 		onFirstLaunch();
-		
-		cursor = DataManager.getDatabase().getBrandedProducts();		
-		adapter = new ProductAdapter(this,
-        		R.layout.product_item,
-        		cursor,
-                new String[] { BrandedProductColumns.GTIN, BrandedProductColumns.NAME, BrandedProductColumns.MANUFACTURER },
-                new int[] { R.id.ProductItemCodeTextView, R.id.ProductItemNameTextView, R.id.ProductItemManufacturerTextView });
-		
-        setListAdapter(adapter);
 	}
 	
 	private final ImageButton.OnClickListener scanListener = new ImageButton.OnClickListener() {
@@ -96,33 +75,6 @@ public final class MainActivity extends ListActivity {
 		}
 	};
 	
-	private class ProductAdapter extends SimpleCursorAdapter {
-
-		public ProductAdapter(Context context, int layout, Cursor cursor, String[] from, int[] to) {
-			super(context, layout, cursor, from, to);
-		}
-		
-		@Override
-		public void bindView(View view, Context context, Cursor cursor) {
-			ImageView imageView = (ImageView) view.findViewById(R.id.ProductItemImageView);
-			String gtin = cursor.getString(cursor.getColumnIndex(BrandedProductColumns.GTIN));
-			if (DataManager.productImageCache.containsKey(gtin)) {
-				imageView.setImageBitmap(DataManager.productImageCache.get(gtin));
-			}
-			else {
-				byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex(BrandedProductColumns.IMAGE));
-				if (bitmapArray != null) {
-					Bitmap bitmap = Helper.getByteArrayAsBitmap(bitmapArray);
-					if (bitmap != null) {
-						imageView.setImageBitmap(bitmap);
-						DataManager.productImageCache.put(gtin, bitmap);
-					}
-				}
-			}
-			super.bindView(view, context, cursor);
-		}
-	}
-	
 	/**
 	 * We want the help screen to be shown automatically the first time a new
 	 * version of the app is run. The easiest way to do this is to check
@@ -143,26 +95,6 @@ public final class MainActivity extends ListActivity {
 		} catch (PackageManager.NameNotFoundException e) {
 			Log.w(TAG, e);
 		}
-	}
-	
-
-	@Override
-	protected void onDestroy() {
-        cursor.close();
-        super.onDestroy();
-	}
-
-	@Override
-	public void onListItemClick(ListView parent, View v, int position, long id) {
-		Cursor cursor = (Cursor) adapter.getItem(position);
-		String gtin = cursor.getString(1);
-		
-		Intent intent = new Intent(this, CommentActivity.class);
-		intent.setAction(Intents.ACTION);
-		intent.putExtra(CommentActivity.UPDATE_HISTORY, false);
-		intent.putExtra(CommentActivity.IS_PRODUCT_BRANDED, true);
-		intent.putExtra(DataManager.GTIN_KEY, gtin);
-		startActivity(intent);
 	}
 
 	@Override

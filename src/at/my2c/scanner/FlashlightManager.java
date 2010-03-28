@@ -16,11 +16,11 @@
 
 package at.my2c.scanner;
 
-import android.os.IBinder;
-import android.util.Log;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import android.os.IBinder;
+import android.util.Log;
 
 /**
  * This class is used to activate the weak light on some camera phones (not flash)
