@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import at.my2c.data.DataManager;
-import at.my2c.util.Helper;
+import at.my2c.utils.Helper;
 
 public final class HistoryActivity extends ListActivity {
 

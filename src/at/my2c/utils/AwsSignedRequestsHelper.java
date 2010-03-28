@@ -19,7 +19,7 @@
  *
  */
 
-package at.my2c.util;
+package at.my2c.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;

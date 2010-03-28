@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.util.Log;
-import at.my2c.util.Helper;
+import at.my2c.utils.Helper;
 
 
 public class DatabaseHelper extends SQLiteOpenHelper {

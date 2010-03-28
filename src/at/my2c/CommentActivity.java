@@ -44,8 +44,8 @@ import at.my2c.comments.TagsAdapter;
 import at.my2c.data.DataManager;
 import at.my2c.data.ProductInfo;
 import at.my2c.data.ProductInfoManager;
-import at.my2c.util.GpsManager;
-import at.my2c.util.NetworkManager;
+import at.my2c.utils.GpsManager;
+import at.my2c.utils.NetworkManager;
 
 public final class CommentActivity extends ListActivity {
 	

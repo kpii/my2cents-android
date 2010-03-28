@@ -29,7 +29,7 @@ import android.widget.Toast;
 import at.my2c.comments.Comment;
 import at.my2c.comments.CommentsAdapter;
 import at.my2c.comments.CommentsManager;
-import at.my2c.util.NetworkManager;
+import at.my2c.utils.NetworkManager;
 
 public final class MainActivity extends ListActivity {
 	

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package at.my2c.util;
+package at.my2c.utils;
 
 import java.text.ChoiceFormat;
 import java.text.MessageFormat;
