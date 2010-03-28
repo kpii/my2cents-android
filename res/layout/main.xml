@@ -55,37 +55,75 @@
 		android:padding="@dimen/empty_list_padding"
 		android:layout_weight="1"
 		android:textSize="@dimen/empty_list_text"
-		android:text="@string/message_no_stream" />
-	<LinearLayout
-		android:layout_height="wrap_content"
-		android:orientation="horizontal"
-		android:layout_width="fill_parent">
-		<Button
-			android:layout_height="wrap_content"
-			android:id="@+id/ScanButton"
-			android:layout_width="0dip"
-			android:layout_weight="0.33"
-			android:text="@string/button_scan"></Button>
-		<Button
-			android:layout_height="wrap_content"
-			android:id="@+id/SearchButton"
-			android:layout_width="0dip"
-			android:layout_weight="0.33"
-			android:text="@string/button_search"></Button>
-		<Button
-			android:layout_height="wrap_content"
-			android:id="@+id/HistoryButton"
-			android:layout_width="0dip"
-			android:layout_weight="0.33"
-			android:text="@string/button_history"></Button>
-	</LinearLayout>
-	<TextView
+		android:text="@string/message_no_products" />
+	<RelativeLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:gravity="center_horizontal"
-		android:id="@+id/StatusTextView"
-		android:background="@color/status_backgroung"
-		android:textColor="@color/status_text"
-		android:textSize="@dimen/status_text"
-		android:padding="@dimen/status_padding"></TextView>
+		android:background="@color/comment_editor_background" android:paddingLeft="@dimen/comment_editor_padding" android:paddingRight="@dimen/comment_editor_padding" android:paddingTop="@dimen/comment_editor_padding">
+		<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_alignParentRight="true"
+			android:layout_height="wrap_content" android:id="@+id/SearchImageButton" android:src="@drawable/search_icon"/>
+		<EditText
+			android:layout_height="wrap_content"
+			android:imeOptions="flagNoEnterAction"
+			android:id="@+id/SearchEditText"
+			android:hint="@string/search_hint"
+			android:layout_width="fill_parent" android:layout_toLeftOf="@+id/SearchImageButton" android:inputType="number"/>
+	</RelativeLayout>
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:id="@+id/ToolbarLayout"
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:background="@color/status_backgroung">
+		<ImageButton
+			android:layout_height="wrap_content"
+			android:layout_weight="0.25"
+			android:scaleType="centerInside"
+			android:layout_width="wrap_content"
+			android:background="@drawable/toolbar_button_background"
+			android:id="@+id/ImageButtonHome"
+			android:src="@drawable/home_button"
+			android:layout_marginBottom="3dip"
+			android:layout_marginRight="3dip"
+			android:layout_marginTop="3dip"
+			android:layout_marginLeft="6dip"></ImageButton>
+		<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="0.25"
+			android:background="@drawable/toolbar_button_background"
+			android:scaleType="centerInside"
+			android:id="@+id/ImageButtonScan"
+			android:src="@drawable/scan_button"
+			android:layout_marginBottom="3dip"
+			android:layout_marginLeft="3dip"
+			android:layout_marginRight="3dip"
+			android:layout_marginTop="3dip"></ImageButton>
+		<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="0.25"
+			android:background="@drawable/toolbar_button_background"
+			android:scaleType="centerInside"
+			android:id="@+id/ImageButtonStream"
+			android:src="@drawable/stream_button"
+			android:layout_marginBottom="3dip"
+			android:layout_marginLeft="3dip"
+			android:layout_marginRight="3dip"
+			android:layout_marginTop="3dip"></ImageButton>
+		<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="0.25"
+			android:background="@drawable/toolbar_button_background"
+			android:scaleType="centerInside"
+			android:id="@+id/ImageButtonHistory"
+			android:src="@drawable/history_button"
+			android:layout_marginBottom="3dip"
+			android:layout_marginLeft="3dip"
+			android:layout_marginTop="3dip"
+			android:layout_marginRight="6dip"></ImageButton>
+	</LinearLayout>
 </LinearLayout>

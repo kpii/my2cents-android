@@ -1,4 +1,3 @@
-
 package at.my2c;
 
 import java.io.IOException;
@@ -34,6 +33,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 import at.my2c.data.DataManager;
 import at.my2c.scanner.CameraManager;
@@ -48,9 +48,11 @@ import com.google.zxing.client.result.ResultParser;
 
 public final class ScanActivity extends Activity implements SurfaceHolder.Callback {
 
+	private static final String TAG = "ScanActivity";
+
 	private static final float BEEP_VOLUME = 0.15f;
 	private static final long VIBRATE_DURATION = 200L;
-	
+
 	private SharedPreferences settings;
 
 	private CaptureActivityHandler handler;
@@ -63,16 +65,16 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	private boolean vibrate;
 	private boolean copyToClipboard;
 	private final OnCompletionListener beepListener = new BeepListener();
-	
+
 	public static final Vector<BarcodeFormat> PRODUCT_FORMATS;
 	static {
-	    PRODUCT_FORMATS = new Vector<BarcodeFormat>(5);
-	    PRODUCT_FORMATS.add(BarcodeFormat.UPC_A);
-	    PRODUCT_FORMATS.add(BarcodeFormat.UPC_E);
-	    PRODUCT_FORMATS.add(BarcodeFormat.EAN_13);
-	    PRODUCT_FORMATS.add(BarcodeFormat.EAN_8);
-	    PRODUCT_FORMATS.add(BarcodeFormat.RSS14);
-	  }
+		PRODUCT_FORMATS = new Vector<BarcodeFormat>(5);
+		PRODUCT_FORMATS.add(BarcodeFormat.UPC_A);
+		PRODUCT_FORMATS.add(BarcodeFormat.UPC_E);
+		PRODUCT_FORMATS.add(BarcodeFormat.EAN_13);
+		PRODUCT_FORMATS.add(BarcodeFormat.EAN_8);
+		PRODUCT_FORMATS.add(BarcodeFormat.RSS14);
+	}
 
 	public ViewfinderView getViewfinderView() {
 		return viewfinderView;
@@ -85,19 +87,42 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
 
 		Window window = getWindow();
 		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setContentView(R.layout.scan);
 
+		findViewById(R.id.ImageButtonHome).setOnClickListener(homeListener);
+		findViewById(R.id.ImageButtonScan).setEnabled(false);
+		findViewById(R.id.ImageButtonStream).setOnClickListener(streamListener);
+		findViewById(R.id.ImageButtonHistory).setOnClickListener(historyListener);
+
 		CameraManager.init(getApplication());
 		viewfinderView = (ViewfinderView) findViewById(R.id.ViewfinderView);
-		handler = null;
-		lastResult = null;
-		hasSurface = false;
 	}
+
+	private final Button.OnClickListener homeListener = new Button.OnClickListener() {
+		public void onClick(View view) {
+			Intent intent = new Intent(getBaseContext(), MainActivity.class);
+			startActivity(intent);
+		}
+	};
+
+	private final Button.OnClickListener historyListener = new Button.OnClickListener() {
+		public void onClick(View view) {
+			Intent intent = new Intent(getBaseContext(), HistoryActivity.class);
+			startActivity(intent);
+		}
+	};
+
+	private final Button.OnClickListener streamListener = new Button.OnClickListener() {
+		public void onClick(View view) {
+			Intent intent = new Intent(getBaseContext(), StreamActivity.class);
+			startActivity(intent);
+		}
+	};
 
 	@Override
 	protected void onResume() {
@@ -161,16 +186,6 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.searchMenuItem: {
-			Intent intent = new Intent(this, SearchActivity.class);
-			startActivity(intent);
-			return true;
-		}
-		case R.id.historyMenuItem: {
-			Intent intent = new Intent(this, HistoryActivity.class);
-			startActivity(intent);
-			return true;
-		}
 		case R.id.settingsMenuItem: {
 			Intent intent = new Intent(this, SettingsActivity.class);
 			startActivity(intent);
@@ -224,55 +239,56 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 
 		handleDecodeInternally(rawResult, barcode);
 	}
-	
-	/**
-	   * Superimpose a line for 1D or dots for 2D to highlight the key features of the barcode.
-	   *
-	   * @param barcode   A bitmap of the captured image.
-	   * @param rawResult The decoded results which contains the points to draw.
-	   */
-	  private void drawResultPoints(Bitmap barcode, Result rawResult) {
-	    ResultPoint[] points = rawResult.getResultPoints();
-	    if (points != null && points.length > 0) {
-	      Canvas canvas = new Canvas(barcode);
-	      Paint paint = new Paint();
-	      paint.setColor(getResources().getColor(R.color.result_image_border));
-	      paint.setStrokeWidth(3.0f);
-	      paint.setStyle(Paint.Style.STROKE);
-	      Rect border = new Rect(2, 2, barcode.getWidth() - 2, barcode.getHeight() - 2);
-	      canvas.drawRect(border, paint);
 
-	      paint.setColor(getResources().getColor(R.color.result_points));
-	      if (points.length == 2) {
-	        paint.setStrokeWidth(4.0f);
-	        canvas.drawLine(points[0].getX(), points[0].getY(), points[1].getX(),
-	            points[1].getY(), paint);
-	      } else {
-	        paint.setStrokeWidth(10.0f);
-	        for (ResultPoint point : points) {
-	          canvas.drawPoint(point.getX(), point.getY(), paint);
-	        }
-	      }
-	    }
-	  }
+	/**
+	 * Superimpose a line for 1D or dots for 2D to highlight the key features of
+	 * the barcode.
+	 * 
+	 * @param barcode
+	 *            A bitmap of the captured image.
+	 * @param rawResult
+	 *            The decoded results which contains the points to draw.
+	 */
+	private void drawResultPoints(Bitmap barcode, Result rawResult) {
+		ResultPoint[] points = rawResult.getResultPoints();
+		if (points != null && points.length > 0) {
+			Canvas canvas = new Canvas(barcode);
+			Paint paint = new Paint();
+			paint.setColor(getResources().getColor(R.color.result_image_border));
+			paint.setStrokeWidth(3.0f);
+			paint.setStyle(Paint.Style.STROKE);
+			Rect border = new Rect(2, 2, barcode.getWidth() - 2, barcode.getHeight() - 2);
+			canvas.drawRect(border, paint);
+
+			paint.setColor(getResources().getColor(R.color.result_points));
+			if (points.length == 2) {
+				paint.setStrokeWidth(4.0f);
+				canvas.drawLine(points[0].getX(), points[0].getY(), points[1].getX(), points[1].getY(), paint);
+			} else {
+				paint.setStrokeWidth(10.0f);
+				for (ResultPoint point : points) {
+					canvas.drawPoint(point.getX(), point.getY(), paint);
+				}
+			}
+		}
+	}
 
 	// Put up our own UI for how to handle the decoded contents.
 	private void handleDecodeInternally(Result rawResult, Bitmap barcode) {
 		ParsedResult result = ResultParser.parseResult(rawResult);
-		String productCode = result.getDisplayResult().replace("\r", "");
+		String gtin = result.getDisplayResult().replace("\r", "");
 		if (rawResult.getBarcodeFormat().equals(BarcodeFormat.UPC_A)) {
-			productCode = "0" + productCode;
+			gtin = "0" + gtin;
 		}
-
-		DataManager.setSearchTerm(productCode);
 
 		if (copyToClipboard) {
 			ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-			clipboard.setText(productCode);
+			clipboard.setText(gtin);
 		}
 
 		Intent intent = new Intent(this, CommentActivity.class);
 		intent.setAction(Intents.ACTION);
+		intent.putExtra(DataManager.GTIN_KEY, gtin);
 		startActivity(intent);
 	}
 
@@ -282,8 +298,12 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	 */
 	private void initBeepSound() {
 		if (playBeep && mediaPlayer == null) {
+			// The volume on STREAM_SYSTEM is not adjustable, and users found it
+			// too loud,
+			// so we now play on the music stream.
+			setVolumeControlStream(AudioManager.STREAM_MUSIC);
 			mediaPlayer = new MediaPlayer();
-			mediaPlayer.setAudioStreamType(AudioManager.STREAM_SYSTEM);
+			mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 			mediaPlayer.setOnCompletionListener(beepListener);
 
 			AssetFileDescriptor file = getResources().openRawResourceFd(R.raw.beep);
@@ -312,13 +332,13 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 		try {
 			CameraManager.get().openDriver(surfaceHolder);
 		} catch (IOException ioe) {
-			Log.w(ScanActivity.class.getName(), ioe);
+			Log.w(TAG, ioe);
 			displayFrameworkBugMessageAndExit();
 			return;
 		} catch (RuntimeException e) {
 			// Barcode Scanner has seen crashes in the wild of this variety:
 			// java.?lang.?RuntimeException: Fail to connect to camera service
-			Log.e(ScanActivity.class.getName(), e.toString());
+			Log.e(TAG, e.toString());
 			displayFrameworkBugMessageAndExit();
 			return;
 		}

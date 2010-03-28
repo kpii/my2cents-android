@@ -10,14 +10,19 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import at.my2c.data.BrandedProductColumns;
 import at.my2c.data.DataManager;
+import at.my2c.data.HistoryColumns;
 import at.my2c.utils.Helper;
 
 public final class HistoryActivity extends ListActivity {
 
+	private static final String TAG = "HistoryActivity";
+	
 	private HistoryAdapter adapter;
 	private Cursor cursor;
 
@@ -25,7 +30,33 @@ public final class HistoryActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.history);
+		
+		findViewById(R.id.ImageButtonHome).setOnClickListener(homeListener);
+		findViewById(R.id.ImageButtonScan).setOnClickListener(scanListener);
+		findViewById(R.id.ImageButtonStream).setOnClickListener(streamListener);
+		findViewById(R.id.ImageButtonHistory).setEnabled(false);
 	}
+	
+	private final Button.OnClickListener scanListener = new Button.OnClickListener() {
+		public void onClick(View view) {
+			Intent intent = new Intent(getBaseContext(), ScanActivity.class);
+			startActivity(intent);
+		}
+	};
+	
+	private final Button.OnClickListener streamListener = new Button.OnClickListener() {
+		public void onClick(View view) {
+			Intent intent = new Intent(getBaseContext(), StreamActivity.class);
+			startActivity(intent);
+		}
+	};
+	
+	private final Button.OnClickListener homeListener = new Button.OnClickListener() {
+		public void onClick(View view) {
+			Intent intent = new Intent(getBaseContext(), MainActivity.class);
+			startActivity(intent);
+		}
+	};
 
 	@Override
 	protected void onResume() {
@@ -35,7 +66,7 @@ public final class HistoryActivity extends ListActivity {
 		adapter = new HistoryAdapter(this,
         		R.layout.history_item,
         		cursor,
-                new String[] { "productCode", "time", "name" },
+                new String[] { HistoryColumns.GTIN, HistoryColumns.TIME, HistoryColumns.NAME },
                 new int[] { R.id.HistoryProductCodeTextView, R.id.HistoryTimeTextView, R.id.HistoryProductNameTextView });
 		
         setListAdapter(adapter);
@@ -50,12 +81,12 @@ public final class HistoryActivity extends ListActivity {
 	@Override
 	public void onListItemClick(ListView parent, View v, int position, long id) {
 		Cursor cursor = (Cursor) adapter.getItem(position);
-		String searchTerm = cursor.getString(1);
-		DataManager.setSearchTerm(searchTerm);
+		String gtin = cursor.getString(2);
 		
 		Intent intent = new Intent(this, CommentActivity.class);
 		intent.setAction(Intents.ACTION);
 		intent.putExtra(CommentActivity.UPDATE_HISTORY, false);
+		intent.putExtra(DataManager.GTIN_KEY, gtin);
 		startActivity(intent);
 	}
 
@@ -70,16 +101,6 @@ public final class HistoryActivity extends ListActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.scanMenuItem: {
-				Intent intent = new Intent(this, ScanActivity.class);
-				startActivity(intent);
-				return true;
-			}
-			case R.id.searchMenuItem: {
-				Intent intent = new Intent(this, SearchActivity.class);
-				startActivity(intent);
-				return true;
-			}
 			case R.id.clearHistoryMenuItem: {
 				DataManager.getDatabase().clearHistory();
 				adapter.getCursor().requery();
@@ -110,14 +131,22 @@ public final class HistoryActivity extends ListActivity {
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
 			ImageView imageView = (ImageView) view.findViewById(R.id.HistoryImageView);
-			byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex("image"));
-			if (bitmapArray != null) {
-				Bitmap bitmap = Helper.getByteArrayAsBitmap(bitmapArray);
-				imageView.setImageBitmap(bitmap);
+			String gtin = cursor.getString(cursor.getColumnIndex(HistoryColumns.GTIN));
+			if (DataManager.productImageCache.containsKey(gtin)) {
+				imageView.setImageBitmap(DataManager.productImageCache.get(gtin));
 			}
-			else
-			{
-				imageView.setImageResource(R.drawable.warning64px);
+			else {
+				byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex(HistoryColumns.IMAGE));
+				if (bitmapArray != null) {
+					Bitmap bitmap = Helper.getByteArrayAsBitmap(bitmapArray);
+					if (bitmap != null) {
+						imageView.setImageBitmap(bitmap);
+						DataManager.productImageCache.put(gtin, bitmap);
+					}
+				}
+				else {
+					imageView.setImageResource(R.drawable.unknown_product_icon);
+				}
 			}
 			super.bindView(view, context, cursor);
 		}

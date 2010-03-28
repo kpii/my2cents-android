@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:padding="6dip"
+	android:layout_height="wrap_content">
+	<ImageView
+		android:id="@+id/StreamProductImageView"
+		android:adjustViewBounds="true"
+		android:maxHeight="@dimen/stream_product_image_max_size"
+		android:maxWidth="@dimen/stream_product_image_max_size"
+		android:src="@drawable/unknown_product_icon" android:layout_height="@dimen/stream_product_image_max_size" android:layout_width="@dimen/stream_product_image_max_size"/>
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/StreamProductTextView"
+		android:text="StreamProductTextView"
+		android:layout_toRightOf="@id/StreamProductImageView" android:layout_marginBottom="3dip" android:textColor="@color/stream_product_name_text" android:textSize="@dimen/stream_product_name_text" android:textStyle="bold"/>
+	
+	<TextView
+		android:id="@+id/StreamCommentTextView"
+		android:layout_height="wrap_content"
+		android:textColor="@color/comment_text"
+		android:textSize="@dimen/comment_text"
+		android:text="StreamCommentTextView: blah lsdsdfsdf"
+		android:layout_width="fill_parent" android:layout_toRightOf="@id/StreamProductImageView" android:layout_below="@id/StreamProductTextView"/>
+	<TextView
+		android:id="@+id/StreamCommentAuthorTextView"
+		android:textSize="@dimen/comment_author_text"
+		android:textColor="@color/comment_author_text"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Author"
+		android:layout_below="@id/StreamCommentTextView" android:gravity="bottom" android:layout_toRightOf="@id/StreamProductImageView" android:layout_marginTop="3dip"/>
+	<TextView
+		android:id="@+id/StreamCommentSentTextView"
+		android:layout_height="wrap_content"
+		android:layout_toRightOf="@id/StreamCommentAuthorTextView"
+		android:textSize="@dimen/comment_sent_text"
+		android:textColor="@color/comment_sent_text"
+		android:layout_alignBaseline="@id/StreamCommentAuthorTextView"
+		android:layout_below="@id/StreamCommentTextView"
+		android:layout_width="fill_parent"
+		android:gravity="right"
+		android:text="11.12.2010 13:45"></TextView>
+</RelativeLayout>

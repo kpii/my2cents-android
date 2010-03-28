@@ -18,11 +18,6 @@
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:background="@color/transparent">
-		<FrameLayout
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			android:layout_weight="1"
-			android:background="@color/transparent" />
 		<LinearLayout
 			android:orientation="horizontal"
 			android:layout_width="fill_parent"
@@ -30,7 +25,7 @@
 			android:layout_weight="0"
 			android:background="@color/status_view"
 			android:baselineAligned="false"
-			android:padding="4px"
+			android:padding="4dip"
 			android:gravity="center">
 			<TextView
 				android:id="@+id/StatusTextView"
@@ -41,5 +36,65 @@
 				android:textColor="@color/scanner_status_text"
 				android.textSize="14sp" />
 		</LinearLayout>
+		<FrameLayout
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_weight="1"
+			android:background="@color/transparent" />
+	</LinearLayout>
+	<LinearLayout
+		android:layout_height="fill_parent"
+		android:id="@+id/ToolbarLayout"
+		android:orientation="vertical"
+		android:layout_width="wrap_content"
+		android:background="@color/status_backgroung">
+		<ImageButton
+			android:layout_height="wrap_content"
+			android:layout_weight="0.25"
+			android:scaleType="centerInside"
+			android:layout_width="wrap_content"
+			android:background="@drawable/toolbar_button_background"
+			android:id="@+id/ImageButtonHome"
+			android:src="@drawable/home_button"
+			android:layout_marginBottom="3dip"
+			android:layout_marginRight="3dip"
+			android:layout_marginTop="6dip"
+			android:layout_marginLeft="3dip"></ImageButton>
+		<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="0.25"
+			android:background="@drawable/toolbar_button_background"
+			android:scaleType="centerInside"
+			android:id="@+id/ImageButtonScan"
+			android:src="@drawable/scan_button"
+			android:layout_marginBottom="3dip"
+			android:layout_marginLeft="3dip"
+			android:layout_marginRight="3dip"
+			android:layout_marginTop="3dip"></ImageButton>
+		<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="0.25"
+			android:background="@drawable/toolbar_button_background"
+			android:scaleType="centerInside"
+			android:id="@+id/ImageButtonStream"
+			android:src="@drawable/stream_button"
+			android:layout_marginBottom="3dip"
+			android:layout_marginLeft="3dip"
+			android:layout_marginRight="3dip"
+			android:layout_marginTop="3dip"></ImageButton>
+		<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="0.25"
+			android:background="@drawable/toolbar_button_background"
+			android:scaleType="centerInside"
+			android:id="@+id/ImageButtonHistory"
+			android:src="@drawable/history_button"
+			android:layout_marginBottom="6dip"
+			android:layout_marginLeft="3dip"
+			android:layout_marginTop="3dip"
+			android:layout_marginRight="3dip"></ImageButton>
 	</LinearLayout>
 </FrameLayout>

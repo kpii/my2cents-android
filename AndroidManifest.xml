@@ -23,7 +23,6 @@
 		android:icon="@drawable/birdy">
 		<activity
 			android:name=".MainActivity"
-			android:launchMode="singleTop"
 			android:configChanges="orientation|keyboardHidden">
 			<intent-filter>
 				<action
@@ -34,7 +33,6 @@
 		</activity>
 		<activity
 			android:screenOrientation="landscape"
-			android:launchMode="singleInstance"
 			android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
 			android:configChanges="orientation|keyboardHidden"
 			android:name=".ScanActivity">
@@ -46,8 +44,17 @@
 			</intent-filter>
 		</activity>
 		<activity
+			android:name=".StreamActivity"
+			android:configChanges="orientation|keyboardHidden">
+			<intent-filter>
+				<action
+					android:name="android.intent.action.VIEW" />
+				<category
+					android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity
 			android:name=".CommentActivity"
-			android:launchMode="singleTop"
 			android:configChanges="orientation|keyboardHidden">
 			<intent-filter>
 				<action
@@ -66,18 +73,21 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".SettingsActivity"
-			android:launchMode="singleInstance">
+			android:name=".SettingsActivity">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.VIEW" />
 				<category
 					android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name=".AuthorizationActivity">
+			<intent-filter>
+				<action
+					android:name="android.intent.action.VIEW" />
 				<category
-					android:name="android.intent.category.BROWSABLE" />
-				<data
-					android:scheme="myapp"
-					android:host="oauth" />
+					android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
 		<activity

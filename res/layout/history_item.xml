@@ -13,7 +13,7 @@
 		android:maxWidth="@dimen/product_image_max_size"
 		android:maxHeight="@dimen/product_image_max_size"
 		android:adjustViewBounds="true"
-		android:layout_height="wrap_content" android:src="@android:drawable/ic_menu_help"/>
+		android:layout_height="wrap_content"/>
 	<TextView
 		android:id="@+id/HistoryProductNameTextView"
 		android:layout_width="fill_parent"

@@ -1,82 +1,70 @@
 
 package at.my2c;
 
-import oauth.signpost.OAuthProvider;
-import oauth.signpost.basic.DefaultOAuthProvider;
-import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
-import twitter4j.http.AccessToken;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.KeyEvent;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.widget.Toast;
-import at.my2c.comments.CommentsManager;
+import at.my2c.utils.NetworkManager;
 
 public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
-	
-	public final static String CONSUMER_KEY = "LAFxqUB51z5j5zBp2qYCFA";
-	public final static String CONSUMER_SECRET = "y2IhpsBaovR96tUVqplOHbTd7UxRUUmfrxFNaevlzA";
-	
-	private final static String CALLBACK_URL = "myapp://oauth";
-	
-	public final static String TAG_PREFIX = "#";
-	public final static String MY_2CENTS_TAG = "#my2c";
-	public final static String PRODUCT_CODE_PREFIX = MY_2CENTS_TAG + " #";
 
-	private OAuthProvider provider;
-	private CommonsHttpOAuthConsumer consumer;
+	private static final String TAG = "SettingsActivity";
+	
+	public static final String AUTH_TOKEN = "AUTH_TOKEN";
+	private static boolean shareOnTwitter;
+	
 	private SharedPreferences settings;
+	private String settings_login_key;
+	private CheckBoxPreference loginCheckBoxPreference;
 	
-	private String twitter_login_key;
-	private CheckBoxPreference twitter_login;
-	
-	private final int DIALOG_CHECK = 1; 
+	private static final int AUTH_REQUEST = 1;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.settings);
-			
+		
+		CookieSyncManager.createInstance(this);
+		
 		addPreferencesFromResource(R.xml.preferences);
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
 		
-		twitter_login_key = getResources().getString(R.string.settings_login_twitter);
-		twitter_login = (CheckBoxPreference)getPreferenceScreen().findPreference(twitter_login_key);
+		settings_login_key = getString(R.string.settings_login);
+		loginCheckBoxPreference = (CheckBoxPreference)getPreferenceScreen().findPreference(settings_login_key);
 	}
 	
 	@Override
 	protected void onResume() {
 		super.onResume();
 		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-        if (!areTokensStored())
+        if (!isAccessTokenStored())
         	unsetTokens();
 	}
 	
 	@Override
 	protected void onPause() {
-		super.onPause();
 		getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+		super.onPause();
 	}
 	
-	public boolean areTokensStored() {
+	public boolean isAccessTokenStored() {
 		String token = settings.getString(getResources().getString(R.string.settings_token),"");
-		String tokenSecret = settings.getString(getResources().getString(R.string.settings_token_secret),"");
-		if (token.equals("") || tokenSecret.equals(""))
+		if (token.equals(""))
 			return false;
 		return true;
 	}
 	
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {        
-		if (key.equals(twitter_login_key)) {
-        	if(twitter_login.isChecked()) {
+		if (key.equals(settings_login_key)) {
+        	if(loginCheckBoxPreference.isChecked()) {
         		askOAuth();
         	} else {
         		unsetTokens();
@@ -84,126 +72,75 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
         }         
     }
 	
-	/**
-	 * Open the browser and asks the user to authorize the app.
-	 * Afterwards, we redirect the user back here!
-	 */
 	private void askOAuth() {
-		try {
-			consumer = new CommonsHttpOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
-			provider = new DefaultOAuthProvider("http://twitter.com/oauth/request_token",
-												"http://twitter.com/oauth/access_token",
-												"http://twitter.com/oauth/authorize");
-			provider.setOAuth10a(true);
-			String authUrl = provider.retrieveRequestToken(consumer, CALLBACK_URL);
-			Toast.makeText(this, R.string.message_authorize, Toast.LENGTH_LONG).show();
-			Intent oauth = new Intent(Intent.ACTION_VIEW, Uri.parse(authUrl));
-			startActivity(oauth);
-		} catch (Exception e) {
-			Log.e(SettingsActivity.class.getName(), e.getMessage());
-			Toast.makeText(this, R.string.message_connection_error, Toast.LENGTH_LONG).show();
-			unsetTokens();
-		}
-	}
-	
-	/**
-	 * As soon as the user successfully authorized the app, we are notified
-	 * here. Now we need to get the verifier from the callback URL, retrieve
-	 * token and token_secret and feed them to twitter4j (as well as
-	 * consumer key and secret).
-	 */
-	@Override
-	protected void onNewIntent(Intent intent) {
-
-		super.onNewIntent(intent);
-
-		Uri uri = intent.getData();
-		
-		if (consumer != null && provider != null && uri != null && uri.toString().startsWith(CALLBACK_URL)) {
-
-			String verifier = uri.getQueryParameter(oauth.signpost.OAuth.OAUTH_VERIFIER);
-			
-			try {
-				// this will populate token and token_secret in consumer
-				provider.retrieveAccessToken(consumer, verifier);
-				Log.i(SettingsActivity.class.getName(), "Tokens retrieved");
-				
-				// store/update tokens in settings
-				storeTokens(consumer.getToken(), consumer.getTokenSecret());
-				
-				// initialize Twitter4J
-				CommentsManager.InitializeOAuth(new AccessToken(consumer.getToken(), consumer.getTokenSecret()));
-				
-			} catch (Exception e) {
-				Log.e(SettingsActivity.class.getName(), e.getMessage());
-				Toast.makeText(this, R.string.message_connection_error, Toast.LENGTH_LONG).show();
-				unsetTokens();
-			}
-
-		} else {
-			Log.w(SettingsActivity.class.getName(), "Callback URL not from OAUTH");
-		}
+		Toast.makeText(this, R.string.message_authorize, Toast.LENGTH_LONG).show();
+		Intent intent = new Intent(this, AuthorizationActivity.class);
+		startActivityForResult(intent, AUTH_REQUEST);
 	}
 	
 	@Override
-	protected Dialog onCreateDialog(int id) {
-		switch (id) {
-			case DIALOG_CHECK: {
-	            ProgressDialog dialog = new ProgressDialog(this);
-	            dialog.setMessage(SettingsActivity.this.getText(R.string.message_please_wait));
-	            dialog.setIndeterminate(true);
-	            dialog.setCancelable(false);
-	            return dialog;
-	        }
-		}
-		
-		return super.onCreateDialog(id);
-	}
+	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (requestCode == AUTH_REQUEST) {
+        	switch (resultCode) {
+				case RESULT_OK: {
+					if (intent != null) {
+	                	String authToken = intent.getStringExtra(AUTH_TOKEN);
+	                	if ((authToken != null) && (authToken != "")) {
+	                		storeAuthToken(authToken);
+	                	}
+	                }
+					return;
+				}
+				case RESULT_CANCELED: {
+					unsetTokens();
+					return;
+				}
+        	}
+        }
+    }
 		
 	private void unsetTokens() {
 		getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
 		
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putString(getResources().getString(R.string.settings_token), "");
-		editor.putString(getResources().getString(R.string.settings_token_secret), "");
-		editor.putString(getResources().getString(R.string.settings_user), "");
-		editor.putBoolean(twitter_login_key, false);
+		editor.putBoolean(settings_login_key, false);
 		editor.commit();
 		
-		twitter_login.setChecked(false);
+		NetworkManager.setAuthToken("");
+		
+		CookieSyncManager.getInstance().sync();
+		CookieManager cookieManager = CookieManager.getInstance();
+		cookieManager.removeAllCookie();
+		CookieSyncManager.getInstance().sync();
+		
+		loginCheckBoxPreference.setChecked(false);
 		
 		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-		Log.i(SettingsActivity.class.getName(), "Tokens unset");
+		Log.i(TAG, "Tokens unset");
 	}
 	
-	private void storeTokens(String token, String tokenSecret) {
+	private void storeAuthToken(String token) {
 		getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
 		
 		SharedPreferences.Editor editor = settings.edit();
 		editor.putString(getResources().getString(R.string.settings_token), token);
-		editor.putString(getResources().getString(R.string.settings_token_secret), tokenSecret);
-		editor.putBoolean(twitter_login_key, true);
+		editor.putBoolean(settings_login_key, true);
 		editor.commit();
 		
-		twitter_login.setChecked(true);
+		NetworkManager.setAuthToken(token);
+		
+		loginCheckBoxPreference.setChecked(true);
 		
 		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-		Log.i(SettingsActivity.class.getName(), "Tokens stored");
+		Log.i(TAG, "Tokens stored");
 	}
-	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			backToMain();
-			return true;
-		}
-		return super.onKeyDown(keyCode, event);
+
+	public static void setShareOnTwitter(boolean shareOnTwitter) {
+		SettingsActivity.shareOnTwitter = shareOnTwitter;
 	}
-	
-	private void backToMain() {
-		Intent main = new Intent(this, MainActivity.class);
-		main.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		startActivity(main);
-		finish();
+
+	public static boolean isShareOnTwitter() {
+		return shareOnTwitter;
 	}
 }

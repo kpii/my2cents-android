@@ -5,18 +5,13 @@
 		android:title="Online Social Networks">
 		<CheckBoxPreference
 			android:defaultValue="false"
-			android:key="@string/settings_login_twitter"
-			android:title="@string/settings_login_twitter"
-			android:summaryOff="@string/settings_login_twitter_desc_out"
-			android:summaryOn="@string/settings_login_twitter_desc_in" />
-		<CheckBoxPreference
-			android:defaultValue="false"
-			android:key="@string/settings_location"
-			android:title="@string/settings_location"
-			android:summaryOn="@string/settings_location_desc_on"
-			android:summaryOff="@string/settings_location_desc_off"
-			android:dependency="@string/settings_login_twitter" />
-	</PreferenceCategory>
+			android:key="@string/settings_login"
+			android:title="@string/settings_login"
+			android:summaryOff="@string/settings_login_desc_out"
+			android:summaryOn="@string/settings_login_desc_in" />
+		
+	<CheckBoxPreference android:key="@string/settings_twitter" android:summary="@string/settings_twitter_description" android:title="@string/settings_twitter" android:defaultValue="false" android:dependency="@string/settings_login"></CheckBoxPreference>
+</PreferenceCategory>
 	<PreferenceCategory
 		android:title="When a barcode is found\u2026">
 		<CheckBoxPreference

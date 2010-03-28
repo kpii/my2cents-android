@@ -6,9 +6,20 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -20,6 +31,24 @@ import android.util.Log;
 public final class NetworkManager {
 
 	private static final String TAG = "NetworkManager";
+	private static String authToken;
+	
+	public static final String BASE_URL = "http://my2cents.base45.de";
+	
+	static {
+		System.setProperty("http.keepAlive", "false");
+		
+		HttpParams params = new BasicHttpParams();
+
+	    // Turn off stale checking.  Our connections break all the time anyway,
+	    // and it's not worth it to pay the penalty of checking every time.
+	    HttpConnectionParams.setStaleCheckingEnabled(params, false);
+
+	    // Default connection and socket timeout of 3 seconds.  Tweak to taste.
+	    HttpConnectionParams.setConnectionTimeout(params, 3 * 1000);
+	    HttpConnectionParams.setSoTimeout(params, 3 * 1000);
+	    HttpConnectionParams.setSocketBufferSize(params, 8192);
+	}
 	
 	public static boolean isNetworkAvailable(Context context) {
 		ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -45,76 +74,120 @@ public final class NetworkManager {
 		}
 		return null;
 	}
-
-	public static Bitmap getRemoteImage(final URL url, final String username, final String password) {
+	
+	private static String convertStreamToString(InputStream stream) {
+        /*
+         * To convert the InputStream to String we use the BufferedReader.readLine()
+         * method. We iterate until the BufferedReader return null which means
+         * there's no more data to read. Each line will appended to a StringBuilder
+         * and returned as String.
+         */
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        StringBuilder stringBuilder = new StringBuilder();
+ 
+        String line = null;
+        try {
+            while ((line = reader.readLine()) != null) {
+            	stringBuilder.append(line + "\n");
+            }
+        } catch (IOException e) {
+        	Log.e(TAG, e.getMessage());
+        } finally {
+            try {
+            	stream.close();
+            } catch (IOException e) {
+            	Log.e(TAG, e.getMessage());
+            }
+        }
+        return stringBuilder.toString();
+    }
+	
+	public static String queryREST(String url) {
+		HttpClient httpClient = new DefaultHttpClient();
+		HttpGet httpGet = new HttpGet(url);
+		
 		try {
-			final URLConnection connection = url.openConnection();
-			setBasicAuthentication(connection, username, password);
-			connection.connect();
-			final BufferedInputStream stream = new BufferedInputStream(connection.getInputStream());
-			final Bitmap bitmap = BitmapFactory.decodeStream(stream);
-			stream.close();
-			return bitmap;
+			HttpResponse response = httpClient.execute(httpGet);			
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				InputStream stream = entity.getContent();
+				String result = convertStreamToString(stream);				
+				stream.close();
+				return result;
+			}
+		} catch (ClientProtocolException e) {
+			Log.e(TAG, "There was a protocol based error", e);
 		} catch (IOException e) {
-			Log.d(TAG, "Cannot load remote image.");
+			Log.e(TAG, "There was an IO Stream related error", e);
 		}
 		return null;
 	}
-
-	private static void setBasicAuthentication(URLConnection connection, String name, String password) {
-		assert name != null && password != null;
-		String token = name + ":" + password;
-		String encoding = Base64.encodeToString(token.getBytes(), false);
-		connection.setRequestProperty("Authorization", "Basic " + encoding);
+	
+	
+	
+	public static String getProductJSONString(String gtin) {
+		String url = BASE_URL + "/gtin/" + gtin + ".json";
+        return queryREST(url);
 	}
 	
-	public static String getRemotePageAsString(String url, String name, String password) {
-		URLConnection connection;
-		try {
-			connection = new URL(url).openConnection();
-		} catch (Exception e) {
-			Log.e(TAG, e.toString());
-			return null;
-		}
-		
-		setBasicAuthentication(connection, name, password);
-		connection.setRequestProperty("User-Agent", "my2cents");
-		InputStream inputStream;
-		try {
-			inputStream = connection.getInputStream();
-		} catch (IOException e) {
-			Log.e(TAG, e.toString());
-			return null;
-		}
-		
-		InputStreamReader inputStreamReader;
-		try {
-			inputStreamReader = new InputStreamReader(inputStream, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			inputStreamReader = new InputStreamReader(inputStream);
-		}
-		
-		BufferedReader reader = new BufferedReader(inputStreamReader);
-		
-		StringBuilder output = new StringBuilder();
-		while (true) {
-			int c;
-			try {
-				c = reader.read();
+	public static String getCommentsStreamJSONString() {
+		String url = BASE_URL + "/comments.json";
+		return queryREST(url);
+	}
+	
+	private static HttpResponse postJSON(String url, String content) {
+		// Create a new HttpClient and Post Header
+		HttpClient httpClient = new DefaultHttpClient();  
+	    HttpPost httpPost = new HttpPost(url);
+	    httpPost.setHeader("User-Agent", "Android my2cents");
+	    
+	    if ((authToken != null) && (authToken != "")) {
+	    	httpPost.setHeader("Cookie", authToken);
+	    }
+	    
+	    try {
+	    	StringEntity entity = new StringEntity(content, "UTF-8");
+	        entity.setContentType("application/json");
+	        httpPost.setEntity(entity);
+	        
+	        // Execute HTTP Post Request
+	        HttpResponse response = httpClient.execute(httpPost);
+	        return response;	        
+	    } catch (ClientProtocolException e) {
+	        Log.e(TAG, e.getMessage());
+	    } catch (IOException e) {
+	    	Log.e(TAG, e.getMessage());
+	    }
+		return null;
+	}
+	
+	public static String postComment(String content) {
+		String url = BASE_URL + "/comments.json";
+	    
+	    HttpResponse response = postJSON(url, content);
+	    if ((response.getStatusLine() != null) && (response.getStatusLine().getStatusCode() == 201)) {
+	    	try {
+    			HttpEntity entity = response.getEntity();
+    			if (entity != null) {
+    				InputStream stream = entity.getContent();
+    				String result = convertStreamToString(stream);				
+    				stream.close();
+    				return result;
+    			}
+			} catch (IllegalStateException e) {
+				Log.e(TAG, e.getMessage());
 			} catch (IOException e) {
-				return null;
+				Log.e(TAG, e.getMessage());
 			}
-			if (c == -1)
-				break;
-			output.append((char) c);
-		}
-		
-		try {
-			reader.close();
-		} catch (IOException e) {
-			Log.e(TAG, e.toString());
-		}
-		
-		return output.toString();
+	    }	    
+		return null;
+	}
+
+	public static void setAuthToken(String authToken) {
+		NetworkManager.authToken = authToken;
+	}
+
+	public static String getAuthToken() {
+		return authToken;
 	}
 }

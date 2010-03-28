@@ -1,44 +1,36 @@
 package at.my2c.data;
 
+import java.util.ArrayList;
+
 import android.graphics.Bitmap;
 
 public final class ProductInfo {
 
-	private final String productId;
-	private String productCode;
-	private String productName;
-	private String productDescription;
+	private final String gtin;
+	private String name;
 	private String manufacturer;
 	private String detailPageUrl;
-	private String productImageUrl;
-	private Bitmap productImage;
+	private String imageUrl;
+	private Bitmap image;
+	private ArrayList<Comment> comments;
+	
 
-	public ProductInfo(String productId) {
-		this.productId = productId;
+	public ProductInfo(String gtin) {
+		this.gtin = gtin;
+		comments = new ArrayList<Comment>();
 	}
 
-	public void setProductName(String productName) {
-		this.productName = productName;
+	
+	public String getGtin() {
+		return gtin;
 	}
 
-	public String getProductName() {
-		return productName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public void setProductImage(Bitmap productImage) {
-		this.productImage = productImage;
-	}
-
-	public Bitmap getProductImage() {
-		return productImage;
-	}
-
-	public void setProductDescription(String productDescription) {
-		this.productDescription = productDescription;
-	}
-
-	public String getProductDescription() {
-		return productDescription;
+	public String getName() {
+		return name;
 	}
 
 	public void setManufacturer(String manufacturer) {
@@ -49,31 +41,35 @@ public final class ProductInfo {
 		return manufacturer;
 	}
 
-	public void setProductImageUrl(String productImageUrl) {
-		this.productImageUrl = productImageUrl;
-	}
-
-	public String getProductImageUrl() {
-		return productImageUrl;
-	}
-
-	public String getProductId() {
-		return productId;
-	}
-
-	public void setProductCode(String productCode) {
-		this.productCode = productCode;
-	}
-
-	public String getProductCode() {
-		return productCode;
-	}
-
 	public void setDetailPageUrl(String detailPageUrl) {
 		this.detailPageUrl = detailPageUrl;
 	}
 
 	public String getDetailPageUrl() {
 		return detailPageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImage(Bitmap image) {
+		this.image = image;
+	}
+
+	public Bitmap getImage() {
+		return image;
+	}
+
+	public void setComments(ArrayList<Comment> comments) {
+		this.comments = comments;
+	}
+
+	public ArrayList<Comment> getComments() {
+		return comments;
 	}
 }

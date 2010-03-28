@@ -14,12 +14,19 @@ import at.my2c.utils.Helper;
 
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-
-    private static final String TAG = "DatabaseHelper";
+	
+	private static final String TAG = "DatabaseHelper";
+	
 	/** The name of the database file on the file system */
     private static final String DATABASE_NAME = "My2CentsDb";
     /** The version of the database that this class understands. */
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 5;
+    
+    private static final String HISTORY_TABLE = "history";
+    private static final String BRANDED_PRODUCTS_TABLE = "branded_products";
+    
+    private static final int historyLimit = 100;
+
     
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -27,69 +34,146 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {        
-        db.execSQL("CREATE TABLE history ("
-                + "_id INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + "productCode TEXT,"
-                + "time TEXT,"
-                + "name TEXT,"
-                + "manufacturer TEXT,"
-                + "image BLOB);");
+        db.execSQL("CREATE TABLE " + HISTORY_TABLE + " ("
+                + HistoryColumns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + HistoryColumns.TIME + " TEXT,"
+                + HistoryColumns.GTIN + " TEXT,"
+                + HistoryColumns.NAME + " TEXT,"
+                + HistoryColumns.MANUFACTURER + " TEXT,"
+                + HistoryColumns.IMAGE + " BLOB);");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.i(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
-        db.execSQL("DROP TABLE IF EXISTS history");
+        Log.i(DatabaseHelper.class.getName(), "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
+        db.execSQL("DROP TABLE IF EXISTS " + HISTORY_TABLE);
         onCreate(db);
     }
     
     
-    public void addHistoryItem(ProductInfo product) {
-    	if ((product == null) || (product.getProductCode() == null) || (product.getProductCode().equals(""))) return;
+    public void addBrandedProducts(ProductInfo[] products) {
+    	if (products == null) return;
     	
     	SQLiteDatabase db = getWritableDatabase();
     	
-    	db.delete("history", "productCode = '" + product.getProductCode() + "'", null);
+    	db.execSQL("DROP TABLE IF EXISTS " + BRANDED_PRODUCTS_TABLE);
+    	db.execSQL("CREATE TABLE " + BRANDED_PRODUCTS_TABLE + " ("
+                + BrandedProductColumns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + BrandedProductColumns.GTIN + " TEXT,"
+                + BrandedProductColumns.NAME + " TEXT,"
+                + BrandedProductColumns.MANUFACTURER + " TEXT,"
+                + BrandedProductColumns.IMAGE + " BLOB);");
+        
+    	for (ProductInfo product : products) {
+    		ContentValues map = new ContentValues();
+            map.put(BrandedProductColumns.GTIN, product.getGtin());
+            map.put(BrandedProductColumns.NAME, product.getName());
+            map.put(BrandedProductColumns.MANUFACTURER, product.getManufacturer());
+            map.put(BrandedProductColumns.IMAGE, Helper.getBitmapAsByteArray(product.getImage()));
+            
+            try{
+                db.insert(BRANDED_PRODUCTS_TABLE, null, map);
+            } catch (SQLException e) {
+                Log.e(TAG, e.getMessage());
+            }
+    	}
+    }
+    
+    
+    public void addHistoryItem(ProductInfo product) {
+    	if ((product == null) || (product.getGtin() == null) || (product.getGtin().equals(""))) return;
     	
-    	Cursor cursor = db.rawQuery("SELECT * FROM history", null);
-    	if (cursor.getCount() > 100) {
-    		db.delete("history", "_id = (SELECT MIN(_id) FROM history)", null);
+    	SQLiteDatabase db = getWritableDatabase();
+    	
+    	db.delete(HISTORY_TABLE, HistoryColumns.GTIN + " = '" + product.getGtin() + "'", null);
+    	
+    	Cursor cursor = db.rawQuery("SELECT * FROM " + HISTORY_TABLE, null);
+    	if (cursor.getCount() > historyLimit) {
+    		db.delete(HISTORY_TABLE, HistoryColumns.ID + " = (SELECT MIN(" + HistoryColumns.ID + ") FROM " + HISTORY_TABLE + ")", null);
     	}
     	cursor.close();
         
         ContentValues map = new ContentValues();
         
-        map.put("productCode", product.getProductCode());
-        map.put("time", new Date().toLocaleString());
+        map.put(HistoryColumns.GTIN, product.getGtin());
+        map.put(HistoryColumns.TIME, new Date().toLocaleString());
         
-        String productName = product.getProductName();
-        if ((productName != null) && (productName != "")) {
-        	map.put("name", product.getProductName());
+        String name = product.getName();
+        if ((name != null) && (name != "")) {
+        	map.put(HistoryColumns.NAME, name);
         }
         else {
-        	map.put("name", ProductInfoManager.UnknownProductName);
+        	map.put(HistoryColumns.NAME, DataManager.UnknownProductName);
         }
         
-        Bitmap image = product.getProductImage();
+        Bitmap image = product.getImage();
         if (image != null) {
-        	map.put("image", Helper.getBitmapAsByteArray(image));
+        	map.put(HistoryColumns.IMAGE, Helper.getBitmapAsByteArray(image));
         }
         
         try{
-            db.insert("history", null, map);
+            db.insert(HISTORY_TABLE, null, map);
         } catch (SQLException e) {
-            Log.e(TAG, e.toString());
+            Log.e(TAG, e.getMessage());
         }
     }
     
     public Cursor getHistory() {
-    	SQLiteDatabase db = getWritableDatabase();
-    	String query = "SELECT * FROM history ORDER BY _id DESC";
+    	SQLiteDatabase db = getReadableDatabase();
+    	String query = "SELECT * FROM " + HISTORY_TABLE + " ORDER BY " + HistoryColumns.ID + " DESC";
     	return db.rawQuery(query, null);
     }
     
     public void clearHistory() {
     	SQLiteDatabase db = getWritableDatabase();
-    	db.delete("history", null, null);
+    	db.delete(HISTORY_TABLE, null, null);
+    }
+    
+    public Cursor getBrandedProducts() {
+    	SQLiteDatabase db = getReadableDatabase();
+    	String query = "SELECT * FROM " + BRANDED_PRODUCTS_TABLE + " ORDER BY " + BrandedProductColumns.ID + " DESC";
+    	return db.rawQuery(query, null);
+    }
+    
+    public ProductInfo getBrandedProductInfo(String gtin) {
+    	SQLiteDatabase db = getReadableDatabase();
+    	String query = "SELECT * FROM " + BRANDED_PRODUCTS_TABLE + " WHERE " + BrandedProductColumns.GTIN + " = '" + gtin + "'";
+    	Cursor cursor = db.rawQuery(query, null);
+    	
+    	ProductInfo productInfo = null;
+    	if (cursor.moveToFirst()) {
+	    	productInfo = new ProductInfo(cursor.getString(cursor.getColumnIndex(BrandedProductColumns.GTIN)));
+	    	productInfo.setName(cursor.getString(cursor.getColumnIndex(BrandedProductColumns.NAME)));
+	    	productInfo.setManufacturer(cursor.getString(cursor.getColumnIndex(BrandedProductColumns.MANUFACTURER)));
+	    	
+	    	byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex(BrandedProductColumns.IMAGE));
+			if (bitmapArray != null) {
+				Bitmap bitmap = Helper.getByteArrayAsBitmap(bitmapArray);
+				productInfo.setImage(bitmap);
+			}
+    	}
+    	cursor.close();
+		return productInfo;
+    }
+    
+    public ProductInfo getCachedProductInfo(String gtin) {
+    	SQLiteDatabase db = getReadableDatabase();
+    	String query = "SELECT * FROM " + HISTORY_TABLE + " WHERE " + HistoryColumns.GTIN + " = '" + gtin + "'";
+    	Cursor cursor = db.rawQuery(query, null);
+    	
+    	ProductInfo productInfo = null;
+    	if (cursor.moveToFirst()) {
+	    	productInfo = new ProductInfo(cursor.getString(cursor.getColumnIndex(HistoryColumns.GTIN)));
+	    	productInfo.setName(cursor.getString(cursor.getColumnIndex(HistoryColumns.NAME)));
+	    	productInfo.setManufacturer(cursor.getString(cursor.getColumnIndex(HistoryColumns.MANUFACTURER)));
+	    	
+	    	byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex(HistoryColumns.IMAGE));
+			if (bitmapArray != null) {
+				Bitmap bitmap = Helper.getByteArrayAsBitmap(bitmapArray);
+				productInfo.setImage(bitmap);
+			}
+    	}
+    	cursor.close();
+		return productInfo;
     }
 }

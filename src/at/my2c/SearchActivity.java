@@ -12,6 +12,9 @@ import android.widget.RadioGroup;
 import at.my2c.data.DataManager;
 
 public final class SearchActivity extends Activity {
+	
+	private static final String TAG = "SearchActivity";
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -43,11 +46,11 @@ public final class SearchActivity extends Activity {
 		public void onClick(View view) {
 			EditText editor = (EditText) findViewById(R.id.InputEditText);
 
-			String searchTerm = editor.getText().toString();
-			DataManager.setSearchTerm(searchTerm);
+			String gtin = editor.getText().toString();
 
 			Intent intent = new Intent(view.getContext(), CommentActivity.class);
 			intent.setAction(Intents.ACTION);
+			intent.putExtra(DataManager.GTIN_KEY, gtin);
 			startActivity(intent);
 
 			finish();

@@ -1,8 +1,6 @@
 
 package at.my2c;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -17,17 +15,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,26 +32,25 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemLongClickListener;
-import at.my2c.comments.Comment;
-import at.my2c.comments.CommentsAdapter;
-import at.my2c.comments.CommentsManager;
-import at.my2c.comments.TagsAdapter;
+import at.my2c.data.Comment;
 import at.my2c.data.DataManager;
 import at.my2c.data.ProductInfo;
-import at.my2c.data.ProductInfoManager;
-import at.my2c.utils.GpsManager;
 import at.my2c.utils.NetworkManager;
+import at.my2c.utils.WeakAsyncTask;
 
 public final class CommentActivity extends ListActivity {
+	
+	private static final String TAG = "CommentActivity";
+	
+	private boolean isProductBranded;
+	public final static String IS_PRODUCT_BRANDED = "IsProductBranded";
+	
+	private boolean isProductInfoAvailable;
 	
 	private boolean updateHistory;
 	public final static String UPDATE_HISTORY = "UpdateHistory";
 	
 	private SharedPreferences settings;
-	
-	private boolean shareLocation;
-	
-	private LocationManager locationManager;
 
 	private List<Comment> comments;
 	private CommentsAdapter commentsAdapter;
@@ -65,6 +59,7 @@ public final class CommentActivity extends ListActivity {
 	private TagsAdapter tagsAdapter;
 	
 	private ProductInfo productInfo;
+	private String gtin;
 	
 	private ProgressDialog progressDialog;
 	private Gallery tagsGallery;
@@ -73,16 +68,18 @@ public final class CommentActivity extends ListActivity {
 	private ImageView productImageView;
 	private TextView productNameTextView;
 	private TextView productManufacturerTextView;
-	private TextView productDetailsTextView;
+	
+	private AsyncTask<String, Void, ProductInfo> getProductInfoTask;
+	private AsyncTask<List<Comment>, Void, Void> getProfileImagesTask;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.comment);
-		
-		ProductInfoManager.UnknownProductName = getString(R.string.unknown_product);
 
+		DataManager.UnknownProductName = getString(R.string.unknown_product);
+		
 		productImageView = (ImageView) findViewById(R.id.ProductImageView);
 		productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
 		productManufacturerTextView = (TextView) findViewById(R.id.ProductManufacturerTextView);
@@ -98,19 +95,46 @@ public final class CommentActivity extends ListActivity {
 		tagsGallery.setOnItemLongClickListener(tagsLongClickListener);
 		
 		productInfoLayout = findViewById(R.id.ProductInfoLayout);
-		productDetailsTextView = (TextView) findViewById(R.id.ProductDetailsTextView);
-		productDetailsTextView.setOnClickListener(productDetailsListener);
 		
-		Button loginButton = (Button) findViewById(R.id.LoginButton);
-		loginButton.setOnClickListener(loginListener);
-
-		Button sendCommentButton = (Button) findViewById(R.id.SendButton);
-		sendCommentButton.setOnClickListener(sendCommentListener);
-
-		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		findViewById(R.id.ProductDetailsTextView).setOnClickListener(productDetailsListener);
+		findViewById(R.id.LoginButton).setOnClickListener(loginListener);
+		findViewById(R.id.SendButton).setOnClickListener(sendCommentListener);
+		
+		findViewById(R.id.ImageButtonHome).setOnClickListener(homeListener);
+		findViewById(R.id.ImageButtonScan).setOnClickListener(scanListener);
+		findViewById(R.id.ImageButtonStream).setOnClickListener(streamListener);
+		findViewById(R.id.ImageButtonHistory).setOnClickListener(historyListener);
 		
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
 	}
+	
+	private final Button.OnClickListener homeListener = new Button.OnClickListener() {
+		public void onClick(View view) {
+			Intent intent = new Intent(getBaseContext(), MainActivity.class);
+			startActivity(intent);
+		}
+	};
+	
+	private final Button.OnClickListener scanListener = new Button.OnClickListener() {
+		public void onClick(View view) {
+			Intent intent = new Intent(getBaseContext(), ScanActivity.class);
+			startActivity(intent);
+		}
+	};
+	
+	private final Button.OnClickListener historyListener = new Button.OnClickListener() {
+		public void onClick(View view) {
+			Intent intent = new Intent(getBaseContext(), HistoryActivity.class);
+			startActivity(intent);
+		}
+	};
+	
+	private final Button.OnClickListener streamListener = new Button.OnClickListener() {
+		public void onClick(View view) {
+			Intent intent = new Intent(getBaseContext(), StreamActivity.class);
+			startActivity(intent);
+		}
+	};
 	
 	private final TextView.OnClickListener productDetailsListener = new TextView.OnClickListener() {
 		public void onClick(View view) {
@@ -136,46 +160,92 @@ public final class CommentActivity extends ListActivity {
 		String action = intent == null ? null : intent.getAction();
 		if (intent != null && action != null) {
 			if (action.equals(Intents.ACTION)) {
+				gtin = intent.getStringExtra(DataManager.GTIN_KEY);
 				updateHistory = intent.getBooleanExtra(UPDATE_HISTORY, true);
+				isProductBranded = intent.getBooleanExtra(IS_PRODUCT_BRANDED, false);
 				
-				new GetProductInfoTask().execute(DataManager.getSearchTerm());
-				new GetCommentsTask().execute(SettingsActivity.TAG_PREFIX + DataManager.getSearchTerm());
+				getProductInfoTask = new GetProductInfoTask(this).execute(gtin);
 			}
 		}
 	}
 	
-	private class GetCommentsTask extends AsyncTask<String, Void, List<Comment>> {
+	private class GetProductInfoTask extends WeakAsyncTask<String, Void, ProductInfo, Context> {
+		public GetProductInfoTask(Context target) {
+			super(target);
+		}
 
 		@Override
-		protected void onPreExecute() {
-			progressDialog = ProgressDialog.show(CommentActivity.this, null, getString(R.string.progress_dialog_loading_comments), true);
+		protected void onPreExecute(Context target) {
+			if (isProductBranded) {
+				productInfo = DataManager.getDatabase().getBrandedProductInfo(gtin);
+				if (productInfo != null) {
+					isProductInfoAvailable = true;
+					displayProductFound(productInfo);
+					productInfoLayout.setVisibility(View.VISIBLE);
+				}
+				else {
+					isProductInfoAvailable = false;
+				}
+			}
+			else {
+				productInfo = DataManager.getDatabase().getCachedProductInfo(gtin);
+				if (productInfo != null) {
+					isProductInfoAvailable = true;
+					displayProductFound(productInfo);
+					productInfoLayout.setVisibility(View.VISIBLE);
+				}
+				else {
+					isProductInfoAvailable = false;
+					productInfoLayout.setVisibility(View.GONE);
+				}
+			}
+			progressDialog = ProgressDialog.show(CommentActivity.this, null, getString(R.string.progress_dialog_loading), true);
 	    }
-		
+
 		@Override
-		protected List<Comment> doInBackground(String... params) {
-			return CommentsManager.searchComments(params[0]);
+		protected ProductInfo doInBackground(Context target, String... params) {
+			if (isProductInfoAvailable) {
+				productInfo = DataManager.getProductComments(productInfo);
+			}
+			else {
+				productInfo = DataManager.getProductInfo(gtin);
+			}
+			
+			if (productInfo != null) {
+				if (updateHistory) {
+					DataManager.getDatabase().addHistoryItem(productInfo);
+				}
+			}
+			else {
+				if (updateHistory) {
+					ProductInfo dummyProduct = new ProductInfo(params[0]);
+					DataManager.getDatabase().addHistoryItem(dummyProduct);
+				}
+			}
+			return productInfo;
 		}
 		
 		@Override
-		protected void onPostExecute(List<Comment> result) {
-			if (result == null) {
-				progressDialog.dismiss();
-				Toast.makeText(CommentActivity.this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
-			}
-			else {
-				comments = result;
-				
-				commentsAdapter.clear();
+		protected void onPostExecute(Context target, ProductInfo product) {
+			
+			progressDialog.dismiss();
+			
+	        if (product != null) {
+	        	if (!isProductBranded) {
+	        		displayProductFound(product);
+	        	}
+	        	
+	        	commentsAdapter.clear();
 				tagsAdapter.clear();
-				
-				String productTag = SettingsActivity.PRODUCT_CODE_PREFIX + DataManager.getSearchTerm();
+	        	comments = product.getComments();
+
 				if (comments.size() > 0) {
 					
 					Set<String> tags = new TreeSet<String>();
 					for (Comment comment : comments) {
 						commentsAdapter.add(comment);
 						
-						String text = comment.getText().replace(productTag, "");
+						String text = comment.getText();
 						if (text.contains("#")) {
 							Pattern p = Pattern.compile("#[A-Za-z0-9]+");						
 							Matcher m = p.matcher(text);
@@ -193,27 +263,33 @@ public final class CommentActivity extends ListActivity {
 					
 					commentsAdapter.notifyDataSetChanged();
 					
-					progressDialog.dismiss();
-					
-					new GetProfileImagesTask().execute(comments);
-				}
-				else {
-					progressDialog.dismiss();
+					getProfileImagesTask = new GetProfileImagesTask(target).execute(comments);
 				}
 			}
+			else {
+				productInfo = null;
+				displayProductNotFound();
+			}
+	        
+	        getProductInfoTask = null;
 	    }
 	}
 	
-	private class GetProfileImagesTask extends AsyncTask<List<Comment>, Void, Void> {
+	private class GetProfileImagesTask extends WeakAsyncTask<List<Comment>, Void, Void, Context> {
 		
+		public GetProfileImagesTask(Context target) {
+			super(target);
+		}
+
 		@Override
-		protected Void doInBackground(List<Comment>... params) {			
+		protected Void doInBackground(Context target, List<Comment>... params) {			
 			for (Comment comment : params[0]) {
-				if (!CommentsManager.imagesMap.containsKey(comment.getUser())) {
-					CommentsManager.imagesMap.put(comment.getUser(), NetworkManager.getRemoteImage(comment.getUserProfileImageUrl()));
+				if (!DataManager.profileImageCache.containsKey(comment.getUser())) {
+					DataManager.profileImageCache.put(comment.getUser(), NetworkManager.getRemoteImage(comment.getUserProfileImageUrl()));
 				}
 				publishProgress();
 			}
+			getProfileImagesTask = null;
 			return null;
 		}
 		
@@ -231,9 +307,7 @@ public final class CommentActivity extends ListActivity {
 			return;
 		}
 		
-		shareLocation = settings.getBoolean(getString(R.string.settings_location), false);
-		
-		checkCommenting();
+		SettingsActivity.setShareOnTwitter(settings.getBoolean(getString(R.string.settings_twitter), false));
 		
 		if (commentsAdapter.getCount() > 0)
 			commentsAdapter.notifyDataSetChanged();
@@ -263,22 +337,6 @@ public final class CommentActivity extends ListActivity {
 		alert.show();
 	}
 	
-	private void checkCommenting() {
-		ViewGroup commentLayout = (ViewGroup) findViewById(R.id.CommentEditorLayout);
-		ViewGroup loginLayout = (ViewGroup) findViewById(R.id.LoginLayout);
-		
-		String token = settings.getString(this.getResources().getString(R.string.settings_token),"");
-		String tokenSecret = settings.getString(this.getResources().getString(R.string.settings_token_secret),"");
-		
-		if (token.equals("") && tokenSecret.equals("")) {
-			commentLayout.setVisibility(View.GONE);
-			loginLayout.setVisibility(View.VISIBLE);
-		} else {
-			loginLayout.setVisibility(View.GONE);
-			commentLayout.setVisibility(View.VISIBLE);
-		}
-	}
-	
 	private final Button.OnClickListener loginListener = new Button.OnClickListener() {
 		public void onClick(View view) {
 			Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
@@ -289,12 +347,9 @@ public final class CommentActivity extends ListActivity {
 	private final Button.OnClickListener sendCommentListener = new Button.OnClickListener() {
 		public void onClick(View view) {
 			EditText commentEditor = (EditText) findViewById(R.id.CommentEditText);
-			String message = commentEditor.getText().toString() +
-				" " +
-				SettingsActivity.PRODUCT_CODE_PREFIX +
-				DataManager.getSearchTerm();
+			String message = commentEditor.getText().toString();
 			
-			new PostComment().execute(message);
+			new PostComment(view.getContext()).execute(message);
 		}
 	};
 
@@ -309,21 +364,6 @@ public final class CommentActivity extends ListActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.scanMenuItem: {
-				Intent intent = new Intent(this, ScanActivity.class);
-				startActivity(intent);
-				return true;
-			}
-			case R.id.searchMenuItem: {
-				Intent intent = new Intent(this, SearchActivity.class);
-				startActivity(intent);
-				return true;
-			}
-			case R.id.historyMenuItem: {
-				Intent intent = new Intent(this, HistoryActivity.class);
-				startActivity(intent);
-				return true;
-			}
 			case R.id.settingsMenuItem: {
 				Intent intent = new Intent(this, SettingsActivity.class);
 				startActivity(intent);
@@ -342,100 +382,51 @@ public final class CommentActivity extends ListActivity {
 	private void displayProductNotFound()
 	{
 		productNameTextView.setText(R.string.unknown_product);
-		productImageView.setImageResource(R.drawable.warning64px);
+		productImageView.setImageResource(R.drawable.unknown_product_icon);
 		productManufacturerTextView.setVisibility(View.GONE);
-		productDetailsTextView.setVisibility(View.GONE);
 		productInfoLayout.setVisibility(View.VISIBLE);
 	}
 	
 	private void displayProductFound(ProductInfo product)
 	{
-		productNameTextView.setText(product.getProductName());
+		productNameTextView.setText(product.getName());
 		
-		if (product.getProductImage() != null) 
-			productImageView.setImageBitmap(product.getProductImage());
+		if (product.getImage() != null) 
+			productImageView.setImageBitmap(product.getImage());
 		else
-			productImageView.setImageResource(R.drawable.warning64px);
+			productImageView.setImageResource(R.drawable.unknown_product_icon);
 		
 		productManufacturerTextView.setText(product.getManufacturer());
 		productManufacturerTextView.setVisibility(View.VISIBLE);
-		productDetailsTextView.setVisibility(View.VISIBLE);
 		productInfoLayout.setVisibility(View.VISIBLE);
 	}
 	
-	private class GetProductInfoTask extends AsyncTask<String, Void, ProductInfo> {
-		@Override
-		protected void onPreExecute() {
-			productInfoLayout.setVisibility(View.GONE);
-	    }
+	
+	private class PostComment extends WeakAsyncTask<String, Void, Comment, Context> {
 
-		@Override
-		protected ProductInfo doInBackground(String... params) {
-			ProductInfo product = ProductInfoManager.getProductFromAmazon(params[0]);
-			
-			if (product != null) {
-				URL url = null;
-				try {
-					url = new URL(product.getProductImageUrl());
-				} catch (MalformedURLException e) {
-					Log.e(this.toString(), e.toString());
-				}
-				product.setProductImage(NetworkManager.getRemoteImage(url));
-				
-				if (updateHistory) {
-					DataManager.getDatabase().addHistoryItem(product);
-				}
-			}
-			else {
-				if (updateHistory) {
-					ProductInfo dummyProduct = new ProductInfo(params[0]);
-					dummyProduct.setProductCode(params[0]);
-					DataManager.getDatabase().addHistoryItem(dummyProduct);
-				}
-			}
-			
-			return product;
+		public PostComment(Context target) {
+			super(target);
 		}
-		
-		@Override
-		protected void onPostExecute(ProductInfo product) {				
-	        if (product != null) {
-	        	productInfo = product;
-	        	displayProductFound(product);
-			}
-			else {
-				productInfo = null;
-				displayProductNotFound();
-			}
-	    }
-	}
-	
-	
-	private class PostComment extends AsyncTask<String, Void, Comment> {
 
 		@Override
-		protected void onPreExecute() {
+		protected void onPreExecute(Context target) {
 			progressDialog = ProgressDialog.show(CommentActivity.this, null, getString(R.string.progress_dialog_sending), true);
 	    }
 		
 		@Override
-		protected Comment doInBackground(String... params) {
+		protected Comment doInBackground(Context target, String... params) {
 			
-			Comment comment = (shareLocation) ? 
-				CommentsManager.sendComment(params[0], GpsManager.getGPS(locationManager)) :
-				CommentsManager.sendComment(params[0], null);
-			
+			Comment comment = DataManager.postComment(gtin, params[0]);
 			if (comment != null) {
-				if (!CommentsManager.imagesMap.containsKey(comment.getUser())) {
-					CommentsManager.imagesMap.put(comment.getUser(), NetworkManager.getRemoteImage(comment.getUserProfileImageUrl()));
+				if (!DataManager.profileImageCache.containsKey(comment.getUser())) {
+					DataManager.profileImageCache.put(comment.getUser(), NetworkManager.getRemoteImage(comment.getUserProfileImageUrl()));
 				}
 			}
-			
 			return comment;
 		}
 		
 		@Override
-		protected void onPostExecute(Comment comment) {
+		protected void onPostExecute(Context target, Comment comment) {
 			if (comment != null) {
 				
 				commentsAdapter.insert(comment, 0);
@@ -449,4 +440,20 @@ public final class CommentActivity extends ListActivity {
 			progressDialog.dismiss();
 	    }
 	}
+	
+	private final void cancelAsyncTasks() {
+		if (getProductInfoTask != null && getProductInfoTask.getStatus() == AsyncTask.Status.RUNNING) {
+        	getProductInfoTask.cancel(true);
+        }
+        
+        if (getProfileImagesTask != null && getProfileImagesTask.getStatus() == AsyncTask.Status.RUNNING) {
+        	getProfileImagesTask.cancel(true);
+        }
+	}
+	
+	@Override
+    protected void onDestroy() {
+		cancelAsyncTasks();
+        super.onDestroy();
+    }
 }

@@ -15,9 +15,4 @@ public class My2CentsApplication extends Application {
 		super.onCreate();
 		DataManager.initDatabase(this);
 	}
-
-	@Override
-	public void onTerminate() {
-		super.onTerminate();
-	}
 }

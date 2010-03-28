@@ -23,8 +23,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import at.my2c.ScanActivity;
 import at.my2c.R;
+import at.my2c.ScanActivity;
 
 import com.google.zxing.Result;
 

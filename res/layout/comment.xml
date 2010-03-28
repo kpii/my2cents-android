@@ -69,7 +69,7 @@
 			android:textColor="@color/product_details_text"
 			android:layout_width="fill_parent"
 			android:layout_below="@id/ProductManufacturerTextView"
-			android:layout_toRightOf="@id/ProductImageView" />
+			android:layout_toRightOf="@id/ProductImageView" android:visibility="gone"/>
 	</RelativeLayout>
 	
 	
@@ -92,7 +92,7 @@
 		android:layout_height="wrap_content"
 		android:id="@+id/CommentEditorLayout"
 		android:background="@color/comment_editor_background"
-		android:padding="@dimen/comment_editor_padding" android:visibility="gone">
+		android:paddingLeft="@dimen/comment_editor_padding" android:paddingRight="@dimen/comment_editor_padding" android:paddingTop="@dimen/comment_editor_padding">
 		<Button
 			android:text="@string/button_send"
 			android:layout_width="wrap_content"
@@ -103,7 +103,6 @@
 			android:layout_height="wrap_content"
 			android:imeOptions="actionSend|flagNoEnterAction"
 			android:inputType="textCapSentences|textAutoCorrect|textMultiLine|textImeMultiLine|textShortMessage"
-			android:maxLength="120"
 			android:id="@+id/CommentEditText"
 			android:layout_width="fill_parent"
 			android:layout_toLeftOf="@id/SendButton" />
@@ -116,7 +115,59 @@
 			android:spacing="@dimen/tab_gallery_spacing"
 			android:layout_below="@id/CommentEditText" />
 	</RelativeLayout>
-
-
-
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:id="@+id/ToolbarLayout"
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:background="@color/status_backgroung">
+		<ImageButton
+			android:layout_height="wrap_content"
+			android:layout_weight="0.25"
+			android:scaleType="centerInside"
+			android:layout_width="wrap_content"
+			android:background="@drawable/toolbar_button_background"
+			android:id="@+id/ImageButtonHome"
+			android:src="@drawable/home_button"
+			android:layout_marginBottom="3dip"
+			android:layout_marginRight="3dip"
+			android:layout_marginTop="3dip"
+			android:layout_marginLeft="6dip"></ImageButton>
+		<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="0.25"
+			android:background="@drawable/toolbar_button_background"
+			android:scaleType="centerInside"
+			android:id="@+id/ImageButtonScan"
+			android:src="@drawable/scan_button"
+			android:layout_marginBottom="3dip"
+			android:layout_marginLeft="3dip"
+			android:layout_marginRight="3dip"
+			android:layout_marginTop="3dip"></ImageButton>
+		<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="0.25"
+			android:background="@drawable/toolbar_button_background"
+			android:scaleType="centerInside"
+			android:id="@+id/ImageButtonStream"
+			android:src="@drawable/stream_button"
+			android:layout_marginBottom="3dip"
+			android:layout_marginLeft="3dip"
+			android:layout_marginRight="3dip"
+			android:layout_marginTop="3dip"></ImageButton>
+		<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="0.25"
+			android:background="@drawable/toolbar_button_background"
+			android:scaleType="centerInside"
+			android:id="@+id/ImageButtonHistory"
+			android:src="@drawable/history_button"
+			android:layout_marginBottom="3dip"
+			android:layout_marginLeft="3dip"
+			android:layout_marginTop="3dip"
+			android:layout_marginRight="6dip"></ImageButton>
+	</LinearLayout>
 </LinearLayout>

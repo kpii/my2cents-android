@@ -17,17 +17,15 @@
 package at.my2c.scanner;
 
 import java.util.Hashtable;
-import java.util.Vector;
 
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import at.my2c.ScanActivity;
 import at.my2c.R;
+import at.my2c.ScanActivity;
 
-import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;

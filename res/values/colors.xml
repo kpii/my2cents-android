@@ -14,9 +14,9 @@
 	<color name="viewfinder_laser">#ffff0000</color>
 	<color name="viewfinder_mask">#60000000</color>
 	
-	<color name="header_backgroung">#71B771</color>
-	<color name="info_backgroung">#4F9C4F</color>
-	<color name="status_backgroung">#71B771</color>
+	<color name="header_backgroung">#446C86</color>
+	<color name="info_backgroung">#2B5D74</color>
+	<color name="status_backgroung">#6A94A4</color>
 	
 	<color name="header_text">#FFF</color>
 	<color name="info_text">#FFF</color>
@@ -28,8 +28,8 @@
 	<color name="product_details_text">#99CCAA</color>
 	
 	<color name="comment_text">#000000</color>
-	<color name="comment_author_text">#3366aa</color>
-	<color name="comment_sent_text">#6699aa</color>
+	<color name="comment_author_text">#628C9C</color>
+	<color name="comment_sent_text">#6A94A4</color>
 	
 	<color name="tag_text">#FFFFFF</color>
 	
@@ -37,5 +37,11 @@
 	<color name="history_code_text">#3366aa</color>
 	<color name="history_time_text">#6699aa</color>
 	
-	<color name="comment_editor_background">#71B771</color>
+	<color name="product_item_name_text">#000000</color>
+	<color name="product_item_manufacturer_text">#3366aa</color>
+	<color name="product_item_code_text">#6699aa</color>
+	
+	<color name="stream_product_name_text">#013068</color>
+	
+	<color name="comment_editor_background">#6A94A4</color>
 </resources>

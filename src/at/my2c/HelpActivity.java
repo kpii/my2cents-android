@@ -15,6 +15,8 @@ import android.widget.Button;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class HelpActivity extends Activity {
+	
+	private static final String TAG = "HelpActivity";
 	private static final String DEFAULT_URL = "file:///android_asset/html/index.html";
 
 	private WebView webView;

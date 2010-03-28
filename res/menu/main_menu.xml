@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <menu
 	xmlns:android="http://schemas.android.com/apk/res/android">
-	<item
-		android:id="@+id/refreshMenuItem"
-		android:title="@string/menu_refresh"
-		android:icon="@android:drawable/ic_menu_rotate" />
+	
 	<item
 		android:id="@+id/settingsMenuItem"
 		android:title="@string/menu_settings"
