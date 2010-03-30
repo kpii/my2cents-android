@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="message_unsuccessful_authorization">Authorization Failed</string>
-    <string name="message_successful_authorization">Successful authorization</string>
+    <string name="message_unsuccessful_authorization">Authentication Failed</string>
+    <string name="message_successful_authorization">Successful authentication</string>
 	<string name="app_name">my2cents</string>
-	<string name="app_notes">by ETH Zurich</string>
-	<string name="app_url">http://my2c.at</string>
+	<string name="app_notes">by ETH Zurich (rev 391)</string>
+	<string name="app_url">http://my2cents.base45.de</string>
 	
 	<string name="button_back">Back</string>
 	<string name="button_cancel">Cancel</string>
@@ -25,6 +25,7 @@
 	<string name="search_by_title">Search by title</string>
 	<string name="search_by_code">Search by code</string>
 	<string name="search_hint">Please enter product code</string>
+	<string name="comment_hint">Enter your comment</string>
 
 	<string name="menu_refresh">Refresh</string>
 	<string name="menu_settings">Settings</string>
@@ -37,13 +38,13 @@
 	
     <string name="settings_token">Token</string>
     <string name="settings_token_secret">Token secret</string>
-    <string name="settings_login">Login to my2cents</string>
-    <string name="settings_login_checked">Logged in to my2cents server</string>
-    <string name="settings_login_desc_out">You are not sharing your comments</string>
-    <string name="settings_login_desc_in">You are sharing your comments</string>
+    <string name="settings_login">Login with Twitter</string>
+    <string name="settings_login_checked">Logged in</string>
+    <string name="settings_login_desc_out">You are not logged in</string>
+    <string name="settings_login_desc_in">You are logged in</string>
     <string name="settings_location">Share location</string>
-    <string name="settings_twitter">Share on Twitter</string>
-    <string name="settings_twitter_description">Share comments on Twitter</string>
+    <string name="settings_twitter">Post to Twitter</string>
+    <string name="settings_twitter_description">Tweet your comments</string>
     <string name="settings_location_desc_on">You are sharing your location</string>
     <string name="settings_location_desc_off">You are not sharing your location</string>
     <string name="settings_copy_to_clipboard">Copy to clipboard</string>
@@ -53,20 +54,20 @@
 	
 	<string name="status_last_update">Last update:</string>
 	
-	<string name="message_authorize">Please authorize my2cents account</string>
+	<string name="message_authorize">Please login with your Twitter account</string>
 	<string name="message_connection_error">Cannot connect to server!\nPlease check network connection.</string>
 	<string name="message_please_wait">Please wait...</string>
-	<string name="message_no_comments">No comments yet. Add your 2 cents!</string>
+	<string name="message_no_comments">No comments yet. Add your comment!</string>
 	<string name="message_no_stream">No comments yet.</string>
 	<string name="message_no_products">No products.</string>
 	<string name="message_empty_history">This list will show you products you have viewed in the past.</string>
 	
 	<string name="search_title">Search for a product</string>
-	<string name="main_header">Connect consumers and their opinions</string>
-	<string name="stream_header">What other people are saying?</string>
+	<string name="main_header">Consumer comments on products</string>
+	<string name="stream_header">What are others commenting on?</string>
 	<string name="comments_header">People's thoughts on the product</string>
 	<string name="help_header">Helpful Tips</string>
-	<string name="history_header">History of the viewed products</string>
+	<string name="history_header">History of viewed products</string>
 	<string name="settings_header">Settings</string>
 	
 	<string name="product_details">Show product details</string>
