@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import at.my2c.data.DataManager;
+import at.my2c.data.HistoryColumns;
 import at.my2c.utils.NetworkManager;
 
 public final class MainActivity extends Activity {
@@ -71,7 +72,7 @@ public final class MainActivity extends Activity {
 			if ((gtin != null) && (!gtin.equals(""))) {
 				Intent intent = new Intent(view.getContext(), CommentActivity.class);
 				intent.setAction(Intents.ACTION);
-				intent.putExtra(DataManager.GTIN_KEY, gtin);
+				intent.putExtra(HistoryColumns.GTIN, gtin);
 				startActivity(intent);
 			}
 		}

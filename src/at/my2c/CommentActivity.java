@@ -34,6 +34,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemLongClickListener;
 import at.my2c.data.Comment;
 import at.my2c.data.DataManager;
+import at.my2c.data.HistoryColumns;
 import at.my2c.data.ProductInfo;
 import at.my2c.utils.NetworkManager;
 import at.my2c.utils.WeakAsyncTask;
@@ -157,7 +158,7 @@ public final class CommentActivity extends ListActivity {
 		String action = intent == null ? null : intent.getAction();
 		if (intent != null && action != null) {
 			if (action.equals(Intents.ACTION)) {
-				gtin = intent.getStringExtra(DataManager.GTIN_KEY);
+				gtin = intent.getStringExtra(HistoryColumns.GTIN);
 				updateHistory = intent.getBooleanExtra(UPDATE_HISTORY, true);
 				
 				getProductInfoTask = new GetProductInfoTask(this).execute(gtin);

@@ -36,6 +36,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import at.my2c.data.DataManager;
+import at.my2c.data.HistoryColumns;
 import at.my2c.scanner.CameraManager;
 import at.my2c.scanner.CaptureActivityHandler;
 import at.my2c.scanner.ViewfinderView;
@@ -288,7 +289,7 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 
 		Intent intent = new Intent(this, CommentActivity.class);
 		intent.setAction(Intents.ACTION);
-		intent.putExtra(DataManager.GTIN_KEY, gtin);
+		intent.putExtra(HistoryColumns.GTIN, gtin);
 		startActivity(intent);
 	}
 

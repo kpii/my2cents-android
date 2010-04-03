@@ -11,6 +11,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import at.my2c.data.Comment;
 import at.my2c.data.DataManager;
+import at.my2c.data.HistoryColumns;
 import at.my2c.utils.NetworkManager;
 import at.my2c.utils.WeakAsyncTask;
 
@@ -187,15 +189,11 @@ public final class StreamActivity extends ListActivity {
 	public void onListItemClick(ListView parent, View v, int position, long id) {
 		Comment selectedComment = comments.get(position);
 		
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage(selectedComment.getText())
-		       .setPositiveButton(R.string.button_close, new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                dialog.dismiss();
-		           }
-		       });
-		AlertDialog alert = builder.create();
-		alert.show();
+		Intent intent = new Intent(this, CommentActivity.class);
+		intent.setAction(Intents.ACTION);
+		intent.putExtra(CommentActivity.UPDATE_HISTORY, false);
+		intent.putExtra(HistoryColumns.GTIN, selectedComment.getGtin());
+		startActivity(intent);
 	}
 
 	@Override

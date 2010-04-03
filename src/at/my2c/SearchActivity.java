@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import at.my2c.data.DataManager;
+import at.my2c.data.HistoryColumns;
 
 public final class SearchActivity extends Activity {
 	
@@ -50,7 +51,7 @@ public final class SearchActivity extends Activity {
 
 			Intent intent = new Intent(view.getContext(), CommentActivity.class);
 			intent.setAction(Intents.ACTION);
-			intent.putExtra(DataManager.GTIN_KEY, gtin);
+			intent.putExtra(HistoryColumns.GTIN, gtin);
 			startActivity(intent);
 
 			finish();

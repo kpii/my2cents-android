@@ -25,7 +25,6 @@ public final class DataManager {
 	
 	private static DatabaseHelper database;
 	
-	public static final String GTIN_KEY = "gtin";
 	public static String UnknownProductName;
 	
 	public final static HashMap<String, Bitmap> profileImageCache = new HashMap<String, Bitmap>();
@@ -121,10 +120,6 @@ public final class DataManager {
     		comment.setText(json.getString("body"));
     		comment.setCreatedAt(dateFormatter.parse(json.getString("created_at")));
     		
-    		if (json.has("product_id")) {
-    			comment.setProductId(json.getInt("product_id"));
-    		}
-    		
     		// User may be anonymous
     		if (json.has("user")) {
     			JSONObject jsonUser = json.getJSONObject("user");
@@ -140,6 +135,7 @@ public final class DataManager {
     		if (json.has("product")) {
     			JSONObject jsonProduct = json.getJSONObject("product");
             	comment.setProductName(jsonProduct.getString("name"));
+            	comment.setGtin(jsonProduct.getString("gtin"));
             	
             	String urlString = jsonProduct.getString("image_url");
             	if ((urlString != null) && (!urlString.equals("")) && (!urlString.equals("null"))) {

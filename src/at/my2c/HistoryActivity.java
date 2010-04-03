@@ -85,7 +85,7 @@ public final class HistoryActivity extends ListActivity {
 		Intent intent = new Intent(this, CommentActivity.class);
 		intent.setAction(Intents.ACTION);
 		intent.putExtra(CommentActivity.UPDATE_HISTORY, false);
-		intent.putExtra(DataManager.GTIN_KEY, gtin);
+		intent.putExtra(HistoryColumns.GTIN, gtin);
 		startActivity(intent);
 	}
 

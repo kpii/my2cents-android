@@ -10,6 +10,7 @@ public class Comment {
     private Date createdAt;
     
     private int productId;
+    private String gtin;
     private String productName;
     private URL productImageUrl;
     
@@ -70,5 +71,13 @@ public class Comment {
 
 	public int getProductId() {
 		return productId;
+	}
+
+	public void setGtin(String gtin) {
+		this.gtin = gtin;
+	}
+
+	public String getGtin() {
+		return gtin;
 	}
 }
