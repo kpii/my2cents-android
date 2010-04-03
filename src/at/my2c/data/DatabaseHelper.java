@@ -36,6 +36,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + HISTORY_TABLE + " ("
                 + HistoryColumns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + HistoryColumns.TIME + " TEXT,"
+                + HistoryColumns.PRODUCT_ID + " INTEGER,"
                 + HistoryColumns.GTIN + " TEXT,"
                 + HistoryColumns.NAME + " TEXT,"
                 + HistoryColumns.MANUFACTURER + " TEXT,"
@@ -69,7 +70,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         map.put(HistoryColumns.TIME, new Date().toLocaleString());
         
         String name = product.getName();
-        if ((name != null) && (name != "")) {
+        if ((name != null) && (!name.equals(""))) {
         	map.put(HistoryColumns.NAME, name);
         }
         else {

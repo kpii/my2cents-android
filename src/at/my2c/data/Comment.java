@@ -9,6 +9,7 @@ public class Comment {
 	private String text;
     private Date createdAt;
     
+    private int productId;
     private String productName;
     private URL productImageUrl;
     
@@ -61,5 +62,13 @@ public class Comment {
 
 	public URL getProductImageUrl() {
 		return productImageUrl;
+	}
+
+	public void setProductId(int productId) {
+		this.productId = productId;
+	}
+
+	public int getProductId() {
+		return productId;
 	}
 }

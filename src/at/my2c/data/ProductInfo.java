@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 public final class ProductInfo {
 
 	private final String gtin;
+	private int productId;
 	private String name;
 	private String manufacturer;
 	private String detailPageUrl;
@@ -71,5 +72,15 @@ public final class ProductInfo {
 
 	public ArrayList<Comment> getComments() {
 		return comments;
+	}
+
+
+	public void setProductId(int productId) {
+		this.productId = productId;
+	}
+
+
+	public int getProductId() {
+		return productId;
 	}
 }

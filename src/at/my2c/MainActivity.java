@@ -68,10 +68,12 @@ public final class MainActivity extends Activity {
 		public void onClick(View view) {
 			EditText editor = (EditText) findViewById(R.id.SearchEditText);
 			String gtin = editor.getText().toString();
-			Intent intent = new Intent(view.getContext(), CommentActivity.class);
-			intent.setAction(Intents.ACTION);
-			intent.putExtra(DataManager.GTIN_KEY, gtin);
-			startActivity(intent);
+			if ((gtin != null) && (!gtin.equals(""))) {
+				Intent intent = new Intent(view.getContext(), CommentActivity.class);
+				intent.setAction(Intents.ACTION);
+				intent.putExtra(DataManager.GTIN_KEY, gtin);
+				startActivity(intent);
+			}
 		}
 	};
 	

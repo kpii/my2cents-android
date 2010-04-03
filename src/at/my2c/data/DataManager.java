@@ -23,9 +23,6 @@ public final class DataManager {
 	
 	private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 	
-	public static final String PRODUCTS_CSV_URI = "products/products.csv";
-	public static final String PRODUCTS_IMAGES_ROOT_URI = "products/images/";
-	
 	private static DatabaseHelper database;
 	
 	public static final String GTIN_KEY = "gtin";
@@ -45,8 +42,17 @@ public final class DataManager {
 	
 	public final static ProductInfo getProductInfo(String gtin){
 		
-		String jsonString = NetworkManager.getProductJSONString(gtin);
-        
+		String jsonString = NetworkManager.getProductJsonString(gtin);
+        return getProductInfoFromJsonString(jsonString);
+	}
+	
+	public final static ProductInfo getProductInfo(int productId){
+		
+		String jsonString = NetworkManager.getProductJsonString(productId);
+        return getProductInfoFromJsonString(jsonString);
+	}
+	
+	private final static ProductInfo getProductInfoFromJsonString(String jsonString){
 		try {
 			JSONObject json = new JSONObject(jsonString);
 			JSONObject jsonProduct = json.getJSONObject("product");
@@ -73,7 +79,7 @@ public final class DataManager {
             JSONArray jsonComments = jsonProduct.getJSONArray("comments");
             for (int i=0; i<jsonComments.length(); i++) {
             	JSONObject jsonComment = jsonComments.getJSONObject(i);            	
-            	Comment comment = JSON2Comment(jsonComment);
+            	Comment comment = Json2Comment(jsonComment);
 				if (comment != null) {
 					productInfo.getComments().add(comment);
 				}
@@ -87,7 +93,7 @@ public final class DataManager {
 	
 	public final static ProductInfo getProductComments(ProductInfo productInfo){
 		
-		String jsonString = NetworkManager.getProductJSONString(productInfo.getGtin());
+		String jsonString = NetworkManager.getProductJsonString(productInfo.getGtin());
         
 		try {
 			JSONObject json = new JSONObject(jsonString).getJSONObject("product");
@@ -95,7 +101,7 @@ public final class DataManager {
             JSONArray jsonComments = json.getJSONArray("comments");
             for (int i=0; i<jsonComments.length(); i++) {
             	JSONObject jsonComment = jsonComments.getJSONObject(i);            	
-            	Comment comment = JSON2Comment(jsonComment);
+            	Comment comment = Json2Comment(jsonComment);
 				if (comment != null) {
 					productInfo.getComments().add(comment);
 				}
@@ -106,7 +112,7 @@ public final class DataManager {
 		return productInfo;
 	}
 	
-	private final static Comment JSON2Comment(JSONObject json) {
+	private final static Comment Json2Comment(JSONObject json) {
 		if (json == null) return null;
 		
 		Comment comment = new Comment();
@@ -114,6 +120,10 @@ public final class DataManager {
     	try {
     		comment.setText(json.getString("body"));
     		comment.setCreatedAt(dateFormatter.parse(json.getString("created_at")));
+    		
+    		if (json.has("product_id")) {
+    			comment.setProductId(json.getInt("product_id"));
+    		}
     		
     		// User may be anonymous
     		if (json.has("user")) {
@@ -157,7 +167,7 @@ public final class DataManager {
 			ArrayList<Comment> comments = new ArrayList<Comment>();
             for (int i=0; i<json.length(); i++) {
             	JSONObject jsonComment = json.getJSONObject(i).getJSONObject("comment");            	
-            	Comment comment = JSON2Comment(jsonComment);
+            	Comment comment = Json2Comment(jsonComment);
 				if (comment != null) {
 					comments.add(comment);
 				}
@@ -190,7 +200,7 @@ public final class DataManager {
 			JSONObject json;
 			try {
 				json = new JSONObject(jsonString);
-				return JSON2Comment(json.getJSONObject("comment"));
+				return Json2Comment(json.getJSONObject("comment"));
 			} catch (JSONException e) {
 				Log.e(TAG, e.getMessage());
 			}

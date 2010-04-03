@@ -80,7 +80,7 @@ public final class HistoryActivity extends ListActivity {
 	@Override
 	public void onListItemClick(ListView parent, View v, int position, long id) {
 		Cursor cursor = (Cursor) adapter.getItem(position);
-		String gtin = cursor.getString(2);
+		String gtin = cursor.getString(cursor.getColumnIndex(HistoryColumns.GTIN));
 		
 		Intent intent = new Intent(this, CommentActivity.class);
 		intent.setAction(Intents.ACTION);
