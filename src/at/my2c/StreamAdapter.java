@@ -46,9 +46,10 @@ public class StreamAdapter extends ArrayAdapter<Comment> {
 			TextView productNameTextView = (TextView) view.findViewById(R.id.StreamProductTextView);
 			productNameTextView.setText(comment.getProductName());
 
-			if (comment.getProductImageUrl() != null) {
+			String gtin = comment.getGtin(); 
+			if ((gtin != null) && (!gtin.equals(""))) {
 				ImageView productImageView = (ImageView) view.findViewById(R.id.StreamProductImageView);
-				productImageView.setImageBitmap(DataManager.productImageCache.get(comment.getProductImageUrl().toString()));
+				productImageView.setImageBitmap(DataManager.productImageCache.get(gtin));
 			}
 		}
 		return view;

@@ -56,7 +56,8 @@ public final class DataManager {
 			JSONObject json = new JSONObject(jsonString);
 			JSONObject jsonProduct = json.getJSONObject("product");
 			
-			ProductInfo productInfo = new ProductInfo(jsonProduct.getString("gtin"));
+			String gtin = jsonProduct.getString("gtin");
+			ProductInfo productInfo = new ProductInfo(gtin);
 			
 			String name = jsonProduct.getString("name");
 			if ((name != null) && (!name.equals("null")) && (!name.equals("")))
@@ -65,15 +66,22 @@ public final class DataManager {
 				productInfo.setName(DataManager.UnknownProductName);
             
             productInfo.setImageUrl(jsonProduct.getString("image_url"));
-			try {
-				String urlString = productInfo.getImageUrl();
-				if ((urlString != null) && (!urlString.equals("")) && (!urlString.equals("null"))) {
-					URL imageUrl = new URL(urlString);
-					productInfo.setImage(NetworkManager.getRemoteImage(imageUrl));
-				}
-			} catch (MalformedURLException e) {
-				Log.e(TAG, e.getMessage());
-			}
+            
+            if (productImageCache.containsKey(gtin)) {
+            	productInfo.setImage(productImageCache.get(gtin));
+            }
+            else {
+            	try {
+    				String urlString = productInfo.getImageUrl();
+    				if ((urlString != null) && (!urlString.equals("")) && (!urlString.equals("null"))) {
+    					URL imageUrl = new URL(urlString);
+    					productInfo.setImage(NetworkManager.getRemoteImage(imageUrl));
+    					productImageCache.put(gtin, productInfo.getImage());
+    				}
+    			} catch (MalformedURLException e) {
+    				Log.e(TAG, e.getMessage());
+    			}
+            }
             
             JSONArray jsonComments = jsonProduct.getJSONArray("comments");
             for (int i=0; i<jsonComments.length(); i++) {

@@ -155,9 +155,10 @@ public final class StreamActivity extends ListActivity {
 //					DataManager.profileImageCache.put(comment.getUser(), NetworkManager.getRemoteImage(comment.getUserProfileImageUrl()));
 //				}
 				
-				if (comment.getProductImageUrl() != null) {
-					if (!DataManager.productImageCache.containsKey(comment.getProductImageUrl().toString())) {
-						DataManager.productImageCache.put(comment.getProductImageUrl().toString(), NetworkManager.getRemoteImage(comment.getProductImageUrl()));
+				String gtin = comment.getGtin(); 
+				if ((gtin != null) && (!gtin.equals(""))) {
+					if (!DataManager.productImageCache.containsKey(gtin)) {
+						DataManager.productImageCache.put(gtin, NetworkManager.getRemoteImage(comment.getProductImageUrl()));
 					}
 				}
 				publishProgress();
