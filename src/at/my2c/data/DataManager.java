@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,8 +32,9 @@ public final class DataManager {
 	public final static HashMap<String, Bitmap> productImageCache = new HashMap<String, Bitmap>();
 	
 
-	public static void initDatabase(Context context) {
+	public static void initialize(Context context) {
 		database = new DatabaseHelper(context);
+		dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
 	}
 	
 	public static DatabaseHelper getDatabase() {

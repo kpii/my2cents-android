@@ -20,8 +20,8 @@ import java.text.ChoiceFormat;
 import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.Date;
-
-import android.content.Context;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 /**
  * 
@@ -35,34 +35,6 @@ public class RelativeTime {
 	private static final int DAY = 24 * HOUR;
 	private static final int MONTH = 30 * DAY;
 
-	private Calendar mCalendar;
-
-	/**
-	 * 
-	 * @param cal
-	 */
-	public RelativeTime(Calendar cal, Context context) {
-		mCalendar = cal;
-	}
-
-	/**
-	 * 
-	 * @param date
-	 */
-	public RelativeTime(Date date) {
-		mCalendar = Calendar.getInstance();
-		mCalendar.setTime(date);
-	}
-
-	/**
-	 * 
-	 * @param milliseconds
-	 */
-	public RelativeTime(long milliseconds) {
-		mCalendar = Calendar.getInstance();
-		mCalendar.setTimeInMillis(milliseconds);
-	}
-
 	/**
 	 * 
 	 * @param from
@@ -70,7 +42,7 @@ public class RelativeTime {
 	 */
 	public static String getDifference(long from) {
 		String value = new String();
-		long to = System.currentTimeMillis();
+		long to = new Date().getTime();
 		long delta = (to - from) / 1000;
 		if (delta < 0) {
 			value = "just now";
@@ -100,14 +72,5 @@ public class RelativeTime {
 			value = form.format(formArgs);
 		}
 		return value;
-	}
-
-	/**
-	 * Returns the relative time passed since now.
-	 * 
-	 * @return String
-	 */
-	public String toString() {
-		return getDifference(mCalendar.getTimeInMillis());
 	}
 }

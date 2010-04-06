@@ -13,6 +13,6 @@ public class My2CentsApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		DataManager.initDatabase(this);
+		DataManager.initialize(this);
 	}
 }
