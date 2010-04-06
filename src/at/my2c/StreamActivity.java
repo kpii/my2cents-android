@@ -32,7 +32,6 @@ public final class StreamActivity extends ListActivity {
 	
 	private static final String TAG = "StreamActivity";
 	
-	private ArrayList<Comment> comments;
 	private StreamAdapter streamAdapter;
 	
 	private String lastUpdateStatus;
@@ -56,8 +55,7 @@ public final class StreamActivity extends ListActivity {
 		findViewById(R.id.ImageButtonStream).setEnabled(false);
 		findViewById(R.id.ImageButtonHistory).setOnClickListener(historyListener);
 		
-		comments = new ArrayList<Comment>();
-		streamAdapter = new StreamAdapter(this, R.layout.stream_item, comments);
+		streamAdapter = new StreamAdapter(this, R.layout.stream_item, new ArrayList<Comment>());
 		setListAdapter(streamAdapter);
 	}
 	
@@ -117,21 +115,19 @@ public final class StreamActivity extends ListActivity {
 				Toast.makeText(target, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
 			}
 			else {
-				comments = result;
-				
 				Date date = new Date(System.currentTimeMillis());
       		  	statusTextView.setText(lastUpdateStatus + date.toLocaleString());
 				
 				streamAdapter.clear();
 				
-				if (comments.size() > 0) {
-					for (Comment comment : comments) {
+				if (result.size() > 0) {
+					for (Comment comment : result) {
 						streamAdapter.add(comment);
 					}
 					streamAdapter.notifyDataSetChanged();
 					progressDialog.dismiss();
 					
-					getProfileImagesTask = new GetImagesTask(target).execute(comments);
+					getProfileImagesTask = new GetImagesTask(target).execute(result);
 				}
 				else {
 					progressDialog.dismiss();
@@ -188,7 +184,7 @@ public final class StreamActivity extends ListActivity {
 
 	@Override
 	public void onListItemClick(ListView parent, View v, int position, long id) {
-		Comment selectedComment = comments.get(position);
+		Comment selectedComment = streamAdapter.getItem(position);
 		
 		Intent intent = new Intent(this, CommentActivity.class);
 		intent.setAction(Intents.ACTION);

@@ -50,7 +50,6 @@ public final class CommentActivity extends ListActivity {
 	
 	private SharedPreferences settings;
 
-	private List<Comment> comments;
 	private CommentsAdapter commentsAdapter;
 
 	private ArrayList<String> tags;
@@ -82,8 +81,7 @@ public final class CommentActivity extends ListActivity {
 		productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
 		productManufacturerTextView = (TextView) findViewById(R.id.ProductManufacturerTextView);
 		
-		comments = new ArrayList<Comment>();
-		commentsAdapter = new CommentsAdapter(this, R.layout.comment_item, comments);
+		commentsAdapter = new CommentsAdapter(this, R.layout.comment_item, new ArrayList<Comment>());
 		setListAdapter(commentsAdapter);
 
 		tags = new ArrayList<String>();
@@ -220,10 +218,8 @@ public final class CommentActivity extends ListActivity {
 	        	
 	        	commentsAdapter.clear();
 				tagsAdapter.clear();
-	        	comments = product.getComments();
-
+	        	ArrayList<Comment> comments = product.getComments();
 				if (comments.size() > 0) {
-					
 					Set<String> tags = new TreeSet<String>();
 					for (Comment comment : comments) {
 						commentsAdapter.add(comment);
@@ -307,7 +303,7 @@ public final class CommentActivity extends ListActivity {
 
 	@Override
 	public void onListItemClick(ListView parent, View v, int position, long id) {
-		Comment selectedComment = comments.get(position);
+		Comment selectedComment = commentsAdapter.getItem(position);
 		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage(selectedComment.getText())
