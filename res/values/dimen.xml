@@ -41,4 +41,5 @@
 	<dimen name="stream_product_image_max_size">48dip</dimen>
 	
 	<dimen name="stream_product_name_text">12sp</dimen>
+	<dimen name="stream_product_image_padding">3dip</dimen>
 </resources>
