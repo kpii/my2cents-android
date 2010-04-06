@@ -9,22 +9,41 @@
 			android:title="@string/settings_login"
 			android:summaryOff="@string/settings_login_desc_out"
 			android:summaryOn="@string/settings_login_desc_in" />
-		
-	<CheckBoxPreference android:key="@string/settings_twitter" android:summary="@string/settings_twitter_description" android:title="@string/settings_twitter" android:defaultValue="false" android:dependency="@string/settings_login"></CheckBoxPreference>
-</PreferenceCategory>
+		<CheckBoxPreference
+			android:key="@string/settings_twitter"
+			android:summary="@string/settings_twitter_description"
+			android:title="@string/settings_twitter"
+			android:defaultValue="false"
+			android:dependency="@string/settings_login" />
+	</PreferenceCategory>
 	<PreferenceCategory
-		android:title="When a barcode is found\u2026">
+		android:title="@string/settings_scanner_category">
 		<CheckBoxPreference
 			android:defaultValue="true"
 			android:key="@string/settings_play_beep"
-			android:title="@string/settings_play_beep" />
+			android:title="@string/settings_play_beep"
+			android:summary="@string/settings_play_beep_summary" />
 		<CheckBoxPreference
 			android:defaultValue="false"
 			android:key="@string/settings_vibrate"
-			android:title="@string/settings_vibrate" />
+			android:title="@string/settings_vibrate"
+			android:summary="@string/settings_vibrate_summary" />
 		<CheckBoxPreference
 			android:defaultValue="true"
 			android:key="@string/settings_copy_to_clipboard"
-			android:title="@string/settings_copy_to_clipboard" />
+			android:title="@string/settings_copy_to_clipboard"
+			android:summary="@string/settings_copy_to_clipboard_summary" />
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:title="@string/settings_general_category">
+		<PreferenceScreen
+			android:key="@string/settings_send_feedback"
+			android:title="@string/settings_send_feedback"
+			android:summary="@string/settings_send_feedback_summary" />
+		<CheckBoxPreference
+			android:defaultValue="true"
+			android:key="@string/settings_helpful_tips"
+			android:title="@string/settings_helpful_tips"
+			android:summary="@string/settings_helpful_tips_summary" />
 	</PreferenceCategory>
 </PreferenceScreen>

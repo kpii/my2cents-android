@@ -47,10 +47,23 @@
     <string name="settings_twitter_description">Tweet your comments</string>
     <string name="settings_location_desc_on">You are sharing your location</string>
     <string name="settings_location_desc_off">You are not sharing your location</string>
+    
+    <string name="settings_scanner_category">Scanner</string>
     <string name="settings_copy_to_clipboard">Copy to clipboard</string>
+    <string name="settings_copy_to_clipboard_summary">Copy to clipboard whan a barcode is found</string>
 	<string name="settings_play_beep">Beep</string>
+	<string name="settings_play_beep_summary">Beep when a barcode is found</string>
 	<string name="settings_vibrate">Vibrate</string>
+	<string name="settings_vibrate_summary">Vibrate when a barcode is found</string>
+	
+	<string name="settings_general_category">General</string>
+    <string name="settings_send_feedback">Send feedback</string>
+    <string name="settings_send_feedback_summary">Send us a feedback on my2cents</string>
+	<string name="settings_helpful_tips">Helpful tips</string>
+	<string name="settings_helpful_tips_summary">Open the helpful tips the next time my2cents starts</string>
+	
 	<string name="settings_first_start">First start</string>
+	<string name="settings_client_id">Client ID</string>
 	
 	<string name="status_last_update">Last update:</string>
 	

@@ -8,10 +8,12 @@ import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.widget.Toast;
+import at.my2c.utils.Helper;
 import at.my2c.utils.NetworkManager;
 
 public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
@@ -39,6 +41,14 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		
 		settings_login_key = getString(R.string.settings_login);
 		loginCheckBoxPreference = (CheckBoxPreference)getPreferenceScreen().findPreference(settings_login_key);
+		
+		// Intent feedback
+        PreferenceScreen feedbackPreference = (PreferenceScreen)getPreferenceManager().findPreference(getString(R.string.settings_send_feedback));
+        Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+		emailIntent.setType("plain/text");
+		emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"feedback@my2cents.base45.de"});
+		emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "my2cents user feedback [" + Helper.getClientID(this) + "]");
+		feedbackPreference.setIntent(emailIntent);
 	}
 	
 	@Override

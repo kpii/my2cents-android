@@ -4,18 +4,14 @@ package at.my2c;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import at.my2c.data.DataManager;
 import at.my2c.data.HistoryColumns;
 import at.my2c.utils.NetworkManager;
 
@@ -41,7 +37,16 @@ public final class MainActivity extends Activity {
         settings = PreferenceManager.getDefaultSharedPreferences(this);
 		NetworkManager.setAuthToken(settings.getString(getString(R.string.settings_token),""));
 		
-		onFirstLaunch();
+		showTips();
+	}
+	
+	private void showTips() {
+		boolean toOpen = settings.getBoolean(getString(R.string.settings_helpful_tips), true);
+		if(toOpen) {
+			settings.edit().putBoolean(getResources().getString(R.string.settings_helpful_tips), false).commit();
+			Intent intent = new Intent(this, HelpActivity.class);
+			startActivity(intent);
+		}
 	}
 	
 	private final ImageButton.OnClickListener scanListener = new ImageButton.OnClickListener() {
@@ -77,28 +82,6 @@ public final class MainActivity extends Activity {
 			}
 		}
 	};
-	
-	/**
-	 * We want the help screen to be shown automatically the first time a new
-	 * version of the app is run. The easiest way to do this is to check
-	 * android:versionCode from the manifest, and compare it to a value stored
-	 * as a preference.
-	 */
-	private void onFirstLaunch() {
-		try {
-			PackageInfo info = getPackageManager().getPackageInfo(this.getPackageName(), 0);
-			int currentVersion = info.versionCode;
-			int lastVersion = settings.getInt(getString(R.string.settings_first_start), 0);
-			if (currentVersion > lastVersion) {
-				settings.edit().putInt(getString(R.string.settings_first_start), currentVersion).commit();
-				Intent intent = new Intent(Intent.ACTION_VIEW);
-				intent.setClassName(this, HelpActivity.class.getName());
-				startActivity(intent);
-			}
-		} catch (PackageManager.NameNotFoundException e) {
-			Log.w(TAG, e);
-		}
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
