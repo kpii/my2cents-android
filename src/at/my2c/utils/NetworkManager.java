@@ -126,7 +126,7 @@ public final class NetworkManager {
 	
 	
 	public static String getProductJsonString(String gtin) {
-		String url = BASE_URL + "/gtin/" + gtin + ".json";
+		String url = BASE_URL + "/products/" + gtin + ".json";
         return queryREST(url);
 	}
 	
