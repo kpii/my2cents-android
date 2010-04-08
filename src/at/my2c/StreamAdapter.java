@@ -44,7 +44,7 @@ public class StreamAdapter extends ArrayAdapter<Comment> {
 				productNameTextView.setText(comment.getProductName());
 			}
 			else {
-				productNameTextView.setText(comment.getGtin());
+				productNameTextView.setText("Unknown product [" + comment.getGtin() + "]");
 			}
 
 			ImageView productImageView = (ImageView) view.findViewById(R.id.StreamProductImageView);

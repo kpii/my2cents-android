@@ -185,7 +185,7 @@ public final class StreamActivity extends ListActivity {
 		
 		Intent intent = new Intent(this, CommentActivity.class);
 		intent.setAction(Intents.ACTION);
-		intent.putExtra(CommentActivity.UPDATE_HISTORY, false);
+		intent.putExtra(CommentActivity.UPDATE_HISTORY, true);
 		intent.putExtra(HistoryColumns.GTIN, selectedComment.getGtin());
 		startActivity(intent);
 	}
