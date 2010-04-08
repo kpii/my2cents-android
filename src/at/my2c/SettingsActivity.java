@@ -46,7 +46,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
         PreferenceScreen feedbackPreference = (PreferenceScreen)getPreferenceManager().findPreference(getString(R.string.settings_send_feedback));
         Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
 		emailIntent.setType("plain/text");
-		emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"feedback@my2cents.base45.de"});
+		emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"feedback@my2cents.mobi"});
 		emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "my2cents user feedback [" + Helper.getClientID(this) + "]");
 		feedbackPreference.setIntent(emailIntent);
 	}

@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <string name="my2cents_is_evolving">my2cents is evolving - this is the first public release of the application, please <a href='mailto:feedback@my2cents.mobi'>leave your comments and suggestions</a> on our product</string>
+    <string name="my2cents_is_social">my2cents is social - you'll make the most of the application if you <a href='test'>log in with your Twitter ID</a></string>
+    <string name="my2cents_is_empowering">my2cents is empowering - you can get real life consumers recommendations and insights and can use it to ask questions and leave notes</string>
+    <string name="home_button_history">Keep track of the products you discovered and check regulary on new comments and recommendations</string>
+    <string name="home_button_history_header">Track the products</string>
+    <string name="home_button_stream">Read the latest comments about all products scanned by the community in real time as they get posted</string>
+    <string name="home_button_stream_header">Read the comments</string>
+    <string name="home_button_scan">Scan a barcode to get basic product information, read other people's comments and share your own opinion</string>
+    <string name="home_button_scan_header">Scan a barcode</string>
     <string name="message_unsuccessful_authorization">Authentication Failed</string>
     <string name="message_successful_authorization">Successful authentication</string>
 	<string name="app_name">my2cents</string>
@@ -77,7 +86,7 @@
 	<string name="message_empty_history">This list will show you products you have viewed in the past.</string>
 	
 	<string name="search_title">Search for a product</string>
-	<string name="main_header">Comments on products</string>
+	<string name="main_header">Welcome to my2cents</string>
 	<string name="stream_header">What are others commenting on?</string>
 	<string name="comments_header">People's thoughts on the product</string>
 	<string name="help_header">Helpful Tips</string>

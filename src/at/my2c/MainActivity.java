@@ -24,15 +24,11 @@ public final class MainActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 		setContentView(R.layout.main);
 		
-		findViewById(R.id.SearchImageButton).setOnClickListener(searchListener);
-		
-		findViewById(R.id.ImageButtonHome).setEnabled(false);
-		findViewById(R.id.ImageButtonScan).setOnClickListener(scanListener);
-		findViewById(R.id.ImageButtonStream).setOnClickListener(streamListener);
-		findViewById(R.id.ImageButtonHistory).setOnClickListener(historyListener);
+		findViewById(R.id.HomeScanLayout).setOnClickListener(scanListener);
+		findViewById(R.id.HomeStreamLayout).setOnClickListener(streamListener);
+		findViewById(R.id.HomeHistoryLayout).setOnClickListener(historyListener);
 		
         settings = PreferenceManager.getDefaultSharedPreferences(this);
 		NetworkManager.setAuthToken(settings.getString(getString(R.string.settings_token),""));
@@ -67,19 +63,6 @@ public final class MainActivity extends Activity {
 		public void onClick(View view) {
 			Intent intent = new Intent(getBaseContext(), HistoryActivity.class);
 			startActivity(intent);
-		}
-	};
-	
-	private final ImageButton.OnClickListener searchListener = new ImageButton.OnClickListener() {
-		public void onClick(View view) {
-			EditText editor = (EditText) findViewById(R.id.SearchEditText);
-			String gtin = editor.getText().toString();
-			if ((gtin != null) && (!gtin.equals(""))) {
-				Intent intent = new Intent(view.getContext(), CommentActivity.class);
-				intent.setAction(Intents.ACTION);
-				intent.putExtra(HistoryColumns.GTIN, gtin);
-				startActivity(intent);
-			}
 		}
 	};
 

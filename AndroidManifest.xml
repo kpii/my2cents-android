@@ -23,7 +23,7 @@
 		android:icon="@drawable/birdy">
 		<activity
 			android:name=".MainActivity"
-			android:configChanges="orientation|keyboardHidden">
+			android:configChanges="orientation|keyboardHidden" android:screenOrientation="portrait">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.MAIN" />

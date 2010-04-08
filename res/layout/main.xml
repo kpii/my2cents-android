@@ -22,7 +22,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignBaseline="@+id/AppNameTextView"
-			android:layout_marginLeft="125sp"
+			android:layout_marginLeft="125dip"
 			android:text="@string/app_notes"
 			android:id="@+id/AppNotesTextView"
 			android:textColor="@color/header_text"
@@ -36,88 +36,132 @@
 		android:background="@color/info_backgroung"
 		android:textColor="@color/info_text"
 		android:textSize="@dimen/info_text"
-		android:padding="@dimen/info_padding"
-		android:text="@string/main_header"></TextView>
-	<RelativeLayout
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:background="@color/comment_editor_background"
-		android:paddingLeft="@dimen/comment_editor_padding"
-		android:paddingRight="@dimen/comment_editor_padding"
-		android:paddingTop="@dimen/comment_editor_padding">
-		<ImageButton
-			android:layout_width="wrap_content"
-			android:layout_alignParentRight="true"
-			android:layout_height="wrap_content"
-			android:id="@+id/SearchImageButton"
-			android:src="@drawable/search_icon" />
-		<EditText
-			android:layout_height="wrap_content"
-			android:imeOptions="flagNoEnterAction"
-			android:id="@+id/SearchEditText"
-			android:hint="@string/search_hint"
-			android:layout_width="fill_parent"
-			android:layout_toLeftOf="@+id/SearchImageButton"
-			android:inputType="number" />
-	</RelativeLayout>
-	<ImageView
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:src="@drawable/homebackgroundimage"
-		android:layout_weight="1" android:adjustViewBounds="true" android:layout_gravity="center"></ImageView>
+		android:padding="@dimen/info_padding" android:text="@string/main_header"></TextView>
 	<LinearLayout
 		android:layout_height="wrap_content"
-		android:id="@+id/ToolbarLayout"
-		android:orientation="horizontal"
+		android:orientation="vertical"
 		android:layout_width="fill_parent"
-		android:background="@color/status_backgroung">
-		<ImageButton
+		android:padding="@dimen/home_screen_button_margin_large">
+		<RelativeLayout
 			android:layout_height="wrap_content"
-			android:layout_weight="0.25"
-			android:scaleType="centerInside"
-			android:layout_width="wrap_content"
-			android:background="@drawable/toolbar_button_background"
-			android:id="@+id/ImageButtonHome"
-			android:src="@drawable/home_button"
-			android:layout_marginBottom="3dip"
-			android:layout_marginRight="3dip"
-			android:layout_marginTop="3dip"
-			android:layout_marginLeft="6dip"></ImageButton>
-		<ImageButton
-			android:layout_width="wrap_content"
+			android:layout_width="fill_parent"
+			android:id="@+id/HomeScanLayout"
+			android:layout_marginBottom="@dimen/home_screen_button_margin_normal">
+			<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:src="@drawable/home_scan"
+				android:layout_centerVertical="true"
+				android:layout_marginRight="@dimen/home_screen_button_margin_normal"
+				android:id="@+id/HomeScanImageView"></ImageView>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/home_button_scan_header"
+				android:id="@+id/HomeScanHeaderTextView"
+				android:layout_toRightOf="@id/HomeScanImageView"
+				android:textStyle="bold"
+				android:textSize="@dimen/home_screen_button_text_header"
+				android:textColor="@color/info_backgroung"
+				android:layout_marginBottom="@dimen/home_screen_button_margin_small"></TextView>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/HomeScanTextView"
+				android:layout_toRightOf="@id/HomeScanImageView"
+				android:layout_below="@id/HomeScanHeaderTextView"
+				android:text="@string/home_button_scan"
+				android:textColor="@color/header_backgroung"
+				android:textSize="@dimen/home_screen_button_text"></TextView>
+		</RelativeLayout>
+		<RelativeLayout
 			android:layout_height="wrap_content"
-			android:layout_weight="0.25"
-			android:background="@drawable/toolbar_button_background"
-			android:scaleType="centerInside"
-			android:id="@+id/ImageButtonScan"
-			android:src="@drawable/scan_button"
-			android:layout_marginBottom="3dip"
-			android:layout_marginLeft="3dip"
-			android:layout_marginRight="3dip"
-			android:layout_marginTop="3dip"></ImageButton>
-		<ImageButton
-			android:layout_width="wrap_content"
+			android:layout_width="fill_parent"
+			android:id="@+id/HomeStreamLayout"
+			android:layout_marginBottom="@dimen/home_screen_button_margin_normal">
+			<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerVertical="true"
+				android:layout_marginRight="@dimen/home_screen_button_margin_normal"
+				android:src="@drawable/home_stream"
+				android:id="@+id/HomeStreamImageView"></ImageView>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textStyle="bold"
+				android:textSize="@dimen/home_screen_button_text_header"
+				android:textColor="@color/info_backgroung"
+				android:layout_marginBottom="@dimen/home_screen_button_margin_small"
+				android:text="@string/home_button_stream_header"
+				android:layout_toRightOf="@id/HomeStreamImageView"
+				android:id="@+id/HomeStreamHeaderTextView"></TextView>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="@color/header_backgroung"
+				android:textSize="@dimen/home_screen_button_text"
+				android:text="@string/home_button_stream"
+				android:layout_below="@id/HomeStreamHeaderTextView"
+				android:layout_toRightOf="@id/HomeStreamImageView"
+				android:id="@+id/HomeStreamTextView"></TextView>
+		</RelativeLayout>
+		<RelativeLayout
 			android:layout_height="wrap_content"
-			android:layout_weight="0.25"
-			android:background="@drawable/toolbar_button_background"
-			android:scaleType="centerInside"
-			android:id="@+id/ImageButtonStream"
-			android:src="@drawable/stream_button"
-			android:layout_marginBottom="3dip"
-			android:layout_marginLeft="3dip"
-			android:layout_marginRight="3dip"
-			android:layout_marginTop="3dip"></ImageButton>
-		<ImageButton
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_weight="0.25"
-			android:background="@drawable/toolbar_button_background"
-			android:scaleType="centerInside"
-			android:id="@+id/ImageButtonHistory"
-			android:src="@drawable/history_button"
-			android:layout_marginBottom="3dip"
-			android:layout_marginLeft="3dip"
-			android:layout_marginTop="3dip"
-			android:layout_marginRight="6dip"></ImageButton>
+			android:layout_width="fill_parent"
+			android:id="@+id/HomeHistoryLayout">
+			<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerVertical="true"
+				android:layout_marginRight="@dimen/home_screen_button_margin_normal"
+				android:src="@drawable/home_history"
+				android:id="@+id/HomeHistoryImageView"></ImageView>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textStyle="bold"
+				android:textSize="@dimen/home_screen_button_text_header"
+				android:textColor="@color/info_backgroung"
+				android:layout_marginBottom="@dimen/home_screen_button_margin_small"
+				android:text="@string/home_button_history_header"
+				android:layout_toRightOf="@id/HomeHistoryImageView"
+				android:id="@+id/HomeHistoryHeaderTextView"></TextView>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="@color/header_backgroung"
+				android:textSize="@dimen/home_screen_button_text"
+				android:text="@string/home_button_history"
+				android:id="@+id/HomeHistoryTextView"
+				android:layout_toRightOf="@id/HomeHistoryImageView"
+				android:layout_below="@id/HomeHistoryHeaderTextView"></TextView>
+		</RelativeLayout>
 	</LinearLayout>
+	<TextView
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:text="@string/my2cents_is_empowering"
+		android:paddingLeft="@dimen/home_screen_button_margin_normal"
+		android:paddingRight="@dimen/home_screen_button_margin_normal"
+		android:layout_marginBottom="@dimen/home_screen_button_margin_normal"
+		android:typeface="monospace"
+		android:textSize="@dimen/home_screen_text"></TextView>
+	<TextView
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:paddingLeft="@dimen/home_screen_button_margin_normal"
+		android:paddingRight="@dimen/home_screen_button_margin_normal"
+		android:layout_marginBottom="@dimen/home_screen_button_margin_normal"
+		android:textSize="@dimen/home_screen_text"
+		android:typeface="monospace"
+		android:text="@string/my2cents_is_social" android:autoLink="web" android:linksClickable="true" android:textColorLink="@color/header_backgroung"></TextView>
+	<TextView
+		android:layout_height="wrap_content"
+		android:layout_width="fill_parent"
+		android:textSize="@dimen/home_screen_text"
+		android:paddingLeft="@dimen/home_screen_button_margin_normal"
+		android:paddingRight="@dimen/home_screen_button_margin_normal"
+		android:text="@string/my2cents_is_evolving"
+		android:typeface="monospace" android:linksClickable="true" android:textColorLink="@color/header_backgroung" android:autoLink="web|email"></TextView>
 </LinearLayout>
