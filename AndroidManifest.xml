@@ -90,18 +90,7 @@
 					android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
-		<activity
-			android:screenOrientation="user"
-			android:label="@string/search_title"
-			android:name=".SearchActivity"
-			android:theme="@android:style/Theme.Dialog">
-			<intent-filter>
-				<action
-					android:name="android.intent.action.VIEW" />
-				<category
-					android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-		</activity>
+		
 		<activity
 			android:name=".HelpActivity"
 			android:screenOrientation="user">

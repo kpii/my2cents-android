@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,6 +26,7 @@ import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -34,6 +36,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import at.my2c.data.DataManager;
 import at.my2c.data.HistoryColumns;
@@ -53,6 +56,8 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 
 	private static final float BEEP_VOLUME = 0.15f;
 	private static final long VIBRATE_DURATION = 200L;
+	
+	private final int DIALOG_SEARCH	= 0;
 
 	private SharedPreferences settings;
 
@@ -187,18 +192,22 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.settingsMenuItem: {
-			Intent intent = new Intent(this, SettingsActivity.class);
-			startActivity(intent);
-			return true;
-		}
-		case R.id.infoMenuItem: {
-			Intent intent = new Intent(this, HelpActivity.class);
-			startActivity(intent);
-			return true;
-		}
-		default:
-			return super.onOptionsItemSelected(item);
+			case R.id.searchMenuItem: {
+				showDialog(DIALOG_SEARCH);
+				return true;
+			}
+			case R.id.settingsMenuItem: {
+				Intent intent = new Intent(this, SettingsActivity.class);
+				startActivity(intent);
+				return true;
+			}
+			case R.id.infoMenuItem: {
+				Intent intent = new Intent(this, HelpActivity.class);
+				startActivity(intent);
+				return true;
+			}
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 	}
 
@@ -381,5 +390,34 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 		public void onCompletion(MediaPlayer mediaPlayer) {
 			mediaPlayer.seekTo(0);
 		}
+	}
+	
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		
+		switch (id) {
+			case DIALOG_SEARCH: {
+				LayoutInflater factory = LayoutInflater.from(this);
+		        final View view = factory.inflate(R.layout.search_dialog, null);
+		        return new AlertDialog.Builder(this)
+		            .setIcon(android.R.drawable.ic_menu_search)
+		            .setTitle(R.string.search_title)
+		            .setView(view)
+		            .setPositiveButton(R.string.button_search, new DialogInterface.OnClickListener() {
+		                public void onClick(DialogInterface dialog, int whichButton) {
+		                	EditText editor = (EditText)view.findViewById(R.id.InputEditText);
+		                	String gtin = editor.getText().toString();
+		        			if ((gtin != null) && (!gtin.equals(""))) {
+		        				Intent intent = new Intent(view.getContext(), CommentActivity.class);
+		        				intent.setAction(Intents.ACTION);
+		        				intent.putExtra(HistoryColumns.GTIN, gtin);
+		        				startActivity(intent);
+		        			}
+		                }
+		            })
+		            .create();
+	        }
+		}
+		return super.onCreateDialog(id);
 	}
 }
