@@ -38,7 +38,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import at.my2c.data.DataManager;
 import at.my2c.data.HistoryColumns;
 import at.my2c.scanner.CameraManager;
 import at.my2c.scanner.CaptureActivityHandler;

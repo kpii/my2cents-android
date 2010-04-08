@@ -47,12 +47,6 @@ public final class DataManager {
         return getProductInfoFromJsonString(jsonString);
 	}
 	
-	public final static ProductInfo getProductInfo(int productId){
-		
-		String jsonString = NetworkManager.getProductJsonString(productId);
-        return getProductInfoFromJsonString(jsonString);
-	}
-	
 	private final static ProductInfo getProductInfoFromJsonString(String jsonString){
 		try {
 			JSONObject json = new JSONObject(jsonString);

@@ -1,7 +1,6 @@
 package at.my2c.utils;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Random;
 import java.util.UUID;
 
 import android.content.Context;

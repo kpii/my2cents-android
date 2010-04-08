@@ -20,7 +20,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	/** The name of the database file on the file system */
     private static final String DATABASE_NAME = "My2CentsDb";
     /** The version of the database that this class understands. */
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
     
     private static final String HISTORY_TABLE = "history";
     
@@ -36,7 +36,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + HISTORY_TABLE + " ("
                 + HistoryColumns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + HistoryColumns.TIME + " TEXT,"
-                + HistoryColumns.PRODUCT_ID + " INTEGER,"
                 + HistoryColumns.GTIN + " TEXT,"
                 + HistoryColumns.NAME + " TEXT,"
                 + HistoryColumns.MANUFACTURER + " TEXT,"

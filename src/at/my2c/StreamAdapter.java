@@ -38,18 +38,21 @@ public class StreamAdapter extends ArrayAdapter<Comment> {
 
 			TextView sentTextView = (TextView) view.findViewById(R.id.StreamCommentSentTextView);
 			sentTextView.setText(RelativeTime.getDifference(comment.getCreatedAt().getTime()));
-
-//			ImageView profileImageView = (ImageView) view.findViewById(R.id.StreamProfileImageView);
-//			profileImageView.setImageBitmap(DataManager.profileImageCache.get(comment.getUser()));
-			
 			
 			TextView productNameTextView = (TextView) view.findViewById(R.id.StreamProductTextView);
-			productNameTextView.setText(comment.getProductName());
+			if ((comment.getProductName() != null) && (!comment.getProductName().equals(""))) {	
+				productNameTextView.setText(comment.getProductName());
+			}
+			else {
+				productNameTextView.setText(comment.getGtin());
+			}
 
-			String gtin = comment.getGtin(); 
-			if ((gtin != null) && (!gtin.equals(""))) {
-				ImageView productImageView = (ImageView) view.findViewById(R.id.StreamProductImageView);
-				productImageView.setImageBitmap(DataManager.productImageCache.get(gtin));
+			ImageView productImageView = (ImageView) view.findViewById(R.id.StreamProductImageView);
+			if (comment.getProductImageUrl() != null) {	
+				productImageView.setImageBitmap(DataManager.productImageCache.get(comment.getGtin()));
+			}
+			else {
+				productImageView.setImageResource(R.drawable.unknown_product_icon);
 			}
 		}
 		return view;

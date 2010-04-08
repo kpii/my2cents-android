@@ -36,22 +36,23 @@
 		android:background="@color/info_backgroung"
 		android:textColor="@color/info_text"
 		android:textSize="@dimen/info_text"
-		android:padding="@dimen/info_padding" android:text="@string/main_header"></TextView>
+		android:padding="@dimen/info_padding"
+		android:text="@string/main_header"></TextView>
 	<LinearLayout
-		android:layout_height="wrap_content"
 		android:orientation="vertical"
 		android:layout_width="fill_parent"
-		android:padding="@dimen/home_screen_button_margin_large">
+		android:layout_height="fill_parent"
+		android:gravity="center_vertical" android:padding="@dimen/home_screen_button_margin_small">
 		<RelativeLayout
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
 			android:id="@+id/HomeScanLayout"
-			android:layout_marginBottom="@dimen/home_screen_button_margin_normal">
+			android:layout_weight="0.25"
+			android:clickable="true" android:background="@android:drawable/list_selector_background" android:padding="@dimen/home_screen_button_margin_small">
 			<ImageView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:src="@drawable/home_scan"
-				android:layout_centerVertical="true"
 				android:layout_marginRight="@dimen/home_screen_button_margin_normal"
 				android:id="@+id/HomeScanImageView"></ImageView>
 			<TextView
@@ -78,11 +79,11 @@
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
 			android:id="@+id/HomeStreamLayout"
-			android:layout_marginBottom="@dimen/home_screen_button_margin_normal">
+			android:layout_weight="0.25"
+			android:clickable="true" android:background="@android:drawable/list_selector_background" android:padding="@dimen/home_screen_button_margin_small">
 			<ImageView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_centerVertical="true"
 				android:layout_marginRight="@dimen/home_screen_button_margin_normal"
 				android:src="@drawable/home_stream"
 				android:id="@+id/HomeStreamImageView"></ImageView>
@@ -109,11 +110,12 @@
 		<RelativeLayout
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
-			android:id="@+id/HomeHistoryLayout">
+			android:id="@+id/HomeHistoryLayout"
+			android:layout_weight="0.25"
+			android:clickable="true" android:background="@android:drawable/list_selector_background" android:padding="@dimen/home_screen_button_margin_small">
 			<ImageView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:layout_centerVertical="true"
 				android:layout_marginRight="@dimen/home_screen_button_margin_normal"
 				android:src="@drawable/home_history"
 				android:id="@+id/HomeHistoryImageView"></ImageView>
@@ -137,6 +139,38 @@
 				android:layout_toRightOf="@id/HomeHistoryImageView"
 				android:layout_below="@id/HomeHistoryHeaderTextView"></TextView>
 		</RelativeLayout>
+		<RelativeLayout
+			android:layout_height="wrap_content"
+			android:layout_width="fill_parent"
+			android:id="@+id/HomeTwitterLayout"
+			android:layout_weight="0.25"
+			android:clickable="true" android:background="@android:drawable/list_selector_background" android:padding="@dimen/home_screen_button_margin_small">
+			<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginRight="@dimen/home_screen_button_margin_normal"
+				android:src="@drawable/twitter"
+				android:id="@+id/HomeTwitterImageView"></ImageView>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textStyle="bold"
+				android:textSize="@dimen/home_screen_button_text_header"
+				android:textColor="@color/info_backgroung"
+				android:layout_marginBottom="@dimen/home_screen_button_margin_small"
+				android:layout_toRightOf="@id/HomeTwitterImageView"
+				android:id="@+id/HomeTwitterHeaderTextView"
+				android:text="@string/home_button_twitter_header"></TextView>
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textColor="@color/header_backgroung"
+				android:textSize="@dimen/home_screen_button_text"
+				android:layout_below="@id/HomeTwitterHeaderTextView"
+				android:layout_toRightOf="@id/HomeTwitterImageView"
+				android:id="@+id/HomeTwitterTextView"
+				android:text="@string/home_button_twitter"></TextView>
+		</RelativeLayout>
 	</LinearLayout>
 	<TextView
 		android:layout_height="wrap_content"
@@ -146,7 +180,8 @@
 		android:paddingRight="@dimen/home_screen_button_margin_normal"
 		android:layout_marginBottom="@dimen/home_screen_button_margin_normal"
 		android:typeface="monospace"
-		android:textSize="@dimen/home_screen_text"></TextView>
+		android:textSize="@dimen/home_screen_text"
+		android:visibility="gone"></TextView>
 	<TextView
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"
@@ -155,7 +190,11 @@
 		android:layout_marginBottom="@dimen/home_screen_button_margin_normal"
 		android:textSize="@dimen/home_screen_text"
 		android:typeface="monospace"
-		android:text="@string/my2cents_is_social" android:autoLink="web" android:linksClickable="true" android:textColorLink="@color/header_backgroung"></TextView>
+		android:text="@string/my2cents_is_social"
+		android:autoLink="web"
+		android:linksClickable="true"
+		android:textColorLink="@color/header_backgroung"
+		android:visibility="gone"></TextView>
 	<TextView
 		android:layout_height="wrap_content"
 		android:layout_width="fill_parent"
@@ -163,5 +202,9 @@
 		android:paddingLeft="@dimen/home_screen_button_margin_normal"
 		android:paddingRight="@dimen/home_screen_button_margin_normal"
 		android:text="@string/my2cents_is_evolving"
-		android:typeface="monospace" android:linksClickable="true" android:textColorLink="@color/header_backgroung" android:autoLink="web|email"></TextView>
+		android:typeface="monospace"
+		android:linksClickable="true"
+		android:textColorLink="@color/header_backgroung"
+		android:autoLink="web|email"
+		android:visibility="gone"></TextView>
 </LinearLayout>

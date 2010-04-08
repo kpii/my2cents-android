@@ -10,9 +10,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import at.my2c.data.HistoryColumns;
 import at.my2c.utils.NetworkManager;
 
 public final class MainActivity extends Activity {
@@ -29,39 +26,36 @@ public final class MainActivity extends Activity {
 		findViewById(R.id.HomeScanLayout).setOnClickListener(scanListener);
 		findViewById(R.id.HomeStreamLayout).setOnClickListener(streamListener);
 		findViewById(R.id.HomeHistoryLayout).setOnClickListener(historyListener);
+		findViewById(R.id.HomeTwitterLayout).setOnClickListener(loginListener);
 		
         settings = PreferenceManager.getDefaultSharedPreferences(this);
 		NetworkManager.setAuthToken(settings.getString(getString(R.string.settings_token),""));
-		
-		showTips();
 	}
 	
-	private void showTips() {
-		boolean toOpen = settings.getBoolean(getString(R.string.settings_helpful_tips), true);
-		if(toOpen) {
-			settings.edit().putBoolean(getResources().getString(R.string.settings_helpful_tips), false).commit();
-			Intent intent = new Intent(this, HelpActivity.class);
-			startActivity(intent);
-		}
-	}
-	
-	private final ImageButton.OnClickListener scanListener = new ImageButton.OnClickListener() {
+	private final View.OnClickListener scanListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			Intent intent = new Intent(getBaseContext(), ScanActivity.class);
 			startActivity(intent);
 		}
 	};
 	
-	private final ImageButton.OnClickListener streamListener = new ImageButton.OnClickListener() {
+	private final View.OnClickListener streamListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			Intent intent = new Intent(getBaseContext(), StreamActivity.class);
 			startActivity(intent);
 		}
 	};
 	
-	private final ImageButton.OnClickListener historyListener = new ImageButton.OnClickListener() {
+	private final View.OnClickListener historyListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			Intent intent = new Intent(getBaseContext(), HistoryActivity.class);
+			startActivity(intent);
+		}
+	};
+	
+	private final View.OnClickListener loginListener = new View.OnClickListener() {
+		public void onClick(View view) {
+			Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
 			startActivity(intent);
 		}
 	};

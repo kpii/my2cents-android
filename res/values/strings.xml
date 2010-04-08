@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <string name="home_button_twitter">my2cents is social and you'll make the most of the application if you log in with your Twitter ID</string>
+    <string name="home_button_twitter_header">Share your opinion</string>
     <string name="my2cents_is_evolving">my2cents is evolving - this is the first public release of the application, please <a href='mailto:feedback@my2cents.mobi'>leave your comments and suggestions</a> on our product</string>
     <string name="my2cents_is_social">my2cents is social - you'll make the most of the application if you <a href='test'>log in with your Twitter ID</a></string>
     <string name="my2cents_is_empowering">my2cents is empowering - you can get real life consumers recommendations and insights and can use it to ask questions and leave notes</string>

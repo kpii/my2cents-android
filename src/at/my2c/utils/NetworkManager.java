@@ -130,11 +130,6 @@ public final class NetworkManager {
         return queryREST(url);
 	}
 	
-	public static String getProductJsonString(int productId) {
-		String url = BASE_URL + "/products/" + productId + ".json";
-        return queryREST(url);
-	}
-	
 	public static String getCommentsStreamJSONString() {
 		String url = BASE_URL + "/comments.json";
 		return queryREST(url);
@@ -146,7 +141,7 @@ public final class NetworkManager {
 	    HttpPost httpPost = new HttpPost(url);
 	    httpPost.setHeader("User-Agent", "Android my2cents");
 	    
-	    if ((authToken != null) && (authToken != "")) {
+	    if ((authToken != null) && (!authToken.equals(""))) {
 	    	httpPost.setHeader("Cookie", authToken);
 	    }
 	    

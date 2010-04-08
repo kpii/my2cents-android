@@ -40,10 +40,5 @@
 			android:key="@string/settings_send_feedback"
 			android:title="@string/settings_send_feedback"
 			android:summary="@string/settings_send_feedback_summary" />
-		<CheckBoxPreference
-			android:defaultValue="true"
-			android:key="@string/settings_helpful_tips"
-			android:title="@string/settings_helpful_tips"
-			android:summary="@string/settings_helpful_tips_summary" />
 	</PreferenceCategory>
 </PreferenceScreen>
