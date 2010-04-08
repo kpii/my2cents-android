@@ -33,7 +33,7 @@ public final class NetworkManager {
 	private static final String TAG = "NetworkManager";
 	private static String authToken;
 	
-	public static final String BASE_URL = "http://my2cents.base45.de";
+	public static final String BASE_URL = "http://my2cents.mobi";
 	
 	static {
 		System.setProperty("http.keepAlive", "false");
