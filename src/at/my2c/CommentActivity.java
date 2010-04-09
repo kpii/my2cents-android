@@ -19,10 +19,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -66,6 +68,8 @@ public final class CommentActivity extends ListActivity {
 	private TextView productNameTextView;
 	private TextView productManufacturerTextView;
 	
+	private EditText commentEditor;
+	
 	private AsyncTask<String, Void, ProductInfo> getProductInfoTask;
 	private AsyncTask<List<Comment>, Void, Void> getProfileImagesTask;
 
@@ -81,6 +85,8 @@ public final class CommentActivity extends ListActivity {
 		productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
 		productManufacturerTextView = (TextView) findViewById(R.id.ProductManufacturerTextView);
 		
+		commentEditor = (EditText) findViewById(R.id.CommentEditText);
+		
 		commentsAdapter = new CommentsAdapter(this, R.layout.comment_item, new ArrayList<Comment>());
 		setListAdapter(commentsAdapter);
 
@@ -94,7 +100,9 @@ public final class CommentActivity extends ListActivity {
 		
 		findViewById(R.id.ProductDetailsTextView).setOnClickListener(productDetailsListener);
 		findViewById(R.id.LoginButton).setOnClickListener(loginListener);
+		
 		findViewById(R.id.SendButton).setOnClickListener(sendCommentListener);
+		commentEditor.setOnEditorActionListener(sendCommentActionListener);
 		
 		findViewById(R.id.ImageButtonHome).setOnClickListener(homeListener);
 		findViewById(R.id.ImageButtonScan).setOnClickListener(scanListener);
@@ -104,35 +112,35 @@ public final class CommentActivity extends ListActivity {
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
 	}
 	
-	private final Button.OnClickListener homeListener = new Button.OnClickListener() {
+	private final View.OnClickListener homeListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			Intent intent = new Intent(getBaseContext(), MainActivity.class);
 			startActivity(intent);
 		}
 	};
 	
-	private final Button.OnClickListener scanListener = new Button.OnClickListener() {
+	private final View.OnClickListener scanListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			Intent intent = new Intent(getBaseContext(), ScanActivity.class);
 			startActivity(intent);
 		}
 	};
 	
-	private final Button.OnClickListener historyListener = new Button.OnClickListener() {
+	private final View.OnClickListener historyListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			Intent intent = new Intent(getBaseContext(), HistoryActivity.class);
 			startActivity(intent);
 		}
 	};
 	
-	private final Button.OnClickListener streamListener = new Button.OnClickListener() {
+	private final View.OnClickListener streamListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			Intent intent = new Intent(getBaseContext(), StreamActivity.class);
 			startActivity(intent);
 		}
 	};
 	
-	private final TextView.OnClickListener productDetailsListener = new TextView.OnClickListener() {
+	private final View.OnClickListener productDetailsListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			if (productInfo != null) {
 				if (productInfo.getDetailPageUrl() != null) {
@@ -142,6 +150,34 @@ public final class CommentActivity extends ListActivity {
 			}
 		}
 	};
+	
+	private final View.OnClickListener loginListener = new View.OnClickListener() {
+		public void onClick(View view) {
+			Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
+			startActivity(intent);
+		}
+	};
+
+	private final View.OnClickListener sendCommentListener = new View.OnClickListener() {
+		public void onClick(View view) {
+			postComment(view.getContext());
+		}
+	};
+	
+	private final TextView.OnEditorActionListener sendCommentActionListener = new TextView.OnEditorActionListener() {
+		public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
+			if (actionId == EditorInfo.IME_ACTION_SEND) {
+				postComment(view.getContext());
+				return true;
+			}			
+			return false;
+		}
+	};
+	
+	private void postComment(Context context) {
+		String message = commentEditor.getText().toString();
+		new PostComment(context).execute(message);
+	}
 	
 	@Override
 	protected void onStart() {
@@ -315,22 +351,6 @@ public final class CommentActivity extends ListActivity {
 		AlertDialog alert = builder.create();
 		alert.show();
 	}
-	
-	private final Button.OnClickListener loginListener = new Button.OnClickListener() {
-		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
-			startActivity(intent);
-		}
-	};
-
-	private final Button.OnClickListener sendCommentListener = new Button.OnClickListener() {
-		public void onClick(View view) {
-			EditText commentEditor = (EditText) findViewById(R.id.CommentEditText);
-			String message = commentEditor.getText().toString();
-			
-			new PostComment(view.getContext()).execute(message);
-		}
-	};
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -411,7 +431,6 @@ public final class CommentActivity extends ListActivity {
 				commentsAdapter.insert(comment, 0);
 				commentsAdapter.notifyDataSetChanged();
 				
-				EditText commentEditor = (EditText) findViewById(R.id.CommentEditText);
 				commentEditor.setText("");
 				Toast.makeText(CommentActivity.this, R.string.message_comment_posted_successfully, Toast.LENGTH_SHORT).show();
 			}
