@@ -52,7 +52,7 @@ public final class DataManager {
 			JSONObject json = new JSONObject(jsonString);
 			JSONObject jsonProduct = json.getJSONObject("product");
 			
-			String gtin = jsonProduct.getString("gtin");
+			String gtin = jsonProduct.getString("key");
 			ProductInfo productInfo = new ProductInfo(gtin);
 			
 			String name = jsonProduct.getString("name");
@@ -139,7 +139,7 @@ public final class DataManager {
     		if (json.has("product")) {
     			JSONObject jsonProduct = json.getJSONObject("product");
             	comment.setProductName(jsonProduct.getString("name"));
-            	comment.setGtin(jsonProduct.getString("gtin"));
+            	comment.setGtin(jsonProduct.getString("key"));
             	
             	String urlString = jsonProduct.getString("image_url");
             	if ((urlString != null) && (!urlString.equals("")) && (!urlString.equals("null"))) {
@@ -183,7 +183,7 @@ public final class DataManager {
 		String content = null;
 	    try {
 	    	JSONObject jsonComment = new JSONObject();
-	    	jsonComment.put("gtin", gtin);
+	    	jsonComment.put("product_key", gtin);
 	    	jsonComment.put("body", body);
 
 			JSONObject json = new JSONObject();
