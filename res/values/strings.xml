@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
 	<string name="app_name">my2cents</string>
-	<string name="app_notes">by ETH Zurich (rev 406)</string>
+	<string name="app_notes">by ETH Zurich (rev $Rev$)</string>
 	<string name="app_url">http://my2cents.mobi</string>
 
     <string name="home_button_twitter">Use my2cents with your Twitter account to personalize your comments and share them with your followers</string>
