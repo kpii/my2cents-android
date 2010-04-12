@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <string name="button_manual_barcode_input">Manual barcode input</string>
     <string name="message_stream_loading">Loading latest comments...</string>
 	<string name="app_name">my2cents</string>
 	<string name="app_notes">by ETH Zurich ($Rev$)</string>

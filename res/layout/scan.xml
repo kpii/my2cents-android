@@ -42,7 +42,7 @@
 			android:layout_weight="1"
 			android:background="@color/transparent" />
 		<Button
-			android:text="Manual barcode input"
+			android:text="@string/button_manual_barcode_input"
 			android:id="@+id/ManualInputButton"
 			android:layout_width="wrap_content"
 			android:layout_gravity="center_horizontal"
