@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="button_manual_barcode_input">Manual barcode input</string>
+    <string name="button_manual_barcode_input">Doesn\'t work? Type the number instead</string>
     <string name="message_stream_loading">Loading latest comments...</string>
 	<string name="app_name">my2cents</string>
-	<string name="app_notes">by ETH Zurich ($Rev$)</string>
+	<string name="app_notes">by ETH Zurich (RC 2 - rev424)</string>
 	<string name="app_url">http://my2cents.mobi</string>
 
-    <string name="home_button_twitter">Use my2cents with your Twitter account to personalize your comments and share them with your followers</string>
+    <string name="home_button_twitter">Personalize your comments and share them with your followers</string>
     <string name="home_button_twitter_header">Login with Twitter</string>
     <string name="my2cents_is_evolving">my2cents is evolving - this is the first public release of the application, please <a href='mailto:feedback@my2cents.mobi'>leave your comments and suggestions</a> on our product</string>
-    <string name="my2cents_is_social">Use my2cents with your Twitter account to personalize your comments and share them with your followers</string>
+    <string name="my2cents_is_social">Personalize your comments and share them with your followers</string>
     <string name="my2cents_is_empowering">my2cents is empowering - you can get real life consumers recommendations and insights and can use it to ask questions and leave notes</string>
     <string name="home_button_history">Keep track of the products you discovered and check for new comments</string>
     <string name="home_button_history_header">Track your products</string>
@@ -30,7 +30,7 @@
 	<string name="button_home">Home</string>
 	<string name="button_history">History</string>
 	<string name="button_stream">Stream</string>
-	<string name="button_search">Search</string>
+	<string name="button_search">Done</string>
 	<string name="button_login_invitation">Please login to comment</string>
 	
 	<string name="radio_button_barcode">Barcode</string>
@@ -38,7 +38,7 @@
 	
 	<string name="search_by_title">Search by title</string>
 	<string name="search_by_code">Search by code</string>
-	<string name="search_hint">Please enter product code</string>
+	<string name="search_hint">Enter barcode number</string>
 	<string name="comment_hint">Enter your comment</string>
 
 	<string name="menu_refresh">Refresh</string>
@@ -90,7 +90,7 @@
 	<string name="message_no_products">No products.</string>
 	<string name="message_empty_history">This list will show you products you have viewed in the past.</string>
 	
-	<string name="search_title">Search for a product</string>
+	<string name="search_title">Enter a barcode</string>
 	<string name="main_header">Comments on products</string>
 	<string name="stream_header">What are others commenting on?</string>
 	<string name="comments_header">People's thoughts on the product</string>
