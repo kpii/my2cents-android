@@ -393,7 +393,7 @@ public final class CommentActivity extends ListActivity {
 		if (product.getImage() != null) 
 			productImageView.setImageBitmap(product.getImage());
 		else
-			productImageView.setImageResource(R.drawable.unknown_product_icon);
+			productImageView.setImageResource(R.drawable.unknown_product_icon_inverted);
 		
 		productManufacturerTextView.setText(product.getManufacturer());
 		productManufacturerTextView.setVisibility(View.VISIBLE);
