@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:versionName="1.0"
+	android:versionName="1.0.$Rev$"
 	android:versionCode="1"
 	package="at.my2c">
 

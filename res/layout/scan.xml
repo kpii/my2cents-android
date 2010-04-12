@@ -41,6 +41,12 @@
 			android:layout_height="fill_parent"
 			android:layout_weight="1"
 			android:background="@color/transparent" />
+		<Button
+			android:text="Manual barcode input"
+			android:id="@+id/ManualInputButton"
+			android:layout_width="wrap_content"
+			android:layout_gravity="center_horizontal"
+			android:layout_height="40dip"></Button>
 	</LinearLayout>
 	<LinearLayout
 		android:layout_height="fill_parent"
@@ -97,4 +103,5 @@
 			android:layout_marginTop="3dip"
 			android:layout_marginRight="3dip"></ImageButton>
 	</LinearLayout>
+
 </FrameLayout>

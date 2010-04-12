@@ -35,7 +35,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import at.my2c.data.HistoryColumns;
@@ -103,29 +102,37 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 		findViewById(R.id.ImageButtonScan).setEnabled(false);
 		findViewById(R.id.ImageButtonStream).setOnClickListener(streamListener);
 		findViewById(R.id.ImageButtonHistory).setOnClickListener(historyListener);
+		
+		findViewById(R.id.ManualInputButton).setOnClickListener(manualInputListener);
 
 		CameraManager.init(getApplication());
 		viewfinderView = (ViewfinderView) findViewById(R.id.ViewfinderView);
 	}
 
-	private final Button.OnClickListener homeListener = new Button.OnClickListener() {
+	private final View.OnClickListener homeListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			Intent intent = new Intent(getBaseContext(), MainActivity.class);
 			startActivity(intent);
 		}
 	};
 
-	private final Button.OnClickListener historyListener = new Button.OnClickListener() {
+	private final View.OnClickListener historyListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			Intent intent = new Intent(getBaseContext(), HistoryActivity.class);
 			startActivity(intent);
 		}
 	};
 
-	private final Button.OnClickListener streamListener = new Button.OnClickListener() {
+	private final View.OnClickListener streamListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			Intent intent = new Intent(getBaseContext(), StreamActivity.class);
 			startActivity(intent);
+		}
+	};
+	
+	private final View.OnClickListener manualInputListener = new View.OnClickListener() {
+		public void onClick(View view) {
+			showDialog(DIALOG_SEARCH);
 		}
 	};
 
