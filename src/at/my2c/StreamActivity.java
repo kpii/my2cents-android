@@ -1,12 +1,10 @@
 
 package at.my2c;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -30,10 +28,8 @@ public final class StreamActivity extends ListActivity {
 	private static final String TAG = "StreamActivity";
 	
 	private StreamAdapter streamAdapter;
+	private static ArrayList<Comment> commentsArray = new ArrayList<Comment>();
 	
-	private String lastUpdateStatus;
-	//private ProgressDialog progressDialog;
-	private TextView statusTextView;
 	private View statusLayout;
 	
 	private AsyncTask<Void, Void, ArrayList<Comment>> getCommentsStreamTask;
@@ -45,8 +41,6 @@ public final class StreamActivity extends ListActivity {
 		
 		setContentView(R.layout.stream);
 
-		lastUpdateStatus = getString(R.string.status_last_update) + " ";
-		statusTextView = (TextView) findViewById(R.id.StatusTextView);
 		statusLayout = findViewById(R.id.StatusRelativeLayout);
 		
 		findViewById(R.id.ImageButtonHome).setOnClickListener(homeListener);
@@ -54,7 +48,7 @@ public final class StreamActivity extends ListActivity {
 		findViewById(R.id.ImageButtonStream).setEnabled(false);
 		findViewById(R.id.ImageButtonHistory).setOnClickListener(historyListener);
 		
-		streamAdapter = new StreamAdapter(this, R.layout.stream_item, new ArrayList<Comment>());
+		streamAdapter = new StreamAdapter(this, R.layout.stream_item, commentsArray);
 		setListAdapter(streamAdapter);
 	}
 	
@@ -112,28 +106,21 @@ public final class StreamActivity extends ListActivity {
 		protected void onPostExecute(Context target, ArrayList<Comment> result) {
 			if (result == null) {
 				statusLayout.setVisibility(View.GONE);
-				//progressDialog.dismiss();
 				Toast.makeText(target, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
 			}
-			else {
-//				Date date = new Date(System.currentTimeMillis());
-//      		  	statusTextView.setText(lastUpdateStatus + date.toLocaleString());
-				
-				streamAdapter.clear();
-				
+			else {				
+				streamAdapter.clear();				
 				if (result.size() > 0) {
 					for (Comment comment : result) {
 						streamAdapter.add(comment);
 					}
 					streamAdapter.notifyDataSetChanged();
 					statusLayout.setVisibility(View.GONE);
-					//progressDialog.dismiss();
 					
 					getProfileImagesTask = new GetImagesTask(target).execute(result);
 				}
 				else {
 					statusLayout.setVisibility(View.GONE);
-					//progressDialog.dismiss();
 				}
 			}
 			getCommentsStreamTask = null;
@@ -149,11 +136,7 @@ public final class StreamActivity extends ListActivity {
 		@Override
 		protected Void doInBackground(Context target, List<Comment>... params) {			
 			
-			for (Comment comment : params[0]) {
-//				if (!DataManager.profileImageCache.containsKey(comment.getUser())) {
-//					DataManager.profileImageCache.put(comment.getUser(), NetworkManager.getRemoteImage(comment.getUserProfileImageUrl()));
-//				}
-				
+			for (Comment comment : params[0]) {				
 				String gtin = comment.getGtin(); 
 				if ((gtin != null) && (!gtin.equals(""))) {
 					if (!DataManager.productImageCache.containsKey(gtin)) {
