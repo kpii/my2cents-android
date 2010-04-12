@@ -20,7 +20,7 @@
 	
 	<color name="header_text">#FFF</color>
 	<color name="info_text">#FFF</color>
-	<color name="status_text">#FFF</color>
+	<color name="status_text">#2B5D74</color>
 	
 	<color name="product_info_background">#B3CC99</color>
 	<color name="product_name_text">#FFF</color>

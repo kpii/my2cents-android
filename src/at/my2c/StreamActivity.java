@@ -32,8 +32,9 @@ public final class StreamActivity extends ListActivity {
 	private StreamAdapter streamAdapter;
 	
 	private String lastUpdateStatus;
-	private ProgressDialog progressDialog;
+	//private ProgressDialog progressDialog;
 	private TextView statusTextView;
+	private View statusLayout;
 	
 	private AsyncTask<Void, Void, ArrayList<Comment>> getCommentsStreamTask;
 	private AsyncTask<List<Comment>, Void, Void> getProfileImagesTask;
@@ -46,6 +47,7 @@ public final class StreamActivity extends ListActivity {
 
 		lastUpdateStatus = getString(R.string.status_last_update) + " ";
 		statusTextView = (TextView) findViewById(R.id.StatusTextView);
+		statusLayout = findViewById(R.id.StatusRelativeLayout);
 		
 		findViewById(R.id.ImageButtonHome).setOnClickListener(homeListener);
 		findViewById(R.id.ImageButtonScan).setOnClickListener(scanListener);
@@ -97,7 +99,8 @@ public final class StreamActivity extends ListActivity {
 
 		@Override
 		protected void onPreExecute(Context target) {
-			progressDialog = ProgressDialog.show(target, null, getString(R.string.progress_dialog_loading), true);
+			statusLayout.setVisibility(View.VISIBLE);
+			//progressDialog = ProgressDialog.show(target, null, getString(R.string.progress_dialog_loading), true);
 	    }
 		
 		@Override
@@ -108,12 +111,13 @@ public final class StreamActivity extends ListActivity {
 		@Override
 		protected void onPostExecute(Context target, ArrayList<Comment> result) {
 			if (result == null) {
-				progressDialog.dismiss();
+				statusLayout.setVisibility(View.GONE);
+				//progressDialog.dismiss();
 				Toast.makeText(target, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
 			}
 			else {
-				Date date = new Date(System.currentTimeMillis());
-      		  	statusTextView.setText(lastUpdateStatus + date.toLocaleString());
+//				Date date = new Date(System.currentTimeMillis());
+//      		  	statusTextView.setText(lastUpdateStatus + date.toLocaleString());
 				
 				streamAdapter.clear();
 				
@@ -122,12 +126,14 @@ public final class StreamActivity extends ListActivity {
 						streamAdapter.add(comment);
 					}
 					streamAdapter.notifyDataSetChanged();
-					progressDialog.dismiss();
+					statusLayout.setVisibility(View.GONE);
+					//progressDialog.dismiss();
 					
 					getProfileImagesTask = new GetImagesTask(target).execute(result);
 				}
 				else {
-					progressDialog.dismiss();
+					statusLayout.setVisibility(View.GONE);
+					//progressDialog.dismiss();
 				}
 			}
 			getCommentsStreamTask = null;
