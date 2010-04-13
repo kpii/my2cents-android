@@ -3,7 +3,7 @@
     <string name="button_manual_barcode_input">Doesn\'t work? Type the number instead</string>
     <string name="message_stream_loading">Loading latest comments...</string>
 	<string name="app_name">my2cents</string>
-	<string name="app_notes">by ETH Zurich (RC 2 - rev426)</string>
+	<string name="app_notes">by ETH Zurich (RC 2 - rev431)</string>
 	<string name="app_url">http://my2cents.mobi</string>
 
     <string name="home_button_twitter">Personalize your comments and share them with your followers</string>
@@ -48,7 +48,7 @@
 	<string name="menu_help">Help</string>
 	<string name="menu_clear_history">Clear History</string>
 
-	<string name="scanner_default_status">Place a barcode inside the viewfinder rectangle to scan it.</string>	
+	<string name="scanner_default_status">Place a barcode inside the viewfinder to scan it.</string>	
 	<string name="message_camera_problem">Sorry, the Android camera encountered a problem. You may need to restart the device.</string>
 	
     <string name="settings_token">Token</string>
@@ -57,19 +57,16 @@
     <string name="settings_login_checked">Logged in</string>
     <string name="settings_login_desc_out">You are not logged in</string>
     <string name="settings_login_desc_in">You are logged in</string>
-    <string name="settings_location">Share location</string>
     <string name="settings_twitter">Post to Twitter</string>
     <string name="settings_twitter_description">Tweet your comments</string>
-    <string name="settings_location_desc_on">You are sharing your location</string>
-    <string name="settings_location_desc_off">You are not sharing your location</string>
     
     <string name="settings_scanner_category">Scanner</string>
-    <string name="settings_copy_to_clipboard">Copy to clipboard</string>
-    <string name="settings_copy_to_clipboard_summary">Copy to clipboard whan a barcode is found</string>
 	<string name="settings_play_beep">Beep</string>
 	<string name="settings_play_beep_summary">Beep when a barcode is found</string>
 	<string name="settings_vibrate">Vibrate</string>
 	<string name="settings_vibrate_summary">Vibrate when a barcode is found</string>
+	<string name="settings_flashlight">Use front light</string>
+  	<string name="settings_flashlight_summary">Improves scanning in low light on some phones, but may cause glare</string>
 	
 	<string name="settings_general_category">General</string>
     <string name="settings_send_feedback">Send feedback</string>

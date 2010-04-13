@@ -16,6 +16,8 @@
 
 package mobi.my2cents.scanner;
 
+import java.util.Vector;
+
 import mobi.my2cents.R;
 import mobi.my2cents.ScanActivity;
 import android.app.Activity;
@@ -26,6 +28,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 
 /**
@@ -34,6 +37,7 @@ import com.google.zxing.Result;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class CaptureActivityHandler extends Handler {
+
   private final ScanActivity activity;
   private final DecodeThread decodeThread;
   private State state;
@@ -45,10 +49,10 @@ public final class CaptureActivityHandler extends Handler {
   }
 
   public CaptureActivityHandler(ScanActivity activity,
+                         Vector<BarcodeFormat> decodeFormats,
                          boolean beginScanning) {
     this.activity = activity;
-    decodeThread = new DecodeThread(activity,
-        new ViewfinderResultPointCallback(activity.getViewfinderView()));
+    decodeThread = new DecodeThread(activity, decodeFormats, new ViewfinderResultPointCallback(activity.getViewfinderView()));
     decodeThread.start();
     state = State.SUCCESS;
 
@@ -89,7 +93,9 @@ public final class CaptureActivityHandler extends Handler {
         break;
       case R.id.launch_product_query:
         String url = (String) message.obj;
-        activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);        
+        activity.startActivity(intent);
         break;
     }
   }
@@ -117,4 +123,5 @@ public final class CaptureActivityHandler extends Handler {
       activity.drawViewfinder();
     }
   }
+
 }

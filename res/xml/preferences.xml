@@ -29,10 +29,10 @@
 			android:title="@string/settings_vibrate"
 			android:summary="@string/settings_vibrate_summary" />
 		<CheckBoxPreference
-			android:defaultValue="true"
-			android:key="@string/settings_copy_to_clipboard"
-			android:title="@string/settings_copy_to_clipboard"
-			android:summary="@string/settings_copy_to_clipboard_summary" />
+			android:key="@string/settings_flashlight"
+			android:defaultValue="false"
+			android:title="@string/settings_flashlight"
+			android:summary="@string/settings_flashlight_summary" />
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:title="@string/settings_general_category">

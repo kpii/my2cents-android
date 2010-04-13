@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import mobi.my2cents.R;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -39,6 +38,7 @@ import com.google.zxing.ResultPoint;
  * @author dswitkin@google.com (Daniel Switkin)
  */
 public final class ViewfinderView extends View {
+
   private static final int[] SCANNER_ALPHA = {0, 64, 128, 192, 255, 192, 128, 64};
   private static final long ANIMATION_DELAY = 100L;
   private static final int OPAQUE = 0xFF;

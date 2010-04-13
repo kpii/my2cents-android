@@ -17,20 +17,20 @@
 package mobi.my2cents.scanner;
 
 import java.io.IOException;
-import java.util.regex.Pattern;
+
+import mobi.my2cents.R;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Handler;
-import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Display;
 import android.view.SurfaceHolder;
-import android.view.WindowManager;
 
 import com.google.zxing.ResultPoint;
 
@@ -43,66 +43,29 @@ import com.google.zxing.ResultPoint;
  */
 public final class CameraManager {
 
-  private static final String TAG = "CameraManager";
+  private static final String TAG = CameraManager.class.getSimpleName();
 
   private static final int MIN_FRAME_WIDTH = 240;
   private static final int MIN_FRAME_HEIGHT = 240;
   private static final int MAX_FRAME_WIDTH = 480;
   private static final int MAX_FRAME_HEIGHT = 360;
 
-  private static final int TEN_DESIRED_ZOOM = 27;
-  private static final int DESIRED_SHARPNESS = 30;
-
-  private static final Pattern COMMA_PATTERN = Pattern.compile(",");
-
   private static CameraManager cameraManager;
 
-  private Camera camera;
   private final Context context;
-  private Point screenResolution;
-  private Point cameraResolution;
+  private final CameraConfigurationManager configManager;
+  private Camera camera;
   private Rect framingRect;
-  private Handler previewHandler;
-  private int previewMessage;
-  private Handler autoFocusHandler;
-  private int autoFocusMessage;
   private boolean initialized;
   private boolean previewing;
-  private int previewFormat;
-  private String previewFormatString;
   private final boolean useOneShotPreviewCallback;
-
   /**
    * Preview frames are delivered here, which we pass on to the registered handler. Make sure to
    * clear the handler so it will only receive one message.
    */
-  private final Camera.PreviewCallback previewCallback = new Camera.PreviewCallback() {
-    public void onPreviewFrame(byte[] data, Camera camera) {
-      if (!useOneShotPreviewCallback) {
-        camera.setPreviewCallback(null);
-      }
-      if (previewHandler != null) {
-        Message message = previewHandler.obtainMessage(previewMessage, cameraResolution.x,
-            cameraResolution.y, data);
-        message.sendToTarget();
-        previewHandler = null;
-      }
-    }
-  };
-
-  /**
-   * Autofocus callbacks arrive here, and are dispatched to the Handler which requested them.
-   */
-  private final Camera.AutoFocusCallback autoFocusCallback = new Camera.AutoFocusCallback() {
-    public void onAutoFocus(boolean success, Camera camera) {
-      if (autoFocusHandler != null) {
-        Message message = autoFocusHandler.obtainMessage(autoFocusMessage, success);
-        // Simulate continuous autofocus by sending a focus request every 1.5 seconds.
-        autoFocusHandler.sendMessageDelayed(message, 1500L);
-        autoFocusHandler = null;
-      }
-    }
-  };
+  private final PreviewCallback previewCallback;
+  /** Autofocus callbacks arrive here, and are dispatched to the Handler which requested them. */
+  private final AutoFocusCallback autoFocusCallback;
 
   /**
    * Initializes this static object with the Context of the calling Activity.
@@ -125,16 +88,18 @@ public final class CameraManager {
   }
 
   private CameraManager(Context context) {
+
     this.context = context;
-    camera = null;
-    initialized = false;
-    previewing = false;
+    this.configManager = new CameraConfigurationManager(context);
 
     // Camera.setOneShotPreviewCallback() has a race condition in Cupcake, so we use the older
     // Camera.setPreviewCallback() on 1.5 and earlier. For Donut and later, we need to use
     // the more efficient one shot callback, as the older one can swamp the system and cause it
     // to run out of memory. We can't use SDK_INT because it was introduced in the Donut SDK.
     useOneShotPreviewCallback = Integer.parseInt(Build.VERSION.SDK) > Build.VERSION_CODES.CUPCAKE;
+
+    previewCallback = new PreviewCallback(configManager, useOneShotPreviewCallback);
+    autoFocusCallback = new AutoFocusCallback(configManager);
   }
 
   /**
@@ -153,11 +118,14 @@ public final class CameraManager {
 
       if (!initialized) {
         initialized = true;
-        getScreenResolution();
+        configManager.initFromCameraParameters(camera);
       }
+      configManager.setDesiredCameraParameters(camera);
 
-      setCameraParameters();
-      FlashlightManager.enableFlashlight();
+      SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+      if (prefs.getBoolean(context.getString(R.string.settings_flashlight), false)) {
+        FlashlightManager.enableFlashlight();
+      }
     }
   }
 
@@ -191,8 +159,8 @@ public final class CameraManager {
         camera.setPreviewCallback(null);
       }
       camera.stopPreview();
-      previewHandler = null;
-      autoFocusHandler = null;
+      previewCallback.setHandler(null, 0);
+      autoFocusCallback.setHandler(null, 0);
       previewing = false;
     }
   }
@@ -207,8 +175,7 @@ public final class CameraManager {
    */
   public void requestPreviewFrame(Handler handler, int message) {
     if (camera != null && previewing) {
-      previewHandler = handler;
-      previewMessage = message;
+      previewCallback.setHandler(handler, message);
       if (useOneShotPreviewCallback) {
         camera.setOneShotPreviewCallback(previewCallback);
       } else {
@@ -225,8 +192,7 @@ public final class CameraManager {
    */
   public void requestAutoFocus(Handler handler, int message) {
     if (camera != null && previewing) {
-      autoFocusHandler = handler;
-      autoFocusMessage = message;
+      autoFocusCallback.setHandler(handler, message);
       camera.autoFocus(autoFocusCallback);
     }
   }
@@ -239,6 +205,7 @@ public final class CameraManager {
    * @return The rectangle to draw on screen in window coordinates.
    */
   public Rect getFramingRect() {
+    Point cameraResolution = configManager.getCameraResolution();
     if (framingRect == null) {
       if (camera == null) {
         return null;
@@ -293,6 +260,8 @@ public final class CameraManager {
    */
   public PlanarYUVLuminanceSource buildLuminanceSource(byte[] data, int width, int height) {
     Rect rect = getFramingRect();
+    int previewFormat = configManager.getPreviewFormat();
+    String previewFormatString = configManager.getPreviewFormatString();
     switch (previewFormat) {
       // This is the standard Android format which all devices are REQUIRED to support.
       // In theory, it's the only one we should ever care about.
@@ -314,177 +283,4 @@ public final class CameraManager {
         previewFormat + '/' + previewFormatString);
   }
 
-  /**
-   * Sets the camera up to take preview images which are used for both preview and decoding.
-   * We detect the preview format here so that buildLuminanceSource() can build an appropriate
-   * LuminanceSource subclass. In the future we may want to force YUV420SP as it's the smallest,
-   * and the planar Y can be used for barcode scanning without a copy in some cases.
-   */
-  private void setCameraParameters() {
-    Camera.Parameters parameters = camera.getParameters();
-    previewFormat = parameters.getPreviewFormat();
-    previewFormatString = parameters.get("preview-format");
-    Log.v(TAG, "Default preview format: " + previewFormat + '/' + previewFormatString);
-
-    cameraResolution = getCameraResolution(parameters);
-    Log.v(TAG, "Setting preview size: " + cameraResolution.x + ", " + cameraResolution.y);
-    parameters.setPreviewSize(cameraResolution.x, cameraResolution.y);
-
-    setFlash(parameters);
-    setZoom(parameters);
-    //setSharpness(parameters);
-
-    camera.setParameters(parameters);
-  }
-
-  private Point getScreenResolution() {
-    if (screenResolution == null) {
-      WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-      Display display = manager.getDefaultDisplay();
-      screenResolution = new Point(display.getWidth(), display.getHeight());
-    }
-    return screenResolution;
-  }
-
-  private Point getCameraResolution(Camera.Parameters parameters) {
-
-    String previewSizeValueString = parameters.get("preview-size-values");
-    // saw this on Xperia
-    if (previewSizeValueString == null) {
-      previewSizeValueString = parameters.get("preview-size-value");
-    }
-
-    Point cameraResolution = null;
-    
-    if (previewSizeValueString != null) {
-      Log.v(TAG, "preview-size parameter: " + previewSizeValueString);
-      cameraResolution = findBestPreviewSizeValue(previewSizeValueString, screenResolution);
-    }
-
-    if (cameraResolution == null) {
-      // Ensure that the camera resolution is a multiple of 8, as the screen may not be.
-      cameraResolution = new Point(
-          (screenResolution.x >> 3) << 3,
-          (screenResolution.y >> 3) << 3);
-    }
-
-    return cameraResolution;
-  }
-
-  private static Point findBestPreviewSizeValue(String previewSizeValueString, Point screenResolution) {
-    int bestX = 0;
-    int bestY = 0;
-    int diff = Integer.MAX_VALUE;
-    for (String previewSize : COMMA_PATTERN.split(previewSizeValueString)) {
-
-      previewSize = previewSize.trim();
-      int dimPosition = previewSize.indexOf('x');
-      if (dimPosition < 0) {
-        Log.w(TAG, "Bad preview-size: " + previewSize);
-        continue;
-      }
-
-      int newX;
-      int newY;
-      try {
-        newX = Integer.parseInt(previewSize.substring(0, dimPosition));
-        newY = Integer.parseInt(previewSize.substring(dimPosition + 1));
-      } catch (NumberFormatException nfe) {
-        Log.w(TAG, "Bad preview-size: " + previewSize);
-        continue;
-      }
-
-      int newDiff = Math.abs(newX - screenResolution.x) + Math.abs(newY - screenResolution.y);
-      if (newDiff == 0) {
-        bestX = newX;
-        bestY = newY;
-        break;
-      } else if (newDiff < diff) {
-        bestX = newX;
-        bestY = newY;
-        diff = newDiff;
-      }
-
-    }
-
-    if (bestX > 0 && bestY > 0) {
-      return new Point(bestX, bestY);
-    }
-    return null;
-  }
-
-  private void setFlash(Camera.Parameters parameters) {
-    // FIXME: This is a hack to turn the flash off on the Samsung Galaxy.
-    parameters.set("flash-value", 2);
-    // This is the standard setting to turn the flash off that all devices should honor.
-    parameters.set("flash-mode", "off");
-  }
-
-  private void setZoom(Camera.Parameters parameters) {
-
-    String zoomSupportedString = parameters.get("zoom-supported");
-    if (zoomSupportedString != null && !Boolean.parseBoolean(zoomSupportedString)) {
-      return;
-    }
-
-    int tenDesiredZoom = TEN_DESIRED_ZOOM;
-
-    String maxZoomString = parameters.get("max-zoom");
-    if (maxZoomString != null) {
-      try {
-        int tenMaxZoom = (int) (10.0 * Double.parseDouble(maxZoomString));
-        if (tenDesiredZoom > tenMaxZoom) {
-          tenDesiredZoom = tenMaxZoom;
-        }
-      } catch (NumberFormatException nfe) {
-        Log.w(TAG, "Bad max-zoom: " + maxZoomString);
-      }
-    }
-
-    String takingPictureZoomMaxString = parameters.get("taking-picture-zoom-max");
-    if (takingPictureZoomMaxString != null) {
-      try {
-        int tenMaxZoom = Integer.parseInt(takingPictureZoomMaxString);
-        if (tenDesiredZoom > tenMaxZoom) {
-          tenDesiredZoom = tenMaxZoom;
-        }
-      } catch (NumberFormatException nfe) {
-        Log.w(TAG, "Bad taking-picture-zoom-max: " + takingPictureZoomMaxString);
-      }
-    }
-
-
-    // Set zoom. This helps encourage the user to pull back.
-    // Some devices like the Behold have a zoom parameter
-    if (maxZoomString != null) {
-      parameters.set("zoom", String.valueOf(tenDesiredZoom / 10.0));
-    }
-
-    // Most devices, like the Hero, appear to expose this zoom parameter.
-    // It takes on values like "27" which appears to mean 2.7x zoom
-    if (takingPictureZoomMaxString != null) {    
-      parameters.set("taking-picture-zoom", tenDesiredZoom);
-    }
-  }
-
-  /*
-  private void setSharpness(Camera.Parameters parameters) {
-
-    int desiredSharpness = DESIRED_SHARPNESS;
-
-    String maxSharpnessString = parameters.get("sharpness-max");
-    if (maxSharpnessString != null) {
-      try {
-        int maxSharpness = Integer.parseInt(maxSharpnessString);
-        if (desiredSharpness > maxSharpness) {
-          desiredSharpness = maxSharpness;
-        }
-      } catch (NumberFormatException nfe) {
-        Log.w(TAG, "Bad sharpness-max: " + maxSharpnessString);
-      }
-    }
-
-    parameters.set("sharpness", desiredSharpness);
-  }
-   */
 }

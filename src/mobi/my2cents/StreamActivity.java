@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -93,7 +94,6 @@ public final class StreamActivity extends ListActivity {
 		@Override
 		protected void onPreExecute(Context target) {
 			statusLayout.setVisibility(View.VISIBLE);
-			//progressDialog = ProgressDialog.show(target, null, getString(R.string.progress_dialog_loading), true);
 	    }
 		
 		@Override
@@ -224,4 +224,16 @@ public final class StreamActivity extends ListActivity {
 		cancelAsyncTasks();
         super.onDestroy();
     }
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)  {
+	    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+	    	Intent back = new Intent(this, MainActivity.class);
+	    	back.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(back);
+			finish();
+	        return true;
+	    }
+	    return super.onKeyDown(keyCode, event);
+	}
 }

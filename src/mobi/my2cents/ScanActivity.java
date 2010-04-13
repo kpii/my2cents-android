@@ -67,7 +67,6 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	private boolean hasSurface;
 	private boolean playBeep;
 	private boolean vibrate;
-	private boolean copyToClipboard;
 	private final OnCompletionListener beepListener = new BeepListener();
 
 	public static final Vector<BarcodeFormat> PRODUCT_FORMATS;
@@ -158,7 +157,6 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 
 		playBeep = settings.getBoolean(getString(R.string.settings_play_beep), true);
 		vibrate = settings.getBoolean(getString(R.string.settings_vibrate), false);
-		copyToClipboard = settings.getBoolean(getString(R.string.settings_copy_to_clipboard), true);
 		initBeepSound();
 	}
 
@@ -170,21 +168,6 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 			handler = null;
 		}
 		CameraManager.get().closeDriver();
-	}
-
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (lastResult != null) {
-				resetStatusView();
-				handler.sendEmptyMessage(R.id.restart_preview);
-				return true;
-			}
-		} else if (keyCode == KeyEvent.KEYCODE_FOCUS || keyCode == KeyEvent.KEYCODE_CAMERA) {
-			// Handle these events so they don't launch the Camera app
-			return true;
-		}
-		return super.onKeyDown(keyCode, event);
 	}
 
 	@Override
@@ -297,11 +280,6 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 			gtin = "0" + gtin;
 		}
 
-		if (copyToClipboard) {
-			ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-			clipboard.setText(gtin);
-		}
-
 		Intent intent = new Intent(this, CommentActivity.class);
 		intent.setAction(Intents.ACTION);
 		intent.putExtra(HistoryColumns.GTIN, gtin);
@@ -360,7 +338,7 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 		}
 		if (handler == null) {
 			boolean beginScanning = lastResult == null;
-			handler = new CaptureActivityHandler(this, beginScanning);
+			handler = new CaptureActivityHandler(this, PRODUCT_FORMATS, beginScanning);
 		}
 	}
 
@@ -425,5 +403,22 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	        }
 		}
 		return super.onCreateDialog(id);
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+			setResult(RESULT_CANCELED);
+	        finish();
+	        
+			Intent back = new Intent(this, MainActivity.class);
+	    	back.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(back);	
+			return true;
+		} else if (keyCode == KeyEvent.KEYCODE_FOCUS || keyCode == KeyEvent.KEYCODE_CAMERA) {
+			// Handle these events so they don't launch the Camera app
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
 	}
 }

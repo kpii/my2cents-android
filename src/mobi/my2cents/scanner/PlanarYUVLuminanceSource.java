@@ -16,9 +16,9 @@
 
 package mobi.my2cents.scanner;
 
-import android.graphics.Bitmap;
-
 import com.google.zxing.LuminanceSource;
+
+import android.graphics.Bitmap;
 
 /**
  * This object extends LuminanceSource around an array of YUV data returned from the camera driver,
@@ -37,7 +37,7 @@ public final class PlanarYUVLuminanceSource extends LuminanceSource {
   private final int left;
   private final int top;
 
-  PlanarYUVLuminanceSource(byte[] yuvData, int dataWidth, int dataHeight, int left, int top,
+  public PlanarYUVLuminanceSource(byte[] yuvData, int dataWidth, int dataHeight, int left, int top,
       int width, int height) {
     super(width, height);
 

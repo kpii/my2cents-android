@@ -16,11 +16,11 @@
 
 package mobi.my2cents.scanner;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import android.os.IBinder;
 import android.util.Log;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * This class is used to activate the weak light on some camera phones (not flash)
@@ -32,10 +32,11 @@ import android.util.Log;
  * http://almondmendoza.com/2009/01/05/changing-the-screen-brightness-programatically/</a> and
  * <a href="http://code.google.com/p/droidled/source/browse/trunk/src/com/droidled/demo/DroidLED.java">
  * http://code.google.com/p/droidled/source/browse/trunk/src/com/droidled/demo/DroidLED.java</a>.
+ * Thanks to Ryan Alford for pointing out the availability of this class.
  */
 final class FlashlightManager {
 
-  private static final String TAG = FlashlightManager.class.getName();
+  private static final String TAG = FlashlightManager.class.getSimpleName();
 
   private static Object iHardwareService;
   private static Method setFlashEnabledMethod;
