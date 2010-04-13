@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -149,5 +150,17 @@ public final class HistoryActivity extends ListActivity {
 			}
 			super.bindView(view, context, cursor);
 		}
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)  {
+	    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+	    	Intent back = new Intent(this, MainActivity.class);
+	    	back.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(back);
+			finish();
+	        return true;
+	    }
+	    return super.onKeyDown(keyCode, event);
 	}
 }
