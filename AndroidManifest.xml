@@ -3,7 +3,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:versionName="1.0.$Rev$"
 	android:versionCode="1"
-	package="at.my2c">
+	package="mobi.my2cents">
 
 	<!-- We require Cupcake (Android 1.5) or later, but are really targeting Donut. -->
 	<uses-sdk
