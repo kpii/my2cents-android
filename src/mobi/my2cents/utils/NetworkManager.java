@@ -32,7 +32,7 @@ public final class NetworkManager {
 
 	private static final String TAG = "NetworkManager";
 	private static String authToken;
-	private static final String USER_AGENT = "Android my2cents";
+	public static String userAgent;
 	public static final String BASE_URL = "http://my2cents.mobi";
 	
 	static {
@@ -105,7 +105,7 @@ public final class NetworkManager {
 	public static String queryREST(String url) {
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet(url);
-		httpGet.setHeader("User-Agent", USER_AGENT);
+		httpGet.setHeader("User-Agent", userAgent);
 		
 		try {
 			HttpResponse response = httpClient.execute(httpGet);			
@@ -140,7 +140,7 @@ public final class NetworkManager {
 		// Create a new HttpClient and Post Header
 		HttpClient httpClient = new DefaultHttpClient();  
 	    HttpPost httpPost = new HttpPost(url);
-	    httpPost.setHeader("User-Agent", USER_AGENT);
+	    httpPost.setHeader("User-Agent", userAgent);
 	    
 	    if ((authToken != null) && (!authToken.equals(""))) {
 	    	httpPost.setHeader("Cookie", authToken);
