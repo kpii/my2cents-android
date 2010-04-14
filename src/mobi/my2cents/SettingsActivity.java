@@ -20,11 +20,9 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 
 	private static final String TAG = "SettingsActivity";
 	
-	public static final String AUTH_TOKEN = "AUTH_TOKEN";
 	private static boolean shareOnTwitter;
 	
 	private SharedPreferences settings;
-	private String settings_login_key;
 	private CheckBoxPreference loginCheckBoxPreference;
 	
 	private static final int AUTH_REQUEST = 1;
@@ -34,13 +32,10 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.settings);
 		
-		CookieSyncManager.createInstance(this);
-		
 		addPreferencesFromResource(R.xml.preferences);
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
 		
-		settings_login_key = getString(R.string.settings_login);
-		loginCheckBoxPreference = (CheckBoxPreference)getPreferenceScreen().findPreference(settings_login_key);
+		loginCheckBoxPreference = (CheckBoxPreference)getPreferenceScreen().findPreference(getString(R.string.settings_login));
 		
 		// Intent feedback
         PreferenceScreen feedbackPreference = (PreferenceScreen)getPreferenceManager().findPreference(getString(R.string.settings_send_feedback));
@@ -54,7 +49,8 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	@Override
 	protected void onResume() {
 		super.onResume();
-		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+		
+		settings.registerOnSharedPreferenceChangeListener(this);
         if (!isAccessTokenStored())
         	unsetTokens();
 	}
@@ -66,14 +62,14 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	}
 	
 	public boolean isAccessTokenStored() {
-		String token = settings.getString(getResources().getString(R.string.settings_token),"");
+		String token = settings.getString(getString(R.string.settings_token),"");
 		if (token.equals(""))
 			return false;
 		return true;
 	}
 	
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {        
-		if (key.equals(settings_login_key)) {
+		if (key.equals(getString(R.string.settings_login))) {
         	if(loginCheckBoxPreference.isChecked()) {
         		askOAuth();
         	} else {
@@ -94,9 +90,9 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
         	switch (resultCode) {
 				case RESULT_OK: {
 					if (intent != null) {
-	                	String authToken = intent.getStringExtra(AUTH_TOKEN);
+	                	String authToken = intent.getStringExtra(getString(R.string.settings_token));
 	                	if ((authToken != null) && (authToken != "")) {
-	                		storeAuthToken(authToken);
+	                		onSetToken();
 	                	}
 	                }
 					return;
@@ -110,11 +106,11 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
     }
 		
 	private void unsetTokens() {
-		getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+		settings.unregisterOnSharedPreferenceChangeListener(this);
 		
 		SharedPreferences.Editor editor = settings.edit();
-		editor.putString(getResources().getString(R.string.settings_token), "");
-		editor.putBoolean(settings_login_key, false);
+		editor.putString(getString(R.string.settings_token), "");
+		editor.putBoolean(getString(R.string.settings_login), false);
 		editor.commit();
 		
 		NetworkManager.setAuthToken("");
@@ -126,24 +122,14 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		
 		loginCheckBoxPreference.setChecked(false);
 		
-		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+		settings.registerOnSharedPreferenceChangeListener(this);
 		Log.i(TAG, "Tokens unset");
 	}
 	
-	private void storeAuthToken(String token) {
-		getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
-		
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putString(getResources().getString(R.string.settings_token), token);
-		editor.putBoolean(settings_login_key, true);
-		editor.commit();
-		
-		NetworkManager.setAuthToken(token);
-		
+	private void onSetToken() {
+		settings.unregisterOnSharedPreferenceChangeListener(this);
 		loginCheckBoxPreference.setChecked(true);
-		
-		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-		Log.i(TAG, "Tokens stored");
+		settings.registerOnSharedPreferenceChangeListener(this);
 	}
 
 	public static void setShareOnTwitter(boolean shareOnTwitter) {

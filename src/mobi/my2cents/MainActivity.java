@@ -12,11 +12,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 public final class MainActivity extends Activity {
 	
-	private static final String TAG = "MainActivity";
-	
+	private static final String TAG = "MainActivity";	
 	private SharedPreferences settings;
 
 	@Override
@@ -32,6 +32,28 @@ public final class MainActivity extends Activity {
 		
         settings = PreferenceManager.getDefaultSharedPreferences(this);
 		NetworkManager.setAuthToken(settings.getString(getString(R.string.settings_token),""));
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		boolean isLoggedIn = settings.getBoolean(getString(R.string.settings_login), false);
+		boolean isSharingOnTwitter = settings.getBoolean(getString(R.string.settings_twitter), false);
+		
+		if (isLoggedIn && isSharingOnTwitter) {
+			findViewById(R.id.HomeTwitterLayout).setVisibility(View.GONE);
+		}
+		else {
+			findViewById(R.id.HomeTwitterLayout).setVisibility(View.VISIBLE);
+			TextView headerTextView = (TextView) findViewById(R.id.HomeTwitterHeaderTextView);
+			if (isLoggedIn && !isSharingOnTwitter) {
+				headerTextView.setText(R.string.home_button_twitter_share_header);
+			}
+			else {
+				headerTextView.setText(R.string.home_button_twitter_login_header);
+			}
+		}
 	}
 	
 	private final View.OnClickListener scanReadListener = new View.OnClickListener() {
@@ -66,8 +88,16 @@ public final class MainActivity extends Activity {
 	
 	private final View.OnClickListener loginListener = new View.OnClickListener() {
 		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
-			startActivity(intent);
+			boolean isLoggedIn = settings.getBoolean(getString(R.string.settings_login), false);
+			boolean isSharingOnTwitter = settings.getBoolean(getString(R.string.settings_twitter), false);
+			if (isLoggedIn && !isSharingOnTwitter) {
+				Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
+				startActivity(intent);
+			}
+			else {
+				Intent intent = new Intent(getBaseContext(), AuthorizationActivity.class);
+				startActivity(intent);
+			}			
 		}
 	};
 

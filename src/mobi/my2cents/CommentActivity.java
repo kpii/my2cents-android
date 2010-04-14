@@ -199,7 +199,7 @@ public final class CommentActivity extends ListActivity {
 				if (intent.getBooleanExtra(getString(R.string.show_virtual_keyboard), false)) {
 					InputMethodManager inputMgr = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 					inputMgr.toggleSoftInput(0, 0);
-				}				
+				}
 				
 				getProductInfoTask = new GetProductInfoTask(this).execute(gtin);
 			}

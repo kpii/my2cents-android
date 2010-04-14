@@ -177,8 +177,7 @@
 				android:textColor="@color/info_backgroung"
 				android:layout_marginBottom="@dimen/home_screen_button_margin_small"
 				android:layout_toRightOf="@id/HomeTwitterImageView"
-				android:id="@+id/HomeTwitterHeaderTextView"
-				android:text="@string/home_button_twitter_header"></TextView>
+				android:id="@+id/HomeTwitterHeaderTextView" android:text="@string/home_button_twitter_login_header"></TextView>
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -186,8 +185,7 @@
 				android:textSize="@dimen/home_screen_button_text"
 				android:layout_below="@id/HomeTwitterHeaderTextView"
 				android:layout_toRightOf="@id/HomeTwitterImageView"
-				android:id="@+id/HomeTwitterTextView"
-				android:text="@string/home_button_twitter"></TextView>
+				android:id="@+id/HomeTwitterTextView" android:text="@string/home_button_twitter_login"></TextView>
 		</RelativeLayout>
 	</LinearLayout>
 	<TextView
