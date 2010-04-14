@@ -23,8 +23,6 @@ public final class AuthorizationActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		CookieSyncManager.createInstance(this);
-		
 		setContentView(R.layout.authorization);
 		
 		webView = (WebView) findViewById(R.id.AuthWebView);

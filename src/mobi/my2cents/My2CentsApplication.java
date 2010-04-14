@@ -6,6 +6,7 @@ import android.app.Application;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
+import android.webkit.CookieSyncManager;
 
 public class My2CentsApplication extends Application {
 	
@@ -20,6 +21,7 @@ public class My2CentsApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		
+		CookieSyncManager.createInstance(this);
 		try {
 			packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
 			NetworkManager.userAgent = "Android my2cents [" + My2CentsApplication.packageInfo.versionName + "]";
