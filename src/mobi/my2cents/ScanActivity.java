@@ -26,7 +26,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
-import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -398,6 +397,11 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 		        				startActivity(intent);
 		        			}
 		                }
+		            })
+		            .setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
+		            	public void onClick(DialogInterface dialog, int whichButton) {
+                	
+		            	}
 		            })
 		            .create();
 	        }
