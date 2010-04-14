@@ -34,7 +34,7 @@
 	<string name="button_home">Home</string>
 	<string name="button_history">History</string>
 	<string name="button_stream">Stream</string>
-	<string name="button_search">Done</string>
+	<string name="button_search">Search</string>
 	<string name="button_login_invitation">Please login to comment</string>
 	
 	<string name="radio_button_barcode">Barcode</string>
