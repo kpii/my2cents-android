@@ -10,6 +10,7 @@ import mobi.my2cents.scanner.ViewfinderView;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -66,6 +67,7 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	private boolean hasSurface;
 	private boolean playBeep;
 	private boolean vibrate;
+	private boolean showVirtualKeyboard;
 	private final OnCompletionListener beepListener = new BeepListener();
 
 	public static final Vector<BarcodeFormat> PRODUCT_FORMATS;
@@ -156,6 +158,9 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 
 		playBeep = settings.getBoolean(getString(R.string.settings_play_beep), true);
 		vibrate = settings.getBoolean(getString(R.string.settings_vibrate), false);
+		
+		showVirtualKeyboard = getIntent().getBooleanExtra(getString(R.string.show_virtual_keyboard), false);
+		
 		initBeepSound();
 	}
 
@@ -278,11 +283,8 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 		if (rawResult.getBarcodeFormat().equals(BarcodeFormat.UPC_A)) {
 			gtin = "0" + gtin;
 		}
-
-		Intent intent = new Intent(this, CommentActivity.class);
-		intent.setAction(Intents.ACTION);
-		intent.putExtra(HistoryColumns.GTIN, gtin);
-		startActivity(intent);
+		
+		showProductDetails(this, gtin);
 	}
 
 	/**
@@ -391,10 +393,7 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 		                	EditText editor = (EditText)view.findViewById(R.id.InputEditText);
 		                	String gtin = editor.getText().toString();
 		        			if ((gtin != null) && (!gtin.equals(""))) {
-		        				Intent intent = new Intent(view.getContext(), CommentActivity.class);
-		        				intent.setAction(Intents.ACTION);
-		        				intent.putExtra(HistoryColumns.GTIN, gtin);
-		        				startActivity(intent);
+		        				showProductDetails(view.getContext(), gtin);
 		        			}
 		                }
 		            })
@@ -424,5 +423,13 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 			return true;
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+	
+	private void showProductDetails(Context context, String gtin) {
+		Intent intent = new Intent(context, CommentActivity.class);
+		intent.setAction(Intents.ACTION);
+		intent.putExtra(HistoryColumns.GTIN, gtin);
+		intent.putExtra(getString(R.string.show_virtual_keyboard), showVirtualKeyboard);
+		startActivity(intent);
 	}
 }

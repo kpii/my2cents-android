@@ -31,6 +31,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Gallery;
@@ -45,6 +46,7 @@ public final class CommentActivity extends ListActivity {
 	private static final String TAG = "CommentActivity";
 	
 	private boolean isProductInfoAvailable;
+	private boolean showVirtualKeyboard;
 	
 	private boolean updateHistory;
 	public final static String UPDATE_HISTORY = "UpdateHistory";
@@ -193,6 +195,11 @@ public final class CommentActivity extends ListActivity {
 			if (action.equals(Intents.ACTION)) {
 				gtin = intent.getStringExtra(HistoryColumns.GTIN);
 				updateHistory = intent.getBooleanExtra(UPDATE_HISTORY, true);
+				
+				if (intent.getBooleanExtra(getString(R.string.show_virtual_keyboard), false)) {
+					InputMethodManager inputMgr = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+					inputMgr.toggleSoftInput(0, 0);
+				}				
 				
 				getProductInfoTask = new GetProductInfoTask(this).execute(gtin);
 			}

@@ -15,8 +15,10 @@
     <string name="home_button_history_header">Track your products</string>
     <string name="home_button_stream">Read what products others are commenting on</string>
     <string name="home_button_stream_header">Comment stream</string>
-    <string name="home_button_scan">Scan a product\'s barcode to read other people\'s comments and share your own opinion</string>
-    <string name="home_button_scan_header">Scan a product</string>
+    <string name="home_button_scan_comment">Scan a barcode to share your opinion</string>
+    <string name="home_button_scan_comment_header">Scan and comment</string>
+    <string name="home_button_scan_read">Scan a barcode to read other people\'s comments</string>
+    <string name="home_button_scan_read_header">Scan and read</string>
     <string name="message_unsuccessful_authorization">Authentication failed</string>
     <string name="message_successful_authorization">Authentication successful</string>
 	
@@ -76,6 +78,8 @@
 	
 	<string name="settings_first_start">First start</string>
 	<string name="settings_client_id">Client ID</string>
+	
+	<string name="show_virtual_keyboard">Show virtual keyboard</string>
 	
 	<string name="status_last_update">Last update:</string>
 	
