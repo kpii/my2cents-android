@@ -15,6 +15,7 @@ import mobi.my2cents.data.ProductInfo;
 import mobi.my2cents.utils.NetworkManager;
 import mobi.my2cents.utils.WeakAsyncTask;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -26,6 +27,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -49,6 +51,8 @@ public final class CommentActivity extends ListActivity {
 	
 	private boolean updateHistory;
 	public final static String UPDATE_HISTORY = "UpdateHistory";
+	
+	private final int DIALOG_PRODUCT_DETAILS = 0;
 	
 	private SharedPreferences settings;
 	private InputMethodManager inputManager;
@@ -83,6 +87,8 @@ public final class CommentActivity extends ListActivity {
 		DataManager.UnknownProductName = getString(R.string.unknown_product);
 		
 		productImageView = (ImageView) findViewById(R.id.ProductImageView);
+		productImageView.setOnClickListener(productDetailsListener);
+		
 		productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
 		productManufacturerTextView = (TextView) findViewById(R.id.ProductManufacturerTextView);
 		
@@ -145,10 +151,11 @@ public final class CommentActivity extends ListActivity {
 	private final View.OnClickListener productDetailsListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			if (productInfo != null) {
-				if (productInfo.getDetailPageUrl() != null) {
-					Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse(productInfo.getDetailPageUrl()));  
-					startActivity(viewIntent);
-				}					
+				showDialog(DIALOG_PRODUCT_DETAILS);
+//				if (productInfo.getDetailPageUrl() != null) {
+//					Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse(productInfo.getDetailPageUrl()));  
+//					startActivity(viewIntent);
+//				}
 			}
 		}
 	};
@@ -455,4 +462,28 @@ public final class CommentActivity extends ListActivity {
 		cancelAsyncTasks();
         super.onDestroy();
     }
+	
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		
+		switch (id) {
+			case DIALOG_PRODUCT_DETAILS: {
+				LayoutInflater factory = LayoutInflater.from(this);
+		        final View view = factory.inflate(R.layout.product_details_dialog, null);
+		        ImageView imageView = (ImageView) view.findViewById(R.id.ProductImageView);
+		        imageView.setImageBitmap(productInfo.getImage());
+		        return new AlertDialog.Builder(this)
+		            .setIcon(android.R.drawable.ic_dialog_info)
+		            .setTitle(productInfo.getGtin())
+		            .setView(view)
+		            .setPositiveButton(R.string.button_close, new DialogInterface.OnClickListener() {
+		                public void onClick(DialogInterface dialog, int whichButton) {
+		                	
+		                }
+		            })
+		            .create();
+	        }
+		}
+		return super.onCreateDialog(id);
+	}
 }
