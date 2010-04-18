@@ -46,12 +46,12 @@ public final class CommentActivity extends ListActivity {
 	private static final String TAG = "CommentActivity";
 	
 	private boolean isProductInfoAvailable;
-	private boolean showVirtualKeyboard;
 	
 	private boolean updateHistory;
 	public final static String UPDATE_HISTORY = "UpdateHistory";
 	
 	private SharedPreferences settings;
+	private InputMethodManager inputManager;
 
 	private CommentsAdapter commentsAdapter;
 
@@ -111,6 +111,8 @@ public final class CommentActivity extends ListActivity {
 		findViewById(R.id.ImageButtonHistory).setOnClickListener(historyListener);
 		
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
+		
+		inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 	}
 	
 	private final View.OnClickListener homeListener = new View.OnClickListener() {
@@ -196,14 +198,15 @@ public final class CommentActivity extends ListActivity {
 				gtin = intent.getStringExtra(HistoryColumns.GTIN);
 				updateHistory = intent.getBooleanExtra(UPDATE_HISTORY, true);
 				
-				if (intent.getBooleanExtra(getString(R.string.show_virtual_keyboard), false)) {
-					InputMethodManager inputMgr = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-					inputMgr.toggleSoftInput(0, 0);
-				}
+				hideVirtualKeyboard();
 				
 				getProductInfoTask = new GetProductInfoTask(this).execute(gtin);
 			}
 		}
+	}
+	
+	private void hideVirtualKeyboard() {
+		inputManager.hideSoftInputFromWindow(commentEditor.getWindowToken(), 0);
 	}
 	
 	private class GetProductInfoTask extends WeakAsyncTask<String, Void, ProductInfo, Context> {
@@ -433,6 +436,8 @@ public final class CommentActivity extends ListActivity {
 		@Override
 		protected void onPostExecute(Context target, Comment comment) {
 			if (comment != null) {
+				
+				hideVirtualKeyboard();
 				
 				commentsAdapter.insert(comment, 0);
 				commentsAdapter.notifyDataSetChanged();

@@ -1,19 +1,14 @@
-
 package mobi.my2cents;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 
-/**
- * An HTML-based help screen with Back and Done buttons at the bottom.
- * 
- * @author dswitkin@google.com (Daniel Switkin)
- */
 public final class HelpActivity extends Activity {
 	
 	private static final String TAG = "HelpActivity";
@@ -35,28 +30,28 @@ public final class HelpActivity extends Activity {
 	};
 
 	@Override
-	protected void onCreate(Bundle icicle) {
-		super.onCreate(icicle);
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		
 		setContentView(R.layout.help);
 
 		webView = (WebView) findViewById(R.id.help_contents);
 		webView.setWebViewClient(new HelpClient());
-		if (icicle != null) {
-			webView.restoreState(icicle);
-		} else {
-			webView.loadUrl(DEFAULT_URL);
-		}
 
 		backButton = (Button) findViewById(R.id.back_button);
 		backButton.setOnClickListener(backListener);
 
-		Button doneButton = (Button) findViewById(R.id.done_button);
-		doneButton.setOnClickListener(doneListener);
-	}
+		findViewById(R.id.done_button).setOnClickListener(doneListener);
+		
 
-	@Override
-	public void onResume() {
-		super.onResume();
+		if (savedInstanceState != null) {
+			webView.restoreState(savedInstanceState);
+		}
+		else {
+			webView.loadUrl(DEFAULT_URL);
+		}
 	}
 
 	@Override
@@ -78,7 +73,6 @@ public final class HelpActivity extends Activity {
 	private final class HelpClient extends WebViewClient {
 		@Override
 		public void onPageFinished(WebView view, String url) {
-			setTitle(view.getTitle());
 			backButton.setEnabled(view.canGoBack());
 		}
 	}

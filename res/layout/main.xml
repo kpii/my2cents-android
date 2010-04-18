@@ -47,52 +47,26 @@
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
 			android:layout_weight="0.25"
-			android:clickable="true" android:background="@android:drawable/list_selector_background" android:padding="@dimen/home_screen_button_margin_small" android:id="@+id/HomeScanReadLayout">
+			android:clickable="true" android:background="@android:drawable/list_selector_background" android:padding="@dimen/home_screen_button_margin_small" android:id="@+id/HomeScanLayout">
 			<ImageView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:src="@drawable/home_scan"
-				android:layout_marginRight="@dimen/home_screen_button_margin_normal" android:id="@+id/HomeScanReadImageView"></ImageView>
+				android:layout_marginRight="@dimen/home_screen_button_margin_normal" android:id="@+id/HomeScanImageView"></ImageView>
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="@string/home_button_scan_read_header"
 				android:textStyle="bold"
 				android:textSize="@dimen/home_screen_button_text_header"
 				android:textColor="@color/info_backgroung"
-				android:layout_marginBottom="@dimen/home_screen_button_margin_small" android:layout_toRightOf="@id/HomeScanReadImageView" android:id="@+id/HomeScanReadHeaderTextView"></TextView>
+				android:layout_marginBottom="@dimen/home_screen_button_margin_small" android:layout_toRightOf="@id/HomeScanImageView" android:id="@+id/HomeScanHeaderTextView" android:text="@string/home_button_scan_header"></TextView>
 			<TextView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:text="@string/home_button_scan_read"
 				android:textColor="@color/header_backgroung"
-				android:textSize="@dimen/home_screen_button_text" android:id="@+id/HomeScanReadTextView" android:layout_below="@id/HomeScanReadHeaderTextView" android:layout_toRightOf="@id/HomeScanReadImageView"></TextView>
+				android:textSize="@dimen/home_screen_button_text" android:layout_below="@id/HomeScanHeaderTextView" android:layout_toRightOf="@id/HomeScanImageView" android:id="@+id/HomeScanTextView" android:text="@string/home_button_scan"></TextView>
 		</RelativeLayout>
-		<RelativeLayout
-			android:layout_height="wrap_content"
-			android:layout_width="fill_parent"
-			android:layout_weight="0.25"
-			android:clickable="true" android:background="@android:drawable/list_selector_background" android:padding="@dimen/home_screen_button_margin_small" android:id="@+id/HomeScanCommentLayout">
-			<ImageView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:src="@drawable/home_scan"
-				android:layout_marginRight="@dimen/home_screen_button_margin_normal" android:id="@+id/HomeScanCommentImageView"></ImageView>
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/home_button_scan_comment_header"
-				android:textStyle="bold"
-				android:textSize="@dimen/home_screen_button_text_header"
-				android:textColor="@color/info_backgroung"
-				android:layout_marginBottom="@dimen/home_screen_button_margin_small" android:layout_toRightOf="@id/HomeScanCommentImageView" android:id="@+id/HomeScanCommentHeaderTextView"></TextView>
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/home_button_scan_comment"
-				android:textColor="@color/header_backgroung"
-				android:textSize="@dimen/home_screen_button_text" android:id="@+id/HomeScanCommentTextView" android:layout_toRightOf="@id/HomeScanCommentImageView" android:layout_below="@id/HomeScanCommentHeaderTextView"></TextView>
-		</RelativeLayout>
+		
 		<RelativeLayout
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"

@@ -93,7 +93,7 @@
 		
 		<activity
 			android:name=".HelpActivity"
-			android:screenOrientation="user">
+			android:screenOrientation="user" android:theme="@android:style/Theme.Dialog">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.VIEW" />

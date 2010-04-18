@@ -24,14 +24,15 @@ public final class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-		findViewById(R.id.HomeScanReadLayout).setOnClickListener(scanReadListener);
-		findViewById(R.id.HomeScanCommentLayout).setOnClickListener(scanCommentListener);
+		findViewById(R.id.HomeScanLayout).setOnClickListener(scanListener);
 		findViewById(R.id.HomeStreamLayout).setOnClickListener(streamListener);
 		findViewById(R.id.HomeHistoryLayout).setOnClickListener(historyListener);
 		findViewById(R.id.HomeTwitterLayout).setOnClickListener(loginListener);
 		
         settings = PreferenceManager.getDefaultSharedPreferences(this);
 		NetworkManager.setAuthToken(settings.getString(getString(R.string.settings_token),""));
+		
+		showHelpOnFirstLaunch();
 	}
 	
 	@Override
@@ -56,18 +57,9 @@ public final class MainActivity extends Activity {
 		}
 	}
 	
-	private final View.OnClickListener scanReadListener = new View.OnClickListener() {
+	private final View.OnClickListener scanListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			Intent intent = new Intent(getBaseContext(), ScanActivity.class);
-			intent.putExtra(getString(R.string.show_virtual_keyboard), false);
-			startActivity(intent);
-		}
-	};
-	
-	private final View.OnClickListener scanCommentListener = new View.OnClickListener() {
-		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), ScanActivity.class);
-			intent.putExtra(getString(R.string.show_virtual_keyboard), true);
 			startActivity(intent);
 		}
 	};
@@ -134,5 +126,16 @@ public final class MainActivity extends Activity {
 	        return true;
 	    }
 	    return super.onKeyDown(keyCode, event);
+	}
+	
+	private void showHelpOnFirstLaunch() {
+		int currentVersion = My2CentsApplication.packageInfo.versionCode;
+		int lastVersion = settings.getInt(getString(R.string.last_version), 0);
+		if (currentVersion > lastVersion) {
+			settings.edit().putInt(getString(R.string.last_version), currentVersion).commit();
+			Intent intent = new Intent(this, HelpActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+			startActivity(intent);
+		}
 	}
 }
