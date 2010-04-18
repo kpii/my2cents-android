@@ -108,5 +108,7 @@
     <string name="progress_dialog_sending">Sending...</string>
     <string name="notification_message_no_products_found">No products found.</string>
     <string name="progress_dialog_loading">Loading...</string>
-    <string name="error_message_no_network_connection">No Network Connection</string>
+    
+    <string name="error_message_no_network_connection">No network connection</string>
+    <string name="error_message_no_server_connection">Cannot connect to my2cents server</string>
 </resources>

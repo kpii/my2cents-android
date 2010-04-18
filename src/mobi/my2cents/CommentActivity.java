@@ -99,7 +99,6 @@ public final class CommentActivity extends ListActivity {
 		
 		productInfoLayout = findViewById(R.id.ProductInfoLayout);
 		
-		findViewById(R.id.ProductDetailsTextView).setOnClickListener(productDetailsListener);
 		findViewById(R.id.LoginButton).setOnClickListener(loginListener);
 		
 		findViewById(R.id.SendButton).setOnClickListener(sendCommentListener);
@@ -178,29 +177,34 @@ public final class CommentActivity extends ListActivity {
 	};
 	
 	private void postComment(Context context) {
-		String message = commentEditor.getText().toString();
-		new PostComment(context).execute(message);
+		if (!NetworkManager.isNetworkAvailable(this)) {
+			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
+		}
+		else {
+			String message = commentEditor.getText().toString();
+			new PostComment(context).execute(message);
+		}
 	}
 	
 	@Override
 	protected void onStart() {
 		super.onStart();
 		
+		hideVirtualKeyboard();
+		
 		if (!NetworkManager.isNetworkAvailable(this)) {
 			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
-			return;
 		}
-
-		Intent intent = getIntent();
-		String action = intent == null ? null : intent.getAction();
-		if (intent != null && action != null) {
-			if (action.equals(Intents.ACTION)) {
-				gtin = intent.getStringExtra(HistoryColumns.GTIN);
-				updateHistory = intent.getBooleanExtra(UPDATE_HISTORY, true);
-				
-				hideVirtualKeyboard();
-				
-				getProductInfoTask = new GetProductInfoTask(this).execute(gtin);
+		else {
+			Intent intent = getIntent();
+			String action = intent == null ? null : intent.getAction();
+			if (intent != null && action != null) {
+				if (action.equals(Intents.ACTION)) {
+					gtin = intent.getStringExtra(HistoryColumns.GTIN);
+					updateHistory = intent.getBooleanExtra(UPDATE_HISTORY, true);
+					
+					getProductInfoTask = new GetProductInfoTask(this).execute(gtin);
+				}
 			}
 		}
 	}
@@ -226,31 +230,29 @@ public final class CommentActivity extends ListActivity {
 				isProductInfoAvailable = false;
 				productInfoLayout.setVisibility(View.GONE);
 			}
-			
 			progressDialog = ProgressDialog.show(CommentActivity.this, null, getString(R.string.progress_dialog_loading), true);
 	    }
 
 		@Override
 		protected ProductInfo doInBackground(Context target, String... params) {
+			ProductInfo result = null;
 			if (isProductInfoAvailable) {
-				productInfo = DataManager.getProductComments(productInfo);
+				result = DataManager.getProductComments(productInfo);
 			}
 			else {
-				productInfo = DataManager.getProductInfo(gtin);
+				result = DataManager.getProductInfo(gtin);
 			}
 			
-			if (productInfo != null) {
-				if (updateHistory) {
-					DataManager.getDatabase().addHistoryItem(productInfo);
+			if (updateHistory) {
+				if (result != null) {
+					DataManager.getDatabase().addHistoryItem(result);
 				}
-			}
-			else {
-				if (updateHistory) {
+				else {
 					ProductInfo dummyProduct = new ProductInfo(params[0]);
 					DataManager.getDatabase().addHistoryItem(dummyProduct);
 				}
 			}
-			return productInfo;
+			return result;
 		}
 		
 		@Override
@@ -291,10 +293,10 @@ public final class CommentActivity extends ListActivity {
 				}
 			}
 			else {
-				productInfo = null;
-				displayProductNotFound();
+				Toast.makeText(target, R.string.error_message_no_server_connection, Toast.LENGTH_LONG).show();
 			}
 	        
+	        productInfo = product;
 	        getProductInfoTask = null;
 	    }
 	}
@@ -326,10 +328,6 @@ public final class CommentActivity extends ListActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
-		if (!NetworkManager.isNetworkAvailable(this)) {
-			return;
-		}
 		
 		SettingsActivity.setShareOnTwitter(settings.getBoolean(getString(R.string.settings_twitter), false));
 		
@@ -387,14 +385,6 @@ public final class CommentActivity extends ListActivity {
 		}
 	}
 	
-	private void displayProductNotFound()
-	{
-		productNameTextView.setText(R.string.unknown_product);
-		productImageView.setImageResource(R.drawable.unknown_product_icon);
-		productManufacturerTextView.setVisibility(View.GONE);
-		productInfoLayout.setVisibility(View.VISIBLE);
-	}
-	
 	private void displayProductFound(ProductInfo product)
 	{
 		productNameTextView.setText(product.getName());
@@ -405,7 +395,6 @@ public final class CommentActivity extends ListActivity {
 			productImageView.setImageResource(R.drawable.unknown_product_icon_inverted);
 		
 		productManufacturerTextView.setText(product.getManufacturer());
-		productManufacturerTextView.setVisibility(View.VISIBLE);
 		productInfoLayout.setVisibility(View.VISIBLE);
 	}
 	
@@ -435,8 +424,8 @@ public final class CommentActivity extends ListActivity {
 		
 		@Override
 		protected void onPostExecute(Context target, Comment comment) {
+			progressDialog.dismiss();
 			if (comment != null) {
-				
 				hideVirtualKeyboard();
 				
 				commentsAdapter.insert(comment, 0);
@@ -445,8 +434,9 @@ public final class CommentActivity extends ListActivity {
 				commentEditor.setText("");
 				Toast.makeText(CommentActivity.this, R.string.message_comment_posted_successfully, Toast.LENGTH_SHORT).show();
 			}
-
-			progressDialog.dismiss();
+			else {
+				Toast.makeText(target, R.string.error_message_no_server_connection, Toast.LENGTH_LONG).show();
+			}
 	    }
 	}
 	

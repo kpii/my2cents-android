@@ -34,20 +34,21 @@ public final class NetworkManager {
 	private static String authToken;
 	public static String userAgent;
 	public static final String BASE_URL = "http://my2cents.mobi";
+	private static final HttpParams httpParams;
 	
 	static {
 		System.setProperty("http.keepAlive", "false");
 		
-		HttpParams params = new BasicHttpParams();
+		httpParams = new BasicHttpParams();
 
 	    // Turn off stale checking.  Our connections break all the time anyway,
 	    // and it's not worth it to pay the penalty of checking every time.
-	    HttpConnectionParams.setStaleCheckingEnabled(params, false);
+	    HttpConnectionParams.setStaleCheckingEnabled(httpParams, false);
 
-	    // Default connection and socket timeout of 3 seconds.  Tweak to taste.
-	    HttpConnectionParams.setConnectionTimeout(params, 3 * 1000);
-	    HttpConnectionParams.setSoTimeout(params, 3 * 1000);
-	    HttpConnectionParams.setSocketBufferSize(params, 8192);
+	    // Default connection and socket timeout of 5 seconds.  Tweak to taste.
+	    HttpConnectionParams.setConnectionTimeout(httpParams, 5 * 1000);
+	    HttpConnectionParams.setSoTimeout(httpParams, 5 * 1000);
+	    HttpConnectionParams.setSocketBufferSize(httpParams, 8192);
 	}
 	
 	public static boolean isNetworkAvailable(Context context) {
@@ -105,6 +106,7 @@ public final class NetworkManager {
 	public static String queryREST(String url) {
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet(url);
+		httpGet.setParams(httpParams);
 		httpGet.setHeader("User-Agent", userAgent);
 		
 		try {
@@ -140,6 +142,7 @@ public final class NetworkManager {
 		// Create a new HttpClient and Post Header
 		HttpClient httpClient = new DefaultHttpClient();  
 	    HttpPost httpPost = new HttpPost(url);
+	    httpPost.setParams(httpParams);
 	    httpPost.setHeader("User-Agent", userAgent);
 	    
 	    if ((authToken != null) && (!authToken.equals(""))) {

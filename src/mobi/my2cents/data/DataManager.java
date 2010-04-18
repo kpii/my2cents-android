@@ -98,6 +98,7 @@ public final class DataManager {
 	public final static ProductInfo getProductComments(ProductInfo productInfo){
 		
 		String jsonString = NetworkManager.getProductJsonString(productInfo.getGtin());
+        if (jsonString == null) return null;
         
 		try {
 			JSONObject json = new JSONObject(jsonString).getJSONObject("product");
@@ -112,6 +113,7 @@ public final class DataManager {
             }
 		} catch (JSONException e) {
 			Log.e(TAG, e.getMessage());
+			return null;
 		}
 		return productInfo;
 	}
@@ -162,7 +164,8 @@ public final class DataManager {
 	public final static ArrayList<Comment> getCommentsStream(){
 		
 		String jsonString = NetworkManager.getCommentsStreamJSONString();
-        
+		if (jsonString == null) return null;
+		
 		try {
 			JSONArray json = new JSONArray(jsonString);
 			ArrayList<Comment> comments = new ArrayList<Comment>();

@@ -79,10 +79,11 @@ public final class StreamActivity extends ListActivity {
 		
 		if (!NetworkManager.isNetworkAvailable(this)) {
 			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
-			return;
 		}
-
-		getCommentsStreamTask = new GetCommentsStreamTask(this).execute();
+		else
+		{
+			getCommentsStreamTask = new GetCommentsStreamTask(this).execute();
+		}
 	}
 	
 	private class GetCommentsStreamTask extends WeakAsyncTask<Void, Void, ArrayList<Comment>, Context> {
@@ -105,7 +106,7 @@ public final class StreamActivity extends ListActivity {
 		protected void onPostExecute(Context target, ArrayList<Comment> result) {
 			if (result == null) {
 				statusLayout.setVisibility(View.GONE);
-				Toast.makeText(target, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
+				Toast.makeText(target, R.string.error_message_no_server_connection, Toast.LENGTH_LONG).show();
 			}
 			else {				
 				streamAdapter.clear();				
@@ -159,10 +160,6 @@ public final class StreamActivity extends ListActivity {
 	protected void onResume() {
 		super.onResume();
 		
-		if (!NetworkManager.isNetworkAvailable(this)) {
-			return;
-		}
-		
 		if (streamAdapter.getCount() > 0)
 			streamAdapter.notifyDataSetChanged();
 	}
@@ -191,7 +188,12 @@ public final class StreamActivity extends ListActivity {
 		switch (item.getItemId()) {
 			case R.id.refreshMenuItem: {
 				cancelAsyncTasks();
-				getCommentsStreamTask = new GetCommentsStreamTask(this).execute();
+				if (!NetworkManager.isNetworkAvailable(this)) {
+					Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
+				}
+				else {
+					getCommentsStreamTask = new GetCommentsStreamTask(this).execute();
+				}
 				return true;
 			}
 			case R.id.settingsMenuItem: {

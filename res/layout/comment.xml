@@ -60,16 +60,7 @@
 			android:layout_below="@id/ProductNameTextView"
 			android:textSize="@dimen/product_manufacturer_text"
 			android:textColor="@color/product_manufacturer_text" />
-		<TextView
-			android:layout_height="wrap_content"
-			android:id="@+id/ProductDetailsTextView"
-			android:text="@string/product_details"
-			android:textSize="@dimen/product_details_text"
-			android:textColor="@color/product_details_text"
-			android:layout_width="fill_parent"
-			android:layout_below="@id/ProductManufacturerTextView"
-			android:layout_toRightOf="@id/ProductImageView"
-			android:visibility="gone" />
+		
 	</RelativeLayout>
 	<ListView
 		android:layout_width="fill_parent"
