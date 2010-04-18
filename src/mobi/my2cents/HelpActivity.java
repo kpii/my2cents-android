@@ -8,6 +8,7 @@ import android.view.Window;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.TextView;
 
 public final class HelpActivity extends Activity {
 	
@@ -36,6 +37,9 @@ public final class HelpActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
 		setContentView(R.layout.help);
+		
+		TextView versionTextView = (TextView) findViewById(R.id.InfoTextView);
+		versionTextView.setText("Version: " + My2CentsApplication.packageInfo.versionName);
 
 		webView = (WebView) findViewById(R.id.help_contents);
 		webView.setWebViewClient(new HelpClient());
@@ -44,7 +48,6 @@ public final class HelpActivity extends Activity {
 		backButton.setOnClickListener(backListener);
 
 		findViewById(R.id.done_button).setOnClickListener(doneListener);
-		
 
 		if (savedInstanceState != null) {
 			webView.restoreState(savedInstanceState);

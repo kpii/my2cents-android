@@ -3,7 +3,7 @@
     <string name="button_manual_barcode_input">Doesn\'t work? Type the number instead</string>
     <string name="message_stream_loading">Loading latest comments...</string>
 	<string name="app_name">my2cents</string>
-	<string name="app_notes">by ETH Zurich (RC 2 - rev431)</string>
+	<string name="app_notes">by ETH Zurich</string>
 	<string name="app_url">http://my2cents.mobi</string>
 
     <string name="home_button_twitter_login">Personalize your comments and share them with your followers</string>
