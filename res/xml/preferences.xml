@@ -2,6 +2,13 @@
 <PreferenceScreen
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<PreferenceCategory
+		android:title="@string/settings_general_category">
+		<PreferenceScreen
+			android:key="@string/settings_send_feedback"
+			android:title="@string/settings_send_feedback"
+			android:summary="@string/settings_send_feedback_summary" />
+	</PreferenceCategory>
+	<PreferenceCategory
 		android:title="Online Social Networks">
 		<CheckBoxPreference
 			android:defaultValue="false"
@@ -33,12 +40,5 @@
 			android:defaultValue="false"
 			android:title="@string/settings_flashlight"
 			android:summary="@string/settings_flashlight_summary" />
-	</PreferenceCategory>
-	<PreferenceCategory
-		android:title="@string/settings_general_category">
-		<PreferenceScreen
-			android:key="@string/settings_send_feedback"
-			android:title="@string/settings_send_feedback"
-			android:summary="@string/settings_send_feedback_summary" />
 	</PreferenceCategory>
 </PreferenceScreen>
