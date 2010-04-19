@@ -47,7 +47,7 @@
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
 			android:layout_weight="0.25"
-			android:clickable="true" android:background="@android:drawable/list_selector_background" android:padding="@dimen/home_screen_button_margin_small" android:id="@+id/HomeScanLayout">
+			android:clickable="true" android:background="@android:drawable/list_selector_background" android:padding="@dimen/home_screen_button_margin_small" android:id="@+id/HomeScanLayout" android:focusable="true">
 			<ImageView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
 			android:layout_width="fill_parent"
 			android:id="@+id/HomeStreamLayout"
 			android:layout_weight="0.25"
-			android:clickable="true" android:background="@android:drawable/list_selector_background" android:padding="@dimen/home_screen_button_margin_small">
+			android:clickable="true" android:background="@android:drawable/list_selector_background" android:padding="@dimen/home_screen_button_margin_small" android:focusable="true">
 			<ImageView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -104,7 +104,7 @@
 			android:layout_width="fill_parent"
 			android:id="@+id/HomeHistoryLayout"
 			android:layout_weight="0.25"
-			android:clickable="true" android:background="@android:drawable/list_selector_background" android:padding="@dimen/home_screen_button_margin_small">
+			android:clickable="true" android:background="@android:drawable/list_selector_background" android:padding="@dimen/home_screen_button_margin_small" android:focusable="true">
 			<ImageView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
@@ -136,7 +136,7 @@
 			android:layout_width="fill_parent"
 			android:id="@+id/HomeTwitterLayout"
 			android:layout_weight="0.25"
-			android:clickable="true" android:background="@android:drawable/list_selector_background" android:padding="@dimen/home_screen_button_margin_small">
+			android:clickable="true" android:background="@android:drawable/list_selector_background" android:padding="@dimen/home_screen_button_margin_small" android:focusable="true">
 			<ImageView
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
