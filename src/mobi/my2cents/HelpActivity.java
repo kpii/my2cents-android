@@ -38,9 +38,6 @@ public final class HelpActivity extends Activity {
 		
 		setContentView(R.layout.help);
 		
-		TextView versionTextView = (TextView) findViewById(R.id.InfoTextView);
-		versionTextView.setText("Version: " + My2CentsApplication.packageInfo.versionName);
-
 		webView = (WebView) findViewById(R.id.help_contents);
 		webView.setWebViewClient(new HelpClient());
 
