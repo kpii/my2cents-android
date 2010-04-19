@@ -38,7 +38,6 @@
 			android:id="@+id/done_button"
 			android:layout_width="0dip"
 			android:layout_height="wrap_content"
-			android:layout_weight="0.35"
-			android:text="@string/button_done" />
+			android:layout_weight="0.35" android:text="@string/button_close"/>
 	</LinearLayout>
 </LinearLayout>
