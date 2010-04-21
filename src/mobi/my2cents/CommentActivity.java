@@ -22,7 +22,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -305,8 +304,10 @@ public final class CommentActivity extends ListActivity {
 	        
 	        productInfo = product;
 	        getProductInfoTask = null;
-	        commentEditor.clearFocus();
-	        productImageView.requestFocus();
+	        
+	        hideVirtualKeyboard();
+//	        commentEditor.clearFocus();
+//	        productImageView.requestFocus();
 	    }
 	}
 	
@@ -364,6 +365,14 @@ public final class CommentActivity extends ListActivity {
 		                dialog.dismiss();
 		           }
 		       });
+		
+		if ((selectedComment.getUser() == null) || (selectedComment.getUser() == "")) {
+			builder.setTitle(R.string.anonymous_username);
+		}
+		else {
+			builder.setTitle(selectedComment.getUser());
+		}
+		
 		AlertDialog alert = builder.create();
 		alert.show();
 	}

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <string name="anonymous_username">Anonymous</string>
 	<string name="app_name">my2cents</string>
 	<string name="app_notes">by ETH Zurich (v1.0 rev448)</string>
 	<string name="app_url">http://my2cents.mobi</string>
