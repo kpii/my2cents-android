@@ -217,6 +217,8 @@ public final class CommentActivity extends ListActivity {
 	
 	private void hideVirtualKeyboard() {
 		inputManager.hideSoftInputFromWindow(commentEditor.getWindowToken(), 0);
+        commentEditor.clearFocus();
+        productImageView.requestFocus();		
 	}
 	
 	private class GetProductInfoTask extends WeakAsyncTask<String, Void, ProductInfo, Context> {
@@ -306,8 +308,6 @@ public final class CommentActivity extends ListActivity {
 	        getProductInfoTask = null;
 	        
 	        hideVirtualKeyboard();
-//	        commentEditor.clearFocus();
-//	        productImageView.requestFocus();
 	    }
 	}
 	
