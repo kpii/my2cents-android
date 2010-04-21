@@ -305,6 +305,8 @@ public final class CommentActivity extends ListActivity {
 	        
 	        productInfo = product;
 	        getProductInfoTask = null;
+	        commentEditor.clearFocus();
+	        productImageView.requestFocus();
 	    }
 	}
 	
