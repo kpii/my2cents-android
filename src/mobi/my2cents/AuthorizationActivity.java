@@ -2,8 +2,10 @@ package mobi.my2cents;
 
 import mobi.my2cents.utils.NetworkManager;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -18,6 +20,7 @@ public final class AuthorizationActivity extends Activity {
 	private final static String TAG = "AuthorizationActivity";
 	
 	private WebView webView;
+	private ProgressDialog progressDialog;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +42,16 @@ public final class AuthorizationActivity extends Activity {
 	    }
 	    
 	    @Override
+	    public void onPageStarted(WebView view, String url, Bitmap favicon) {
+	    	if (progressDialog != null && progressDialog.isShowing()) {
+	    		progressDialog.dismiss();
+	    	}
+	    	progressDialog = ProgressDialog.show(webView.getContext(), null, getString(R.string.progress_dialog_loading), true);
+	    }
+	    
+	    @Override
 	    public void onPageFinished(WebView view, String url) {
+	    	progressDialog.dismiss();
 	        if (url.equals(NetworkManager.BASE_URL + "/auth/success")) {
 	        	Toast.makeText(view.getContext(), R.string.message_successful_authorization, Toast.LENGTH_LONG).show();
 	        	
