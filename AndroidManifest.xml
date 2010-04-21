@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:versionName="1.0.$Rev$"
 	android:versionCode="1"
-	package="mobi.my2cents">
+	package="mobi.my2cents" android:versionName="1.0.0">
 
 	<!-- We require Cupcake (Android 1.5) or later, but are really targeting Donut. -->
 	<uses-sdk
-		android:minSdkVersion="3"
-		android:targetSdkVersion="4" />
+		android:minSdkVersion="3" android:targetSdkVersion="4"/>
 	<!-- Donut-specific flags which allow us to run on large and high dpi screens. -->
 	<supports-screens
 		android:largeScreens="true"
@@ -23,7 +21,7 @@
 		android:icon="@drawable/birdy">
 		<activity
 			android:name=".MainActivity"
-			android:configChanges="orientation|keyboardHidden" android:screenOrientation="portrait">
+			android:configChanges="orientation|keyboardHidden" android:screenOrientation="portrait" android:launchMode="singleInstance">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.MAIN" />
@@ -55,7 +53,7 @@
 		</activity>
 		<activity
 			android:name=".CommentActivity"
-			android:configChanges="orientation|keyboardHidden">
+			android:configChanges="orientation|keyboardHidden" android:windowSoftInputMode="stateHidden">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.VIEW" />
