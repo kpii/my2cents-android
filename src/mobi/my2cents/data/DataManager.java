@@ -49,6 +49,7 @@ public final class DataManager {
 	}
 	
 	private final static ProductInfo getProductInfoFromJsonString(String jsonString){
+		if (jsonString == null) return null;
 		try {
 			JSONObject json = new JSONObject(jsonString);
 			JSONObject jsonProduct = json.getJSONObject("product");
@@ -92,14 +93,15 @@ public final class DataManager {
 		} catch (JSONException e) {
 			Log.e(TAG, e.getMessage());
 			return null;
+		} catch (Exception e) {
+			Log.e(TAG, e.getMessage());
+			return null;
 		}
 	}
 	
 	public final static ProductInfo getProductComments(ProductInfo productInfo){
-		
 		String jsonString = NetworkManager.getProductJsonString(productInfo.getGtin());
         if (jsonString == null) return null;
-        
 		try {
 			JSONObject json = new JSONObject(jsonString).getJSONObject("product");
             
