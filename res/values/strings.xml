@@ -1,26 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="button_manual_barcode_input">Doesn\'t work? Type the number instead</string>
-    <string name="message_stream_loading">Loading latest comments...</string>
 	<string name="app_name">my2cents</string>
-	<string name="app_notes">by ETH Zurich (rev443)</string>
+	<string name="app_notes">by ETH Zurich (v1.0 rev448)</string>
 	<string name="app_url">http://my2cents.mobi</string>
 
-    <string name="home_button_twitter_login">Personalize your comments and share them with your followers</string>
+	<string name="main_header">Comments on products</string>
+	<string name="stream_header">What are others commenting on?</string>
+	<string name="comments_header">People's thoughts on the product</string>
+	<string name="history_header">Products you have viewed before</string>
+	<string name="settings_header">Settings</string>
+ 
+    <string name="home_button_scan_header">Share comments</string>
+    <string name="home_button_scan_"></string>
+    <string name="home_button_scan">Scan a product\'s barcode to read others\' comments and write your own</string>
+
+    <string name="home_button_stream_header">Follow live stream</string>
+    <string name="home_button_stream_"></string>
+    <string name="home_button_stream">See what others are commenting on</string>
+
+    <string name="home_button_history_header">Track your products</string>
+    <string name="home_button_history_"></string>
+    <string name="home_button_history">Keep track of products you discovered and check for new comments</string>
+
     <string name="home_button_twitter_login_header">Login with Twitter</string>
-    <string name="home_button_twitter_share">Personalize your comments and share them with your followers</string>
+    <string name="home_button_twitter_login_"></string>
+    <string name="home_button_twitter_login">Personalize your comments and share them with your followers</string>
+
     <string name="home_button_twitter_share_header">Share comments on Twitter</string>
+    <string name="home_button_twitter_share">Personalize your comments and share them with your followers on Twitter</string>
+
     <string name="my2cents_is_evolving">my2cents is evolving - this is the first public release of the application, please <a href='mailto:feedback@my2cents.mobi'>leave your comments and suggestions</a> on our product</string>
     <string name="my2cents_is_social">Personalize your comments and share them with your followers</string>
     <string name="my2cents_is_empowering">my2cents is empowering - you can get real life consumers recommendations and insights and can use it to ask questions and leave notes</string>
-    <string name="home_button_history">Keep track of the products you discovered and check for new comments</string>
-    <string name="home_button_history_header">Track your products</string>
-    <string name="home_button_stream">Read comments others have written recently</string>
-    <string name="home_button_stream_header">Live stream</string>
-    <string name="home_button_scan">Scan a product\'s barcode to read other people\'s comments and write your own comment</string>
-    <string name="home_button_scan_header">Share comments</string>
-    <string name="message_unsuccessful_authorization">Authentication failed</string>
-    <string name="message_successful_authorization">Authentication successful</string>
+
 	
 	<string name="button_back">Back</string>
 	<string name="button_cancel">Cancel</string>
@@ -32,8 +44,9 @@
 	<string name="button_home">Home</string>
 	<string name="button_history">History</string>
 	<string name="button_stream">Stream</string>
-	<string name="button_search">Search</string>
+	<string name="button_search">Submit</string>
 	<string name="button_login_invitation">Please login to comment</string>
+    <string name="button_manual_barcode_input">Doesn\'t work? Type the number instead</string>
 	
 	<string name="radio_button_barcode">Barcode</string>
 	<string name="radio_button_title">Title</string>
@@ -72,7 +85,7 @@
 	
 	<string name="settings_general_category">General</string>
     <string name="settings_send_feedback">Send feedback</string>
-    <string name="settings_send_feedback_summary">Send us a feedback on my2cents</string>
+    <string name="settings_send_feedback_summary">Send us feedback on my2cents</string>
 	<string name="settings_helpful_tips">Helpful tips</string>
 	<string name="settings_helpful_tips_summary">Open the helpful tips the next time my2cents starts</string>
 	
@@ -85,19 +98,19 @@
 	
 	<string name="message_authorize">Please login with your Twitter account</string>
 	<string name="message_connection_error">Cannot connect to server!\nPlease check network connection.</string>
-	<string name="message_please_wait">Please wait...</string>
+	<string name="message_please_wait">Please wait ...</string>
 	<string name="message_no_comments">No comments yet. Add your comment!</string>
 	<string name="message_no_stream">No comments yet.</string>
 	<string name="message_no_products">No products.</string>
-	<string name="message_empty_history">This list will show you products you have viewed in the past.</string>
+	<string name="message_empty_history">This list will show products you have viewed in the past. You have not viewed any products yet.</string>
+    <string name="message_stream_loading">Loading recent comments ...</string>
+
+    <string name="message_successful_authorization">Authentication successful</string>
+    <string name="message_unsuccessful_authorization">Authentication failed</string>
 	
 	<string name="search_title">Enter a barcode</string>
-	<string name="main_header">Share comments on products</string>
-	<string name="stream_header">What are others commenting on?</string>
-	<string name="comments_header">People's thoughts on the product</string>
+
 	<string name="help_header">About my2cents</string>
-	<string name="history_header">History of viewed products</string>
-	<string name="settings_header">Settings</string>
 	
 	<string name="product_details">Show product details</string>
 	

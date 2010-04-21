@@ -115,12 +115,11 @@
 			android:layout_height="wrap_content" />
 		<EditText
 			android:layout_height="wrap_content"
-			android:inputType="textCapSentences|textAutoCorrect|textMultiLine|textImeMultiLine|textShortMessage"
 			android:id="@+id/CommentEditText"
 			android:hint="@string/comment_hint"
 			android:layout_width="fill_parent"
 			android:layout_toLeftOf="@id/SendButton"
-			android:imeOptions="actionSend|flagNoEnterAction" />
+			android:imeOptions="actionSend|flagNoEnterAction" android:inputType="textCapSentences|textAutoCorrect|textMultiLine|textImeMultiLine"/>
 		<Gallery
 			android:layout_height="wrap_content"
 			android:layout_width="fill_parent"
