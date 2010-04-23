@@ -62,6 +62,14 @@ public final class DataManager {
 				productInfo.setName(name);
 			else
 				productInfo.setName(DataManager.UnknownProductName);
+			
+			if (jsonProduct.has("affiliate_links")) {
+				JSONArray jsonLinks = jsonProduct.getJSONArray("affiliate_links");
+				if (jsonLinks.length() > 0) {
+					String productDetailsUrl = jsonLinks.getString(0);
+					productInfo.setDetailPageUrl(productDetailsUrl);
+				}
+			}
             
             productInfo.setImageUrl(jsonProduct.getString("image_url"));
             

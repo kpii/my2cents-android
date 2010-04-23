@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -86,9 +87,11 @@ public final class CommentActivity extends ListActivity {
 		DataManager.UnknownProductName = getString(R.string.unknown_product);
 		
 		productImageView = (ImageView) findViewById(R.id.ProductImageView);
-		productImageView.setOnClickListener(productDetailsListener);
+		productImageView.setOnClickListener(productImageListener);
 		
 		productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
+		productNameTextView.setOnClickListener(productDetailsListener);
+		
 		productManufacturerTextView = (TextView) findViewById(R.id.ProductManufacturerTextView);
 		
 		commentEditor = (EditText) findViewById(R.id.CommentEditText);
@@ -147,14 +150,21 @@ public final class CommentActivity extends ListActivity {
 		}
 	};
 	
-	private final View.OnClickListener productDetailsListener = new View.OnClickListener() {
+	private final View.OnClickListener productImageListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			if (productInfo != null) {
 				showDialog(DIALOG_PRODUCT_DETAILS);
-//				if (productInfo.getDetailPageUrl() != null) {
-//					Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse(productInfo.getDetailPageUrl()));  
-//					startActivity(viewIntent);
-//				}
+			}
+		}
+	};
+	
+	private final View.OnClickListener productDetailsListener = new View.OnClickListener() {
+		public void onClick(View view) {
+			if (productInfo != null) {
+				if (productInfo.getDetailPageUrl() != null) {
+					Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse(productInfo.getDetailPageUrl()));  
+					startActivity(viewIntent);
+				}
 			}
 		}
 	};
@@ -413,6 +423,7 @@ public final class CommentActivity extends ListActivity {
 			productImageView.setImageResource(R.drawable.unknown_product_icon_inverted);
 		
 		productManufacturerTextView.setText(product.getManufacturer());
+		
 		productInfoLayout.setVisibility(View.VISIBLE);
 	}
 	

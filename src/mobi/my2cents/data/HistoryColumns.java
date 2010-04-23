@@ -9,5 +9,6 @@ public class HistoryColumns implements BaseColumns {
 	public static final String GTIN 		= "gtin";
 	public static final String NAME 		= "name";
 	public static final String MANUFACTURER = "manufacturer";
-	public static final String IMAGE 		= "image";   
+	public static final String AFFILIATE_URL = "affiliate_url";
+	public static final String IMAGE 		= "image";
 }

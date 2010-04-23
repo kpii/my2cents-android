@@ -20,7 +20,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	/** The name of the database file on the file system */
     private static final String DATABASE_NAME = "My2CentsDb";
     /** The version of the database that this class understands. */
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 7;
     
     private static final String HISTORY_TABLE = "history";
     
@@ -39,6 +39,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + HistoryColumns.GTIN + " TEXT,"
                 + HistoryColumns.NAME + " TEXT,"
                 + HistoryColumns.MANUFACTURER + " TEXT,"
+                + HistoryColumns.AFFILIATE_URL + " TEXT,"
                 + HistoryColumns.IMAGE + " BLOB);");
     }
 
@@ -76,6 +77,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         	map.put(HistoryColumns.NAME, DataManager.UnknownProductName);
         }
         
+        String manufacturer = product.getManufacturer();
+        if ((manufacturer != null) && (!manufacturer.equals("")) && (!manufacturer.equals("null"))) {
+        	map.put(HistoryColumns.MANUFACTURER, manufacturer);
+        }
+        
+        String affiliateUrl = product.getDetailPageUrl();
+        if ((affiliateUrl != null) && (!affiliateUrl.equals("")) && (!affiliateUrl.equals("null"))) {
+        	map.put(HistoryColumns.AFFILIATE_URL, affiliateUrl);
+        }
+        
         Bitmap image = product.getImage();
         if (image != null) {
         	map.put(HistoryColumns.IMAGE, Helper.getBitmapAsByteArray(image));
@@ -109,6 +120,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	    	productInfo = new ProductInfo(cursor.getString(cursor.getColumnIndex(HistoryColumns.GTIN)));
 	    	productInfo.setName(cursor.getString(cursor.getColumnIndex(HistoryColumns.NAME)));
 	    	productInfo.setManufacturer(cursor.getString(cursor.getColumnIndex(HistoryColumns.MANUFACTURER)));
+	    	productInfo.setDetailPageUrl(cursor.getString(cursor.getColumnIndex(HistoryColumns.AFFILIATE_URL)));
 	    	
 	    	byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex(HistoryColumns.IMAGE));
 			if (bitmapArray != null) {
