@@ -19,8 +19,8 @@ public final class AuthorizationActivity extends Activity {
 	
 	private final static String TAG = "AuthorizationActivity";
 	
-	private WebView webView;
-	private ProgressDialog progressDialog;
+	private static WebView webView;
+	private static ProgressDialog progressDialog;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +29,8 @@ public final class AuthorizationActivity extends Activity {
 		setContentView(R.layout.authorization);
 		
 		webView = (WebView) findViewById(R.id.AuthWebView);
-		webView.getSettings().setJavaScriptEnabled(true);
 		webView.setWebViewClient(new AuthWebViewClient());
-		webView.getSettings().setUserAgentString("Android my2cents");
+		webView.getSettings().setUserAgentString(NetworkManager.userAgent);
 	}
 	
 	private class AuthWebViewClient extends WebViewClient {
