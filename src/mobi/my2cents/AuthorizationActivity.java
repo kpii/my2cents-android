@@ -19,8 +19,8 @@ public final class AuthorizationActivity extends Activity {
 	
 	private final static String TAG = "AuthorizationActivity";
 	
-	private static WebView webView;
-	private static ProgressDialog progressDialog;
+	private WebView webView;
+	private ProgressDialog progressDialog;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +42,14 @@ public final class AuthorizationActivity extends Activity {
 	    
 	    @Override
 	    public void onPageStarted(WebView view, String url, Bitmap favicon) {
-	    	if (progressDialog != null && progressDialog.isShowing()) {
-	    		progressDialog.dismiss();
-	    	}
-	    	progressDialog = ProgressDialog.show(webView.getContext(), null, getString(R.string.progress_dialog_loading), true);
+	    	closeProgressDialog();
+	    	progressDialog = ProgressDialog.show(AuthorizationActivity.this, null, getString(R.string.progress_dialog_loading), true);
 	    }
 	    
 	    @Override
 	    public void onPageFinished(WebView view, String url) {
-	    	progressDialog.dismiss();
+	    	closeProgressDialog();
+	    	
 	        if (url.equals(NetworkManager.BASE_URL + "/auth/success")) {
 	        	Toast.makeText(view.getContext(), R.string.message_successful_authorization, Toast.LENGTH_LONG).show();
 	        	
@@ -78,6 +77,13 @@ public final class AuthorizationActivity extends Activity {
 	    }
 	}
 	
+	private void closeProgressDialog() {
+		if (progressDialog != null && progressDialog.isShowing()) {
+    		progressDialog.dismiss();
+    		progressDialog = null;
+    	}
+	}
+	
 	private void storeAuthToken(String token) {
 		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
 		
@@ -101,6 +107,7 @@ public final class AuthorizationActivity extends Activity {
 	@Override
 	protected void onPause() {
 		CookieSyncManager.getInstance().stopSync();
+		closeProgressDialog();
 		super.onPause();
 	}
 }
