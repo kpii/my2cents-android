@@ -2,7 +2,7 @@
 <resources>
     <string name="anonymous_username">Anonymous</string>
 	<string name="app_name">my2cents</string>
-	<string name="app_notes">by ETH Zurich (v1.0 rev448)</string>
+	<string name="app_notes">by ETH Zurich [v1.0.1]</string>
 	<string name="app_url">http://my2cents.mobi</string>
 
 	<string name="main_header">Comments on products</string>
@@ -11,20 +11,16 @@
 	<string name="history_header">Products you have viewed before</string>
 	<string name="settings_header">Settings</string>
  
-    <string name="home_button_scan_header">Share comments</string>
-    <string name="home_button_scan_"></string>
+    <string name="home_button_scan_header">Scan a product</string>
     <string name="home_button_scan">Scan a product\'s barcode to read others\' comments and write your own</string>
 
     <string name="home_button_stream_header">Follow live stream</string>
-    <string name="home_button_stream_"></string>
     <string name="home_button_stream">See what others are commenting on</string>
 
     <string name="home_button_history_header">Track your products</string>
-    <string name="home_button_history_"></string>
     <string name="home_button_history">Keep track of products you discovered and check for new comments</string>
 
     <string name="home_button_twitter_login_header">Login with Twitter</string>
-    <string name="home_button_twitter_login_"></string>
     <string name="home_button_twitter_login">Personalize your comments and share them with your followers</string>
 
     <string name="home_button_twitter_share_header">Share comments on Twitter</string>
@@ -98,7 +94,6 @@
 	<string name="status_last_update">Last update:</string>
 	
 	<string name="message_authorize">Please login with your Twitter account</string>
-	<string name="message_connection_error">Cannot connect to server!\nPlease check network connection.</string>
 	<string name="message_please_wait">Please wait ...</string>
 	<string name="message_no_comments">No comments yet. Add your comment!</string>
 	<string name="message_no_stream">No comments yet.</string>
