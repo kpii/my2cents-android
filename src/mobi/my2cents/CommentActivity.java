@@ -47,8 +47,6 @@ public final class CommentActivity extends ListActivity {
 	
 	private static final String TAG = "CommentActivity";
 	
-	private boolean isProductInfoAvailable;
-	
 	private boolean updateHistory;
 	public final static String UPDATE_HISTORY = "UpdateHistory";
 	
@@ -74,6 +72,7 @@ public final class CommentActivity extends ListActivity {
 	private TextView productManufacturerTextView;
 	
 	private EditText commentEditor;
+	private View statusLayout;
 	
 	private AsyncTask<String, Void, ProductInfo> getProductInfoTask;
 	private AsyncTask<List<Comment>, Void, Void> getProfileImagesTask;
@@ -85,6 +84,8 @@ public final class CommentActivity extends ListActivity {
 		setContentView(R.layout.comment);
 
 		DataManager.UnknownProductName = getString(R.string.unknown_product);
+		
+		statusLayout = findViewById(R.id.StatusRelativeLayout);
 		
 		productImageView = (ImageView) findViewById(R.id.ProductImageView);
 		productImageView.setOnClickListener(productImageListener);
@@ -238,29 +239,21 @@ public final class CommentActivity extends ListActivity {
 
 		@Override
 		protected void onPreExecute(Context target) {
+			statusLayout.setVisibility(View.VISIBLE);
 			productInfo = DataManager.getDatabase().getCachedProductInfo(gtin);
 			if (productInfo != null) {
-				isProductInfoAvailable = true;
 				displayProductFound(productInfo);
 				productInfoLayout.setVisibility(View.VISIBLE);
 			}
 			else {
-				isProductInfoAvailable = false;
 				productInfoLayout.setVisibility(View.GONE);
 			}
-			progressDialog = ProgressDialog.show(CommentActivity.this, null, getString(R.string.progress_dialog_loading), true);
+			//progressDialog = ProgressDialog.show(CommentActivity.this, null, getString(R.string.progress_dialog_loading), true);
 	    }
 
 		@Override
 		protected ProductInfo doInBackground(Context target, String... params) {
 			ProductInfo result = DataManager.getProductInfo(gtin);
-			
-//			if (isProductInfoAvailable) {
-//				result = DataManager.getProductComments(productInfo);
-//			}
-//			else {
-//				result = DataManager.getProductInfo(gtin);
-//			}
 			
 			if (updateHistory) {
 				if (result != null) {
@@ -276,8 +269,8 @@ public final class CommentActivity extends ListActivity {
 		
 		@Override
 		protected void onPostExecute(Context target, ProductInfo product) {
-			
-			progressDialog.dismiss();
+			statusLayout.setVisibility(View.GONE);
+			//progressDialog.dismiss();
 			
 	        if (product != null) {
 	        	displayProductFound(product);

@@ -38,7 +38,29 @@
 		android:textSize="@dimen/info_text"
 		android:padding="@dimen/info_padding"
 		android:text="@string/stream_header"></TextView>
-	<RelativeLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/StatusRelativeLayout" android:background="@color/status_backgroung" android:visibility="gone" android:padding="5dip"><ProgressBar android:layout_height="24dip" android:layout_width="24dip" android:id="@+id/StatusProgressBar" android:layout_marginRight="5dip"></ProgressBar><TextView android:layout_width="fill_parent" android:id="@+id/StatusTextView" android:textColor="@color/status_text" android:textSize="@dimen/status_text" android:layout_toRightOf="@id/StatusProgressBar" android:layout_centerVertical="true" android:text="@string/message_stream_loading" android:layout_height="wrap_content"></TextView></RelativeLayout><ListView
+	<RelativeLayout
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/StatusRelativeLayout"
+		android:background="@color/status_backgroung"
+		android:visibility="gone"
+		android:padding="5dip">
+		<ProgressBar
+			android:layout_height="24dip"
+			android:layout_width="24dip"
+			android:id="@+id/StatusProgressBar"
+			android:layout_marginRight="5dip"></ProgressBar>
+		<TextView
+			android:layout_width="fill_parent"
+			android:id="@+id/StatusTextView"
+			android:textColor="@color/status_text"
+			android:textSize="@dimen/status_text"
+			android:layout_toRightOf="@id/StatusProgressBar"
+			android:layout_centerVertical="true"
+			android:text="@string/message_stream_loading"
+			android:layout_height="wrap_content"></TextView>
+	</RelativeLayout>
+	<ListView
 		android:layout_width="fill_parent"
 		android:layout_weight="1"
 		android:scrollbars="vertical"
@@ -56,13 +78,55 @@
 		android:layout_weight="1"
 		android:textSize="@dimen/empty_list_text"
 		android:text="@string/message_no_stream" />
-	
-	<LinearLayout android:layout_height="wrap_content" android:id="@+id/ToolbarLayout" android:orientation="horizontal" android:layout_width="fill_parent" android:background="@color/status_backgroung">
-		<ImageButton android:layout_height="wrap_content" android:layout_weight="0.25" android:scaleType="centerInside" android:layout_width="wrap_content" android:id="@+id/ImageButtonHome" android:src="@drawable/home_icon" android:layout_marginBottom="3dip" android:layout_marginRight="3dip" android:layout_marginTop="3dip" android:layout_marginLeft="6dip"></ImageButton>
-		<ImageButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="0.25" android:scaleType="centerInside" android:id="@+id/ImageButtonScan" android:src="@drawable/scan_icon" android:layout_marginBottom="3dip" android:layout_marginLeft="3dip" android:layout_marginRight="3dip" android:layout_marginTop="3dip"></ImageButton>
-		<ImageButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="0.25" android:scaleType="centerInside" android:id="@+id/ImageButtonStream" android:src="@drawable/stream_icon" android:layout_marginBottom="3dip" android:layout_marginLeft="3dip" android:layout_marginRight="3dip" android:layout_marginTop="3dip"></ImageButton>
-		<ImageButton android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="0.25" android:scaleType="centerInside" android:id="@+id/ImageButtonHistory" android:src="@drawable/history_icon" android:layout_marginBottom="3dip" android:layout_marginLeft="3dip" android:layout_marginTop="3dip" android:layout_marginRight="6dip"></ImageButton>
+	<LinearLayout
+		android:layout_height="wrap_content"
+		android:id="@+id/ToolbarLayout"
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:background="@color/status_backgroung">
+		<ImageButton
+			android:layout_height="wrap_content"
+			android:layout_weight="0.25"
+			android:scaleType="centerInside"
+			android:layout_width="wrap_content"
+			android:id="@+id/ImageButtonHome"
+			android:src="@drawable/home_icon"
+			android:layout_marginBottom="3dip"
+			android:layout_marginRight="3dip"
+			android:layout_marginTop="3dip"
+			android:layout_marginLeft="6dip"></ImageButton>
+		<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="0.25"
+			android:scaleType="centerInside"
+			android:id="@+id/ImageButtonScan"
+			android:src="@drawable/scan_icon"
+			android:layout_marginBottom="3dip"
+			android:layout_marginLeft="3dip"
+			android:layout_marginRight="3dip"
+			android:layout_marginTop="3dip"></ImageButton>
+		<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="0.25"
+			android:scaleType="centerInside"
+			android:id="@+id/ImageButtonStream"
+			android:src="@drawable/stream_icon"
+			android:layout_marginBottom="3dip"
+			android:layout_marginLeft="3dip"
+			android:layout_marginRight="3dip"
+			android:layout_marginTop="3dip"></ImageButton>
+		<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_weight="0.25"
+			android:scaleType="centerInside"
+			android:id="@+id/ImageButtonHistory"
+			android:src="@drawable/history_icon"
+			android:layout_marginBottom="3dip"
+			android:layout_marginLeft="3dip"
+			android:layout_marginTop="3dip"
+			android:layout_marginRight="6dip"></ImageButton>
 	</LinearLayout>
-
-
 </LinearLayout>

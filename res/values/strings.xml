@@ -100,6 +100,7 @@
 	<string name="message_no_products">No products.</string>
 	<string name="message_empty_history">This list will show products you have viewed in the past. You have not viewed any products yet.</string>
     <string name="message_stream_loading">Loading recent comments ...</string>
+    <string name="message_product_info_loading">Loading product information ...</string>
 
     <string name="message_successful_authorization">Authentication successful</string>
     <string name="message_unsuccessful_authorization">Authentication failed</string>
