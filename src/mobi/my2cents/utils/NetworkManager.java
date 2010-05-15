@@ -45,9 +45,9 @@ public final class NetworkManager {
 	    // and it's not worth it to pay the penalty of checking every time.
 	    HttpConnectionParams.setStaleCheckingEnabled(httpParams, false);
 
-	    // Default connection and socket timeout of 5 seconds.  Tweak to taste.
-	    HttpConnectionParams.setConnectionTimeout(httpParams, 5 * 1000);
-	    HttpConnectionParams.setSoTimeout(httpParams, 5 * 1000);
+	    // Default connection and socket timeout of 10 seconds.  Tweak to taste.
+	    HttpConnectionParams.setConnectionTimeout(httpParams, 10 * 1000);
+	    HttpConnectionParams.setSoTimeout(httpParams, 10 * 1000);
 	    HttpConnectionParams.setSocketBufferSize(httpParams, 8192);
 	}
 	
