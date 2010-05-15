@@ -8,7 +8,6 @@ public final class ProductInfo {
 
 	private final String gtin;
 	private String name;
-	private String manufacturer;
 	private String affiliateName;
 	private String affiliateUrl;
 	private String imageUrl;
@@ -32,14 +31,6 @@ public final class ProductInfo {
 
 	public String getName() {
 		return name;
-	}
-
-	public void setManufacturer(String manufacturer) {
-		this.manufacturer = manufacturer;
-	}
-
-	public String getManufacturer() {
-		return manufacturer;
 	}
 
 	public void setAffiliateUrl(String affiliateUrl) {

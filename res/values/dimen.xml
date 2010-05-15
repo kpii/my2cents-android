@@ -29,7 +29,7 @@
 	
 	<dimen name="product_layout_padding">6dip</dimen>
 	<dimen name="product_name_text">14sp</dimen>
-	<dimen name="product_manufacturer_text">12sp</dimen>
+	<dimen name="affiliate_text">12sp</dimen>
 	<dimen name="product_details_text">12sp</dimen>
 
 	<dimen name="comment_editor_padding">3dip</dimen>	

@@ -63,11 +63,12 @@ public final class DataManager {
 			else
 				productInfo.setName(DataManager.UnknownProductName);
 			
-			if (jsonProduct.has("affiliate_links")) {
-				JSONArray jsonLinks = jsonProduct.getJSONArray("affiliate_links");
+			if (jsonProduct.has("affiliates")) {
+				JSONArray jsonLinks = jsonProduct.getJSONArray("affiliates");
 				if (jsonLinks.length() > 0) {
-					String productDetailsUrl = jsonLinks.getString(0);
-					productInfo.setAffiliateUrl(productDetailsUrl);
+					JSONObject affiliate = jsonLinks.getJSONObject(0);
+					productInfo.setAffiliateName(affiliate.getString("text"));
+					productInfo.setAffiliateUrl(affiliate.getString("href"));
 				}
 			}
             

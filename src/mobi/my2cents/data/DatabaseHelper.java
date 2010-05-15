@@ -38,7 +38,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + HistoryColumns.TIME + " TEXT,"
                 + HistoryColumns.GTIN + " TEXT,"
                 + HistoryColumns.NAME + " TEXT,"
-                + HistoryColumns.MANUFACTURER + " TEXT,"
                 + HistoryColumns.AFFILIATE_NAME + " TEXT,"
                 + HistoryColumns.AFFILIATE_URL + " TEXT,"
                 + HistoryColumns.IMAGE + " BLOB);");
@@ -76,11 +75,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         else {
         	map.put(HistoryColumns.NAME, DataManager.UnknownProductName);
-        }
-        
-        String manufacturer = product.getManufacturer();
-        if ((manufacturer != null) && (!manufacturer.equals("")) && (!manufacturer.equals("null"))) {
-        	map.put(HistoryColumns.MANUFACTURER, manufacturer);
         }
         
         String affiliateName = product.getAffiliateName();
@@ -125,7 +119,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     	if (cursor.moveToFirst()) {
 	    	productInfo = new ProductInfo(cursor.getString(cursor.getColumnIndex(HistoryColumns.GTIN)));
 	    	productInfo.setName(cursor.getString(cursor.getColumnIndex(HistoryColumns.NAME)));
-	    	productInfo.setManufacturer(cursor.getString(cursor.getColumnIndex(HistoryColumns.MANUFACTURER)));
 	    	productInfo.setAffiliateName(cursor.getString(cursor.getColumnIndex(HistoryColumns.AFFILIATE_NAME)));
 	    	productInfo.setAffiliateUrl(cursor.getString(cursor.getColumnIndex(HistoryColumns.AFFILIATE_URL)));
 	    	

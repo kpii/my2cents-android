@@ -56,11 +56,11 @@
 		<TextView
 			android:layout_height="wrap_content"
 			android:layout_width="wrap_content"
-			android:id="@+id/ProductManufacturerTextView"
+			android:id="@+id/AffiliateTextView"
 			android:layout_toRightOf="@id/ProductImageView"
 			android:layout_below="@id/ProductNameTextView"
-			android:textSize="@dimen/product_manufacturer_text"
-			android:textColor="@color/product_manufacturer_text" />
+			android:textSize="@dimen/affiliate_text"
+			android:textColor="@color/affiliate_text" />
 	</RelativeLayout>
 	<RelativeLayout
 		android:layout_width="wrap_content"

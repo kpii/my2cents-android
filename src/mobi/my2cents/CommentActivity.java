@@ -69,7 +69,7 @@ public final class CommentActivity extends ListActivity {
 	
 	private ImageView productImageView;
 	private TextView productNameTextView;
-	private TextView productManufacturerTextView;
+	private TextView affiliateTextView;
 	
 	private EditText commentEditor;
 	private View statusLayout;
@@ -91,9 +91,9 @@ public final class CommentActivity extends ListActivity {
 		productImageView.setOnClickListener(productImageListener);
 		
 		productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
-		productNameTextView.setOnClickListener(productDetailsListener);
 		
-		productManufacturerTextView = (TextView) findViewById(R.id.ProductManufacturerTextView);
+		affiliateTextView = (TextView) findViewById(R.id.AffiliateTextView);
+		affiliateTextView.setOnClickListener(affiliateListener);
 		
 		commentEditor = (EditText) findViewById(R.id.CommentEditText);
 		
@@ -159,7 +159,7 @@ public final class CommentActivity extends ListActivity {
 		}
 	};
 	
-	private final View.OnClickListener productDetailsListener = new View.OnClickListener() {
+	private final View.OnClickListener affiliateListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			if (productInfo != null) {
 				if (productInfo.getAffiliateUrl() != null) {
@@ -416,7 +416,7 @@ public final class CommentActivity extends ListActivity {
 		else
 			productImageView.setImageResource(R.drawable.unknown_product_icon_inverted);
 		
-		productManufacturerTextView.setText(product.getManufacturer());
+		affiliateTextView.setText(product.getAffiliateName());
 		
 		productInfoLayout.setVisibility(View.VISIBLE);
 	}
