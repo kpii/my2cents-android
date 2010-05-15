@@ -9,7 +9,8 @@ public final class ProductInfo {
 	private final String gtin;
 	private String name;
 	private String manufacturer;
-	private String detailPageUrl;
+	private String affiliateName;
+	private String affiliateUrl;
 	private String imageUrl;
 	private Bitmap image;
 	private ArrayList<Comment> comments;
@@ -41,12 +42,12 @@ public final class ProductInfo {
 		return manufacturer;
 	}
 
-	public void setDetailPageUrl(String detailPageUrl) {
-		this.detailPageUrl = detailPageUrl;
+	public void setAffiliateUrl(String affiliateUrl) {
+		this.affiliateUrl = affiliateUrl;
 	}
 
-	public String getDetailPageUrl() {
-		return detailPageUrl;
+	public String getAffiliateUrl() {
+		return affiliateUrl;
 	}
 
 	public void setImageUrl(String imageUrl) {
@@ -71,5 +72,15 @@ public final class ProductInfo {
 
 	public ArrayList<Comment> getComments() {
 		return comments;
+	}
+
+
+	public void setAffiliateName(String affiliateName) {
+		this.affiliateName = affiliateName;
+	}
+
+
+	public String getAffiliateName() {
+		return affiliateName;
 	}
 }

@@ -161,8 +161,8 @@ public final class CommentActivity extends ListActivity {
 	private final View.OnClickListener productDetailsListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			if (productInfo != null) {
-				if (productInfo.getDetailPageUrl() != null) {
-					Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse(productInfo.getDetailPageUrl()));  
+				if (productInfo.getAffiliateUrl() != null) {
+					Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse(productInfo.getAffiliateUrl()));  
 					startActivity(viewIntent);
 				}
 			}
@@ -253,13 +253,14 @@ public final class CommentActivity extends ListActivity {
 
 		@Override
 		protected ProductInfo doInBackground(Context target, String... params) {
-			ProductInfo result = null;
-			if (isProductInfoAvailable) {
-				result = DataManager.getProductComments(productInfo);
-			}
-			else {
-				result = DataManager.getProductInfo(gtin);
-			}
+			ProductInfo result = DataManager.getProductInfo(gtin);
+			
+//			if (isProductInfoAvailable) {
+//				result = DataManager.getProductComments(productInfo);
+//			}
+//			else {
+//				result = DataManager.getProductInfo(gtin);
+//			}
 			
 			if (updateHistory) {
 				if (result != null) {

@@ -67,13 +67,13 @@ public final class DataManager {
 				JSONArray jsonLinks = jsonProduct.getJSONArray("affiliate_links");
 				if (jsonLinks.length() > 0) {
 					String productDetailsUrl = jsonLinks.getString(0);
-					productInfo.setDetailPageUrl(productDetailsUrl);
+					productInfo.setAffiliateUrl(productDetailsUrl);
 				}
 			}
             
             productInfo.setImageUrl(jsonProduct.getString("image_url"));
             
-            if (productImageCache.containsKey(gtin)) {
+            if (productImageCache.containsKey(gtin) && productImageCache.get(gtin) != null) {
             	productInfo.setImage(productImageCache.get(gtin));
             }
             else {
@@ -81,8 +81,11 @@ public final class DataManager {
     				String urlString = productInfo.getImageUrl();
     				if ((urlString != null) && (!urlString.equals("")) && (!urlString.equals("null"))) {
     					URL imageUrl = new URL(urlString);
-    					productInfo.setImage(NetworkManager.getRemoteImage(imageUrl));
-    					productImageCache.put(gtin, productInfo.getImage());
+    					Bitmap productImage = NetworkManager.getRemoteImage(imageUrl);
+    					if (productImage != null) {
+    						productInfo.setImage(productImage);
+        					productImageCache.put(gtin, productInfo.getImage());
+    					}
     				}
     			} catch (MalformedURLException e) {
     				Log.e(TAG, e.getMessage());
