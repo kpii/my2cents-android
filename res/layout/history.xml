@@ -54,56 +54,44 @@
 		android:gravity="center"
 		android:textSize="@dimen/empty_list_text"
 		android:padding="@dimen/empty_list_padding"
-		android:text="@string/message_empty_history" android:layout_weight="1"/>
+		android:text="@string/message_empty_history"
+		android:layout_weight="1" />
 	<LinearLayout
 		android:layout_height="wrap_content"
 		android:id="@+id/ToolbarLayout"
 		android:orientation="horizontal"
 		android:layout_width="fill_parent"
-		android:background="@color/status_backgroung">
+		android:background="@color/status_backgroung"
+		android:paddingLeft="3dip"
+		android:paddingRight="3dip"
+		android:paddingTop="3dip">
 		<ImageButton
 			android:layout_height="wrap_content"
 			android:layout_weight="0.25"
 			android:scaleType="centerInside"
 			android:layout_width="wrap_content"
 			android:id="@+id/ImageButtonHome"
-			android:src="@drawable/home_icon"
-			android:layout_marginBottom="3dip"
-			android:layout_marginRight="3dip"
-			android:layout_marginTop="3dip"
-			android:layout_marginLeft="6dip"></ImageButton>
+			android:src="@drawable/home_icon"></ImageButton>
 		<ImageButton
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_weight="0.25"
 			android:scaleType="centerInside"
 			android:id="@+id/ImageButtonScan"
-			android:src="@drawable/scan_icon"
-			android:layout_marginBottom="3dip"
-			android:layout_marginLeft="3dip"
-			android:layout_marginRight="3dip"
-			android:layout_marginTop="3dip"></ImageButton>
+			android:src="@drawable/scan_icon"></ImageButton>
 		<ImageButton
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_weight="0.25"
 			android:scaleType="centerInside"
 			android:id="@+id/ImageButtonStream"
-			android:src="@drawable/stream_icon"
-			android:layout_marginBottom="3dip"
-			android:layout_marginLeft="3dip"
-			android:layout_marginRight="3dip"
-			android:layout_marginTop="3dip"></ImageButton>
+			android:src="@drawable/stream_icon"></ImageButton>
 		<ImageButton
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_weight="0.25"
 			android:scaleType="centerInside"
 			android:id="@+id/ImageButtonHistory"
-			android:src="@drawable/history_icon"
-			android:layout_marginBottom="3dip"
-			android:layout_marginLeft="3dip"
-			android:layout_marginTop="3dip"
-			android:layout_marginRight="6dip"></ImageButton>
+			android:src="@drawable/history_icon"></ImageButton>
 	</LinearLayout>
 </LinearLayout>
