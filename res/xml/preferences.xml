@@ -7,7 +7,8 @@
 			android:key="@string/settings_send_feedback"
 			android:title="@string/settings_send_feedback"
 			android:summary="@string/settings_send_feedback_summary" />
-	</PreferenceCategory>
+	<CheckBoxPreference android:key="@string/settings_share_location" android:title="@string/settings_share_location" android:summary="@string/settings_share_location_summary" android:defaultValue="false"></CheckBoxPreference>
+</PreferenceCategory>
 	<PreferenceCategory
 		android:title="Online Social Networks">
 		<CheckBoxPreference

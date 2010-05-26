@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.TimeZone;
 
 import mobi.my2cents.SettingsActivity;
+import mobi.my2cents.utils.GpsManager;
 import mobi.my2cents.utils.NetworkManager;
 
 import org.json.JSONArray;
@@ -17,6 +18,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.util.Log;
 
 public final class DataManager {
@@ -208,6 +210,13 @@ public final class DataManager {
 			json.put("comment", jsonComment);
 			String tmp = SettingsActivity.isShareOnTwitter() ? "1" : "0";
 			json.put("publish_to_twitter", tmp);
+			if (SettingsActivity.isShareLocation()) {
+				Location location = GpsManager.getLocation();
+				if (location != null) {
+					json.put("latitude", location.getLatitude());
+					json.put("longitude", location.getLongitude());
+				}
+			}
 			content = json.toString();
 		} catch (JSONException e) {
 			Log.e(TAG, e.getMessage());

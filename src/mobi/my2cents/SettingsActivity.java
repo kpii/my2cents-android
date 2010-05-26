@@ -21,6 +21,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	private static final String TAG = "SettingsActivity";
 	
 	private static boolean shareOnTwitter;
+	private static boolean shareLocation;
 	
 	private SharedPreferences settings;
 	private CheckBoxPreference loginCheckBoxPreference;
@@ -138,5 +139,13 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 
 	public static boolean isShareOnTwitter() {
 		return shareOnTwitter;
+	}
+
+	public static void setShareLocation(boolean shareLocation) {
+		SettingsActivity.shareLocation = shareLocation;
+	}
+
+	public static boolean isShareLocation() {
+		return shareLocation;
 	}
 }

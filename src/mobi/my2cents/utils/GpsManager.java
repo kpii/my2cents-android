@@ -7,17 +7,18 @@ import android.location.Location;
 import android.location.LocationManager;
 
 public class GpsManager {
-	public static final Location getGPS(LocationManager lm) {  
-		List<String> providers = lm.getProviders(true);
-
+	
+	public static LocationManager locationManager;
+	
+	public static final Location getLocation() { 
+		if (locationManager == null) return null;
+		List<String> providers = locationManager.getProviders(true);
 		/* Loop over the array backwards, and if you get an accurate location, then break out the loop*/
-		Location l = null;
-		
+		Location location = null;		
 		for (int i=providers.size()-1; i>=0; i--) {
-			l = lm.getLastKnownLocation(providers.get(i));
-			if (l != null) break;
-		}
-		
-		return l;
+			location = locationManager.getLastKnownLocation(providers.get(i));
+			if (location != null) break;
+		}		
+		return location;
 	}
 }

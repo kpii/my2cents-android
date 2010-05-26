@@ -12,6 +12,7 @@ import mobi.my2cents.data.Comment;
 import mobi.my2cents.data.DataManager;
 import mobi.my2cents.data.HistoryColumns;
 import mobi.my2cents.data.ProductInfo;
+import mobi.my2cents.utils.GpsManager;
 import mobi.my2cents.utils.NetworkManager;
 import mobi.my2cents.utils.WeakAsyncTask;
 import android.app.AlertDialog;
@@ -22,6 +23,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -344,6 +346,11 @@ public final class CommentActivity extends ListActivity {
 		super.onResume();
 		
 		SettingsActivity.setShareOnTwitter(settings.getBoolean(getString(R.string.settings_twitter), false));
+		boolean shareLocation = settings.getBoolean(getString(R.string.settings_share_location), false);
+		SettingsActivity.setShareLocation(shareLocation);
+		if (shareLocation) {
+			GpsManager.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		}
 		
 		if (commentsAdapter.getCount() > 0)
 			commentsAdapter.notifyDataSetChanged();
