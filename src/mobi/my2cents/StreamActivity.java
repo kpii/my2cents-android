@@ -43,10 +43,10 @@ public final class StreamActivity extends ListActivity {
 
 		statusLayout = findViewById(R.id.StatusRelativeLayout);
 		
-		findViewById(R.id.ImageButtonHome).setOnClickListener(homeListener);
-		findViewById(R.id.ImageButtonScan).setOnClickListener(scanListener);
-		findViewById(R.id.ImageButtonStream).setEnabled(false);
-		findViewById(R.id.ImageButtonHistory).setOnClickListener(historyListener);
+		findViewById(R.id.NavigationButtonHome).setOnClickListener(homeListener);
+		findViewById(R.id.NavigationButtonScan).setOnClickListener(scanListener);
+		findViewById(R.id.NavigationButtonStream).setEnabled(false);
+		findViewById(R.id.NavigationButtonHistory).setOnClickListener(historyListener);
 		
 		streamAdapter = new StreamAdapter(this, R.layout.stream_item, commentsArray);
 		setListAdapter(streamAdapter);

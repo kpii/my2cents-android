@@ -34,6 +34,11 @@
 		android:padding="@dimen/empty_list_padding"
 		android:text="@string/message_empty_history"
 		android:layout_weight="1" />
+		
+	<View
+        android:layout_width="fill_parent"
+        android:layout_height="3dp"
+        android:background="@drawable/footer_shadow" />	
 	<include
 		android:id="@+id/NavigationBar"
 		layout="@layout/navigation_bar" />

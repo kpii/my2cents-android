@@ -50,4 +50,6 @@
 	<dimen name="home_screen_button_text_header">20sp</dimen>
 	<dimen name="home_screen_button_text">12sp</dimen>
 	<dimen name="home_screen_text">10sp</dimen>
+	
+	<dimen name="bar_height">53dip</dimen>
 </resources>

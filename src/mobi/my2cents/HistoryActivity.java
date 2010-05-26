@@ -31,10 +31,10 @@ public final class HistoryActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.history);
 		
-		findViewById(R.id.ImageButtonHome).setOnClickListener(homeListener);
-		findViewById(R.id.ImageButtonScan).setOnClickListener(scanListener);
-		findViewById(R.id.ImageButtonStream).setOnClickListener(streamListener);
-		findViewById(R.id.ImageButtonHistory).setEnabled(false);
+		findViewById(R.id.NavigationButtonHome).setOnClickListener(homeListener);
+		findViewById(R.id.NavigationButtonScan).setOnClickListener(scanListener);
+		findViewById(R.id.NavigationButtonStream).setOnClickListener(streamListener);
+		findViewById(R.id.NavigationButtonHistory).setEnabled(false);
 	}
 	
 	private final Button.OnClickListener scanListener = new Button.OnClickListener() {

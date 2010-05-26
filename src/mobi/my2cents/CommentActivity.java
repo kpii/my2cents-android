@@ -120,10 +120,10 @@ public final class CommentActivity extends ListActivity {
 		findViewById(R.id.SendButton).setOnClickListener(sendCommentListener);
 		commentEditor.setOnEditorActionListener(sendCommentActionListener);
 		
-		findViewById(R.id.ImageButtonHome).setOnClickListener(homeListener);
-		findViewById(R.id.ImageButtonScan).setOnClickListener(scanListener);
-		findViewById(R.id.ImageButtonStream).setOnClickListener(streamListener);
-		findViewById(R.id.ImageButtonHistory).setOnClickListener(historyListener);
+		findViewById(R.id.NavigationButtonHome).setOnClickListener(homeListener);
+		findViewById(R.id.NavigationButtonScan).setOnClickListener(scanListener);
+		findViewById(R.id.NavigationButtonStream).setOnClickListener(streamListener);
+		findViewById(R.id.NavigationButtonHistory).setOnClickListener(historyListener);
 		
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
 		
