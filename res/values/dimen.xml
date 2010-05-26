@@ -19,37 +19,38 @@
 	<dimen name="info_text">14sp</dimen>
 	<dimen name="status_text">11sp</dimen>
 	
-	<dimen name="header_padding">5dip</dimen>
-	<dimen name="header_sub_padding">0dip</dimen>
-	<dimen name="info_padding">5dip</dimen>
-	<dimen name="status_padding">3dip</dimen>
+	<dimen name="header_padding">5dp</dimen>
+	<dimen name="header_sub_padding">0dp</dimen>
+	<dimen name="info_padding">5dp</dimen>
+	<dimen name="status_padding">3dp</dimen>
 	
 	<dimen name="empty_list_text">14sp</dimen>
-	<dimen name="empty_list_padding">5dip</dimen>
+	<dimen name="empty_list_padding">5dp</dimen>
 	
-	<dimen name="product_layout_padding">6dip</dimen>
+	<dimen name="product_layout_padding">6dp</dimen>
 	<dimen name="product_name_text">14sp</dimen>
 	<dimen name="affiliate_text">12sp</dimen>
 	<dimen name="product_details_text">12sp</dimen>
 
-	<dimen name="comment_editor_padding">3dip</dimen>	
+	<dimen name="comment_editor_padding">3dp</dimen>	
 	
-	<dimen name="tab_gallery_spacing">5dip</dimen>
+	<dimen name="tab_gallery_spacing">5dp</dimen>
 	
-	<dimen name="product_image_max_size">90dip</dimen>
-	<dimen name="profile_image_max_size">73dip</dimen>
-	<dimen name="stream_product_image_max_size">48dip</dimen>
+	<dimen name="product_image_max_size">90dp</dimen>
+	<dimen name="profile_image_max_size">73dp</dimen>
+	<dimen name="stream_product_image_max_size">48dp</dimen>
 	
 	<dimen name="stream_product_name_text">12sp</dimen>
-	<dimen name="stream_product_image_padding">3dip</dimen>
+	<dimen name="stream_product_image_padding">3dp</dimen>
 	
-	<dimen name="home_screen_button_margin_small">5dip</dimen>
-	<dimen name="home_screen_button_margin_normal">10dip</dimen>
-	<dimen name="home_screen_button_margin_large">10dip</dimen>
+	<dimen name="home_screen_button_margin_small">5dp</dimen>
+	<dimen name="home_screen_button_margin_normal">10dp</dimen>
+	<dimen name="home_screen_button_margin_large">10dp</dimen>
 	
 	<dimen name="home_screen_button_text_header">20sp</dimen>
 	<dimen name="home_screen_button_text">12sp</dimen>
 	<dimen name="home_screen_text">10sp</dimen>
 	
-	<dimen name="bar_height">53dip</dimen>
+	<dimen name="product_bar_height">53dp</dimen>
+	<dimen name="bar_height">53dp</dimen>
 </resources>

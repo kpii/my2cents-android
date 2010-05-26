@@ -9,27 +9,27 @@
 	<Button
 		android:id="@+id/NavigationButtonHome"
 		style="@style/BarButton"
-		android:drawableTop="@drawable/home_icon"
+		android:drawableTop="@drawable/home_button"
 		android:text="Home" />
 	<View
 		style="@style/BarDivider" />
 	<Button
 		android:id="@+id/NavigationButtonScan"
 		style="@style/BarButton"
-		android:drawableTop="@drawable/scan_icon"
+		android:drawableTop="@drawable/scan_button"
 		android:text="Scan" />
 	<View
 		style="@style/BarDivider" />
 	<Button
 		android:id="@+id/NavigationButtonStream"
 		style="@style/BarButton"
-		android:drawableTop="@drawable/stream_icon"
+		android:drawableTop="@drawable/stream_button"
 		android:text="Stream" />
 	<View
 		style="@style/BarDivider" />
 	<Button
 		android:id="@+id/NavigationButtonHistory"
 		style="@style/BarButton"
-		android:drawableTop="@drawable/history_icon"
+		android:drawableTop="@drawable/history_button"
 		android:text="History" />
 </LinearLayout>

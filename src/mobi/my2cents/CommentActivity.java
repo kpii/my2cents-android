@@ -94,13 +94,9 @@ public final class CommentActivity extends ListActivity {
 		
 		productImageView = (ImageView) findViewById(R.id.ProductImageView);
 		productImageView.setOnClickListener(productImageListener);
-
-		findViewById(R.id.PopupImageView).setOnClickListener(productQuickActionsListener);
 		
 		productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
-		
 		affiliateTextView = (TextView) findViewById(R.id.AffiliateTextView);
-		affiliateTextView.setOnClickListener(affiliateListener);
 		
 		commentEditor = (EditText) findViewById(R.id.CommentEditText);
 		
@@ -114,6 +110,7 @@ public final class CommentActivity extends ListActivity {
 		tagsGallery.setOnItemLongClickListener(tagsLongClickListener);
 		
 		productInfoLayout = findViewById(R.id.ProductInfoLayout);
+		productInfoLayout.setOnClickListener(productQuickActionsListener);
 		
 		findViewById(R.id.LoginButton).setOnClickListener(loginListener);
 		
@@ -171,12 +168,15 @@ public final class CommentActivity extends ListActivity {
 			if (productInfo != null) {
 				if (productPopup == null) {
 					LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+					
 					View contentView = inflater.inflate(R.layout.product_popup, null, false);
 					contentView.setOnTouchListener(closePopupListener);
+					contentView.findViewById(R.id.ProductBarButtonDetails).setOnClickListener(affiliateListener);
+					
 					productPopup = new PopupWindow(
 							contentView, 
-							100, 
-							100, 
+							view.getWidth(), 
+							R.dimen.product_bar_height, 
 							false);
 				    // The code below assumes that the root container has an id called 'main'
 					productPopup.setOutsideTouchable(true);
@@ -187,14 +187,19 @@ public final class CommentActivity extends ListActivity {
 		}
 	};
 	
+	private void closeProductPopupBar() {
+		if (productPopup != null) {
+			productPopup.dismiss();
+			productPopup = null;
+			
+		}
+	}
+	
 	private final View.OnTouchListener closePopupListener = new View.OnTouchListener() {
 		public boolean onTouch(View v, MotionEvent event) {
 			if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
-				if (productPopup != null) {
-					productPopup.dismiss();
-					productPopup = null;
-					return true;
-				}
+				closeProductPopupBar();
+				return true;
 			}
 			return false;
 		}
@@ -202,6 +207,7 @@ public final class CommentActivity extends ListActivity {
 	
 	private final View.OnClickListener affiliateListener = new View.OnClickListener() {
 		public void onClick(View view) {
+			closeProductPopupBar();
 			if (productInfo != null) {
 				if (productInfo.getAffiliateUrl() != null) {
 					Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse(productInfo.getAffiliateUrl()));  

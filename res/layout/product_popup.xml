@@ -1,12 +1,35 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical"
-	android:padding="10dip"
-	android:layout_height="wrap_content" android:layout_width="wrap_content" android:background="@drawable/birdy">
-	<TextView
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginTop="10dip"
-		android:text="Test Pop-Up" />
+	android:id="@+id/NavigationBar"
+	android:layout_width="fill_parent"
+	android:layout_height="@dimen/bar_height"
+	android:gravity="center"
+	android:background="@drawable/bar"
+	android:layout_alignParentBottom="true">
+	<Button
+		android:id="@+id/ProductBarButtonDetails"
+		style="@style/BarButton"
+		android:drawableTop="@android:drawable/ic_dialog_info"
+		android:text="Details" />
+	<View
+		style="@style/BarDivider" />
+	<Button
+		android:id="@+id/ProductBarButtonEdit"
+		style="@style/BarButton"
+		android:drawableTop="@android:drawable/ic_dialog_dialer"
+		android:text="Edit" />
+	<View
+		style="@style/BarDivider" />
+	<Button
+		android:id="@+id/ProductBarButtonLike"
+		style="@style/BarButton"
+		android:drawableTop="@android:drawable/btn_star_big_on"
+		android:text="Like" />
+	<View
+		style="@style/BarDivider" />
+	<Button
+		android:id="@+id/ProductBarButtonDislike"
+		style="@style/BarButton"
+		android:drawableTop="@android:drawable/btn_star_big_off"
+		android:text="Dislike" />
 </LinearLayout>
