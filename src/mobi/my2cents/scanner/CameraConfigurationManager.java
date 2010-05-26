@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import android.content.Context;
 import android.graphics.Point;
 import android.hardware.Camera;
+import android.os.Build;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -51,9 +52,13 @@ final class CameraConfigurationManager {
     Camera.Parameters parameters = camera.getParameters();
     previewFormat = parameters.getPreviewFormat();
     previewFormatString = parameters.get("preview-format");
-    Log.v(TAG, "Default preview format: " + previewFormat + '/' + previewFormatString);
-    screenResolution = getScreenResolution();
-    cameraResolution = getCameraResolution(parameters);
+    Log.d(TAG, "Default preview format: " + previewFormat + '/' + previewFormatString);
+    WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+    Display display = manager.getDefaultDisplay();
+    screenResolution = new Point(display.getWidth(), display.getHeight());
+    Log.d(TAG, "Screen resolution: " + screenResolution);
+    cameraResolution = getCameraResolution(parameters, screenResolution);
+    Log.d(TAG, "Camera resolution: " + screenResolution);
   }
 
   /**
@@ -64,7 +69,7 @@ final class CameraConfigurationManager {
    */
   void setDesiredCameraParameters(Camera camera) {
     Camera.Parameters parameters = camera.getParameters();
-    Log.v(TAG, "Setting preview size: " + cameraResolution.x + ", " + cameraResolution.y);
+    Log.d(TAG, "Setting preview size: " + cameraResolution);
     parameters.setPreviewSize(cameraResolution.x, cameraResolution.y);
     setFlash(parameters);
     setZoom(parameters);
@@ -76,6 +81,10 @@ final class CameraConfigurationManager {
     return cameraResolution;
   }
 
+  Point getScreenResolution() {
+    return screenResolution;
+  }
+
   int getPreviewFormat() {
     return previewFormat;
   }
@@ -84,13 +93,7 @@ final class CameraConfigurationManager {
     return previewFormatString;
   }
 
-  private Point getScreenResolution() {
-    WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-    Display display = manager.getDefaultDisplay();
-    return new Point(display.getWidth(), display.getHeight());
-  }
-
-  private Point getCameraResolution(Camera.Parameters parameters) {
+  private static Point getCameraResolution(Camera.Parameters parameters, Point screenResolution) {
 
     String previewSizeValueString = parameters.get("preview-size-values");
     // saw this on Xperia
@@ -101,7 +104,7 @@ final class CameraConfigurationManager {
     Point cameraResolution = null;
 
     if (previewSizeValueString != null) {
-      Log.v(TAG, "preview-size parameter: " + previewSizeValueString);
+      Log.d(TAG, "preview-size-values parameter: " + previewSizeValueString);
       cameraResolution = findBestPreviewSizeValue(previewSizeValueString, screenResolution);
     }
 
@@ -157,7 +160,7 @@ final class CameraConfigurationManager {
     return null;
   }
 
-  private static int findBestMotZoomValue(String stringValues, int tenDesiredZoom) {
+  private static int findBestMotZoomValue(CharSequence stringValues, int tenDesiredZoom) {
     int tenBestValue = 0;
     for (String stringValue : COMMA_PATTERN.split(stringValues)) {
       stringValue = stringValue.trim();
@@ -177,7 +180,14 @@ final class CameraConfigurationManager {
 
   private void setFlash(Camera.Parameters parameters) {
     // FIXME: This is a hack to turn the flash off on the Samsung Galaxy.
-    parameters.set("flash-value", 2);
+    // And this is a hack-hack to work around a different value on the Behold II
+    // Restrict Behold II check to Cupcake, per Samsung's advice
+    if (Build.MODEL.contains("Behold II") &&
+        CameraManager.SDK_INT == Build.VERSION_CODES.CUPCAKE) {
+      parameters.set("flash-value", 1);
+    } else {
+      parameters.set("flash-value", 2);
+    }
     // This is the standard setting to turn the flash off that all devices should honor.
     parameters.set("flash-mode", "off");
   }

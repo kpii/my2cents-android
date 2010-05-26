@@ -18,6 +18,7 @@ package mobi.my2cents.scanner;
 
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.concurrent.CountDownLatch;
 
 import mobi.my2cents.ScanActivity;
 import android.os.Handler;
@@ -29,39 +30,47 @@ import com.google.zxing.ResultPointCallback;
 
 /**
  * This thread does all the heavy lifting of decoding the images.
- *
+ * 
  * @author dswitkin@google.com (Daniel Switkin)
  */
 final class DecodeThread extends Thread {
 
-  public static final String BARCODE_BITMAP = "barcode_bitmap";
+	public static final String BARCODE_BITMAP = "barcode_bitmap";
 
-  private final ScanActivity activity;
-  private final Hashtable<DecodeHintType, Object> hints;
-  private Handler handler;
+	private final ScanActivity activity;
+	private final Hashtable<DecodeHintType, Object> hints;
+	private Handler handler;
+	private final CountDownLatch handlerInitLatch;
 
-  DecodeThread(ScanActivity activity,
-               Vector<BarcodeFormat> decodeFormats,
-               ResultPointCallback resultPointCallback) {
+	DecodeThread(ScanActivity activity, Vector<BarcodeFormat> decodeFormats,
+			ResultPointCallback resultPointCallback) {
 
-    this.activity = activity;
+		this.activity = activity;
+		handlerInitLatch = new CountDownLatch(1);
 
-    hints = new Hashtable<DecodeHintType, Object>(3);
-    if (decodeFormats != null) {
-    	hints.put(DecodeHintType.POSSIBLE_FORMATS, decodeFormats);
-    }    
-    hints.put(DecodeHintType.NEED_RESULT_POINT_CALLBACK, resultPointCallback);
-  }
+		hints = new Hashtable<DecodeHintType, Object>(3);
+		if (decodeFormats != null) {
+			hints.put(DecodeHintType.POSSIBLE_FORMATS, decodeFormats);
+		}
+		hints.put(DecodeHintType.NEED_RESULT_POINT_CALLBACK,
+				resultPointCallback);
+	}
 
-  Handler getHandler() {
-    return handler;
-  }
+	Handler getHandler() {
+		try {
+			handlerInitLatch.await();
+		} catch (InterruptedException ie) {
+			// continue?
+		}
+		return handler;
+	}
 
-  @Override
-  public void run() {
-    Looper.prepare();
-    handler = new DecodeHandler(activity, hints);    
-    Looper.loop();
-  }
+	@Override
+	public void run() {
+		Looper.prepare();
+		handler = new DecodeHandler(activity, hints);
+		handlerInitLatch.countDown();
+		Looper.loop();
+	}
 
 }
