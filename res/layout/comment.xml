@@ -3,7 +3,7 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical"
 	android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
+	android:layout_height="fill_parent" android:id="@+id/ParentLayout">
 	<RelativeLayout
 		android:layout_width="fill_parent"
 		android:orientation="horizontal"
@@ -34,8 +34,7 @@
 		android:layout_height="wrap_content"
 		android:padding="@dimen/product_layout_padding"
 		android:background="@color/info_backgroung"
-		android:id="@+id/ProductInfoLayout"
-		android:visibility="gone">
+		android:id="@+id/ProductInfoLayout" android:visibility="gone">
 		<ImageView
 			android:layout_width="wrap_content"
 			android:layout_marginRight="6dip"
@@ -59,7 +58,17 @@
 			android:layout_toRightOf="@id/ProductImageView"
 			android:layout_below="@id/ProductNameTextView"
 			android:textSize="@dimen/affiliate_text"
-			android:textColor="@color/affiliate_text" android:layout_width="fill_parent" android:gravity="right"/>
+			android:textColor="@color/affiliate_text"
+			android:layout_width="wrap_content" />
+		<ImageView
+			android:layout_height="wrap_content"
+			android:id="@+id/PopupImageView"
+			android:layout_below="@id/ProductNameTextView"
+			android:layout_toRightOf="@id/AffiliateTextView"
+			android:src="@android:drawable/star_off"
+			android:layout_width="wrap_content"
+			android:scaleType="fitEnd"
+			android:layout_alignParentRight="true" android:visibility="gone"></ImageView>
 	</RelativeLayout>
 	<RelativeLayout
 		android:layout_width="wrap_content"

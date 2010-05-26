@@ -41,6 +41,7 @@ import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -75,6 +76,7 @@ public final class CommentActivity extends ListActivity {
 	
 	private EditText commentEditor;
 	private View statusLayout;
+	private PopupWindow productPopup;
 	
 	private AsyncTask<String, Void, ProductInfo> getProductInfoTask;
 	private AsyncTask<List<Comment>, Void, Void> getProfileImagesTask;
@@ -82,7 +84,6 @@ public final class CommentActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 		setContentView(R.layout.comment);
 
 		DataManager.UnknownProductName = getString(R.string.unknown_product);
@@ -91,6 +92,8 @@ public final class CommentActivity extends ListActivity {
 		
 		productImageView = (ImageView) findViewById(R.id.ProductImageView);
 		productImageView.setOnClickListener(productImageListener);
+
+//		findViewById(R.id.PopupImageView).setOnClickListener(productQuickActionsListener);
 		
 		productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
 		
@@ -158,6 +161,37 @@ public final class CommentActivity extends ListActivity {
 			if (productInfo != null) {
 				showDialog(DIALOG_PRODUCT_DETAILS);
 			}
+		}
+	};
+	
+	private final View.OnClickListener productQuickActionsListener = new View.OnClickListener() {
+		public void onClick(View view) {
+			if (productInfo != null) {
+				if (productPopup == null) {
+					LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+					View contentView = inflater.inflate(R.layout.product_popup, null, false);
+					contentView.setOnFocusChangeListener(closePopupListener);
+					productPopup = new PopupWindow(
+							contentView, 
+							100, 
+							100, 
+							true);
+				    // The code below assumes that the root container has an id called 'main'
+					productPopup.setOutsideTouchable(false);
+					productPopup.showAsDropDown(view);
+				}
+			}
+		}
+	};
+	
+	private final View.OnFocusChangeListener closePopupListener = new View.OnFocusChangeListener() {
+		public void onFocusChange(View v, boolean hasFocus) {
+			if (hasFocus) {
+				if (productPopup != null) {
+					productPopup.dismiss();
+					productPopup = null;
+				}
+			}		
 		}
 	};
 	
