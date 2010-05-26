@@ -33,7 +33,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -93,7 +95,7 @@ public final class CommentActivity extends ListActivity {
 		productImageView = (ImageView) findViewById(R.id.ProductImageView);
 		productImageView.setOnClickListener(productImageListener);
 
-//		findViewById(R.id.PopupImageView).setOnClickListener(productQuickActionsListener);
+		findViewById(R.id.PopupImageView).setOnClickListener(productQuickActionsListener);
 		
 		productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
 		
@@ -170,28 +172,31 @@ public final class CommentActivity extends ListActivity {
 				if (productPopup == null) {
 					LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 					View contentView = inflater.inflate(R.layout.product_popup, null, false);
-					contentView.setOnFocusChangeListener(closePopupListener);
+					contentView.setOnTouchListener(closePopupListener);
 					productPopup = new PopupWindow(
 							contentView, 
 							100, 
 							100, 
-							true);
+							false);
 				    // The code below assumes that the root container has an id called 'main'
-					productPopup.setOutsideTouchable(false);
+					productPopup.setOutsideTouchable(true);
+					productPopup.setTouchInterceptor(closePopupListener);
 					productPopup.showAsDropDown(view);
 				}
 			}
 		}
 	};
 	
-	private final View.OnFocusChangeListener closePopupListener = new View.OnFocusChangeListener() {
-		public void onFocusChange(View v, boolean hasFocus) {
-			if (hasFocus) {
+	private final View.OnTouchListener closePopupListener = new View.OnTouchListener() {
+		public boolean onTouch(View v, MotionEvent event) {
+			if (event.getAction() == MotionEvent.ACTION_OUTSIDE) {
 				if (productPopup != null) {
 					productPopup.dismiss();
 					productPopup = null;
+					return true;
 				}
-			}		
+			}
+			return false;
 		}
 	};
 	

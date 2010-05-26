@@ -4,31 +4,9 @@
 	android:orientation="vertical"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
-	<RelativeLayout
-		android:layout_width="fill_parent"
-		android:orientation="horizontal"
-		android:layout_height="wrap_content"
-		android:background="@color/header_backgroung">
-		<TextView
-			android:text="@string/app_name"
-			android:layout_height="wrap_content"
-			android:textStyle="bold"
-			android:layout_width="wrap_content"
-			android:id="@+id/AppNameTextView"
-			android:textColor="@color/header_text"
-			android:textSize="@dimen/header_text"
-			android:padding="@dimen/header_padding"></TextView>
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignBaseline="@+id/AppNameTextView"
-			android:layout_marginLeft="125sp"
-			android:text="@string/app_notes"
-			android:id="@+id/AppNotesTextView"
-			android:textColor="@color/header_text"
-			android:textSize="@dimen/header_sub_text"
-			android:padding="@dimen/header_sub_padding"></TextView>
-	</RelativeLayout>
+	<include
+		android:id="@+id/Header"
+		layout="@layout/header" />
 	<TextView
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
@@ -56,42 +34,7 @@
 		android:padding="@dimen/empty_list_padding"
 		android:text="@string/message_empty_history"
 		android:layout_weight="1" />
-	<LinearLayout
-		android:layout_height="wrap_content"
-		android:id="@+id/ToolbarLayout"
-		android:orientation="horizontal"
-		android:layout_width="fill_parent"
-		android:background="@color/status_backgroung"
-		android:paddingLeft="3dip"
-		android:paddingRight="3dip"
-		android:paddingTop="3dip">
-		<ImageButton
-			android:layout_height="wrap_content"
-			android:layout_weight="0.25"
-			android:scaleType="centerInside"
-			android:layout_width="wrap_content"
-			android:id="@+id/ImageButtonHome"
-			android:src="@drawable/home_icon"></ImageButton>
-		<ImageButton
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_weight="0.25"
-			android:scaleType="centerInside"
-			android:id="@+id/ImageButtonScan"
-			android:src="@drawable/scan_icon"></ImageButton>
-		<ImageButton
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_weight="0.25"
-			android:scaleType="centerInside"
-			android:id="@+id/ImageButtonStream"
-			android:src="@drawable/stream_icon"></ImageButton>
-		<ImageButton
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_weight="0.25"
-			android:scaleType="centerInside"
-			android:id="@+id/ImageButtonHistory"
-			android:src="@drawable/history_icon"></ImageButton>
-	</LinearLayout>
+	<include
+		android:id="@+id/NavigationBar"
+		layout="@layout/navigation_bar" />
 </LinearLayout>
