@@ -205,18 +205,18 @@ public final class DataManager {
 	    	JSONObject jsonComment = new JSONObject();
 	    	jsonComment.put("product_key", gtin);
 	    	jsonComment.put("body", body);
+	    	if (SettingsActivity.isShareLocation()) {
+				Location location = GpsManager.getLocation();
+				if (location != null) {
+					jsonComment.put("latitude", location.getLatitude());
+					jsonComment.put("longitude", location.getLongitude());
+				}
+			}
 
 			JSONObject json = new JSONObject();
 			json.put("comment", jsonComment);
 			String tmp = SettingsActivity.isShareOnTwitter() ? "1" : "0";
 			json.put("publish_to_twitter", tmp);
-			if (SettingsActivity.isShareLocation()) {
-				Location location = GpsManager.getLocation();
-				if (location != null) {
-					json.put("latitude", location.getLatitude());
-					json.put("longitude", location.getLongitude());
-				}
-			}
 			content = json.toString();
 		} catch (JSONException e) {
 			Log.e(TAG, e.getMessage());
