@@ -98,10 +98,10 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setContentView(R.layout.scan);
 
-		findViewById(R.id.ImageButtonHome).setOnClickListener(homeListener);
-		findViewById(R.id.ImageButtonScan).setEnabled(false);
-		findViewById(R.id.ImageButtonStream).setOnClickListener(streamListener);
-		findViewById(R.id.ImageButtonHistory).setOnClickListener(historyListener);
+		findViewById(R.id.NavigationButtonHome).setOnClickListener(homeListener);
+		findViewById(R.id.NavigationButtonScan).setEnabled(false);
+		findViewById(R.id.NavigationButtonStream).setOnClickListener(streamListener);
+		findViewById(R.id.NavigationButtonHistory).setOnClickListener(historyListener);
 		
 		findViewById(R.id.ManualInputButton).setOnClickListener(manualInputListener);
 

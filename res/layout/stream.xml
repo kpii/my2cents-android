@@ -63,5 +63,5 @@
         android:background="@drawable/footer_shadow" />
 	<include
 		android:id="@+id/NavigationBar"
-		layout="@layout/navigation_bar" />
+		layout="@layout/horizontal_navigation_bar" />
 </LinearLayout>

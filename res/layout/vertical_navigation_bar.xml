@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/NavigationBar"
+	android:layout_width="@dimen/bar_height"
+	android:layout_height="fill_parent"
+	android:background="@drawable/bar"
+	android:orientation="vertical">
+	<Button
+		android:id="@+id/NavigationButtonHome"
+		style="@style/VerticalBarButton"
+		android:drawableTop="@drawable/home_button"
+		android:text="@string/navigation_button_home" />
+<!--	<View-->
+<!--		style="@style/VerticalBarDivider" />-->
+	<Button
+		android:id="@+id/NavigationButtonScan"
+		style="@style/VerticalBarButton"
+		android:drawableTop="@drawable/scan_button"
+		android:text="@string/navigation_button_scan" />
+<!--	<View-->
+<!--		style="@style/VerticalBarDivider" />-->
+	<Button
+		android:id="@+id/NavigationButtonStream"
+		style="@style/VerticalBarButton"
+		android:drawableTop="@drawable/stream_button"
+		android:text="@string/navigation_button_stream" />
+<!--	<View-->
+<!--		style="@style/VerticalBarDivider" />-->
+	<Button
+		android:id="@+id/NavigationButtonHistory"
+		style="@style/VerticalBarButton"
+		android:drawableTop="@drawable/history_button"
+		android:text="@string/navigation_button_history" />
+</LinearLayout>

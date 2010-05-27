@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <string name="navigation_button_history">History</string>
+    <string name="navigation_button_stream">Stream</string>
+    <string name="navigation_button_scan">Scan</string>
+    <string name="navigation_button_home">Home</string>
     <string name="anonymous_username">Anonymous</string>
 	<string name="app_name">my2cents</string>
 	<string name="app_notes">by ETH Zurich [v1.0.4]</string>
