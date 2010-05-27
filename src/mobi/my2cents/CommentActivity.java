@@ -121,7 +121,7 @@ public final class CommentActivity extends ListActivity {
 		tagsGallery.setAdapter(tagsAdapter);
 		tagsGallery.setOnItemLongClickListener(tagsLongClickListener);
 		
-		findViewById(R.id.ProductInfoLayout).setOnClickListener(productQuickActionsListener);
+		findViewById(R.id.ProductInfoPanel).setOnClickListener(productQuickActionsListener);
 		findViewById(R.id.LoginButton).setOnClickListener(loginListener);
 		findViewById(R.id.SendButton).setOnClickListener(sendCommentListener);
 		

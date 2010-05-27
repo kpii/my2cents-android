@@ -16,38 +16,8 @@
 		android:orientation="vertical"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent">
-		<RelativeLayout
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:padding="@dimen/product_layout_padding"
-			android:background="@color/info_backgroung"
-			android:id="@+id/ProductInfoLayout">
-			<ImageView
-				android:layout_width="wrap_content"
-				android:layout_marginRight="6dip"
-				android:layout_height="wrap_content"
-				android:adjustViewBounds="true"
-				android:id="@+id/ProductImageView"
-				android:maxHeight="@dimen/product_image_max_size"
-				android:maxWidth="@dimen/product_image_max_size" />
-			<TextView
-				android:layout_width="fill_parent"
-				android:layout_height="wrap_content"
-				android:layout_toRightOf="@id/ProductImageView"
-				android:id="@+id/ProductNameTextView"
-				android:textSize="@dimen/product_name_text"
-				android:textColor="@color/product_name_text"
-				android:layout_marginBottom="5dip"
-				android:clickable="true" />
-			<TextView
-				android:layout_height="wrap_content"
-				android:id="@+id/AffiliateTextView"
-				android:layout_toRightOf="@id/ProductImageView"
-				android:layout_below="@id/ProductNameTextView"
-				android:textSize="@dimen/affiliate_text"
-				android:textColor="@color/affiliate_text"
-				android:layout_width="wrap_content" />
-		</RelativeLayout>
+		<include
+			layout="@layout/product_info_panel" />
 		<RelativeLayout
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
