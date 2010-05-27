@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -35,7 +36,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -86,9 +86,22 @@ public final class CommentActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.comment);
-
+		
 		DataManager.UnknownProductName = getString(R.string.unknown_product);
+		settings = PreferenceManager.getDefaultSharedPreferences(this);
+		inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+		
+		tags = new ArrayList<String>();
+		tagsAdapter = new TagsAdapter(this, R.layout.tag_item, tags);
+		
+		commentsAdapter = new CommentsAdapter(this, R.layout.comment_item, new ArrayList<Comment>());
+		setListAdapter(commentsAdapter);
+		
+		updateUI();
+	}
+	
+	private void updateUI() {
+		setContentView(R.layout.comment);
 		
 		statusLayout = findViewById(R.id.StatusRelativeLayout);
 		
@@ -99,12 +112,7 @@ public final class CommentActivity extends ListActivity {
 		affiliateTextView = (TextView) findViewById(R.id.AffiliateTextView);
 		
 		commentEditor = (EditText) findViewById(R.id.CommentEditText);
-		
-		commentsAdapter = new CommentsAdapter(this, R.layout.comment_item, new ArrayList<Comment>());
-		setListAdapter(commentsAdapter);
 
-		tags = new ArrayList<String>();
-		tagsAdapter = new TagsAdapter(this, R.layout.tag_item, tags);
 		tagsGallery = (Gallery) findViewById(R.id.TagsGallery);
 		tagsGallery.setAdapter(tagsAdapter);
 		tagsGallery.setOnItemLongClickListener(tagsLongClickListener);
@@ -122,9 +130,9 @@ public final class CommentActivity extends ListActivity {
 		findViewById(R.id.NavigationButtonStream).setOnClickListener(streamListener);
 		findViewById(R.id.NavigationButtonHistory).setOnClickListener(historyListener);
 		
-		settings = PreferenceManager.getDefaultSharedPreferences(this);
-		
-		inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+		if (productInfo != null) {
+			displayProductFound(productInfo);
+		}
 	}
 	
 	private final View.OnClickListener homeListener = new View.OnClickListener() {
@@ -469,8 +477,6 @@ public final class CommentActivity extends ListActivity {
 			productImageView.setImageResource(R.drawable.unknown_product_icon_inverted);
 		
 		affiliateTextView.setText(product.getAffiliateName());
-		
-		productInfoLayout.setVisibility(View.VISIBLE);
 	}
 	
 	
@@ -530,6 +536,15 @@ public final class CommentActivity extends ListActivity {
 		cancelAsyncTasks();
         super.onDestroy();
     }
+	
+	@Override
+	public void onConfigurationChanged(Configuration config) {
+		// Do nothing, this is to prevent the activity from being restarted when
+		// the keyboard opens.
+		super.onConfigurationChanged(config);
+		closeProductPopupBar();
+		updateUI();
+	}
 	
 	@Override
 	protected Dialog onCreateDialog(int id) {

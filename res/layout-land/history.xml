@@ -1,25 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical"
+	android:orientation="horizontal"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 	<include
-		android:id="@+id/Header"
-		layout="@layout/header" />
-	<TextView
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:id="@+id/InfoTextView"
-		android:background="@color/info_backgroung"
-		android:textColor="@color/info_text"
-		android:textSize="@dimen/info_text"
-		android:padding="@dimen/info_padding"
-		android:text="@string/history_header"></TextView>
+		android:id="@+id/NavigationBar"
+		layout="@layout/navigation_bar" />
 	<View
-		android:layout_width="fill_parent"
-		android:layout_height="3dp"
-		android:background="@drawable/header_shadow" />
+        android:layout_width="3dp"
+        android:layout_height="fill_parent"
+        android:background="@drawable/navigation_bar_shadow" />
 	<ListView
 		android:layout_width="fill_parent"
 		android:layout_weight="1"
@@ -38,11 +29,4 @@
 		android:padding="@dimen/empty_list_padding"
 		android:text="@string/message_empty_history"
 		android:layout_weight="1" />
-	<View
-		android:layout_width="fill_parent"
-		android:layout_height="3dp"
-		android:background="@drawable/navigation_bar_shadow" />
-	<include
-		android:id="@+id/NavigationBar"
-		layout="@layout/navigation_bar" />
 </LinearLayout>

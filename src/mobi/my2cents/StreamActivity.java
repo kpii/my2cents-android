@@ -12,6 +12,7 @@ import mobi.my2cents.utils.WeakAsyncTask;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -39,6 +40,13 @@ public final class StreamActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		updateUI();
+		
+		streamAdapter = new StreamAdapter(this, R.layout.stream_item, commentsArray);
+		setListAdapter(streamAdapter);
+	}
+	
+	private void updateUI() {
 		setContentView(R.layout.stream);
 
 		statusLayout = findViewById(R.id.StatusRelativeLayout);
@@ -47,9 +55,6 @@ public final class StreamActivity extends ListActivity {
 		findViewById(R.id.NavigationButtonScan).setOnClickListener(scanListener);
 		findViewById(R.id.NavigationButtonStream).setEnabled(false);
 		findViewById(R.id.NavigationButtonHistory).setOnClickListener(historyListener);
-		
-		streamAdapter = new StreamAdapter(this, R.layout.stream_item, commentsArray);
-		setListAdapter(streamAdapter);
 	}
 	
 	private final Button.OnClickListener scanListener = new Button.OnClickListener() {
@@ -226,6 +231,14 @@ public final class StreamActivity extends ListActivity {
 		cancelAsyncTasks();
         super.onDestroy();
     }
+	
+	@Override
+	public void onConfigurationChanged(Configuration config) {
+		// Do nothing, this is to prevent the activity from being restarted when
+		// the keyboard opens.
+		super.onConfigurationChanged(config);
+		updateUI();
+	}
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	package="mobi.my2cents" android:versionCode="5" android:versionName="1.0.4">
+	package="mobi.my2cents" android:versionName="1.1" android:versionCode="5">
 
 	<!-- We require Cupcake (Android 1.5) or later, but are really targeting Donut. -->
 	<uses-sdk
@@ -18,8 +18,7 @@
 		android:name="My2CentsApplication"
 		android:icon="@drawable/birdy" android:debuggable="true">
 		<activity
-			android:name=".MainActivity"
-			android:configChanges="orientation|keyboardHidden" android:screenOrientation="portrait">
+			android:name=".MainActivity">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.MAIN" />

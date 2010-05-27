@@ -12,8 +12,7 @@
 		android:layout_height="wrap_content"
 		android:padding="@dimen/product_layout_padding"
 		android:background="@color/info_backgroung"
-		android:id="@+id/ProductInfoLayout"
-		android:visibility="gone">
+		android:id="@+id/ProductInfoLayout">
 		<ImageView
 			android:layout_width="wrap_content"
 			android:layout_marginRight="6dip"
@@ -39,7 +38,6 @@
 			android:textSize="@dimen/affiliate_text"
 			android:textColor="@color/affiliate_text"
 			android:layout_width="wrap_content" />
-		
 	</RelativeLayout>
 	<RelativeLayout
 		android:layout_width="wrap_content"
@@ -63,6 +61,10 @@
 			android:text="@string/message_product_info_loading"
 			android:layout_height="wrap_content"></TextView>
 	</RelativeLayout>
+	<View
+		android:layout_width="fill_parent"
+		android:layout_height="3dp"
+		android:background="@drawable/header_shadow" />
 	<ListView
 		android:layout_width="fill_parent"
 		android:scrollbars="vertical"
@@ -103,7 +105,7 @@
 	<View
 		android:layout_width="fill_parent"
 		android:layout_height="3dp"
-		android:background="@drawable/footer_shadow" />
+		android:background="@drawable/navigation_bar_shadow" />
 	<RelativeLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
@@ -137,5 +139,5 @@
 	</RelativeLayout>
 	<include
 		android:id="@+id/NavigationBar"
-		layout="@layout/horizontal_navigation_bar" />
+		layout="@layout/navigation_bar" />
 </LinearLayout>

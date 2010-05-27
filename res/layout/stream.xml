@@ -38,6 +38,10 @@
 			android:text="@string/message_stream_loading"
 			android:layout_height="wrap_content"></TextView>
 	</RelativeLayout>
+	<View
+		android:layout_width="fill_parent"
+		android:layout_height="3dp"
+		android:background="@drawable/header_shadow" />
 	<ListView
 		android:layout_width="fill_parent"
 		android:layout_weight="1"
@@ -60,8 +64,8 @@
 	<View
         android:layout_width="fill_parent"
         android:layout_height="3dp"
-        android:background="@drawable/footer_shadow" />
+        android:background="@drawable/navigation_bar_shadow" />
 	<include
 		android:id="@+id/NavigationBar"
-		layout="@layout/horizontal_navigation_bar" />
+		layout="@layout/navigation_bar" />
 </LinearLayout>
