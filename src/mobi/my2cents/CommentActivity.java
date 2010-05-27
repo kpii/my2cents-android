@@ -70,7 +70,6 @@ public final class CommentActivity extends ListActivity {
 	
 	private ProgressDialog progressDialog;
 	private Gallery tagsGallery;
-	private View productInfoLayout;
 	
 	private ImageView productImageView;
 	private TextView productNameTextView;
@@ -112,18 +111,16 @@ public final class CommentActivity extends ListActivity {
 		affiliateTextView = (TextView) findViewById(R.id.AffiliateTextView);
 		
 		commentEditor = (EditText) findViewById(R.id.CommentEditText);
-
+		commentEditor.setOnEditorActionListener(sendCommentActionListener);
+		
 		tagsGallery = (Gallery) findViewById(R.id.TagsGallery);
 		tagsGallery.setAdapter(tagsAdapter);
 		tagsGallery.setOnItemLongClickListener(tagsLongClickListener);
 		
-		productInfoLayout = findViewById(R.id.ProductInfoLayout);
-		productInfoLayout.setOnClickListener(productQuickActionsListener);
-		
+		findViewById(R.id.ProductInfoLayout).setOnClickListener(productQuickActionsListener);
 		findViewById(R.id.LoginButton).setOnClickListener(loginListener);
-		
 		findViewById(R.id.SendButton).setOnClickListener(sendCommentListener);
-		commentEditor.setOnEditorActionListener(sendCommentActionListener);
+		
 		
 		findViewById(R.id.NavigationButtonHome).setOnClickListener(homeListener);
 		findViewById(R.id.NavigationButtonScan).setOnClickListener(scanListener);
@@ -298,12 +295,7 @@ public final class CommentActivity extends ListActivity {
 			productInfo = DataManager.getDatabase().getCachedProductInfo(gtin);
 			if (productInfo != null) {
 				displayProductFound(productInfo);
-				productInfoLayout.setVisibility(View.VISIBLE);
 			}
-			else {
-				productInfoLayout.setVisibility(View.GONE);
-			}
-			//progressDialog = ProgressDialog.show(CommentActivity.this, null, getString(R.string.progress_dialog_loading), true);
 	    }
 
 		@Override
