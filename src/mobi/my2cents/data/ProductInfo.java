@@ -12,6 +12,8 @@ public final class ProductInfo {
 	private String affiliateUrl;
 	private String imageUrl;
 	private Bitmap image;
+	private int likes;
+	private int dislikes;
 	private ArrayList<Comment> comments;
 	
 
@@ -73,5 +75,25 @@ public final class ProductInfo {
 
 	public String getAffiliateName() {
 		return affiliateName;
+	}
+
+
+	public void setLikes(int likes) {
+		this.likes = likes;
+	}
+
+
+	public int getLikes() {
+		return likes;
+	}
+
+
+	public void setDislikes(int dislikes) {
+		this.dislikes = dislikes;
+	}
+
+
+	public int getDislikes() {
+		return dislikes;
 	}
 }

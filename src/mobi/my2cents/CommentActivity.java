@@ -74,6 +74,8 @@ public final class CommentActivity extends ListActivity {
 	private ImageView productImageView;
 	private TextView productNameTextView;
 	private TextView affiliateTextView;
+	private TextView likesTextView;
+	private TextView dislikesTextView;
 	
 	private EditText commentEditor;
 	private View statusLayout;
@@ -109,6 +111,8 @@ public final class CommentActivity extends ListActivity {
 		
 		productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
 		affiliateTextView = (TextView) findViewById(R.id.AffiliateTextView);
+		likesTextView = (TextView) findViewById(R.id.LikesTextView);
+		dislikesTextView = (TextView) findViewById(R.id.DislikesTextView);
 		
 		commentEditor = (EditText) findViewById(R.id.CommentEditText);
 		commentEditor.setOnEditorActionListener(sendCommentActionListener);
@@ -177,6 +181,9 @@ public final class CommentActivity extends ListActivity {
 					View contentView = inflater.inflate(R.layout.product_popup, null, false);
 					contentView.setOnTouchListener(closePopupListener);
 					contentView.findViewById(R.id.ProductBarButtonDetails).setOnClickListener(affiliateListener);
+					contentView.findViewById(R.id.ProductBarButtonLike).setOnClickListener(likeListener);
+					contentView.findViewById(R.id.ProductBarButtonDislike).setOnClickListener(dislikeListener);
+					contentView.findViewById(R.id.ProductBarButtonEdit).setOnClickListener(editProductInfoListener);
 					
 					productPopup = new PopupWindow(
 							contentView, 
@@ -218,6 +225,33 @@ public final class CommentActivity extends ListActivity {
 					Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse(productInfo.getAffiliateUrl()));  
 					startActivity(viewIntent);
 				}
+			}
+		}
+	};
+	
+	private final View.OnClickListener likeListener = new View.OnClickListener() {
+		public void onClick(View view) {
+			closeProductPopupBar();
+			if (productInfo != null) {
+				
+			}
+		}
+	};
+	
+	private final View.OnClickListener dislikeListener = new View.OnClickListener() {
+		public void onClick(View view) {
+			closeProductPopupBar();
+			if (productInfo != null) {
+				
+			}
+		}
+	};
+	
+	private final View.OnClickListener editProductInfoListener = new View.OnClickListener() {
+		public void onClick(View view) {
+			closeProductPopupBar();
+			if (productInfo != null) {
+				
 			}
 		}
 	};
@@ -469,6 +503,8 @@ public final class CommentActivity extends ListActivity {
 			productImageView.setImageResource(R.drawable.unknown_product_icon_inverted);
 		
 		affiliateTextView.setText(product.getAffiliateName());
+		likesTextView.setText("Likes: " + product.getLikes());
+		dislikesTextView.setText("Dislikes: " + product.getDislikes());
 	}
 	
 	

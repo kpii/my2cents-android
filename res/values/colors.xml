@@ -24,8 +24,7 @@
 	
 	<color name="product_info_background">#B3CC99</color>
 	<color name="product_name_text">#FFF</color>
-	<color name="affiliate_text">#6A94A4</color>
-	<color name="product_details_text">#99CCAA</color>
+	<color name="affiliate_text">#9BD9EF</color>
 	
 	<color name="comment_text">#000000</color>
 	<color name="comment_author_text">#628C9C</color>
