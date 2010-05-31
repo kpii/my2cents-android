@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <string name="rating_successful">Product was successfully rated</string>
+    <string name="rating_unsuccesful">Product was not rated</string>
     <string name="navigation_button_history">History</string>
     <string name="navigation_button_stream">Stream</string>
     <string name="navigation_button_scan">Scan</string>

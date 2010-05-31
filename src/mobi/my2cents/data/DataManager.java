@@ -73,6 +73,14 @@ public final class DataManager {
 					productInfo.setAffiliateUrl(affiliate.getString("href"));
 				}
 			}
+			
+			if (jsonProduct.has("rating")) {
+				JSONObject jsonRating = jsonProduct.getJSONObject("rating");
+				if (jsonRating != null) {
+					productInfo.setLikes(jsonRating.getInt("likes"));
+					productInfo.setDislikes(jsonRating.getInt("dislikes"));
+				}
+			}
             
             productInfo.setImageUrl(jsonProduct.getString("image_url"));
             
@@ -230,6 +238,28 @@ public final class DataManager {
 				return Json2Comment(json.getJSONObject("comment"));
 			} catch (JSONException e) {
 				Log.e(TAG, e.getMessage());
+			}
+		}
+		return null;
+	}
+	
+	public final static String rateProduct(String gtin, String value) {
+		String content = null;
+	    try {
+	    	JSONObject jsonRating = new JSONObject();
+	    	jsonRating.put("value", value);
+	    	
+	    	JSONObject json = new JSONObject();
+	    	json.put("rating", jsonRating);
+			content = json.toString();
+		} catch (JSONException e) {
+			Log.e(TAG, e.getMessage());
+		}
+		
+		if (content != null) {
+			boolean wasSend = NetworkManager.putRating(gtin, content);
+			if (wasSend) {
+				return value;
 			}
 		}
 		return null;

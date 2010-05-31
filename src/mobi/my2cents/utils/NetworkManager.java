@@ -15,6 +15,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
@@ -185,6 +186,43 @@ public final class NetworkManager {
 			}
 	    }	    
 		return null;
+	}
+	
+	private static HttpResponse putJSON(String url, String content) {
+		// Create a new HttpClient and Put Header
+		HttpClient httpClient = new DefaultHttpClient();
+		HttpPut httpPut = new HttpPut(url);
+	    httpPut.setParams(httpParams);
+		httpPut.setHeader("User-Agent", userAgent);
+	    
+	    if ((authToken != null) && (!authToken.equals(""))) {
+	    	httpPut.setHeader("Cookie", authToken);
+	    }
+	    
+	    try {
+	    	StringEntity entity = new StringEntity(content, "UTF-8");
+	        entity.setContentType("application/json");
+	        httpPut.setEntity(entity);
+	        
+	        // Execute HTTP Put Request
+	        HttpResponse response = httpClient.execute(httpPut);
+	        return response;	        
+	    } catch (ClientProtocolException e) {
+	        Log.e(TAG, e.getMessage());
+	    } catch (IOException e) {
+	    	Log.e(TAG, e.getMessage());
+	    }
+		return null;
+	}
+	
+	public static boolean putRating(String gtin, String content) {
+		String url = BASE_URL + "/products/" + gtin + "/rating.json";
+		HttpResponse response = putJSON(url, content);
+		if (response != null) {
+			boolean wasSend = (response.getStatusLine().getStatusCode() == 200);
+			return wasSend;
+		}
+		return false;
 	}
 
 	public static void setAuthToken(String authToken) {

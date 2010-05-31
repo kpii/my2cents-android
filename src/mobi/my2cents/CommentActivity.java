@@ -233,7 +233,7 @@ public final class CommentActivity extends ListActivity {
 		public void onClick(View view) {
 			closeProductPopupBar();
 			if (productInfo != null) {
-				
+				rateProduct(view.getContext(), "like");
 			}
 		}
 	};
@@ -242,7 +242,7 @@ public final class CommentActivity extends ListActivity {
 		public void onClick(View view) {
 			closeProductPopupBar();
 			if (productInfo != null) {
-				
+				rateProduct(view.getContext(), "dislike");
 			}
 		}
 	};
@@ -286,6 +286,15 @@ public final class CommentActivity extends ListActivity {
 		else {
 			String message = commentEditor.getText().toString();
 			new PostComment(context).execute(message);
+		}
+	}
+	
+	private void rateProduct(Context context, String value) {
+		if (!NetworkManager.isNetworkAvailable(this)) {
+			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
+		}
+		else {
+			new PutRating(context).execute(value);
 		}
 	}
 	
@@ -545,6 +554,41 @@ public final class CommentActivity extends ListActivity {
 			}
 			else {
 				Toast.makeText(target, R.string.error_message_no_server_connection, Toast.LENGTH_LONG).show();
+			}
+	    }
+	}
+	
+	private class PutRating extends WeakAsyncTask<String, Void, String, Context> {
+
+		public PutRating(Context target) {
+			super(target);
+		}
+
+		@Override
+		protected void onPreExecute(Context target) {
+			progressDialog = ProgressDialog.show(target, null, "Rating product...", true);
+	    }
+		
+		@Override
+		protected String doInBackground(Context target, String... params) {
+			return DataManager.rateProduct(gtin, params[0]);
+		}
+		
+		@Override
+		protected void onPostExecute(Context target, String result) {
+			progressDialog.dismiss();
+			if (result == null) {
+				Toast.makeText(target, R.string.rating_unsuccesful, Toast.LENGTH_LONG).show();
+			}
+			else {
+				if (result.equals("like")) {
+					productInfo.setLikes(productInfo.getLikes() + 1);
+				}
+				else {
+					productInfo.setDislikes(productInfo.getDislikes() + 1);
+				}
+				displayProductFound(productInfo);
+				Toast.makeText(target, R.string.rating_successful, Toast.LENGTH_SHORT).show();
 			}
 	    }
 	}
