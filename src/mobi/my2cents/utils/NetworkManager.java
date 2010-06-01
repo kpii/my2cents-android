@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -33,6 +34,7 @@ public final class NetworkManager {
 
 	private static final String TAG = "NetworkManager";
 	private static String authToken;
+	private static String sessionToken;
 	public static String userAgent;
 	public static final String BASE_URL = "http://my2cents.mobi";
 	private static final HttpParams httpParams;
@@ -111,7 +113,14 @@ public final class NetworkManager {
 		httpGet.setHeader("User-Agent", userAgent);
 		
 		try {
-			HttpResponse response = httpClient.execute(httpGet);			
+			HttpResponse response = httpClient.execute(httpGet);
+			if (sessionToken == null) {
+				Header sessionCookie = response.getFirstHeader("Set-Cookie");
+				if (sessionCookie != null) {
+					sessionToken = sessionCookie.getValue();
+				}
+			}
+			
 			HttpEntity entity = response.getEntity();
 			if (entity != null) {
 				InputStream stream = entity.getContent();
@@ -148,6 +157,11 @@ public final class NetworkManager {
 	    
 	    if ((authToken != null) && (!authToken.equals(""))) {
 	    	httpPost.setHeader("Cookie", authToken);
+	    }
+	    else {
+	    	if (sessionToken != null) {
+	    		httpPost.setHeader("Cookie", sessionToken);
+	    	}
 	    }
 	    
 	    try {
@@ -198,6 +212,9 @@ public final class NetworkManager {
 	    if ((authToken != null) && (!authToken.equals(""))) {
 	    	httpPut.setHeader("Cookie", authToken);
 	    }
+	    else {
+	    	httpPut.setHeader("Cookie", sessionToken);
+	    }
 	    
 	    try {
 	    	StringEntity entity = new StringEntity(content, "UTF-8");
@@ -215,14 +232,25 @@ public final class NetworkManager {
 		return null;
 	}
 	
-	public static boolean putRating(String gtin, String content) {
+	public static String putRating(String gtin, String content) {
 		String url = BASE_URL + "/products/" + gtin + "/rating.json";
 		HttpResponse response = putJSON(url, content);
-		if (response != null) {
-			boolean wasSend = (response.getStatusLine().getStatusCode() == 200);
-			return wasSend;
-		}
-		return false;
+		if ((response.getStatusLine() != null) && (response.getStatusLine().getStatusCode() == 200)) {
+	    	try {
+    			HttpEntity entity = response.getEntity();
+    			if (entity != null) {
+    				InputStream stream = entity.getContent();
+    				String result = convertStreamToString(stream);				
+    				stream.close();
+    				return result;
+    			}
+			} catch (IllegalStateException e) {
+				Log.e(TAG, e.getMessage());
+			} catch (IOException e) {
+				Log.e(TAG, e.getMessage());
+			}
+	    }	    
+		return null;
 	}
 
 	public static void setAuthToken(String authToken) {
@@ -231,5 +259,13 @@ public final class NetworkManager {
 
 	public static String getAuthToken() {
 		return authToken;
+	}
+
+	public static void setSessionToken(String sessionToken) {
+		NetworkManager.sessionToken = sessionToken;
+	}
+
+	public static String getSessionToken() {
+		return sessionToken;
 	}
 }

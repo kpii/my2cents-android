@@ -77,8 +77,7 @@ public final class DataManager {
 			if (jsonProduct.has("rating")) {
 				JSONObject jsonRating = jsonProduct.getJSONObject("rating");
 				if (jsonRating != null) {
-					productInfo.setLikes(jsonRating.getInt("likes"));
-					productInfo.setDislikes(jsonRating.getInt("dislikes"));
+					productInfo.setRating(Rating.ParseJson(jsonRating));
 				}
 			}
             
@@ -243,7 +242,7 @@ public final class DataManager {
 		return null;
 	}
 	
-	public final static String rateProduct(String gtin, String value) {
+	public final static Rating rateProduct(String gtin, String value) {
 		String content = null;
 	    try {
 	    	JSONObject jsonRating = new JSONObject();
@@ -257,9 +256,15 @@ public final class DataManager {
 		}
 		
 		if (content != null) {
-			boolean wasSend = NetworkManager.putRating(gtin, content);
-			if (wasSend) {
-				return value;
+			String jsonString = NetworkManager.putRating(gtin, content);
+			if (jsonString != null) {
+				JSONObject json;
+				try {
+					json = new JSONObject(jsonString);
+					return Rating.ParseJson(json.getJSONObject("rating"));
+				} catch (JSONException e) {
+					Log.e(TAG, e.getMessage());
+				}
 			}
 		}
 		return null;

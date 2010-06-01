@@ -12,6 +12,7 @@ import mobi.my2cents.data.Comment;
 import mobi.my2cents.data.DataManager;
 import mobi.my2cents.data.HistoryColumns;
 import mobi.my2cents.data.ProductInfo;
+import mobi.my2cents.data.Rating;
 import mobi.my2cents.utils.GpsManager;
 import mobi.my2cents.utils.NetworkManager;
 import mobi.my2cents.utils.WeakAsyncTask;
@@ -512,8 +513,8 @@ public final class CommentActivity extends ListActivity {
 			productImageView.setImageResource(R.drawable.unknown_product_icon_inverted);
 		
 		affiliateTextView.setText(product.getAffiliateName());
-		likesTextView.setText("Likes: " + product.getLikes());
-		dislikesTextView.setText("Dislikes: " + product.getDislikes());
+		likesTextView.setText("Likes: " + product.getRating().getLikes());
+		dislikesTextView.setText("Dislikes: " + product.getRating().getDislikes());
 	}
 	
 	
@@ -558,7 +559,7 @@ public final class CommentActivity extends ListActivity {
 	    }
 	}
 	
-	private class PutRating extends WeakAsyncTask<String, Void, String, Context> {
+	private class PutRating extends WeakAsyncTask<String, Void, Rating, Context> {
 
 		public PutRating(Context target) {
 			super(target);
@@ -570,23 +571,18 @@ public final class CommentActivity extends ListActivity {
 	    }
 		
 		@Override
-		protected String doInBackground(Context target, String... params) {
+		protected Rating doInBackground(Context target, String... params) {
 			return DataManager.rateProduct(gtin, params[0]);
 		}
 		
 		@Override
-		protected void onPostExecute(Context target, String result) {
+		protected void onPostExecute(Context target, Rating result) {
 			progressDialog.dismiss();
 			if (result == null) {
 				Toast.makeText(target, R.string.rating_unsuccesful, Toast.LENGTH_LONG).show();
 			}
 			else {
-				if (result.equals("like")) {
-					productInfo.setLikes(productInfo.getLikes() + 1);
-				}
-				else {
-					productInfo.setDislikes(productInfo.getDislikes() + 1);
-				}
+				productInfo.setRating(result);
 				displayProductFound(productInfo);
 				Toast.makeText(target, R.string.rating_successful, Toast.LENGTH_SHORT).show();
 			}

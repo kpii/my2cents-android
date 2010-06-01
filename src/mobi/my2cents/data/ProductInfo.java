@@ -12,13 +12,13 @@ public final class ProductInfo {
 	private String affiliateUrl;
 	private String imageUrl;
 	private Bitmap image;
-	private int likes;
-	private int dislikes;
+	private Rating rating;
 	private ArrayList<Comment> comments;
 	
 
 	public ProductInfo(String gtin) {
 		this.gtin = gtin;
+		rating = new Rating();
 		comments = new ArrayList<Comment>();
 	}
 
@@ -76,24 +76,14 @@ public final class ProductInfo {
 	public String getAffiliateName() {
 		return affiliateName;
 	}
+	
 
-
-	public void setLikes(int likes) {
-		this.likes = likes;
+	public void setRating(Rating rating) {
+		this.rating = rating;
 	}
 
 
-	public int getLikes() {
-		return likes;
-	}
-
-
-	public void setDislikes(int dislikes) {
-		this.dislikes = dislikes;
-	}
-
-
-	public int getDislikes() {
-		return dislikes;
+	public Rating getRating() {
+		return rating;
 	}
 }
