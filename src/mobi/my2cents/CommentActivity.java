@@ -29,6 +29,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -350,6 +352,26 @@ public final class CommentActivity extends ListActivity {
 		resolver.insert(History.CONTENT_URI, values);
 	}
 	
+	private ProductInfo getHistoryItem(String gtin) {
+		ProductInfo item = null;
+		ContentResolver resolver = getContentResolver();
+		Cursor cursor = resolver.query(Uri.withAppendedPath(History.CONTENT_URI, gtin), null, null, null, null);
+    	if (cursor.moveToFirst()) {
+    		item = new ProductInfo(gtin);
+    		item.setName(cursor.getString(cursor.getColumnIndex(History.NAME)));
+    		item.setAffiliateName(cursor.getString(cursor.getColumnIndex(History.AFFILIATE_NAME)));
+    		item.setAffiliateUrl(cursor.getString(cursor.getColumnIndex(History.AFFILIATE_URL)));
+	    	
+	    	byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex(History.IMAGE));
+			if (bitmapArray != null) {
+				Bitmap bitmap = Helper.getByteArrayAsBitmap(bitmapArray);
+				item.setImage(bitmap);
+			}
+    	}
+    	cursor.close();
+    	return item;
+	}
+	
 	private class GetProductInfoTask extends WeakAsyncTask<String, Void, ProductInfo, Context> {
 		public GetProductInfoTask(Context target) {
 			super(target);
@@ -358,7 +380,7 @@ public final class CommentActivity extends ListActivity {
 		@Override
 		protected void onPreExecute(Context target) {
 			statusLayout.setVisibility(View.VISIBLE);
-			productInfo = DataManager.getDatabase().getCachedProductInfo(gtin);
+			productInfo = getHistoryItem(gtin);
 			if (productInfo != null) {
 				displayProductFound(productInfo);
 			}
