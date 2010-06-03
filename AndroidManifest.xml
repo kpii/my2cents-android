@@ -96,7 +96,8 @@
 					android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
-	</application>
+	<provider android:name=".data.HistoryProvider" android:authorities="mobi.my2cents"></provider>
+</application>
 	<uses-permission
 		android:name="android.permission.CAMERA" />
 	<uses-permission

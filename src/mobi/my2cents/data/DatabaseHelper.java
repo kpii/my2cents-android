@@ -12,17 +12,23 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.util.Log;
 
-
 public class DatabaseHelper extends SQLiteOpenHelper {
-	
 	private static final String TAG = "DatabaseHelper";
 	
-	/** The name of the database file on the file system */
     private static final String DATABASE_NAME = "My2CentsDb";
     /** The version of the database that this class understands. */
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
     
-    private static final String HISTORY_TABLE = "history";
+    public static final String HISTORY_TABLE = "history";
+    private static final String CREATE_HISTORY_TABLE =
+    	"CREATE TABLE " + HISTORY_TABLE + " ("
+        + History._ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+        + History.TIME + " TEXT,"
+        + History.GTIN + " TEXT,"
+        + History.NAME + " TEXT,"
+        + History.AFFILIATE_NAME + " TEXT,"
+        + History.AFFILIATE_URL + " TEXT,"
+        + History.IMAGE + " BLOB);";
     
     private static final int historyLimit = 100;
 
@@ -33,14 +39,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {        
-        db.execSQL("CREATE TABLE " + HISTORY_TABLE + " ("
-                + HistoryColumns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + HistoryColumns.TIME + " TEXT,"
-                + HistoryColumns.GTIN + " TEXT,"
-                + HistoryColumns.NAME + " TEXT,"
-                + HistoryColumns.AFFILIATE_NAME + " TEXT,"
-                + HistoryColumns.AFFILIATE_URL + " TEXT,"
-                + HistoryColumns.IMAGE + " BLOB);");
+        db.execSQL(CREATE_HISTORY_TABLE);
     }
 
     @Override
@@ -50,79 +49,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
     
-    
-    public void addHistoryItem(ProductInfo product) {
-    	if ((product == null) || (product.getGtin() == null) || (product.getGtin().equals(""))) return;
-    	
-    	SQLiteDatabase db = getWritableDatabase();
-    	
-    	db.delete(HISTORY_TABLE, HistoryColumns.GTIN + " = '" + product.getGtin() + "'", null);
-    	
-    	Cursor cursor = db.rawQuery("SELECT * FROM " + HISTORY_TABLE, null);
-    	if (cursor.getCount() > historyLimit) {
-    		db.delete(HISTORY_TABLE, HistoryColumns.ID + " = (SELECT MIN(" + HistoryColumns.ID + ") FROM " + HISTORY_TABLE + ")", null);
-    	}
-    	cursor.close();
-        
-        ContentValues map = new ContentValues();
-        
-        map.put(HistoryColumns.GTIN, product.getGtin());
-        map.put(HistoryColumns.TIME, new Date().toLocaleString());
-        
-        String name = product.getName();
-        if ((name != null) && (!name.equals(""))) {
-        	map.put(HistoryColumns.NAME, name);
-        }
-        else {
-        	map.put(HistoryColumns.NAME, DataManager.UnknownProductName);
-        }
-        
-        String affiliateName = product.getAffiliateName();
-        if ((affiliateName != null) && (!affiliateName.equals("")) && (!affiliateName.equals("null"))) {
-        	map.put(HistoryColumns.AFFILIATE_NAME, affiliateName);
-        }
-        
-        String affiliateUrl = product.getAffiliateUrl();
-        if ((affiliateUrl != null) && (!affiliateUrl.equals("")) && (!affiliateUrl.equals("null"))) {
-        	map.put(HistoryColumns.AFFILIATE_URL, affiliateUrl);
-        }
-        
-        Bitmap image = product.getImage();
-        if (image != null) {
-        	map.put(HistoryColumns.IMAGE, Helper.getBitmapAsByteArray(image));
-        }
-        
-        try{
-            db.insert(HISTORY_TABLE, null, map);
-        } catch (SQLException e) {
-            Log.e(TAG, e.getMessage());
-        }
-    }
-    
-    public Cursor getHistory() {
-    	SQLiteDatabase db = getReadableDatabase();
-    	String query = "SELECT * FROM " + HISTORY_TABLE + " ORDER BY " + HistoryColumns.ID + " DESC";
-    	return db.rawQuery(query, null);
-    }
-    
-    public void clearHistory() {
-    	SQLiteDatabase db = getWritableDatabase();
-    	db.delete(HISTORY_TABLE, null, null);
-    }
-    
     public ProductInfo getCachedProductInfo(String gtin) {
     	SQLiteDatabase db = getReadableDatabase();
-    	String query = "SELECT * FROM " + HISTORY_TABLE + " WHERE " + HistoryColumns.GTIN + " = '" + gtin + "'";
+    	String query = "SELECT * FROM " + HISTORY_TABLE + " WHERE " + History.GTIN + " = '" + gtin + "'";
     	Cursor cursor = db.rawQuery(query, null);
     	
     	ProductInfo productInfo = null;
     	if (cursor.moveToFirst()) {
-	    	productInfo = new ProductInfo(cursor.getString(cursor.getColumnIndex(HistoryColumns.GTIN)));
-	    	productInfo.setName(cursor.getString(cursor.getColumnIndex(HistoryColumns.NAME)));
-	    	productInfo.setAffiliateName(cursor.getString(cursor.getColumnIndex(HistoryColumns.AFFILIATE_NAME)));
-	    	productInfo.setAffiliateUrl(cursor.getString(cursor.getColumnIndex(HistoryColumns.AFFILIATE_URL)));
+	    	productInfo = new ProductInfo(cursor.getString(cursor.getColumnIndex(History.GTIN)));
+	    	productInfo.setName(cursor.getString(cursor.getColumnIndex(History.NAME)));
+	    	productInfo.setAffiliateName(cursor.getString(cursor.getColumnIndex(History.AFFILIATE_NAME)));
+	    	productInfo.setAffiliateUrl(cursor.getString(cursor.getColumnIndex(History.AFFILIATE_URL)));
 	    	
-	    	byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex(HistoryColumns.IMAGE));
+	    	byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex(History.IMAGE));
 			if (bitmapArray != null) {
 				Bitmap bitmap = Helper.getByteArrayAsBitmap(bitmapArray);
 				productInfo.setImage(bitmap);

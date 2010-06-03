@@ -2,6 +2,7 @@
 package mobi.my2cents;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -10,16 +11,19 @@ import java.util.regex.Pattern;
 
 import mobi.my2cents.data.Comment;
 import mobi.my2cents.data.DataManager;
-import mobi.my2cents.data.HistoryColumns;
+import mobi.my2cents.data.History;
 import mobi.my2cents.data.ProductInfo;
 import mobi.my2cents.data.Rating;
 import mobi.my2cents.utils.GpsManager;
+import mobi.my2cents.utils.Helper;
 import mobi.my2cents.utils.NetworkManager;
 import mobi.my2cents.utils.WeakAsyncTask;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -313,7 +317,7 @@ public final class CommentActivity extends ListActivity {
 			String action = intent == null ? null : intent.getAction();
 			if (intent != null && action != null) {
 				if (action.equals(Intents.ACTION)) {
-					gtin = intent.getStringExtra(HistoryColumns.GTIN);
+					gtin = intent.getStringExtra(History.GTIN);
 					updateHistory = intent.getBooleanExtra(UPDATE_HISTORY, true);
 					
 					getProductInfoTask = new GetProductInfoTask(this).execute(gtin);
@@ -326,6 +330,24 @@ public final class CommentActivity extends ListActivity {
 		inputManager.hideSoftInputFromWindow(commentEditor.getWindowToken(), 0);
         commentEditor.clearFocus();
         productImageView.requestFocus();		
+	}
+	
+	private void addHistoryItem(ProductInfo item) {
+		
+		ContentResolver resolver = getContentResolver();
+		resolver.delete(Uri.withAppendedPath(History.CONTENT_URI, item.getGtin()), null, null);
+		
+		ContentValues values = new ContentValues();
+		values.put( History.GTIN, item.getGtin());
+		values.put( History.NAME, item.getName());
+		values.put( History.TIME, new Date().toLocaleString());
+		values.put( History.AFFILIATE_NAME, item.getAffiliateName());
+		values.put( History.AFFILIATE_URL, item.getAffiliateUrl());		
+        if (item.getImage() != null) {
+        	values.put(History.IMAGE, Helper.getBitmapAsByteArray(item.getImage()));
+        }
+		
+		resolver.insert(History.CONTENT_URI, values);
 	}
 	
 	private class GetProductInfoTask extends WeakAsyncTask<String, Void, ProductInfo, Context> {
@@ -348,11 +370,11 @@ public final class CommentActivity extends ListActivity {
 			
 			if (updateHistory) {
 				if (result != null) {
-					DataManager.getDatabase().addHistoryItem(result);
+					addHistoryItem(result);
 				}
 				else {
-					ProductInfo dummyProduct = new ProductInfo(params[0]);
-					DataManager.getDatabase().addHistoryItem(dummyProduct);
+					ProductInfo dummy = new ProductInfo(params[0]);
+					addHistoryItem(dummy);
 				}
 			}
 			return result;

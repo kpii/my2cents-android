@@ -6,7 +6,7 @@ import java.util.List;
 
 import mobi.my2cents.data.Comment;
 import mobi.my2cents.data.DataManager;
-import mobi.my2cents.data.HistoryColumns;
+import mobi.my2cents.data.History;
 import mobi.my2cents.utils.NetworkManager;
 import mobi.my2cents.utils.WeakAsyncTask;
 import android.app.ListActivity;
@@ -176,7 +176,7 @@ public final class StreamActivity extends ListActivity {
 		Intent intent = new Intent(this, CommentActivity.class);
 		intent.setAction(Intents.ACTION);
 		intent.putExtra(CommentActivity.UPDATE_HISTORY, true);
-		intent.putExtra(HistoryColumns.GTIN, selectedComment.getGtin());
+		intent.putExtra(History.GTIN, selectedComment.getGtin());
 		startActivity(intent);
 	}
 

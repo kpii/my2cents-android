@@ -1,7 +1,7 @@
 package mobi.my2cents;
 
 import mobi.my2cents.data.DataManager;
-import mobi.my2cents.data.HistoryColumns;
+import mobi.my2cents.data.History;
 import mobi.my2cents.utils.Helper;
 import android.app.ListActivity;
 import android.content.Context;
@@ -62,11 +62,11 @@ public final class HistoryActivity extends ListActivity {
 	protected void onResume() {
 		super.onResume();
 		
-		cursor = DataManager.getDatabase().getHistory();		
+		cursor = getContentResolver().query(History.CONTENT_URI, null, null, null, null);		
 		adapter = new HistoryAdapter(this,
         		R.layout.history_item,
         		cursor,
-                new String[] { HistoryColumns.GTIN, HistoryColumns.TIME, HistoryColumns.NAME },
+                new String[] { History.GTIN, History.TIME, History.NAME },
                 new int[] { R.id.HistoryProductCodeTextView, R.id.HistoryTimeTextView, R.id.HistoryProductNameTextView });
 		
         setListAdapter(adapter);
@@ -81,12 +81,12 @@ public final class HistoryActivity extends ListActivity {
 	@Override
 	public void onListItemClick(ListView parent, View v, int position, long id) {
 		Cursor cursor = (Cursor) adapter.getItem(position);
-		String gtin = cursor.getString(cursor.getColumnIndex(HistoryColumns.GTIN));
+		String gtin = cursor.getString(cursor.getColumnIndex(History.GTIN));
 		
 		Intent intent = new Intent(this, CommentActivity.class);
 		intent.setAction(Intents.ACTION);
 		intent.putExtra(CommentActivity.UPDATE_HISTORY, false);
-		intent.putExtra(HistoryColumns.GTIN, gtin);
+		intent.putExtra(History.GTIN, gtin);
 		startActivity(intent);
 	}
 
@@ -102,7 +102,7 @@ public final class HistoryActivity extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.clearHistoryMenuItem: {
-				DataManager.getDatabase().clearHistory();
+				getContentResolver().delete(History.CONTENT_URI, null, null);
 				adapter.getCursor().requery();
 				return true;
 			}
@@ -131,12 +131,12 @@ public final class HistoryActivity extends ListActivity {
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
 			ImageView imageView = (ImageView) view.findViewById(R.id.HistoryImageView);
-			String gtin = cursor.getString(cursor.getColumnIndex(HistoryColumns.GTIN));
+			String gtin = cursor.getString(cursor.getColumnIndex(History.GTIN));
 			if (DataManager.productImageCache.containsKey(gtin)) {
 				imageView.setImageBitmap(DataManager.productImageCache.get(gtin));
 			}
 			else {
-				byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex(HistoryColumns.IMAGE));
+				byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex(History.IMAGE));
 				if (bitmapArray != null) {
 					Bitmap bitmap = Helper.getByteArrayAsBitmap(bitmapArray);
 					if (bitmap != null) {
