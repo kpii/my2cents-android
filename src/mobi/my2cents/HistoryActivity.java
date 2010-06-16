@@ -20,11 +20,8 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 public final class HistoryActivity extends ListActivity {
-
-	private static final String TAG = "HistoryActivity";
 	
 	private HistoryAdapter adapter;
-	private Cursor cursor;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -62,7 +59,8 @@ public final class HistoryActivity extends ListActivity {
 	protected void onResume() {
 		super.onResume();
 		
-		cursor = DataManager.getDatabase().getHistory();		
+		Cursor cursor = DataManager.getDatabase().getHistory();
+		startManagingCursor(cursor);
 		adapter = new HistoryAdapter(this,
         		R.layout.history_item,
         		cursor,
@@ -70,12 +68,6 @@ public final class HistoryActivity extends ListActivity {
                 new int[] { R.id.HistoryProductCodeTextView, R.id.HistoryTimeTextView, R.id.HistoryProductNameTextView });
 		
         setListAdapter(adapter);
-	}
-	
-	@Override
-	protected void onStop() {
-        cursor.close();
-        super.onStop();
 	}
 
 	@Override

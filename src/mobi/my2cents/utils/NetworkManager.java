@@ -1,40 +1,46 @@
 
 package mobi.my2cents.utils;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 
+import mobi.my2cents.My2Cents;
+
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.util.EntityUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.text.TextUtils;
 import android.util.Log;
 
 public final class NetworkManager {
 
 	private static final String TAG = "NetworkManager";
 	private static String authToken;
-	public static String userAgent;
+	private static String sessionToken;
 	public static final String BASE_URL = "http://my2cents.mobi";
 	private static final HttpParams httpParams;
+	private static final int TIMEOUT = 10 * 1000; // 10 seconds
 	
 	static {
 		System.setProperty("http.keepAlive", "false");
@@ -46,9 +52,10 @@ public final class NetworkManager {
 	    HttpConnectionParams.setStaleCheckingEnabled(httpParams, false);
 
 	    // Default connection and socket timeout of 10 seconds.  Tweak to taste.
-	    HttpConnectionParams.setConnectionTimeout(httpParams, 10 * 1000);
-	    HttpConnectionParams.setSoTimeout(httpParams, 10 * 1000);
-	    HttpConnectionParams.setSocketBufferSize(httpParams, 8192);
+	    HttpConnectionParams.setConnectionTimeout(httpParams, TIMEOUT);
+        HttpConnectionParams.setSoTimeout(httpParams, TIMEOUT);
+        ConnManagerParams.setTimeout(httpParams, TIMEOUT);
+        HttpConnectionParams.setSocketBufferSize(httpParams, 8192);
 	}
 	
 	public static boolean isNetworkAvailable(Context context) {
@@ -59,132 +66,28 @@ public final class NetworkManager {
 		}
 		return true;
 	}
-
+	
 	public static Bitmap getRemoteImage(final URL url) {
-		if (url != null) {
-			try {
-				final URLConnection connection = url.openConnection();
-				connection.connect();
-				final BufferedInputStream stream = new BufferedInputStream(connection.getInputStream());
-				final Bitmap bitmap = BitmapFactory.decodeStream(stream);
-				stream.close();
-				return bitmap;
-			} catch (IOException e) {
-				Log.d(TAG, "Cannot load remote image.");
-			}
-		}
-		return null;
-	}
-	
-	private static String convertStreamToString(InputStream stream) {
-        /*
-         * To convert the InputStream to String we use the BufferedReader.readLine()
-         * method. We iterate until the BufferedReader return null which means
-         * there's no more data to read. Each line will appended to a StringBuilder
-         * and returned as String.
-         */
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        StringBuilder stringBuilder = new StringBuilder();
- 
-        String line = null;
-        try {
-            while ((line = reader.readLine()) != null) {
-            	stringBuilder.append(line + "\n");
-            }
-        } catch (IOException e) {
-        	Log.e(TAG, e.getMessage());
-        } finally {
-            try {
-            	stream.close();
-            } catch (IOException e) {
-            	Log.e(TAG, e.getMessage());
-            }
-        }
-        return stringBuilder.toString();
-    }
-	
-	public static String queryREST(String url) {
-		HttpClient httpClient = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet(url);
-		httpGet.setParams(httpParams);
-		httpGet.setHeader("User-Agent", userAgent);
-		
+		if (url == null) return null;
 		try {
-			HttpResponse response = httpClient.execute(httpGet);			
-			HttpEntity entity = response.getEntity();
-			if (entity != null) {
-				InputStream stream = entity.getContent();
-				String result = convertStreamToString(stream);				
-				stream.close();
-				return result;
-			}
-		} catch (ClientProtocolException e) {
-			Log.e(TAG, "There was a protocol based error", e);
+			return BitmapFactory.decodeStream(url.openStream());
 		} catch (IOException e) {
-			Log.e(TAG, "There was an IO Stream related error", e);
+			Log.e(My2Cents.TAG, e.getMessage());
+			return null;
 		}
-		return null;
 	}
 	
-	
-	
-	public static String getProductJsonString(String gtin) {
-		String url = BASE_URL + "/products/" + gtin + ".json";
-        return queryREST(url);
-	}
-	
-	public static String getCommentsStreamJSONString() {
-		String url = BASE_URL + "/comments.json";
-		return queryREST(url);
-	}
-	
-	private static HttpResponse postJSON(String url, String content) {
-		// Create a new HttpClient and Post Header
-		HttpClient httpClient = new DefaultHttpClient();  
-	    HttpPost httpPost = new HttpPost(url);
-	    httpPost.setParams(httpParams);
-	    httpPost.setHeader("User-Agent", userAgent);
-	    
-	    if ((authToken != null) && (!authToken.equals(""))) {
-	    	httpPost.setHeader("Cookie", authToken);
-	    }
-	    
-	    try {
-	    	StringEntity entity = new StringEntity(content, "UTF-8");
-	        entity.setContentType("application/json");
-	        httpPost.setEntity(entity);
-	        
-	        // Execute HTTP Post Request
-	        HttpResponse response = httpClient.execute(httpPost);
-	        return response;	        
-	    } catch (ClientProtocolException e) {
-	        Log.e(TAG, e.getMessage());
-	    } catch (IOException e) {
-	    	Log.e(TAG, e.getMessage());
-	    }
-		return null;
-	}
-	
-	public static String postComment(String content) {
-		String url = BASE_URL + "/comments.json";
-	    
-	    HttpResponse response = postJSON(url, content);
-	    if ((response.getStatusLine() != null) && (response.getStatusLine().getStatusCode() == 201)) {
-	    	try {
-    			HttpEntity entity = response.getEntity();
-    			if (entity != null) {
-    				InputStream stream = entity.getContent();
-    				String result = convertStreamToString(stream);				
-    				stream.close();
-    				return result;
-    			}
-			} catch (IllegalStateException e) {
-				Log.e(TAG, e.getMessage());
-			} catch (IOException e) {
-				Log.e(TAG, e.getMessage());
-			}
-	    }	    
-		return null;
+	public static Bitmap getRemoteImage(final String urlString) {
+		if (TextUtils.isEmpty(urlString)) return null;		
+		try {
+			return BitmapFactory.decodeStream(new URL(urlString).openStream());
+		} catch (MalformedURLException e) {
+			Log.e(My2Cents.TAG, e.toString());
+			return null;
+		} catch (IOException e) {
+			Log.e(My2Cents.TAG, e.getMessage());
+			return null;
+		}
 	}
 
 	public static void setAuthToken(String authToken) {
@@ -193,5 +96,119 @@ public final class NetworkManager {
 
 	public static String getAuthToken() {
 		return authToken;
+	}
+	
+	
+	public static String getREST(String url) throws ClientProtocolException, IOException {
+		String result = null;
+		final HttpGet httpGet = new HttpGet(url);
+		final AndroidHttpClient client = AndroidHttpClient.newInstance(getUserAgent());
+		try {
+			final HttpResponse response = client.execute(httpGet);
+			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				
+				if (sessionToken == null) {
+					Header sessionCookie = response.getFirstHeader("Set-Cookie");
+					if (sessionCookie != null) {
+						sessionToken = sessionCookie.getValue();
+					}
+				}		
+				
+				final HttpEntity entity = response.getEntity();
+				result = EntityUtils.toString(entity);
+			}
+		}
+		finally {
+			client.close();
+		}		
+		return result;
+	}
+	
+	public static String postREST(String url, String content) throws ClientProtocolException, IOException {
+		String result = null;
+		final HttpPost httpPost = new HttpPost(url);
+		
+		if ((authToken != null) && (!authToken.equals(""))) {
+	    	httpPost.setHeader("Cookie", authToken);
+	    }
+	    else {
+	    	if (sessionToken != null) {
+	    		httpPost.setHeader("Cookie", sessionToken);
+	    	}
+	    }
+		
+		StringEntity entity = new StringEntity(content, "UTF-8");
+        entity.setContentType("application/json");
+        httpPost.setEntity(entity);
+        
+        final AndroidHttpClient client = AndroidHttpClient.newInstance(getUserAgent());
+        try {
+        	final HttpResponse response = client.execute(httpPost);
+    		if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
+    			result = EntityUtils.toString(response.getEntity());
+    		}
+        }
+        finally {
+        	client.close();
+        }		
+		return result;
+	}
+	
+	public static String putREST(String url, String content) throws ClientProtocolException, IOException {
+		String result = null;
+		final HttpPut httpPut = new HttpPut(url);
+		
+		if ((authToken != null) && (!authToken.equals(""))) {
+			httpPut.setHeader("Cookie", authToken);
+	    }
+	    else {
+	    	if (sessionToken != null) {
+	    		httpPut.setHeader("Cookie", sessionToken);
+	    	}
+	    }
+		
+		StringEntity entity = new StringEntity(content, "UTF-8");
+        entity.setContentType("application/json");
+        httpPut.setEntity(entity);
+		
+        final AndroidHttpClient client = AndroidHttpClient.newInstance(getUserAgent());
+        try {
+        	final HttpResponse response = client.execute(httpPut);
+    		if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+    			result = EntityUtils.toString(response.getEntity());
+    		}
+        }
+        finally {
+        	client.close();
+        }
+		return result;
+	}
+	
+	public static String putRating(String gtin, String content) throws ClientProtocolException, IOException {
+		final String url = BASE_URL + "/products/" + gtin + "/rating.json";
+		return putREST(url, content);
+	}
+	
+	public static String postComment(String content) throws ClientProtocolException, IOException {
+		final String url = BASE_URL + "/comments.json";
+		return postREST(url, content);
+	}
+	
+	public static String getFeed() throws ClientProtocolException, IOException {
+		final String url = BASE_URL + "/comments.json";
+        return getREST(url);
+	}
+	
+	public static String getProduct(String key) throws ClientProtocolException, IOException {
+		final String url = BASE_URL + "/products/" + key + ".json";
+		return getREST(url);
+	}
+
+	public static void setUserAgent(String userAgent) {
+		HttpProtocolParams.setUserAgent(httpParams, userAgent);
+	}
+	
+	public static String getUserAgent() {
+		return HttpProtocolParams.getUserAgent(httpParams);
 	}
 }

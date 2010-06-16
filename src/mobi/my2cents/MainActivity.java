@@ -129,7 +129,7 @@ public final class MainActivity extends Activity {
 	}
 	
 	private void showHelpOnFirstLaunch() {
-		int currentVersion = My2CentsApplication.packageInfo.versionCode;
+		int currentVersion = My2Cents.packageInfo.versionCode;
 		int lastVersion = settings.getInt(getString(R.string.last_version), 0);
 		if (currentVersion > lastVersion) {
 			settings.edit().putInt(getString(R.string.last_version), currentVersion).commit();

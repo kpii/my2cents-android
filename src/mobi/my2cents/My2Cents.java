@@ -8,12 +8,12 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
 import android.webkit.CookieSyncManager;
 
-public class My2CentsApplication extends Application {
+public class My2Cents extends Application {
 	
-	private final static String TAG = "My2CentsApplication";
+	public final static String TAG = "My2Cents";
 	public static PackageInfo packageInfo;
 	
-	public My2CentsApplication() {
+	public My2Cents() {
 		super();
 	}
 
@@ -24,7 +24,7 @@ public class My2CentsApplication extends Application {
 		CookieSyncManager.createInstance(this);
 		try {
 			packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-			NetworkManager.userAgent = "Android my2cents [" + My2CentsApplication.packageInfo.versionName + "]";
+			NetworkManager.setUserAgent("Android my2cents [" + My2Cents.packageInfo.versionName + "]");
 		} catch (NameNotFoundException e) {
 			Log.e(TAG, e.getMessage());
 		}

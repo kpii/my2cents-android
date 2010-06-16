@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <resources>
     <string name="anonymous_username">Anonymous</string>
 	<string name="app_name">my2cents</string>
-	<string name="app_notes">by ETH Zurich [v1.0.3]</string>
+	<string name="app_notes">by ETH Zurich [1.0.4]</string>
 	<string name="app_url">http://my2cents.mobi</string>
 
 	<string name="main_header">Comments on products</string>
@@ -25,7 +25,7 @@
     <string name="home_button_twitter_share_header">Share comments on Twitter</string>
     <string name="home_button_twitter_share">Personalize your comments and share them with your followers on Twitter</string>
 
-    <string name="my2cents_is_evolving">my2cents is evolving - this is the first public release of the application, please <a href='mailto:feedback@my2cents.mobi'>leave your comments and suggestions</a> on our product</string>
+    <string name="my2cents_is_evolving">my2cents is evolving - this is the first public release of the application, please <a href="mailto:feedback@my2cents.mobi">leave your comments and suggestions</a> on our product</string>
     <string name="my2cents_is_social">Personalize your comments and share them with your followers</string>
     <string name="my2cents_is_empowering">my2cents is empowering - you can get real life consumers recommendations and insights and can use it to ask questions and leave notes</string>
 

@@ -1,5 +1,6 @@
 package mobi.my2cents.data;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
@@ -8,10 +9,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TimeZone;
 
+import mobi.my2cents.My2Cents;
 import mobi.my2cents.SettingsActivity;
 import mobi.my2cents.utils.GpsManager;
 import mobi.my2cents.utils.NetworkManager;
 
+import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,8 +49,16 @@ public final class DataManager {
 	
 	public final static ProductInfo getProductInfo(String gtin){
 		
-		String jsonString = NetworkManager.getProductJsonString(gtin);
-        return getProductInfoFromJsonString(jsonString);
+		String jsonString = null;
+		try {
+			jsonString = NetworkManager.getProduct(gtin);
+			return getProductInfoFromJsonString(jsonString);
+		} catch (ClientProtocolException e) {
+			Log.e(My2Cents.TAG, e.toString());
+		} catch (IOException e) {
+			Log.e(My2Cents.TAG, e.toString());
+		}
+        return null;
 	}
 	
 	private final static ProductInfo getProductInfoFromJsonString(String jsonString){
@@ -114,7 +125,15 @@ public final class DataManager {
 	}
 	
 	public final static ProductInfo getProductComments(ProductInfo productInfo){
-		String jsonString = NetworkManager.getProductJsonString(productInfo.getGtin());
+		String jsonString = null;
+		try {
+			jsonString = NetworkManager.getProduct(productInfo.getGtin());
+		} catch (ClientProtocolException e) {
+			Log.e(My2Cents.TAG, e.toString());
+		} catch (IOException e) {
+			Log.e(My2Cents.TAG, e.toString());
+		}
+		
         if (jsonString == null) return null;
 		try {
 			JSONObject json = new JSONObject(jsonString).getJSONObject("product");
@@ -179,7 +198,15 @@ public final class DataManager {
 	
 	public final static ArrayList<Comment> getCommentsStream(){
 		
-		String jsonString = NetworkManager.getCommentsStreamJSONString();
+		String jsonString = null;
+		try {
+			jsonString = NetworkManager.getFeed();
+		} catch (ClientProtocolException e) {
+			Log.e(TAG, e.getMessage());
+		} catch (IOException e) {
+			Log.e(TAG, e.getMessage());
+		}
+		
 		if (jsonString == null) return null;
 		
 		try {
@@ -222,7 +249,15 @@ public final class DataManager {
 			Log.e(TAG, e.getMessage());
 		}
 		
-		String jsonString = NetworkManager.postComment(content);
+		String jsonString = null;
+		try {
+			jsonString = NetworkManager.postComment(content);
+		} catch (ClientProtocolException e) {
+			Log.e(TAG, e.getMessage());
+		} catch (IOException e) {
+			Log.e(TAG, e.getMessage());
+		}
+		
 		if (jsonString != null) {
 			JSONObject json;
 			try {
