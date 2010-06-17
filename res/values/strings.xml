@@ -2,7 +2,7 @@
 <resources>
     <string name="anonymous_username">Anonymous</string>
 	<string name="app_name">my2cents</string>
-	<string name="app_notes">by ETH Zurich [1.0.4 RC1]</string>
+	<string name="app_notes">by ETH Zurich [1.0.4 RC2]</string>
 	<string name="app_url">http://my2cents.mobi</string>
 
 	<string name="main_header">Comments on products</string>

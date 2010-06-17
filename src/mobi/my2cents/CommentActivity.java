@@ -211,21 +211,30 @@ public final class CommentActivity extends ListActivity {
 		
 		hideVirtualKeyboard();
 		
-		if (!NetworkManager.isNetworkAvailable(this)) {
-			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
-		}
-		else {
-			Intent intent = getIntent();
-			String action = intent == null ? null : intent.getAction();
-			if (intent != null && action != null) {
-				if (action.equals(Intents.ACTION)) {
-					gtin = intent.getStringExtra(HistoryColumns.GTIN);
-					updateHistory = intent.getBooleanExtra(UPDATE_HISTORY, true);
-					
-					getProductInfoTask = new GetProductInfoTask(this).execute(gtin);
+		Intent intent = getIntent();
+		String action = intent == null ? null : intent.getAction();
+		if (intent != null && action != null) {
+			if (action.equals(Intents.ACTION)) {
+				gtin = intent.getStringExtra(HistoryColumns.GTIN);
+				updateHistory = intent.getBooleanExtra(UPDATE_HISTORY, true);
+				
+				productInfo = DataManager.getDatabase().getCachedProductInfo(gtin);
+				if (productInfo != null) {
+					displayProductFound(productInfo);
+					productInfoLayout.setVisibility(View.VISIBLE);
 				}
+				else {
+					productInfoLayout.setVisibility(View.GONE);
+				}
+				
+				if (!NetworkManager.isNetworkAvailable(this)) {
+					Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
+				}
+				else {
+					getProductInfoTask = new GetProductInfoTask(this).execute(gtin);
+				}				
 			}
-		}
+		}	
 	}
 	
 	private void hideVirtualKeyboard() {
@@ -242,15 +251,6 @@ public final class CommentActivity extends ListActivity {
 		@Override
 		protected void onPreExecute(Context target) {
 			statusLayout.setVisibility(View.VISIBLE);
-			productInfo = DataManager.getDatabase().getCachedProductInfo(gtin);
-			if (productInfo != null) {
-				displayProductFound(productInfo);
-				productInfoLayout.setVisibility(View.VISIBLE);
-			}
-			else {
-				productInfoLayout.setVisibility(View.GONE);
-			}
-			//progressDialog = ProgressDialog.show(CommentActivity.this, null, getString(R.string.progress_dialog_loading), true);
 	    }
 
 		@Override
