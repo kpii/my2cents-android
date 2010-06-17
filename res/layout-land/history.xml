@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="horizontal"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<include
+		android:id="@+id/NavigationBar"
+		layout="@layout/navigation_bar" />
+	<View
+        android:layout_width="3dp"
+        android:layout_height="fill_parent"
+        android:background="@drawable/navigation_bar_shadow" />
+	<ListView
+		android:layout_width="fill_parent"
+		android:layout_weight="1"
+		android:scrollbars="vertical"
+		android:choiceMode="none"
+		android:clickable="false"
+		android:layout_height="fill_parent"
+		android:id="@id/android:list">
+	</ListView>
+	<TextView
+		android:id="@id/android:empty"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:gravity="center"
+		android:textSize="@dimen/empty_list_text"
+		android:padding="@dimen/empty_list_padding"
+		android:text="@string/message_empty_history"
+		android:layout_weight="1" />
+</LinearLayout>

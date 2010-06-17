@@ -1,47 +1,45 @@
 package mobi.my2cents;
 
-import java.util.List;
-
 import mobi.my2cents.data.Comment;
-import mobi.my2cents.data.DataManager;
-import mobi.my2cents.utils.RelativeTime;
 import android.content.Context;
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
+import android.widget.CursorAdapter;
 import android.widget.TextView;
 
-public class CommentsAdapter extends ArrayAdapter<Comment> {
+
+public class CommentsAdapter extends CursorAdapter {
 	
-	public CommentsAdapter(Context context, int textViewResourceId, List<Comment> comments) {
-		super(context, textViewResourceId, comments);
+	public CommentsAdapter(Context context, Cursor cursor) {
+		super(context, cursor);
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public void bindView(View view, Context context, Cursor cursor) {
+		
+		TextView usernameTextView = (TextView) view.findViewById(R.id.CommentAuthorTextView);
+		usernameTextView.setText(cursor.getString(cursor.getColumnIndex(Comment.USER_NAME)));
 
-		View view = convertView;
-		if (view == null) {
-			LayoutInflater inflator = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			view = inflator.inflate(R.layout.comment_item, null);
-		}
+		TextView bodyTextView = (TextView) view.findViewById(R.id.CommentTextView);
+		bodyTextView.setText(cursor.getString(cursor.getColumnIndex(Comment.BODY)));
 
-		Comment comment = getItem(position);
-		if (comment != null) {
-			TextView authorTextView = (TextView) view.findViewById(R.id.CommentAuthorTextView);
-			authorTextView.setText(comment.getUser());
+		TextView sentTextView = (TextView) view.findViewById(R.id.CommentSentTextView);
+		sentTextView.setText(cursor.getString(cursor.getColumnIndex(Comment.CREATED_AT)));
 
-			TextView messageTextView = (TextView) view.findViewById(R.id.CommentTextView);
-			messageTextView.setText(comment.getText());
+//		ImageView profileImageView = (ImageView) view.findViewById(R.id.CommentImageView);
+//		Bitmap bitmap = Helper.getByteArrayAsBitmap(cursor.getBlob(cursor.getColumnIndex(Comment.USER_ID)));
+//		profileImageView.setImageBitmap(bitmap);
 
-			TextView sentTextView = (TextView) view.findViewById(R.id.CommentSentTextView);
-			sentTextView.setText(RelativeTime.getDifference(comment.getCreatedAt().getTime()));
+	}
 
-			ImageView avatarImageView = (ImageView) view.findViewById(R.id.CommentImageView);
-			avatarImageView.setImageBitmap(DataManager.profileImageCache.get(comment.getUser()));
-		}
+	@Override
+	public View newView(Context context, Cursor cursor, ViewGroup parent) {
+		LayoutInflater inflater = LayoutInflater.from(context);
+		View view = inflater.inflate(R.layout.comment_item, parent, false);
+		bindView(view, context, cursor);
 		return view;
 	}
+
 }

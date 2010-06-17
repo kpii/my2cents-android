@@ -4,63 +4,11 @@
 	android:orientation="vertical"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
-	<RelativeLayout
-		android:layout_width="fill_parent"
-		android:orientation="horizontal"
-		android:layout_height="wrap_content"
-		android:background="@color/header_backgroung">
-		<TextView
-			android:text="@string/app_name"
-			android:layout_height="wrap_content"
-			android:textStyle="bold"
-			android:layout_width="wrap_content"
-			android:id="@+id/AppNameTextView"
-			android:textColor="@color/header_text"
-			android:textSize="@dimen/header_text"
-			android:padding="@dimen/header_padding"></TextView>
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_alignBaseline="@+id/AppNameTextView"
-			android:layout_marginLeft="125sp"
-			android:text="@string/app_notes"
-			android:id="@+id/AppNotesTextView"
-			android:textColor="@color/header_text"
-			android:textSize="@dimen/header_sub_text"
-			android:padding="@dimen/header_sub_padding"></TextView>
-	</RelativeLayout>
-	<RelativeLayout
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:padding="@dimen/product_layout_padding"
-		android:background="@color/info_backgroung"
-		android:id="@+id/ProductInfoLayout"
-		android:visibility="gone">
-		<ImageView
-			android:layout_width="wrap_content"
-			android:layout_marginRight="6dip"
-			android:layout_height="wrap_content"
-			android:adjustViewBounds="true"
-			android:id="@+id/ProductImageView"
-			android:maxHeight="@dimen/product_image_max_size"
-			android:maxWidth="@dimen/product_image_max_size" />
-		<TextView
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:layout_toRightOf="@id/ProductImageView"
-			android:id="@+id/ProductNameTextView"
-			android:textSize="@dimen/product_name_text"
-			android:textColor="@color/product_name_text"
-			android:layout_marginBottom="5dip"
-			android:clickable="true" />
-		<TextView
-			android:layout_height="wrap_content"
-			android:id="@+id/AffiliateTextView"
-			android:layout_toRightOf="@id/ProductImageView"
-			android:layout_below="@id/ProductNameTextView"
-			android:textSize="@dimen/affiliate_text"
-			android:textColor="@color/affiliate_text" android:layout_width="fill_parent" android:gravity="right"/>
-	</RelativeLayout>
+	<include
+		android:id="@+id/Header"
+		layout="@layout/header" />
+	<include
+		layout="@layout/product_info_panel" />
 	<RelativeLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -83,6 +31,10 @@
 			android:text="@string/message_product_info_loading"
 			android:layout_height="wrap_content"></TextView>
 	</RelativeLayout>
+	<View
+		android:layout_width="fill_parent"
+		android:layout_height="3dp"
+		android:background="@drawable/header_shadow" />
 	<ListView
 		android:layout_width="fill_parent"
 		android:scrollbars="vertical"
@@ -120,6 +72,10 @@
 			android:text="@string/button_login_invitation"
 			android:id="@+id/LoginButton" />
 	</LinearLayout>
+	<View
+		android:layout_width="fill_parent"
+		android:layout_height="3dp"
+		android:background="@drawable/navigation_bar_shadow" />
 	<RelativeLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
@@ -151,42 +107,7 @@
 			android:spacing="@dimen/tab_gallery_spacing"
 			android:layout_below="@id/CommentEditText" />
 	</RelativeLayout>
-	<LinearLayout
-		android:layout_height="wrap_content"
-		android:id="@+id/ToolbarLayout"
-		android:orientation="horizontal"
-		android:layout_width="fill_parent"
-		android:background="@color/status_backgroung"
-		android:paddingLeft="3dip"
-		android:paddingRight="3dip"
-		android:paddingTop="3dip">
-		<ImageButton
-			android:layout_height="wrap_content"
-			android:layout_weight="0.25"
-			android:scaleType="centerInside"
-			android:layout_width="wrap_content"
-			android:id="@+id/ImageButtonHome"
-			android:src="@drawable/home_icon"></ImageButton>
-		<ImageButton
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_weight="0.25"
-			android:scaleType="centerInside"
-			android:id="@+id/ImageButtonScan"
-			android:src="@drawable/scan_icon"></ImageButton>
-		<ImageButton
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_weight="0.25"
-			android:scaleType="centerInside"
-			android:id="@+id/ImageButtonStream"
-			android:src="@drawable/stream_icon"></ImageButton>
-		<ImageButton
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_weight="0.25"
-			android:scaleType="centerInside"
-			android:id="@+id/ImageButtonHistory"
-			android:src="@drawable/history_icon"></ImageButton>
-	</LinearLayout>
+	<include
+		android:id="@+id/NavigationBar"
+		layout="@layout/navigation_bar" />
 </LinearLayout>

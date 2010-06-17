@@ -3,14 +3,21 @@ package mobi.my2cents;
 
 import mobi.my2cents.utils.Helper;
 import mobi.my2cents.utils.NetworkManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.CheckBoxPreference;
+import android.preference.ListPreference;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -36,7 +43,10 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		addPreferencesFromResource(R.xml.preferences);
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
 		
-		loginCheckBoxPreference = (CheckBoxPreference)getPreferenceScreen().findPreference(getString(R.string.settings_login));
+		ListPreference listpreference = ((ListPreference)findPreference("polling_interval"));
+		listpreference.setSummary(listpreference.getEntry());
+		
+		loginCheckBoxPreference = (CheckBoxPreference) findPreference(getString(R.string.settings_login));
 		
 		// Intent feedback
         PreferenceScreen feedbackPreference = (PreferenceScreen)getPreferenceManager().findPreference(getString(R.string.settings_send_feedback));
@@ -76,7 +86,17 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
         	} else {
         		unsetTokens();
         	}
-        }         
+        } else if (key.equals("polling_interval")) {
+        	int newValue = Integer.valueOf(sharedPreferences.getString("polling_interval", "30000"));
+        	Log.d(My2Cents.TAG, "polling setting changed "+newValue);
+			AlarmManager mgr=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
+			Intent i=new Intent(SettingsActivity.this, OnAlarmReceiver.class);
+			PendingIntent pi=PendingIntent.getBroadcast(SettingsActivity.this, 0,i, 0);
+			mgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+												SystemClock.elapsedRealtime()+newValue,newValue,pi);
+			ListPreference listpreference = ((ListPreference)findPreference("polling_interval"));
+			listpreference.setSummary(listpreference.getEntry());
+        }
     }
 	
 	private void askOAuth() {

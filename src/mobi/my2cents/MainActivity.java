@@ -1,10 +1,14 @@
 
 package mobi.my2cents;
 
+import mobi.my2cents.data.Product;
+import mobi.my2cents.data.ProductInfo;
 import mobi.my2cents.utils.NetworkManager;
 import android.app.Activity;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
@@ -22,6 +26,9 @@ public final class MainActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+//		startActivity(new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(Product.CONTENT_URI, "4029764001807")));
+		
 		setContentView(R.layout.main);
 		
 		findViewById(R.id.HomeScanLayout).setOnClickListener(scanListener);
@@ -66,7 +73,7 @@ public final class MainActivity extends Activity {
 	
 	private final View.OnClickListener streamListener = new View.OnClickListener() {
 		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), StreamActivity.class);
+			Intent intent = new Intent(getBaseContext(), FeedActivity.class);
 			startActivity(intent);
 		}
 	};

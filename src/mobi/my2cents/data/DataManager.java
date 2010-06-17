@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TimeZone;
 
-import mobi.my2cents.My2Cents;
 import mobi.my2cents.SettingsActivity;
 import mobi.my2cents.utils.GpsManager;
 import mobi.my2cents.utils.NetworkManager;
@@ -47,21 +46,23 @@ public final class DataManager {
 		return database;
 	}
 	
-	public final static ProductInfo getProductInfo(String gtin){
+	public final static ProductInfo getProductInfo(String gtin) {
 		
 		String jsonString = null;
 		try {
 			jsonString = NetworkManager.getProduct(gtin);
-			return getProductInfoFromJsonString(jsonString);
 		} catch (ClientProtocolException e) {
-			Log.e(My2Cents.TAG, e.toString());
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (IOException e) {
-			Log.e(My2Cents.TAG, e.toString());
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-        return null;
+        return getProductInfoFromJsonString(jsonString);
+        
 	}
 	
-	private final static ProductInfo getProductInfoFromJsonString(String jsonString){
+	public final static ProductInfo getProductInfoFromJsonString(String jsonString){
 		if (jsonString == null) return null;
 		try {
 			JSONObject json = new JSONObject(jsonString);
@@ -82,6 +83,13 @@ public final class DataManager {
 					JSONObject affiliate = jsonLinks.getJSONObject(0);
 					productInfo.setAffiliateName(affiliate.getString("text"));
 					productInfo.setAffiliateUrl(affiliate.getString("href"));
+				}
+			}
+			
+			if (jsonProduct.has("rating")) {
+				JSONObject jsonRating = jsonProduct.getJSONObject("rating");
+				if (jsonRating != null) {
+					productInfo.setRating(Rating.ParseJson(jsonRating));
 				}
 			}
             
@@ -128,12 +136,13 @@ public final class DataManager {
 		String jsonString = null;
 		try {
 			jsonString = NetworkManager.getProduct(productInfo.getGtin());
-		} catch (ClientProtocolException e) {
-			Log.e(My2Cents.TAG, e.toString());
-		} catch (IOException e) {
-			Log.e(My2Cents.TAG, e.toString());
+		} catch (ClientProtocolException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
-		
         if (jsonString == null) return null;
 		try {
 			JSONObject json = new JSONObject(jsonString).getJSONObject("product");
@@ -201,10 +210,12 @@ public final class DataManager {
 		String jsonString = null;
 		try {
 			jsonString = NetworkManager.getFeed();
-		} catch (ClientProtocolException e) {
-			Log.e(TAG, e.getMessage());
-		} catch (IOException e) {
-			Log.e(TAG, e.getMessage());
+		} catch (ClientProtocolException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 		
 		if (jsonString == null) return null;
@@ -252,12 +263,13 @@ public final class DataManager {
 		String jsonString = null;
 		try {
 			jsonString = NetworkManager.postComment(content);
-		} catch (ClientProtocolException e) {
-			Log.e(TAG, e.getMessage());
-		} catch (IOException e) {
-			Log.e(TAG, e.getMessage());
+		} catch (ClientProtocolException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
-		
 		if (jsonString != null) {
 			JSONObject json;
 			try {
@@ -265,6 +277,43 @@ public final class DataManager {
 				return Json2Comment(json.getJSONObject("comment"));
 			} catch (JSONException e) {
 				Log.e(TAG, e.getMessage());
+			}
+		}
+		return null;
+	}
+	
+	public final static Rating rateProduct(String gtin, String value) {
+		String content = null;
+	    try {
+	    	JSONObject jsonRating = new JSONObject();
+	    	jsonRating.put("value", value);
+	    	
+	    	JSONObject json = new JSONObject();
+	    	json.put("rating", jsonRating);
+			content = json.toString();
+		} catch (JSONException e) {
+			Log.e(TAG, e.getMessage());
+		}
+		
+		if (content != null) {
+			String jsonString = null;
+			try {
+				jsonString = NetworkManager.putRating(gtin, content);
+			} catch (ClientProtocolException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			if (jsonString != null) {
+				JSONObject json;
+				try {
+					json = new JSONObject(jsonString);
+					return Rating.ParseJson(json.getJSONObject("rating"));
+				} catch (JSONException e) {
+					Log.e(TAG, e.getMessage());
+				}
 			}
 		}
 		return null;

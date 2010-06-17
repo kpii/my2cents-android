@@ -1,30 +1,63 @@
 package mobi.my2cents.data;
 
-import java.util.Date;
-
-import mobi.my2cents.utils.Helper;
-import android.content.ContentValues;
+import mobi.my2cents.My2Cents;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Bitmap;
 import android.util.Log;
-
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 	
-	private static final String TAG = "DatabaseHelper";
-	
-	/** The name of the database file on the file system */
-    private static final String DATABASE_NAME = "My2CentsDb";
-    /** The version of the database that this class understands. */
-    private static final int DATABASE_VERSION = 8;
+    private static final String DATABASE_NAME = "My2Cents.db";
+    private static final int DATABASE_VERSION = 17;
     
-    private static final String HISTORY_TABLE = "history";
     
-    private static final int historyLimit = 100;
+    private static final String transitionflags = 
+    	Comment.TRANSITION_ACTIVE + " BOOLEAN, "
+    	+ Comment.GET_TRANSITIONAL_STATE + " BOOLEAN, "
+    	+ Comment.POST_TRANSITIONAL_STATE + " BOOLEAN, "
+    	+ Comment.DEL_TRANSITIONAL_STATE + " BOOLEAN, "
+    	+ Comment.PUT_TRANSITIONAL_STATE + " BOOLEAN ";
+    
+    public static final String COMMENTS_TABLE = "comments";
+    private static final String CREATE_COMMENTS_TABLE =
+    	"CREATE TABLE " + COMMENTS_TABLE + " ("
+		+ Comment._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+		+ Comment.KEY + " INTEGER UNIQUE, "
+		+ Comment.URI + " TEXT, "
+		+ Comment.BODY + " TEXT, "
+		+ Comment.CREATED_AT + " BIGINT, "
+		+ Comment.LATITUDE + " INTEGER, "
+		+ Comment.LONGITUDE + " INTEGER, "
+		+ Comment.PRODUCT_KEY + " TEXT, "
+		+ Comment.USER_ID + " INTEGER, "
+		+ Comment.USER_NAME + " TEXT, "
+		+ transitionflags + ");"
+		+ "CREATE INDEX comments_key_index ON " + COMMENTS_TABLE + "(" + Comment.KEY + ");";
+    
+    
+    public static final String PRODUCTS_TABLE = "products";
+    private static final String CREATE_PRODUCTS_TABLE =
+    	"CREATE TABLE " + PRODUCTS_TABLE + " ("
+    	+ Product._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+    	+ Product.KEY + " TEXT, "
+    	+ Product.URI + " TEXT, "
+    	+ Product.NAME + " TEXT, "
+    	+ Product.IMAGE + " BLOB, "
+    	+ Product.ETAG + " TEXT, "
+    	+ transitionflags + ");";
+    
+    
+    public static final String HISTORY_TABLE = "history";
+    private static final String CREATE_HISTORY_TABLE =
+    	"CREATE TABLE " + HISTORY_TABLE + " ("
+        + History._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+        + History.TIME + " TEXT, "
+        + History.PRODUCT_KEY + " TEXT ,"
+        + History.NAME + " TEXT, "
+        + History.AFFILIATE_NAME + " TEXT, "
+        + History.AFFILIATE_URL + " TEXT, "
+        + History.IMAGE + " BLOB);";
 
     
     public DatabaseHelper(Context context) {
@@ -32,103 +65,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db) {        
-        db.execSQL("CREATE TABLE " + HISTORY_TABLE + " ("
-                + HistoryColumns.ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + HistoryColumns.TIME + " TEXT,"
-                + HistoryColumns.GTIN + " TEXT,"
-                + HistoryColumns.NAME + " TEXT,"
-                + HistoryColumns.AFFILIATE_NAME + " TEXT,"
-                + HistoryColumns.AFFILIATE_URL + " TEXT,"
-                + HistoryColumns.IMAGE + " BLOB);");
+    public void onCreate(SQLiteDatabase db) {
+    	db.execSQL(CREATE_PRODUCTS_TABLE);
+    	db.execSQL(CREATE_COMMENTS_TABLE);
+    	db.execSQL(CREATE_HISTORY_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.i(DatabaseHelper.class.getName(), "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
+        Log.i(My2Cents.TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
+        db.execSQL("DROP TABLE IF EXISTS " + PRODUCTS_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + COMMENTS_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + HISTORY_TABLE);
         onCreate(db);
-    }
-    
-    
-    public void addHistoryItem(ProductInfo product) {
-    	if ((product == null) || (product.getGtin() == null) || (product.getGtin().equals(""))) return;
-    	
-    	SQLiteDatabase db = getWritableDatabase();
-    	
-    	db.delete(HISTORY_TABLE, HistoryColumns.GTIN + " = '" + product.getGtin() + "'", null);
-    	
-    	Cursor cursor = db.rawQuery("SELECT * FROM " + HISTORY_TABLE, null);
-    	if (cursor.getCount() > historyLimit) {
-    		db.delete(HISTORY_TABLE, HistoryColumns.ID + " = (SELECT MIN(" + HistoryColumns.ID + ") FROM " + HISTORY_TABLE + ")", null);
-    	}
-    	cursor.close();
-        
-        ContentValues map = new ContentValues();
-        
-        map.put(HistoryColumns.GTIN, product.getGtin());
-        map.put(HistoryColumns.TIME, new Date().toLocaleString());
-        
-        String name = product.getName();
-        if ((name != null) && (!name.equals(""))) {
-        	map.put(HistoryColumns.NAME, name);
-        }
-        else {
-        	map.put(HistoryColumns.NAME, DataManager.UnknownProductName);
-        }
-        
-        String affiliateName = product.getAffiliateName();
-        if ((affiliateName != null) && (!affiliateName.equals("")) && (!affiliateName.equals("null"))) {
-        	map.put(HistoryColumns.AFFILIATE_NAME, affiliateName);
-        }
-        
-        String affiliateUrl = product.getAffiliateUrl();
-        if ((affiliateUrl != null) && (!affiliateUrl.equals("")) && (!affiliateUrl.equals("null"))) {
-        	map.put(HistoryColumns.AFFILIATE_URL, affiliateUrl);
-        }
-        
-        Bitmap image = product.getImage();
-        if (image != null) {
-        	map.put(HistoryColumns.IMAGE, Helper.getBitmapAsByteArray(image));
-        }
-        
-        try{
-            db.insert(HISTORY_TABLE, null, map);
-        } catch (SQLException e) {
-            Log.e(TAG, e.getMessage());
-        }
-    }
-    
-    public Cursor getHistory() {
-    	SQLiteDatabase db = getReadableDatabase();
-    	String query = "SELECT * FROM " + HISTORY_TABLE + " ORDER BY " + HistoryColumns.ID + " DESC";
-    	return db.rawQuery(query, null);
-    }
-    
-    public void clearHistory() {
-    	SQLiteDatabase db = getWritableDatabase();
-    	db.delete(HISTORY_TABLE, null, null);
-    }
-    
-    public ProductInfo getCachedProductInfo(String gtin) {
-    	SQLiteDatabase db = getReadableDatabase();
-    	String query = "SELECT * FROM " + HISTORY_TABLE + " WHERE " + HistoryColumns.GTIN + " = '" + gtin + "'";
-    	Cursor cursor = db.rawQuery(query, null);
-    	
-    	ProductInfo productInfo = null;
-    	if (cursor.moveToFirst()) {
-	    	productInfo = new ProductInfo(cursor.getString(cursor.getColumnIndex(HistoryColumns.GTIN)));
-	    	productInfo.setName(cursor.getString(cursor.getColumnIndex(HistoryColumns.NAME)));
-	    	productInfo.setAffiliateName(cursor.getString(cursor.getColumnIndex(HistoryColumns.AFFILIATE_NAME)));
-	    	productInfo.setAffiliateUrl(cursor.getString(cursor.getColumnIndex(HistoryColumns.AFFILIATE_URL)));
-	    	
-	    	byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex(HistoryColumns.IMAGE));
-			if (bitmapArray != null) {
-				Bitmap bitmap = Helper.getByteArrayAsBitmap(bitmapArray);
-				productInfo.setImage(bitmap);
-			}
-    	}
-    	cursor.close();
-		return productInfo;
     }
 }

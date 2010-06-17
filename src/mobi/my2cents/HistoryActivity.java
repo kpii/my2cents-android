@@ -1,13 +1,10 @@
 package mobi.my2cents;
 
-import mobi.my2cents.data.DataManager;
-import mobi.my2cents.data.HistoryColumns;
-import mobi.my2cents.utils.Helper;
+import mobi.my2cents.data.History;
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -15,9 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 
 public final class HistoryActivity extends ListActivity {
 	
@@ -26,12 +21,34 @@ public final class HistoryActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		prepareUI();
+		handleIntent(getIntent());
+	}
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+	    setIntent(intent);
+	    handleIntent(intent);
+	}
+	
+	private void handleIntent(Intent intent) {
+		bindAdapter();
+	}
+	
+	private void bindAdapter() {
+		Cursor cursor = managedQuery(History.CONTENT_URI, null, null, null, null);
+		adapter = new HistoryAdapter(this, cursor);
+		setListAdapter(adapter);
+	}
+	
+	private void prepareUI() {
 		setContentView(R.layout.history);
 		
-		findViewById(R.id.ImageButtonHome).setOnClickListener(homeListener);
-		findViewById(R.id.ImageButtonScan).setOnClickListener(scanListener);
-		findViewById(R.id.ImageButtonStream).setOnClickListener(streamListener);
-		findViewById(R.id.ImageButtonHistory).setEnabled(false);
+		findViewById(R.id.NavigationButtonHome).setOnClickListener(homeListener);
+		findViewById(R.id.NavigationButtonScan).setOnClickListener(scanListener);
+		findViewById(R.id.NavigationButtonStream).setOnClickListener(streamListener);
+		findViewById(R.id.NavigationButtonHistory).setEnabled(false);
 	}
 	
 	private final Button.OnClickListener scanListener = new Button.OnClickListener() {
@@ -43,7 +60,7 @@ public final class HistoryActivity extends ListActivity {
 	
 	private final Button.OnClickListener streamListener = new Button.OnClickListener() {
 		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), StreamActivity.class);
+			Intent intent = new Intent(getBaseContext(), FeedActivity.class);
 			startActivity(intent);
 		}
 	};
@@ -56,29 +73,18 @@ public final class HistoryActivity extends ListActivity {
 	};
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-		
-		Cursor cursor = DataManager.getDatabase().getHistory();
-		startManagingCursor(cursor);
-		adapter = new HistoryAdapter(this,
-        		R.layout.history_item,
-        		cursor,
-                new String[] { HistoryColumns.GTIN, HistoryColumns.TIME, HistoryColumns.NAME },
-                new int[] { R.id.HistoryProductCodeTextView, R.id.HistoryTimeTextView, R.id.HistoryProductNameTextView });
-		
-        setListAdapter(adapter);
-	}
-
-	@Override
 	public void onListItemClick(ListView parent, View v, int position, long id) {
 		Cursor cursor = (Cursor) adapter.getItem(position);
-		String gtin = cursor.getString(cursor.getColumnIndex(HistoryColumns.GTIN));
+		String key = cursor.getString(cursor.getColumnIndex(History.PRODUCT_KEY));
 		
 		Intent intent = new Intent(this, CommentActivity.class);
 		intent.setAction(Intents.ACTION);
+		intent.setData(Uri.withAppendedPath(History.CONTENT_URI, key));
 		intent.putExtra(CommentActivity.UPDATE_HISTORY, false);
-		intent.putExtra(HistoryColumns.GTIN, gtin);
+		intent.putExtra(History.PRODUCT_KEY, key);
+		
+//		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(Product.CONTENT_URI, key));
+		
 		startActivity(intent);
 	}
 
@@ -94,7 +100,7 @@ public final class HistoryActivity extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.clearHistoryMenuItem: {
-				DataManager.getDatabase().clearHistory();
+				getContentResolver().delete(History.CONTENT_URI, null, null);
 				adapter.getCursor().requery();
 				return true;
 			}
@@ -110,37 +116,6 @@ public final class HistoryActivity extends ListActivity {
 			}
 			default:
 				return super.onOptionsItemSelected(item);
-		}
-	}
-	
-	
-	private class HistoryAdapter extends SimpleCursorAdapter {
-
-		public HistoryAdapter(Context context, int layout, Cursor cursor, String[] from, int[] to) {
-			super(context, layout, cursor, from, to);
-		}
-		
-		@Override
-		public void bindView(View view, Context context, Cursor cursor) {
-			ImageView imageView = (ImageView) view.findViewById(R.id.HistoryImageView);
-			String gtin = cursor.getString(cursor.getColumnIndex(HistoryColumns.GTIN));
-			if (DataManager.productImageCache.containsKey(gtin)) {
-				imageView.setImageBitmap(DataManager.productImageCache.get(gtin));
-			}
-			else {
-				byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex(HistoryColumns.IMAGE));
-				if (bitmapArray != null) {
-					Bitmap bitmap = Helper.getByteArrayAsBitmap(bitmapArray);
-					if (bitmap != null) {
-						imageView.setImageBitmap(bitmap);
-						DataManager.productImageCache.put(gtin, bitmap);
-					}
-				}
-				else {
-					imageView.setImageResource(R.drawable.unknown_product_icon);
-				}
-			}
-			super.bindView(view, context, cursor);
 		}
 	}
 	

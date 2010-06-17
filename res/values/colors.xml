@@ -24,8 +24,7 @@
 	
 	<color name="product_info_background">#B3CC99</color>
 	<color name="product_name_text">#FFF</color>
-	<color name="affiliate_text">#99CCCC</color>
-	<color name="product_details_text">#99CCAA</color>
+	<color name="affiliate_text">#9BD9EF</color>
 	
 	<color name="comment_text">#000000</color>
 	<color name="comment_author_text">#628C9C</color>
@@ -43,5 +42,11 @@
 	
 	<color name="stream_product_name_text">#013068</color>
 	
-	<color name="comment_editor_background">#6A94A4</color>
+	<color name="comment_editor_background">#446C86</color>
+	
+	<color name="divider_dark">#77111111</color>
+	<color name="divider_light">#66707070</color>
+	
+	<color name="bar_dark">#6A94A4</color>
+	<color name="bar_light">#222</color>
 </resources>

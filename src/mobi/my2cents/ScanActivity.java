@@ -3,7 +3,7 @@ package mobi.my2cents;
 import java.io.IOException;
 import java.util.Vector;
 
-import mobi.my2cents.data.HistoryColumns;
+import mobi.my2cents.data.History;
 import mobi.my2cents.scanner.CameraManager;
 import mobi.my2cents.scanner.CaptureActivityHandler;
 import mobi.my2cents.scanner.ViewfinderView;
@@ -98,10 +98,10 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setContentView(R.layout.scan);
 
-		findViewById(R.id.ImageButtonHome).setOnClickListener(homeListener);
-		findViewById(R.id.ImageButtonScan).setEnabled(false);
-		findViewById(R.id.ImageButtonStream).setOnClickListener(streamListener);
-		findViewById(R.id.ImageButtonHistory).setOnClickListener(historyListener);
+		findViewById(R.id.NavigationButtonHome).setOnClickListener(homeListener);
+		findViewById(R.id.NavigationButtonScan).setEnabled(false);
+		findViewById(R.id.NavigationButtonStream).setOnClickListener(streamListener);
+		findViewById(R.id.NavigationButtonHistory).setOnClickListener(historyListener);
 		
 		findViewById(R.id.ManualInputButton).setOnClickListener(manualInputListener);
 
@@ -125,7 +125,7 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 
 	private final View.OnClickListener streamListener = new View.OnClickListener() {
 		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), StreamActivity.class);
+			Intent intent = new Intent(getBaseContext(), FeedActivity.class);
 			startActivity(intent);
 		}
 	};
@@ -428,7 +428,7 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	private void showProductDetails(Context context, String gtin) {
 		Intent intent = new Intent(context, CommentActivity.class);
 		intent.setAction(Intents.ACTION);
-		intent.putExtra(HistoryColumns.GTIN, gtin);
+		intent.putExtra(History.PRODUCT_KEY, gtin);
 		intent.putExtra(getString(R.string.show_virtual_keyboard), showVirtualKeyboard);
 		startActivity(intent);
 	}

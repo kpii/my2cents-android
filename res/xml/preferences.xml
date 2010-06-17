@@ -42,4 +42,17 @@
 			android:title="@string/settings_flashlight"
 			android:summary="@string/settings_flashlight_summary" />
 	</PreferenceCategory>
+	<PreferenceCategory
+		android:title="@string/settings_background">
+		<ListPreference 
+			android:key="polling_interval"
+			android:defaultValue="30000"
+			android:title="@string/polling_interval"
+			android:summary="@string/polling_interval_summary"
+			android:entries="@array/polling_intervals"
+			android:entryValues="@array/polling_intervals_values"
+		>
+		
+		</ListPreference>
+	</PreferenceCategory>
 </PreferenceScreen>

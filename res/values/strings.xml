@@ -1,8 +1,14 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <string name="rating_successful">Product was successfully rated</string>
+    <string name="rating_unsuccesful">Product was not rated</string>
+    <string name="navigation_button_history">History</string>
+    <string name="navigation_button_stream">Stream</string>
+    <string name="navigation_button_scan">Scan</string>
+    <string name="navigation_button_home">Home</string>
     <string name="anonymous_username">Anonymous</string>
 	<string name="app_name">my2cents</string>
-	<string name="app_notes">by ETH Zurich [1.0.4 RC2]</string>
+	<string name="app_notes">by ETH Zurich [v1.1]</string>
 	<string name="app_url">http://my2cents.mobi</string>
 
 	<string name="main_header">Comments on products</string>
@@ -25,7 +31,7 @@
     <string name="home_button_twitter_share_header">Share comments on Twitter</string>
     <string name="home_button_twitter_share">Personalize your comments and share them with your followers on Twitter</string>
 
-    <string name="my2cents_is_evolving">my2cents is evolving - this is the first public release of the application, please <a href="mailto:feedback@my2cents.mobi">leave your comments and suggestions</a> on our product</string>
+    <string name="my2cents_is_evolving">my2cents is evolving - this is the first public release of the application, please <a href='mailto:feedback@my2cents.mobi'>leave your comments and suggestions</a> on our product</string>
     <string name="my2cents_is_social">Personalize your comments and share them with your followers</string>
     <string name="my2cents_is_empowering">my2cents is empowering - you can get real life consumers recommendations and insights and can use it to ask questions and leave notes</string>
 
@@ -58,7 +64,8 @@
 	<string name="menu_info">Info</string>
 	<string name="menu_help">Help</string>
 	<string name="menu_clear_history">Clear History</string>
-
+<string name="thumbs_up">i like</string>
+<string name="thumbs_down">i dislike</string>
 	<string name="scanner_default_status">Place a barcode inside the viewfinder to scan it.</string>	
 	<string name="message_camera_problem">Sorry, the Android camera encountered a problem. You may need to restart the device.</string>
 	
@@ -89,6 +96,15 @@
 	
 	<string name="settings_first_start">First start</string>
 	<string name="settings_client_id">Client ID</string>
+	
+	<string name="polling_interval">Refresh Interval</string>
+	<string name="settings_background">background settings</string>
+	<string name="polling_interval_summary">background polling</string>
+	<string name="time_30_sec">30 sec</string>
+	<string name="time_1_min">1 min</string>
+	<string name="time_5_min">5 min</string>
+	<string name="time_30_min">30 min</string>
+	<string name="time_1_hour">1 hour</string>
 	
 	<string name="show_virtual_keyboard">Show virtual keyboard</string>
 	
@@ -121,5 +137,11 @@
     <string name="progress_dialog_loading">Loading...</string>
     
     <string name="error_message_no_network_connection">No network connection</string>
+    
     <string name="error_message_no_server_connection">Cannot connect to my2cents server</string>
+    <string name="msg_default_status">Cannot connect to my2cents server</string>
+    <string name="account_dialog_username">Cannot connect to my2cents server</string>
+    <string name="account_dialog_password">Cannot connect to my2cents server</string>
+    <string name="account_dialog_show_password">Cannot connect to my2cents server</string>
+
 </resources>
