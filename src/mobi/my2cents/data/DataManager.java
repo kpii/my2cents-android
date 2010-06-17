@@ -167,40 +167,40 @@ public final class DataManager {
 		
 		Comment comment = new Comment();
     	
-    	try {
-    		comment.setText(json.getString("body"));
-    		comment.setCreatedAt(dateFormatter.parse(json.getString("created_at")));
-    		
-    		// User may be anonymous
-    		if (json.has("user")) {
-    			JSONObject jsonUser = json.getJSONObject("user");
-            	comment.setUser(jsonUser.getString("name"));
-            	
-            	String urlString = jsonUser.getString("profile_image_url");
-            	if ((urlString != null) && (!urlString.equals("")) && (!urlString.equals("null"))) {
-            		URL url = new URL(urlString);
-            		comment.setUserProfileImageUrl(url);
-            	}
-    		}
-    		
-    		if (json.has("product")) {
-    			JSONObject jsonProduct = json.getJSONObject("product");
-            	comment.setProductName(jsonProduct.getString("name"));
-            	comment.setGtin(jsonProduct.getString("key"));
-            	
-            	String urlString = jsonProduct.getString("image_url");
-            	if ((urlString != null) && (!urlString.equals("")) && (!urlString.equals("null"))) {
-            		URL url = new URL(urlString);
-            		comment.setProductImageUrl(url);
-            	}
-    		}
-    	} catch (JSONException e) {
-    		Log.e(TAG, e.getMessage());
-    	} catch (MalformedURLException e) {
-    		Log.e(TAG, e.getMessage());
-		} catch (ParseException e) {
-			Log.e(TAG, e.getMessage());
-		}
+//    	try {
+//    		comment.setText(json.getString("body"));
+//    		comment.setCreatedAt(dateFormatter.parse(json.getString("created_at")));
+//    		
+//    		// User may be anonymous
+//    		if (json.has("user")) {
+//    			JSONObject jsonUser = json.getJSONObject("user");
+//            	comment.setUser(jsonUser.getString("name"));
+//            	
+//            	String urlString = jsonUser.getString("profile_image_url");
+//            	if ((urlString != null) && (!urlString.equals("")) && (!urlString.equals("null"))) {
+//            		URL url = new URL(urlString);
+//            		comment.setUserProfileImageUrl(url);
+//            	}
+//    		}
+//    		
+//    		if (json.has("product")) {
+//    			JSONObject jsonProduct = json.getJSONObject("product");
+//            	comment.setProductName(jsonProduct.getString("name"));
+//            	comment.setGtin(jsonProduct.getString("key"));
+//            	
+//            	String urlString = jsonProduct.getString("image_url");
+//            	if ((urlString != null) && (!urlString.equals("")) && (!urlString.equals("null"))) {
+//            		URL url = new URL(urlString);
+//            		comment.setProductImageUrl(url);
+//            	}
+//    		}
+//    	} catch (JSONException e) {
+//    		Log.e(TAG, e.getMessage());
+//    	} catch (MalformedURLException e) {
+//    		Log.e(TAG, e.getMessage());
+//		} catch (ParseException e) {
+//			Log.e(TAG, e.getMessage());
+//		}
     	
     	return comment;
 	}

@@ -16,7 +16,7 @@ import android.webkit.CookieSyncManager;
 public class My2Cents extends Application {
 	
 	public final static String TAG = "My2Cents";
-	public static final String AUTHORITY = "mobi.my2cents";
+	public final static String AUTHORITY = "mobi.my2cents";
 	
 	public static PackageInfo packageInfo;
 	

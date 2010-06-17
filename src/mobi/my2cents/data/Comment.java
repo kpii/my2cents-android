@@ -1,7 +1,5 @@
 package mobi.my2cents.data;
 
-import java.net.URL;
-import java.util.Date;
 import java.util.HashMap;
 
 import mobi.my2cents.My2Cents;
@@ -25,8 +23,11 @@ public class Comment implements BaseColumns, TransitionalStateColumns{
 	public static final String LATITUDE = "latitude";
 	public static final String LONGITUDE = "longitude";
 	public static final String PRODUCT_KEY = "product_key";
-	public static final String USER_ID = "user_id";
+	public static final String PRODUCT_NAME = "product_name";
+	public static final String PRODUCT_IMAGE_URL = "product_image_url";
+	public static final String USER_KEY = "user_key";
 	public static final String USER_NAME = "user_name";
+	public static final String USER_IMAGE_URL = "user_image_url";
 
 
 	public static HashMap<String, String> projectionMap = new HashMap<String, String>();
@@ -36,114 +37,45 @@ public class Comment implements BaseColumns, TransitionalStateColumns{
 		projectionMap.put( Comment.URI, 						Comment.URI);
 		projectionMap.put( Comment.BODY, 						Comment.BODY);
 		projectionMap.put( Comment.CREATED_AT, 					Comment.CREATED_AT);
-		projectionMap.put( Comment.PRODUCT_KEY, 				Comment.PRODUCT_KEY);
-		projectionMap.put( Comment.USER_ID, 					Comment.USER_ID);
-		projectionMap.put( Comment.USER_NAME, 					Comment.USER_NAME);
 		projectionMap.put( Comment.LATITUDE, 					Comment.LATITUDE);
 		projectionMap.put( Comment.LONGITUDE, 					Comment.LONGITUDE);
-		projectionMap.put( Comment.TRANSITION_ACTIVE, 			Comment.TRANSITION_ACTIVE);
+		
+		projectionMap.put( Comment.PRODUCT_KEY, 				Comment.PRODUCT_KEY);
+		projectionMap.put( Comment.PRODUCT_NAME, 				Comment.PRODUCT_NAME);
+		projectionMap.put( Comment.PRODUCT_IMAGE_URL, 			Comment.PRODUCT_IMAGE_URL);
+		
+		projectionMap.put( Comment.USER_KEY, 					Comment.USER_KEY);
+		projectionMap.put( Comment.USER_NAME, 					Comment.USER_NAME);
+		projectionMap.put( Comment.USER_IMAGE_URL, 				Comment.USER_IMAGE_URL);
+
 		projectionMap.put( Comment.TRANSITION_ACTIVE, 			Comment.TRANSITION_ACTIVE);
 		projectionMap.put( Comment.POST_TRANSITIONAL_STATE,		Comment.POST_TRANSITIONAL_STATE);
 		projectionMap.put( Comment.GET_TRANSITIONAL_STATE, 		Comment.GET_TRANSITIONAL_STATE);
 		projectionMap.put( Comment.PUT_TRANSITIONAL_STATE, 		Comment.PUT_TRANSITIONAL_STATE);
 		projectionMap.put( Comment.DEL_TRANSITIONAL_STATE, 		Comment.DEL_TRANSITIONAL_STATE);
 	}
-
-
-
-	private String user;
-	private URL userProfileImageUrl;
-	private String text;
-    private Date createdAt;
-    
-    private String gtin;
-    private String productName;
-    private URL productImageUrl;
-    
-    public Comment() {
-    }
-
-	public void setUser(String user) {
-		this.user = user;
-	}
-
-	public String getUser() {
-		return user;
-	}
-
-	public void setUserProfileImageUrl(URL userProfileImageUrl) {
-		this.userProfileImageUrl = userProfileImageUrl;
-	}
-
-	public URL getUserProfileImageUrl() {
-		return userProfileImageUrl;
-	}
-
-	public void setText(String text) {
-		this.text = text;
-	}
-
-	public String getText() {
-		return text;
-	}
-
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public Date getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setProductName(String productName) {
-		this.productName = productName;
-	}
-
-	public String getProductName() {
-		return productName;
-	}
-
-	public void setProductImageUrl(URL productImageUrl) {
-		this.productImageUrl = productImageUrl;
-	}
-
-	public URL getProductImageUrl() {
-		return productImageUrl;
-	}
-
-	public void setGtin(String gtin) {
-		this.gtin = gtin;
-	}
-
-	public String getGtin() {
-		return gtin;
-	}
-	
-	public ContentValues toContentValues() {
-		ContentValues cv = new ContentValues();
-		cv.put(Comment.BODY, text);
-		cv.put(Comment.PRODUCT_KEY, gtin);
-		return cv;
-	}
 	
 	public final static ContentValues ParseJson(JSONObject json) throws JSONException {
+		
 		if (json == null) return null;
 		
 		ContentValues values = new ContentValues();
-		values.put(Comment.BODY, json.getString("body"));
 		values.put(Comment.KEY, json.getString("id"));
+		values.put(Comment.BODY, json.getString("body"));
 		values.put(Comment.CREATED_AT, Helper.parseDate(json.getString("created_at")));
+		
+		if (json.has("product")) {
+			JSONObject product = json.getJSONObject("product");
+			values.put(Comment.PRODUCT_KEY, product.getString("key"));
+			values.put(Comment.PRODUCT_NAME, product.getString("name"));
+			values.put(Comment.PRODUCT_IMAGE_URL, product.getString("image_url"));
+		}
 		
 		// User may be anonymous
 		if (json.has("user")) {
 			JSONObject user = json.getJSONObject("user");
-			
-//			values.put(Comment.USER_ID, user.getString("id"));
 			values.put(Comment.USER_NAME, user.getString("name"));
-			values.put(Comment.URI, user.getString("profile_image_url"));
-		}
-		else {
-			
+			values.put(Comment.USER_IMAGE_URL, user.getString("profile_image_url"));
 		}
 		
 		return values;

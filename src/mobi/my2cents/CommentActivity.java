@@ -58,8 +58,6 @@ import android.widget.AdapterView.OnItemLongClickListener;
 
 public final class CommentActivity extends ListActivity {
 	
-	private static final String TAG = "CommentActivity";
-	
 	private boolean updateHistory;
 	public final static String UPDATE_HISTORY = "UpdateHistory";
 	
@@ -459,13 +457,13 @@ private void addHistoryItem(ProductInfo item) {
 
 		@Override
 		protected Void doInBackground(Context target, List<Comment>... params) {			
-			for (Comment comment : params[0]) {
-				if (!DataManager.profileImageCache.containsKey(comment.getUser())) {
-					DataManager.profileImageCache.put(comment.getUser(), NetworkManager.getRemoteImage(comment.getUserProfileImageUrl()));
-				}
-				publishProgress();
-			}
-			getProfileImagesTask = null;
+//			for (Comment comment : params[0]) {
+//				if (!DataManager.profileImageCache.containsKey(comment.getUser())) {
+//					DataManager.profileImageCache.put(comment.getUser(), NetworkManager.getRemoteImage(comment.getUserProfileImageUrl()));
+//				}
+//				publishProgress();
+//			}
+//			getProfileImagesTask = null;
 			return null;
 		}
 		
@@ -590,11 +588,11 @@ private void addHistoryItem(ProductInfo item) {
 		protected Comment doInBackground(Context target, String... params) {
 			
 			Comment comment = DataManager.postComment(gtin, params[0]);
-			if (comment != null) {
-				if (!DataManager.profileImageCache.containsKey(comment.getUser())) {
-					DataManager.profileImageCache.put(comment.getUser(), NetworkManager.getRemoteImage(comment.getUserProfileImageUrl()));
-				}
-			}
+//			if (comment != null) {
+//				if (!DataManager.profileImageCache.containsKey(comment.getUser())) {
+//					DataManager.profileImageCache.put(comment.getUser(), NetworkManager.getRemoteImage(comment.getUserProfileImageUrl()));
+//				}
+//			}
 			return comment;
 		}
 		

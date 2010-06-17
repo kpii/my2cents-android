@@ -1,13 +1,12 @@
 package mobi.my2cents;
 
-import java.util.Date;
-
 import mobi.my2cents.data.Comment;
 import mobi.my2cents.data.DataManager;
 import mobi.my2cents.utils.RelativeTime;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +23,8 @@ public class FeedAdapter extends CursorAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		
-//		TextView userTextView = (TextView) view.findViewById(R.id.StreamCommentAuthorTextView);
-//		userTextView.setText(cursor.getString(cursor.getColumnIndex(Comment.USER_NAME)));
+		TextView userTextView = (TextView) view.findViewById(R.id.StreamCommentAuthorTextView);
+		userTextView.setText(cursor.getString(cursor.getColumnIndex(Comment.USER_NAME)));
 
 		TextView messageTextView = (TextView) view.findViewById(R.id.StreamCommentTextView);
 		messageTextView.setText(cursor.getString(cursor.getColumnIndex(Comment.BODY)));
@@ -34,26 +33,24 @@ public class FeedAdapter extends CursorAdapter {
 		long time = cursor.getLong(cursor.getColumnIndex(Comment.CREATED_AT));
 		sentTextView.setText(RelativeTime.getDifference(time));
 		
-//		TextView productNameTextView = (TextView) view.findViewById(R.id.StreamProductTextView);
-//		if ((comment.getProductName() != null) && (!comment.getProductName().equals(""))) {	
-//			productNameTextView.setText(comment.getProductName());
-//		}
-//		else {
+		TextView productNameTextView = (TextView) view.findViewById(R.id.StreamProductTextView);
+		String productName = cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_NAME));
+		if (TextUtils.isEmpty(productName)) {	
 //			productNameTextView.setText("Unknown product [" + comment.getGtin() + "]");
-//		}
+		}
+		else {
+			productNameTextView.setText(productName);
+		}
 
-		String profileUrl = cursor.getString(cursor.getColumnIndex(Comment.URI));
-		if (DataManager.profileImageCache.containsKey(profileUrl)) {
-			ImageView productImageView = (ImageView) view.findViewById(R.id.StreamProductImageView);
-			Bitmap bitmap = DataManager.profileImageCache.get(profileUrl);
+		final ImageView productImageView = (ImageView) view.findViewById(R.id.StreamProductImageView);
+		final String productKey = cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_KEY));
+		if (DataManager.productImageCache.containsKey(productKey)) {
+			final Bitmap bitmap = DataManager.productImageCache.get(productKey);
 			productImageView.setImageBitmap(bitmap);
-//			if (comment.getProductImageUrl() != null) {	
-//				productImageView.setImageBitmap(DataManager.productImageCache.get(comment.getGtin()));
-//			}
-//			else {
-//				productImageView.setImageResource(R.drawable.unknown_product_icon);
-//			}
-		}		
+		}
+		else {
+			productImageView.setImageResource(R.drawable.unknown_product_icon);
+		}
 
 	}
 

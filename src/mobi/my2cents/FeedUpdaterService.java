@@ -1,8 +1,6 @@
 package mobi.my2cents;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import mobi.my2cents.data.Comment;
 import mobi.my2cents.data.DataManager;
@@ -14,10 +12,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.IntentService;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 import android.util.Log;
 
 public class FeedUpdaterService extends IntentService {
@@ -41,13 +39,11 @@ public class FeedUpdaterService extends IntentService {
 		}
 		
 		if (data != null) {
+			Intent broadcastIntent = new Intent(FEED_UPDATED);
 			try {
 				JSONArray json = new JSONArray(data);
 				if (json.length() > 0) {
-					
-					ContentResolver resolver = getContentResolver();
-//					resolver.delete(Comment.CONTENT_URI, null, null);
-					
+								
 					ContentValues[] values = new ContentValues[json.length()];
 					for (int i=0; i<json.length(); i++) {
 						
@@ -55,22 +51,27 @@ public class FeedUpdaterService extends IntentService {
 		            	values[i] = Comment.ParseJson(item);
 		            }
 					
-					int rows = resolver.bulkInsert(Comment.CONTENT_URI, values);
-					
-					Intent broadcastIntent = new Intent(FEED_UPDATED);
+					final int rows = getContentResolver().bulkInsert(Comment.CONTENT_URI, values);
 					sendBroadcast(broadcastIntent);
 					
 					for (int i=0; i<values.length; i++) {
-						String url = values[i].getAsString(Comment.URI);
-						if (!DataManager.profileImageCache.containsKey(url)) {
-							Bitmap bitmap = NetworkManager.getRemoteImage(url);
-							DataManager.profileImageCache.put(url, bitmap);
-							sendBroadcast(broadcastIntent);
-			            }
+						final String url = values[i].getAsString(Comment.PRODUCT_IMAGE_URL);
+						if (!TextUtils.isEmpty(url) && !url.equals("null")) {
+							final String key = values[i].getAsString(Comment.PRODUCT_KEY);
+							if (!DataManager.productImageCache.containsKey(key)) {
+								Bitmap bitmap = NetworkManager.getRemoteImage(url);
+								if (bitmap != null) {
+									DataManager.productImageCache.put(key, bitmap);
+									sendBroadcast(broadcastIntent);
+								}
+				            }
+						}						
 					}
 				}
 			} catch (JSONException e) {
 				Log.e(My2Cents.TAG, e.getMessage());
+			} finally {
+				sendBroadcast(broadcastIntent);
 			}
 		}
 	}

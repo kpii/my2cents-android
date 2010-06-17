@@ -2,6 +2,7 @@
 package mobi.my2cents;
 
 import mobi.my2cents.data.Comment;
+import mobi.my2cents.data.History;
 import mobi.my2cents.utils.NetworkManager;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
@@ -10,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -61,16 +63,13 @@ public final class FeedActivity extends ListActivity {
 	
 	private void handleIntent(Intent intent) {
 		bindAdapter();
+		updateFeed();
 	}
 	
 	private void bindAdapter() {
 		Cursor cursor = managedQuery(Comment.CONTENT_URI, null, null, null, null);
 		adapter = new FeedAdapter(this, cursor);
 		setListAdapter(adapter);
-//		if (cursor.getCount() == 0) {
-//			updateFeed();
-//		}
-		updateFeed();
 	}
 	
 	private void updateFeed() {
@@ -121,13 +120,18 @@ public final class FeedActivity extends ListActivity {
 
 	@Override
 	public void onListItemClick(ListView parent, View v, int position, long id) {
-//		Comment selectedComment = streamAdapter.getItem(position);
-//		
-//		Intent intent = new Intent(this, CommentActivity.class);
-//		intent.setAction(Intents.ACTION);
-//		intent.putExtra(CommentActivity.UPDATE_HISTORY, true);
-//		intent.putExtra(Product.KEY, selectedComment.getGtin());
-//		startActivity(intent);
+		Cursor cursor = (Cursor) adapter.getItem(position);
+		String key = cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_KEY));
+		
+		Intent intent = new Intent(this, CommentActivity.class);
+		intent.setAction(Intents.ACTION);
+//		intent.setData(Uri.withAppendedPath(History.CONTENT_URI, key));
+		intent.putExtra(CommentActivity.UPDATE_HISTORY, false);
+		intent.putExtra(Comment.PRODUCT_KEY, key);
+		
+//		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(Product.CONTENT_URI, key));
+		
+		startActivity(intent);
 	}
 
 	@Override

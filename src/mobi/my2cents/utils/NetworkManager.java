@@ -33,7 +33,6 @@ import android.util.Log;
 
 public final class NetworkManager {
 
-	private static final String TAG = "NetworkManager";
 	private static String authToken;
 	private static String sessionToken;
 	public static final String BASE_URL = "http://my2cents.mobi";

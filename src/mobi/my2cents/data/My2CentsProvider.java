@@ -13,8 +13,6 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 public class My2CentsProvider extends ContentProvider {
-
-    public static final String DEFAULT_SORT_ORDER = Comment._ID + " ASC";
 	
     private static final int PRODUCT_DIR = 1;
     private static final int PRODUCT_ITEM = 2;
@@ -174,7 +172,7 @@ public class My2CentsProvider extends ContentProvider {
 	    		long rowId = db.replace(DatabaseHelper.COMMENTS_TABLE, "", values);
 	            if (rowId > 0) {	
 	                Uri eventUri = ContentUris.withAppendedId(Comment.CONTENT_URI, rowId);
-	                getContext().getContentResolver().notifyChange(eventUri, null);
+//	                getContext().getContentResolver().notifyChange(eventUri, null);
 	                return eventUri;
 	            }
 	    		break;
@@ -214,12 +212,7 @@ public class My2CentsProvider extends ContentProvider {
 		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 		
 		// If no sort order is specified use the default
-        String orderBy;
-        if (TextUtils.isEmpty(sortOrder)) {
-            orderBy = DEFAULT_SORT_ORDER;
-        } else {
-            orderBy = sortOrder;
-        }
+        String orderBy = sortOrder;
 		
 		switch (uriMatcher.match(uri)) {    		
 	    	case PRODUCT_DIR: {
@@ -247,6 +240,7 @@ public class My2CentsProvider extends ContentProvider {
 	    	case COMMENT_DIR: {
 	    		qb.setTables(DatabaseHelper.COMMENTS_TABLE);
 	            qb.setProjectionMap(Comment.projectionMap);
+	            orderBy = Comment.CREATED_AT + " DESC";
 	    		break;
 	    	}
 	    		
@@ -259,6 +253,7 @@ public class My2CentsProvider extends ContentProvider {
 	    	case HISTORY_DIR: {
 	    		qb.setTables(DatabaseHelper.HISTORY_TABLE);
 	            qb.setProjectionMap(History.projectionMap);
+	            orderBy = History.TIME + " DESC";
 	    		break;
 	    	}
 	    		

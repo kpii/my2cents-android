@@ -96,7 +96,7 @@ public class My2centsService extends WakefulIntentService {
 			
 			// insert comments
 			for (Comment c : product.getComments()) {
-				getContentResolver().insert(Uri.withAppendedPath(uri, "comments"), c.toContentValues());
+//				getContentResolver().insert(Uri.withAppendedPath(uri, "comments"), c.toContentValues());
 			}
 			Log.d(TAG, "->Done.");
 		
@@ -118,7 +118,7 @@ public class My2centsService extends WakefulIntentService {
 					// reinsert all comments (for now)
 					getContentResolver().delete(Comment.CONTENT_URI, Comment.PRODUCT_KEY+"=?", new String[]{key});
 					for (Comment c : product.getComments())
-						getContentResolver().insert(Uri.withAppendedPath(Product.CONTENT_URI, key+"/comments"), c.toContentValues());
+//						getContentResolver().insert(Uri.withAppendedPath(Product.CONTENT_URI, key+"/comments"), c.toContentValues());
 					
 					if (activityVisible) {
 						Log.d(TAG, "  -> activity is visible");
