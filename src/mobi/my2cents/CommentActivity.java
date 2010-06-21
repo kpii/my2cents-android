@@ -4,10 +4,6 @@ package mobi.my2cents;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import mobi.my2cents.data.Comment;
 import mobi.my2cents.data.DataManager;
@@ -17,17 +13,20 @@ import mobi.my2cents.data.ProductInfo;
 import mobi.my2cents.data.Rating;
 import mobi.my2cents.utils.GpsManager;
 import mobi.my2cents.utils.Helper;
+import mobi.my2cents.utils.ImageManager;
 import mobi.my2cents.utils.NetworkManager;
 import mobi.my2cents.utils.WeakAsyncTask;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -47,6 +46,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
@@ -54,7 +54,6 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemLongClickListener;
 
 public final class CommentActivity extends ListActivity {
 	
@@ -66,7 +65,10 @@ public final class CommentActivity extends ListActivity {
 	private SharedPreferences settings;
 	private InputMethodManager inputManager;
 
-	private CommentsAdapter commentsAdapter;
+	private CommentsAdapter adapter;
+	
+	private IntentFilter filter;
+	private ProductUpdaterReceiver receiver;
 
 	private ArrayList<String> tags;
 	private TagsAdapter tagsAdapter;
@@ -85,6 +87,7 @@ public final class CommentActivity extends ListActivity {
 	
 	private EditText commentEditor;
 	private View statusLayout;
+	private View productPanel;
 	private PopupWindow productPopup;
 	
 	private AsyncTask<String, Void, ProductInfo> getProductInfoTask;
@@ -94,20 +97,110 @@ public final class CommentActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		prepareUI();
+		
+		filter = new IntentFilter(ProductUpdaterService.PRODUCT_UPDATED);
+		receiver = new ProductUpdaterReceiver();
+		
 		DataManager.UnknownProductName = getString(R.string.unknown_product);
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
 		inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 		
 		tags = new ArrayList<String>();
-		tagsAdapter = new TagsAdapter(this, R.layout.tag_item, tags);
+		tagsAdapter = new TagsAdapter(this, R.layout.tag_item, tags);		
 		
-//		commentsAdapter = new CommentsAdapter(this, R.layout.comment_item, new ArrayList<Comment>());
-//		setListAdapter(commentsAdapter);
-		
-		updateUI();
+		handleIntent(getIntent());
 	}
 	
-	private void updateUI() {
+	@Override
+	public void onResume() {
+		super.onResume();
+		registerReceiver(receiver, filter);
+		
+		SettingsActivity.setShareOnTwitter(settings.getBoolean(getString(R.string.settings_twitter), false));
+		boolean shareLocation = settings.getBoolean(getString(R.string.settings_share_location), false);
+		SettingsActivity.setShareLocation(shareLocation);
+		if (shareLocation) {
+			GpsManager.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		}
+	}
+	
+	@Override
+	public void onPause() {
+		unregisterReceiver(receiver);
+		super.onPause();
+	}
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+	    setIntent(intent);
+	    handleIntent(intent);
+	}
+	
+	private void handleIntent(Intent intent) {
+		hideVirtualKeyboard();
+		String key = intent.getStringExtra(Product.KEY);
+		bindAdapter(key);
+		getProductInfo(key);		
+	}
+	
+	private void bindAdapter(String key) {		
+		Cursor cursor = managedQuery(Uri.withAppendedPath(Product.CONTENT_URI, key + "/comments"), null, null, null, null);
+		adapter = new CommentsAdapter(this, cursor);
+		setListAdapter(adapter);
+	}
+	
+	private void displayProduct(String key)
+	{
+		final Cursor cursor = managedQuery(Uri.withAppendedPath(Product.CONTENT_URI, key), null, null, null, null);
+		if (cursor.moveToFirst()) {
+			productPanel.setVisibility(View.VISIBLE);
+			
+			productNameTextView.setText(cursor.getString(cursor.getColumnIndex(Product.NAME)));			
+			affiliateTextView.setText(cursor.getString(cursor.getColumnIndex(Product.AFFILIATE_NAME)));
+			likesTextView.setText("Likes: " + cursor.getInt(cursor.getColumnIndex(Product.RATING_LIKES)));
+			dislikesTextView.setText("Dislikes: " + cursor.getInt(cursor.getColumnIndex(Product.RATING_DISLIKES)));
+			
+			if (ImageManager.hasImage(key)) {
+				productImageView.setImageBitmap(ImageManager.getImage(key));
+			}			
+			else {
+				productImageView.setImageResource(R.drawable.unknown_product_icon_inverted);
+			}
+		}
+	}
+	
+	private void getProductInfo(String key) {
+		if (!NetworkManager.isNetworkAvailable(this)) {
+			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
+		}
+		else {
+			productPanel.setVisibility(View.GONE);
+			statusLayout.setVisibility(View.VISIBLE);
+			Intent intent = new Intent(this, ProductUpdaterService.class);
+			intent.putExtra(Product.KEY, key);
+			startService(intent);
+		}		
+	}
+	
+//	private void updateProduct(Intent intent) {
+//		if (!NetworkManager.isNetworkAvailable(this)) {
+//			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
+//		}
+//		else {
+//			String action = intent == null ? null : intent.getAction();
+//			if (intent != null && action != null) {
+//				if (action.equals(Intents.ACTION)) {
+//					gtin = intent.getStringExtra(Product.KEY);
+//					updateHistory = intent.getBooleanExtra(UPDATE_HISTORY, true);
+//					
+//					getProductInfoTask = new GetProductInfoTask(this).execute(gtin);
+//				}
+//			}
+//		}
+//	}
+	
+	private void prepareUI() {
 		setContentView(R.layout.comment);
 		
 		statusLayout = findViewById(R.id.StatusRelativeLayout);
@@ -127,7 +220,8 @@ public final class CommentActivity extends ListActivity {
 		tagsGallery.setAdapter(tagsAdapter);
 		tagsGallery.setOnItemLongClickListener(tagsLongClickListener);
 		
-		findViewById(R.id.ProductInfoPanel).setOnClickListener(productQuickActionsListener);
+		productPanel = findViewById(R.id.ProductInfoPanel);
+		productPanel.setOnClickListener(productQuickActionsListener);
 		findViewById(R.id.LoginButton).setOnClickListener(loginListener);
 		findViewById(R.id.SendButton).setOnClickListener(sendCommentListener);
 		
@@ -136,10 +230,6 @@ public final class CommentActivity extends ListActivity {
 		findViewById(R.id.NavigationButtonScan).setOnClickListener(scanListener);
 		findViewById(R.id.NavigationButtonStream).setOnClickListener(streamListener);
 		findViewById(R.id.NavigationButtonHistory).setOnClickListener(historyListener);
-		
-		if (productInfo != null) {
-			displayProductFound(productInfo);
-		}
 	}
 	
 	private final View.OnClickListener homeListener = new View.OnClickListener() {
@@ -180,27 +270,25 @@ public final class CommentActivity extends ListActivity {
 	
 	private final View.OnClickListener productQuickActionsListener = new View.OnClickListener() {
 		public void onClick(View view) {
-			if (productInfo != null) {
-				if (productPopup == null) {
-					LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-					
-					View contentView = inflater.inflate(R.layout.product_popup, null, false);
-					contentView.setOnTouchListener(closePopupListener);
-					contentView.findViewById(R.id.ProductBarButtonDetails).setOnClickListener(affiliateListener);
-					contentView.findViewById(R.id.ProductBarButtonLike).setOnClickListener(likeListener);
-					contentView.findViewById(R.id.ProductBarButtonDislike).setOnClickListener(dislikeListener);
-					contentView.findViewById(R.id.ProductBarButtonEdit).setOnClickListener(editProductInfoListener);
-					
-					productPopup = new PopupWindow(
-							contentView, 
-							view.getWidth(), 
-							R.dimen.product_bar_height, 
-							false);
-				    // The code below assumes that the root container has an id called 'main'
-					productPopup.setOutsideTouchable(true);
-					productPopup.setTouchInterceptor(closePopupListener);
-					productPopup.showAsDropDown(view);
-				}
+			if (productPopup == null) {
+				LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+				
+				View contentView = inflater.inflate(R.layout.product_popup, null, false);
+				contentView.setOnTouchListener(closePopupListener);
+				contentView.findViewById(R.id.ProductBarButtonDetails).setOnClickListener(affiliateListener);
+				contentView.findViewById(R.id.ProductBarButtonLike).setOnClickListener(likeListener);
+				contentView.findViewById(R.id.ProductBarButtonDislike).setOnClickListener(dislikeListener);
+				contentView.findViewById(R.id.ProductBarButtonEdit).setOnClickListener(editProductInfoListener);
+				
+				productPopup = new PopupWindow(
+						contentView, 
+						view.getWidth(), 
+						R.dimen.product_bar_height, 
+						false);
+			    // The code below assumes that the root container has an id called 'main'
+				productPopup.setOutsideTouchable(true);
+				productPopup.setTouchInterceptor(closePopupListener);
+				productPopup.showAsDropDown(view);
 			}
 		}
 	};
@@ -304,36 +392,13 @@ public final class CommentActivity extends ListActivity {
 		}
 	}
 	
-	@Override
-	protected void onStart() {
-		super.onStart();
-		
-		hideVirtualKeyboard();
-		
-		if (!NetworkManager.isNetworkAvailable(this)) {
-			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
-		}
-		else {
-			Intent intent = getIntent();
-			String action = intent == null ? null : intent.getAction();
-			if (intent != null && action != null) {
-				if (action.equals(Intents.ACTION)) {
-					gtin = intent.getStringExtra(Product.KEY);
-					updateHistory = intent.getBooleanExtra(UPDATE_HISTORY, true);
-					
-					getProductInfoTask = new GetProductInfoTask(this).execute(gtin);
-				}
-			}
-		}
-	}
-	
 	private void hideVirtualKeyboard() {
 		inputManager.hideSoftInputFromWindow(commentEditor.getWindowToken(), 0);
         commentEditor.clearFocus();
         productImageView.requestFocus();		
 	}
 	
-private void addHistoryItem(ProductInfo item) {
+	private void addHistoryItem(ProductInfo item) {
 		
 		ContentResolver resolver = getContentResolver();
 		resolver.delete(Uri.withAppendedPath(History.CONTENT_URI, item.getGtin()), null, null);
@@ -381,7 +446,7 @@ private void addHistoryItem(ProductInfo item) {
 			statusLayout.setVisibility(View.VISIBLE);
 			productInfo = getHistoryItem(gtin);
 			if (productInfo != null) {
-				displayProductFound(productInfo);
+//				displayProductFound(productInfo);
 			}
 	    }
 
@@ -469,23 +534,8 @@ private void addHistoryItem(ProductInfo item) {
 		
 		@Override
 		protected void onProgressUpdate(Void... progress) {
-			commentsAdapter.notifyDataSetChanged();
+//			commentsAdapter.notifyDataSetChanged();
 	    }
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		
-		SettingsActivity.setShareOnTwitter(settings.getBoolean(getString(R.string.settings_twitter), false));
-		boolean shareLocation = settings.getBoolean(getString(R.string.settings_share_location), false);
-		SettingsActivity.setShareLocation(shareLocation);
-		if (shareLocation) {
-			GpsManager.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		}
-		
-		if (commentsAdapter.getCount() > 0)
-			commentsAdapter.notifyDataSetChanged();
 	}
 
 	private final OnItemLongClickListener tagsLongClickListener = new OnItemLongClickListener() {
@@ -558,20 +608,6 @@ private void addHistoryItem(ProductInfo item) {
 		}
 	}
 	
-	private void displayProductFound(ProductInfo product)
-	{
-		productNameTextView.setText(product.getName());
-		
-		if (product.getImage() != null) 
-			productImageView.setImageBitmap(product.getImage());
-		else
-			productImageView.setImageResource(R.drawable.unknown_product_icon_inverted);
-		
-		affiliateTextView.setText(product.getAffiliateName());
-		likesTextView.setText("Likes: " + product.getRating().getLikes());
-		dislikesTextView.setText("Dislikes: " + product.getRating().getDislikes());
-	}
-	
 	
 	private class PostComment extends WeakAsyncTask<String, Void, Comment, Context> {
 
@@ -638,27 +674,11 @@ private void addHistoryItem(ProductInfo item) {
 			}
 			else {
 				productInfo.setRating(result);
-				displayProductFound(productInfo);
+//				displayProductFound(productInfo);
 				Toast.makeText(target, R.string.rating_successful, Toast.LENGTH_SHORT).show();
 			}
 	    }
 	}
-	
-	private final void cancelAsyncTasks() {
-		if (getProductInfoTask != null && getProductInfoTask.getStatus() == AsyncTask.Status.RUNNING) {
-        	getProductInfoTask.cancel(true);
-        }
-        
-        if (getProfileImagesTask != null && getProfileImagesTask.getStatus() == AsyncTask.Status.RUNNING) {
-        	getProfileImagesTask.cancel(true);
-        }
-	}
-	
-	@Override
-    protected void onDestroy() {
-		cancelAsyncTasks();
-        super.onDestroy();
-    }
 	
 	@Override
 	public void onConfigurationChanged(Configuration config) {
@@ -666,7 +686,7 @@ private void addHistoryItem(ProductInfo item) {
 		// the keyboard opens.
 		super.onConfigurationChanged(config);
 		closeProductPopupBar();
-		updateUI();
+		prepareUI();
 	}
 	
 	@Override
@@ -691,5 +711,17 @@ private void addHistoryItem(ProductInfo item) {
 	        }
 		}
 		return super.onCreateDialog(id);
+	}
+	
+	private final class ProductUpdaterReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			statusLayout.setVisibility(View.GONE);
+			adapter.notifyDataSetChanged();
+			final String key = intent.getStringExtra(Product.KEY);
+			displayProduct(key);
+		}
+		
 	}
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import mobi.my2cents.data.Comment;
 import mobi.my2cents.data.DataManager;
+import mobi.my2cents.utils.ImageManager;
 import mobi.my2cents.utils.NetworkManager;
 
 import org.apache.http.client.ClientProtocolException;
@@ -56,16 +57,17 @@ public class FeedUpdaterService extends IntentService {
 					
 					for (int i=0; i<values.length; i++) {
 						final String url = values[i].getAsString(Comment.PRODUCT_IMAGE_URL);
+						
 						if (!TextUtils.isEmpty(url) && !url.equals("null")) {
 							final String key = values[i].getAsString(Comment.PRODUCT_KEY);
-							if (!DataManager.productImageCache.containsKey(key)) {
-								Bitmap bitmap = NetworkManager.getRemoteImage(url);
+							if (!ImageManager.hasImage(key)) {
+								final Bitmap bitmap = NetworkManager.getRemoteImage(url);
 								if (bitmap != null) {
-									DataManager.productImageCache.put(key, bitmap);
+									ImageManager.putImage(key, bitmap);
 									sendBroadcast(broadcastIntent);
 								}
-				            }
-						}						
+							}
+						}					
 					}
 				}
 			} catch (JSONException e) {

@@ -205,37 +205,37 @@ public final class DataManager {
     	return comment;
 	}
 	
-	public final static ArrayList<Comment> getCommentsStream(){
-		
-		String jsonString = null;
-		try {
-			jsonString = NetworkManager.getFeed();
-		} catch (ClientProtocolException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		if (jsonString == null) return null;
-		
-		try {
-			JSONArray json = new JSONArray(jsonString);
-			ArrayList<Comment> comments = new ArrayList<Comment>();
-            for (int i=0; i<json.length(); i++) {
-            	JSONObject jsonComment = json.getJSONObject(i).getJSONObject("comment");            	
-            	Comment comment = Json2Comment(jsonComment);
-				if (comment != null) {
-					comments.add(comment);
-				}
-            }	
-            return comments;
-		} catch (JSONException e) {
-			Log.e(TAG, e.getMessage());
-			return null;
-		}
-	}
+//	public final static ArrayList<Comment> getCommentsStream(){
+//		
+//		String jsonString = null;
+//		try {
+//			jsonString = NetworkManager.getFeed();
+//		} catch (ClientProtocolException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		} catch (IOException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+//		
+//		if (jsonString == null) return null;
+//		
+//		try {
+//			JSONArray json = new JSONArray(jsonString);
+//			ArrayList<Comment> comments = new ArrayList<Comment>();
+//            for (int i=0; i<json.length(); i++) {
+//            	JSONObject jsonComment = json.getJSONObject(i).getJSONObject("comment");            	
+//            	Comment comment = Json2Comment(jsonComment);
+//				if (comment != null) {
+//					comments.add(comment);
+//				}
+//            }	
+//            return comments;
+//		} catch (JSONException e) {
+//			Log.e(TAG, e.getMessage());
+//			return null;
+//		}
+//	}
 	
 	public final static Comment postComment(String gtin, String body) {
 		String content = null;

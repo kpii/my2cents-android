@@ -142,10 +142,10 @@ public class My2CentsProvider extends ContentProvider {
         switch (uriMatcher.match(uri)) {    		
 	    	case PRODUCT_DIR: {
 	    		values.put(Comment.GET_TRANSITIONAL_STATE, true);
-	    		long rowId = db.insert(DatabaseHelper.PRODUCTS_TABLE, "", values);
+	    		long rowId = db.replace(DatabaseHelper.PRODUCTS_TABLE, "", values);
 	            if (rowId > 0) {	
-	                Uri eventUri = ContentUris.withAppendedId(Product.CONTENT_URI, rowId);
-	                getContext().getContentResolver().notifyChange(eventUri, null);
+	                final Uri eventUri = ContentUris.withAppendedId(Product.CONTENT_URI, rowId);
+//	                getContext().getContentResolver().notifyChange(eventUri, null);
 	                return eventUri;
 	            }
 	    		break;
@@ -171,7 +171,7 @@ public class My2CentsProvider extends ContentProvider {
 	    	case COMMENT_DIR: {
 	    		long rowId = db.replace(DatabaseHelper.COMMENTS_TABLE, "", values);
 	            if (rowId > 0) {	
-	                Uri eventUri = ContentUris.withAppendedId(Comment.CONTENT_URI, rowId);
+	                final Uri eventUri = ContentUris.withAppendedId(Comment.CONTENT_URI, rowId);
 //	                getContext().getContentResolver().notifyChange(eventUri, null);
 	                return eventUri;
 	            }

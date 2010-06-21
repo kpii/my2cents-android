@@ -1,6 +1,7 @@
 package mobi.my2cents;
 
 import mobi.my2cents.data.DataManager;
+import mobi.my2cents.utils.ImageManager;
 import mobi.my2cents.utils.NetworkManager;
 import android.app.AlarmManager;
 import android.app.Application;
@@ -46,5 +47,6 @@ public class My2Cents extends Application {
 			Log.e(TAG, e.getMessage());
 		}
 		DataManager.initialize(this);
+		ImageManager.initialize(this);
 	}
 }

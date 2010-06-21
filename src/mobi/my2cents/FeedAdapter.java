@@ -2,6 +2,7 @@ package mobi.my2cents;
 
 import mobi.my2cents.data.Comment;
 import mobi.my2cents.data.DataManager;
+import mobi.my2cents.utils.ImageManager;
 import mobi.my2cents.utils.RelativeTime;
 import android.content.Context;
 import android.database.Cursor;
@@ -35,17 +36,14 @@ public class FeedAdapter extends CursorAdapter {
 		
 		TextView productNameTextView = (TextView) view.findViewById(R.id.StreamProductTextView);
 		String productName = cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_NAME));
-		if (TextUtils.isEmpty(productName)) {	
-//			productNameTextView.setText("Unknown product [" + comment.getGtin() + "]");
-		}
-		else {
+		if (!TextUtils.isEmpty(productName)) {
 			productNameTextView.setText(productName);
 		}
 
 		final ImageView productImageView = (ImageView) view.findViewById(R.id.StreamProductImageView);
-		final String productKey = cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_KEY));
-		if (DataManager.productImageCache.containsKey(productKey)) {
-			final Bitmap bitmap = DataManager.productImageCache.get(productKey);
+		final String productKey = cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_KEY));		
+		if (ImageManager.hasImage(productKey)) {
+			final Bitmap bitmap = ImageManager.getImage(productKey);
 			productImageView.setImageBitmap(bitmap);
 		}
 		else {

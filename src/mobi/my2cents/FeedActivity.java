@@ -3,6 +3,7 @@ package mobi.my2cents;
 
 import mobi.my2cents.data.Comment;
 import mobi.my2cents.data.History;
+import mobi.my2cents.data.Product;
 import mobi.my2cents.utils.NetworkManager;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
@@ -127,7 +128,7 @@ public final class FeedActivity extends ListActivity {
 		intent.setAction(Intents.ACTION);
 //		intent.setData(Uri.withAppendedPath(History.CONTENT_URI, key));
 		intent.putExtra(CommentActivity.UPDATE_HISTORY, false);
-		intent.putExtra(Comment.PRODUCT_KEY, key);
+		intent.putExtra(Product.KEY, key);
 		
 //		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(Product.CONTENT_URI, key));
 		

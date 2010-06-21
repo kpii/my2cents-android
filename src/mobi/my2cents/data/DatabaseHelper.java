@@ -9,7 +9,7 @@ import android.util.Log;
 public class DatabaseHelper extends SQLiteOpenHelper {
 	
     private static final String DATABASE_NAME = "My2Cents.db";
-    private static final int DATABASE_VERSION = 18;
+    private static final int DATABASE_VERSION = 20;
     
     
     private static final String TRANSITION_FLAGS = 
@@ -48,11 +48,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     	"CREATE TABLE " + PRODUCTS_TABLE + " ("
     	+ Product._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
     	+ Product.KEY + " TEXT, "
-    	+ Product.URI + " TEXT, "
     	+ Product.NAME + " TEXT, "
+    	+ Product.IMAGE_URL + " TEXT, "
+    	
+    	+ Product.AFFILIATE_NAME + " TEXT, "
+    	+ Product.AFFILIATE_URL + " TEXT, "
+
+    	+ Product.RATING_LIKES + " INTEGER, "
+    	+ Product.RATING_DISLIKES + " INTEGER, "
+    	+ Product.RATING_PERSONAL + " TEXT, "
+    	
+    	+ Product.URI + " TEXT, "
     	+ Product.IMAGE + " BLOB, "
     	+ Product.ETAG + " TEXT, "
-    	+ TRANSITION_FLAGS + ");";
+    	+ TRANSITION_FLAGS + ");"
+    	+ "CREATE INDEX products_key_index ON " + PRODUCTS_TABLE + "(" + Product.KEY + ");";
     
     
     public static final String HISTORY_TABLE = "history";

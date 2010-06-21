@@ -53,16 +53,4 @@
 		android:layout_alignParentTop="true"
 		
 	/>
-		 
-		
-	<TextView
-		android:id="@+id/CommentSentTextView"
-		android:layout_height="wrap_content"
-		android:layout_toRightOf="@id/CommentAuthorTextView"
-		android:textSize="@dimen/comment_sent_text"
-		android:textColor="@color/comment_sent_text"
-		android:layout_alignBaseline="@id/CommentAuthorTextView"
-		android:layout_below="@id/CommentTextView"
-		android:layout_width="fill_parent"
-		android:gravity="right"></TextView>
 </RelativeLayout>

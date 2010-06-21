@@ -2,8 +2,8 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="mobi.my2cents"
-	android:versionName="1.1" android:versionCode="6">
-
+	android:versionName="1.1"
+	android:versionCode="6">
 	<!-- We require Cupcake (Android 1.5) or later, but are really targeting Donut. -->
 	<uses-sdk
 		android:minSdkVersion="3"
@@ -18,7 +18,8 @@
 		android:label="@string/app_name"
 		android:theme="@android:style/Theme.Light.NoTitleBar"
 		android:icon="@drawable/birdy"
-		android:debuggable="true" android:name="My2Cents">
+		android:debuggable="true"
+		android:name="My2Cents">
 		<activity
 			android:name=".MainActivity">
 			<intent-filter>
@@ -127,7 +128,9 @@
 		</service>
 		<service
 			android:name=".FeedUpdaterService"></service>
-	</application>
+		<service
+			android:name=".ProductUpdaterService"></service>
+</application>
 	<uses-permission
 		android:name="android.permission.CAMERA" />
 	<uses-permission
