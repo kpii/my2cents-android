@@ -21,9 +21,6 @@ public class My2CentsProvider extends ContentProvider {
     private static final int COMMENT_DIR = 4;
     private static final int COMMENT_ITEM = 5;
     
-    private static final int HISTORY_DIR = 6;
-    private static final int HISTORY_ITEM = 7;
-    
     private static final UriMatcher uriMatcher;    
 	private DatabaseHelper dbHelper;
 
@@ -54,14 +51,6 @@ public class My2CentsProvider extends ContentProvider {
 	    		
 	    	case COMMENT_ITEM: {
 	    		return "vnd.android.cursor.item/mobi.my2cents.comment";
-	    	}
-	    	
-	    	case HISTORY_DIR: {
-	    		return "vnd.android.cursor.dir/mobi.my2cents.history";
-	    	}
-	    		
-	    	case HISTORY_ITEM: {
-	    		return "vnd.android.cursor.item/mobi.my2cents.history";
 	    	}
 	    	
 	    	default: {
@@ -109,20 +98,6 @@ public class My2CentsProvider extends ContentProvider {
 	    		break;
 	    	}
 	    	
-	    	case HISTORY_DIR: {
-	    		count = db.delete(DatabaseHelper.HISTORY_TABLE, where, whereArgs);
-	    		break;
-	    	}
-	    		
-	    	case HISTORY_ITEM: {
-	    		String key = uri.getPathSegments().get(1);
-	    		String whereClause = 
-	    			History.PRODUCT_KEY + "=" + key
-	    			+ (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : "");
-	            count = db.delete(DatabaseHelper.HISTORY_TABLE, whereClause, whereArgs);
-	    		break;
-	    	}
-	    	
 	    	default: {
 	    		throw new IllegalArgumentException("Unknown URI: " + uri);
 	    	}
@@ -159,7 +134,7 @@ public class My2CentsProvider extends ContentProvider {
 	    		String key = uri.getPathSegments().get(1);
 	    		values.put(Comment.TRANSITION_ACTIVE, false);
 				values.put(Comment.PRODUCT_KEY, key);
-	    		long rowId = db.insert(DatabaseHelper.COMMENTS_TABLE, "", values);
+	    		long rowId = db.replace(DatabaseHelper.COMMENTS_TABLE, "", values);
 	            if (rowId > 0) {	
 	                Uri eventUri = ContentUris.withAppendedId(Product.CONTENT_URI, rowId);
 	                getContext().getContentResolver().notifyChange(eventUri, null);
@@ -179,20 +154,6 @@ public class My2CentsProvider extends ContentProvider {
 	    	}
 	    		
 	    	case COMMENT_ITEM: {
-	    		break;
-	    	}
-	    	
-	    	case HISTORY_DIR: {	    		
-	    		break;
-	    	}
-	    		
-	    	case HISTORY_ITEM: {
-	    		long rowId = db.insert(DatabaseHelper.HISTORY_TABLE, "", values);
-	            if (rowId > 0) {	
-	                Uri eventUri = ContentUris.withAppendedId(History.CONTENT_URI, rowId);
-	                getContext().getContentResolver().notifyChange(eventUri, null);
-	                return eventUri;
-	            }
 	    		break;
 	    	}
 	    	
@@ -218,6 +179,7 @@ public class My2CentsProvider extends ContentProvider {
 	    	case PRODUCT_DIR: {
 	    		qb.setTables(DatabaseHelper.PRODUCTS_TABLE);
 	            qb.setProjectionMap(Product.projectionMap);
+	            orderBy = Product._ID + " DESC";
 	    		break;
 	    	}
 	    		
@@ -247,19 +209,6 @@ public class My2CentsProvider extends ContentProvider {
 	    	case COMMENT_ITEM: {
 	    		qb.setTables(DatabaseHelper.COMMENTS_TABLE);
 	            qb.setProjectionMap(Comment.projectionMap);
-	    		break;
-	    	}
-	    	
-	    	case HISTORY_DIR: {
-	    		qb.setTables(DatabaseHelper.HISTORY_TABLE);
-	            qb.setProjectionMap(History.projectionMap);
-	            orderBy = History.TIME + " DESC";
-	    		break;
-	    	}
-	    		
-	    	case HISTORY_ITEM: {
-	    		qb.setTables(DatabaseHelper.HISTORY_TABLE);
-	            qb.setProjectionMap(History.projectionMap);
 	    		break;
 	    	}
 	    	
@@ -312,19 +261,6 @@ public class My2CentsProvider extends ContentProvider {
 	    		break;
 	    	}
 	    	
-	    	case HISTORY_DIR: {	    		
-	    		break;
-	    	}
-	    		
-	    	case HISTORY_ITEM: {
-	    		String key = uri.getPathSegments().get(1);
-	    		String whereClause = 
-	    			History.PRODUCT_KEY + "=" + key
-	    			+ (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : "");
-	            count = db.update(DatabaseHelper.HISTORY_TABLE, values, whereClause, whereArgs);
-	    		break;
-	    	}
-	    	
 	    	default: {
 	    		throw new IllegalArgumentException("Unknown URI: " + uri);
 	    	}
@@ -337,9 +273,6 @@ public class My2CentsProvider extends ContentProvider {
 	
 	static {
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-		
-        uriMatcher.addURI(My2Cents.AUTHORITY, "history", HISTORY_DIR);
-        uriMatcher.addURI(My2Cents.AUTHORITY, "history/*", HISTORY_ITEM);
         
         uriMatcher.addURI(My2Cents.AUTHORITY, "products", PRODUCT_DIR);
         uriMatcher.addURI(My2Cents.AUTHORITY, "products/*", PRODUCT_ITEM);

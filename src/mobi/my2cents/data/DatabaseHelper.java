@@ -9,7 +9,7 @@ import android.util.Log;
 public class DatabaseHelper extends SQLiteOpenHelper {
 	
     private static final String DATABASE_NAME = "My2Cents.db";
-    private static final int DATABASE_VERSION = 20;
+    private static final int DATABASE_VERSION = 24;
     
     
     private static final String TRANSITION_FLAGS = 
@@ -47,7 +47,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String CREATE_PRODUCTS_TABLE =
     	"CREATE TABLE " + PRODUCTS_TABLE + " ("
     	+ Product._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-    	+ Product.KEY + " TEXT, "
+    	+ Product.KEY + " TEXT UNIQUE, "
     	+ Product.NAME + " TEXT, "
     	+ Product.IMAGE_URL + " TEXT, "
     	
@@ -65,18 +65,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     	+ "CREATE INDEX products_key_index ON " + PRODUCTS_TABLE + "(" + Product.KEY + ");";
     
     
-    public static final String HISTORY_TABLE = "history";
-    private static final String CREATE_HISTORY_TABLE =
-    	"CREATE TABLE " + HISTORY_TABLE + " ("
-        + History._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-        + History.TIME + " TEXT, "
-        + History.PRODUCT_KEY + " TEXT ,"
-        + History.NAME + " TEXT, "
-        + History.AFFILIATE_NAME + " TEXT, "
-        + History.AFFILIATE_URL + " TEXT, "
-        + History.IMAGE + " BLOB);";
-
-    
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -85,7 +73,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
     	db.execSQL(CREATE_PRODUCTS_TABLE);
     	db.execSQL(CREATE_COMMENTS_TABLE);
-    	db.execSQL(CREATE_HISTORY_TABLE);
     }
 
     @Override
@@ -93,7 +80,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.i(My2Cents.TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
         db.execSQL("DROP TABLE IF EXISTS " + PRODUCTS_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + COMMENTS_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + HISTORY_TABLE);
         onCreate(db);
     }
 }

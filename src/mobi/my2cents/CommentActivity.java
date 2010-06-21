@@ -2,17 +2,14 @@
 package mobi.my2cents;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import mobi.my2cents.data.Comment;
 import mobi.my2cents.data.DataManager;
-import mobi.my2cents.data.History;
 import mobi.my2cents.data.Product;
 import mobi.my2cents.data.ProductInfo;
 import mobi.my2cents.data.Rating;
 import mobi.my2cents.utils.GpsManager;
-import mobi.my2cents.utils.Helper;
 import mobi.my2cents.utils.ImageManager;
 import mobi.my2cents.utils.NetworkManager;
 import mobi.my2cents.utils.WeakAsyncTask;
@@ -21,7 +18,6 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -30,10 +26,8 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.location.LocationManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
@@ -89,9 +83,6 @@ public final class CommentActivity extends ListActivity {
 	private View statusLayout;
 	private View productPanel;
 	private PopupWindow productPopup;
-	
-	private AsyncTask<String, Void, ProductInfo> getProductInfoTask;
-	private AsyncTask<List<Comment>, Void, Void> getProfileImagesTask;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -156,10 +147,15 @@ public final class CommentActivity extends ListActivity {
 		if (cursor.moveToFirst()) {
 			productPanel.setVisibility(View.VISIBLE);
 			
-			productNameTextView.setText(cursor.getString(cursor.getColumnIndex(Product.NAME)));			
-			affiliateTextView.setText(cursor.getString(cursor.getColumnIndex(Product.AFFILIATE_NAME)));
-			likesTextView.setText("Likes: " + cursor.getInt(cursor.getColumnIndex(Product.RATING_LIKES)));
-			dislikesTextView.setText("Dislikes: " + cursor.getInt(cursor.getColumnIndex(Product.RATING_DISLIKES)));
+			final String name = cursor.getString(cursor.getColumnIndex(Product.NAME));
+			final String affiliateName = cursor.getString(cursor.getColumnIndex(Product.AFFILIATE_NAME));
+			final int likes = cursor.getInt(cursor.getColumnIndex(Product.RATING_LIKES));
+			final int dislikes = cursor.getInt(cursor.getColumnIndex(Product.RATING_DISLIKES));
+			
+			productNameTextView.setText(name);			
+			affiliateTextView.setText(affiliateName);
+			likesTextView.setText("Likes: " + likes);
+			dislikesTextView.setText("Dislikes: " + dislikes);
 			
 			if (ImageManager.hasImage(key)) {
 				productImageView.setImageBitmap(ImageManager.getImage(key));
@@ -167,6 +163,16 @@ public final class CommentActivity extends ListActivity {
 			else {
 				productImageView.setImageResource(R.drawable.unknown_product_icon_inverted);
 			}
+			
+//			resolver.delete(Uri.withAppendedPath(Product.CONTENT_URI, key), null, null);
+			ContentValues values = new ContentValues();
+			values.put( Product.KEY, key);
+			values.put( Product.NAME, name);
+			values.put( Product.AFFILIATE_NAME, affiliateName);
+			values.put( Product.RATING_LIKES, likes);
+			values.put( Product.RATING_DISLIKES, dislikes);
+			
+			getContentResolver().insert(Product.CONTENT_URI, values);
 		}
 	}
 	
@@ -398,44 +404,6 @@ public final class CommentActivity extends ListActivity {
         productImageView.requestFocus();		
 	}
 	
-	private void addHistoryItem(ProductInfo item) {
-		
-		ContentResolver resolver = getContentResolver();
-		resolver.delete(Uri.withAppendedPath(History.CONTENT_URI, item.getGtin()), null, null);
-		
-		ContentValues values = new ContentValues();
-		values.put( History.PRODUCT_KEY, item.getGtin());
-		values.put( History.NAME, item.getName());
-		values.put( History.TIME, new Date().toLocaleString());
-		values.put( History.AFFILIATE_NAME, item.getAffiliateName());
-		values.put( History.AFFILIATE_URL, item.getAffiliateUrl());		
-        if (item.getImage() != null) {
-        	values.put(History.IMAGE, Helper.getBitmapAsByteArray(item.getImage()));
-        }
-		
-		resolver.insert(History.CONTENT_URI, values);
-	}
-	
-	private ProductInfo getHistoryItem(String gtin) {
-		ProductInfo item = null;
-		ContentResolver resolver = getContentResolver();
-		Cursor cursor = resolver.query(Uri.withAppendedPath(History.CONTENT_URI, gtin), null, null, null, null);
-    	if (cursor.moveToFirst()) {
-    		item = new ProductInfo(gtin);
-    		item.setName(cursor.getString(cursor.getColumnIndex(History.NAME)));
-    		item.setAffiliateName(cursor.getString(cursor.getColumnIndex(History.AFFILIATE_NAME)));
-    		item.setAffiliateUrl(cursor.getString(cursor.getColumnIndex(History.AFFILIATE_URL)));
-	    	
-	    	byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex(History.IMAGE));
-			if (bitmapArray != null) {
-				Bitmap bitmap = Helper.getByteArrayAsBitmap(bitmapArray);
-				item.setImage(bitmap);
-			}
-    	}
-    	cursor.close();
-    	return item;
-	}
-	
 	private class GetProductInfoTask extends WeakAsyncTask<String, Void, ProductInfo, Context> {
 		public GetProductInfoTask(Context target) {
 			super(target);
@@ -444,7 +412,7 @@ public final class CommentActivity extends ListActivity {
 		@Override
 		protected void onPreExecute(Context target) {
 			statusLayout.setVisibility(View.VISIBLE);
-			productInfo = getHistoryItem(gtin);
+//			productInfo = getHistoryItem(gtin);
 			if (productInfo != null) {
 //				displayProductFound(productInfo);
 			}
@@ -456,11 +424,11 @@ public final class CommentActivity extends ListActivity {
 			
 			if (updateHistory) {
 				if (result != null) {
-					addHistoryItem(result);
+//					addHistoryItem(result);
 				}
 				else {
 					ProductInfo dummy = new ProductInfo(params[0]);
-					addHistoryItem(dummy);
+//					addHistoryItem(dummy);
 				}
 			}
 			return result;

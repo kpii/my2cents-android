@@ -3,7 +3,7 @@ package mobi.my2cents;
 import java.io.IOException;
 import java.util.Vector;
 
-import mobi.my2cents.data.History;
+import mobi.my2cents.data.Product;
 import mobi.my2cents.scanner.CameraManager;
 import mobi.my2cents.scanner.CaptureActivityHandler;
 import mobi.my2cents.scanner.ViewfinderView;
@@ -428,7 +428,7 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	private void showProductDetails(Context context, String gtin) {
 		Intent intent = new Intent(context, CommentActivity.class);
 		intent.setAction(Intents.ACTION);
-		intent.putExtra(History.PRODUCT_KEY, gtin);
+		intent.putExtra(Product.KEY, gtin);
 		intent.putExtra(getString(R.string.show_virtual_keyboard), showVirtualKeyboard);
 		startActivity(intent);
 	}

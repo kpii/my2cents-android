@@ -1,6 +1,6 @@
 package mobi.my2cents;
 
-import mobi.my2cents.data.History;
+import mobi.my2cents.data.Product;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -37,7 +37,7 @@ public final class HistoryActivity extends ListActivity {
 	}
 	
 	private void bindAdapter() {
-		Cursor cursor = managedQuery(History.CONTENT_URI, null, null, null, null);
+		final Cursor cursor = managedQuery(Product.CONTENT_URI, null, null, null, null);
 		adapter = new HistoryAdapter(this, cursor);
 		setListAdapter(adapter);
 	}
@@ -75,13 +75,13 @@ public final class HistoryActivity extends ListActivity {
 	@Override
 	public void onListItemClick(ListView parent, View v, int position, long id) {
 		Cursor cursor = (Cursor) adapter.getItem(position);
-		String key = cursor.getString(cursor.getColumnIndex(History.PRODUCT_KEY));
+		String key = cursor.getString(cursor.getColumnIndex(Product.KEY));
 		
 		Intent intent = new Intent(this, CommentActivity.class);
 		intent.setAction(Intents.ACTION);
-		intent.setData(Uri.withAppendedPath(History.CONTENT_URI, key));
+		intent.setData(Uri.withAppendedPath(Product.CONTENT_URI, key));
 		intent.putExtra(CommentActivity.UPDATE_HISTORY, false);
-		intent.putExtra(History.PRODUCT_KEY, key);
+		intent.putExtra(Product.KEY, key);
 		
 //		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(Product.CONTENT_URI, key));
 		
@@ -100,7 +100,7 @@ public final class HistoryActivity extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.clearHistoryMenuItem: {
-				getContentResolver().delete(History.CONTENT_URI, null, null);
+				getContentResolver().delete(Product.CONTENT_URI, null, null);
 				adapter.getCursor().requery();
 				return true;
 			}

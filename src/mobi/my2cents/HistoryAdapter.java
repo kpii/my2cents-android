@@ -1,8 +1,7 @@
 package mobi.my2cents;
 
-import mobi.my2cents.data.DataManager;
-import mobi.my2cents.data.History;
-import mobi.my2cents.utils.Helper;
+import mobi.my2cents.data.Product;
+import mobi.my2cents.utils.ImageManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -23,33 +22,24 @@ public class HistoryAdapter extends CursorAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		
-		String key = cursor.getString(cursor.getColumnIndex(History.PRODUCT_KEY));
+		String key = cursor.getString(cursor.getColumnIndex(Product.KEY));
 		
 		TextView keyTextView = (TextView) view.findViewById(R.id.HistoryProductCodeTextView);
 		keyTextView.setText(key);
 
 		TextView nameTextView = (TextView) view.findViewById(R.id.HistoryProductNameTextView);
-		nameTextView.setText(cursor.getString(cursor.getColumnIndex(History.NAME)));
+		nameTextView.setText(cursor.getString(cursor.getColumnIndex(Product.NAME)));
 
-		TextView timeTextView = (TextView) view.findViewById(R.id.HistoryTimeTextView);
-		timeTextView.setText(cursor.getString(cursor.getColumnIndex(History.TIME)));
+//		TextView timeTextView = (TextView) view.findViewById(R.id.HistoryTimeTextView);
+//		timeTextView.setText(cursor.getString(cursor.getColumnIndex(History.TIME)));
 		
 		ImageView imageView = (ImageView) view.findViewById(R.id.HistoryImageView);
-		if (DataManager.productImageCache.containsKey(key)) {
-			imageView.setImageBitmap(DataManager.productImageCache.get(key));
+		if (ImageManager.hasImage(key)) {
+			final Bitmap bitmap = ImageManager.getImage(key);
+			imageView.setImageBitmap(bitmap);
 		}
 		else {
-			byte[] bitmapArray = cursor.getBlob(cursor.getColumnIndex(History.IMAGE));
-			if (bitmapArray != null) {
-				Bitmap bitmap = Helper.getByteArrayAsBitmap(bitmapArray);
-				if (bitmap != null) {
-					imageView.setImageBitmap(bitmap);
-					DataManager.productImageCache.put(key, bitmap);
-				}
-			}
-			else {
-				imageView.setImageResource(R.drawable.unknown_product_icon);
-			}
+			imageView.setImageResource(R.drawable.unknown_product_icon);
 		}
 	}
 

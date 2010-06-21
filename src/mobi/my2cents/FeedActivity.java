@@ -2,7 +2,6 @@
 package mobi.my2cents;
 
 import mobi.my2cents.data.Comment;
-import mobi.my2cents.data.History;
 import mobi.my2cents.data.Product;
 import mobi.my2cents.utils.NetworkManager;
 import android.app.ListActivity;
@@ -12,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -125,12 +123,7 @@ public final class FeedActivity extends ListActivity {
 		String key = cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_KEY));
 		
 		Intent intent = new Intent(this, CommentActivity.class);
-		intent.setAction(Intents.ACTION);
-//		intent.setData(Uri.withAppendedPath(History.CONTENT_URI, key));
-		intent.putExtra(CommentActivity.UPDATE_HISTORY, false);
 		intent.putExtra(Product.KEY, key);
-		
-//		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(Product.CONTENT_URI, key));
 		
 		startActivity(intent);
 	}

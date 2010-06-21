@@ -1,7 +1,6 @@
 package mobi.my2cents;
 
 import mobi.my2cents.data.Comment;
-import mobi.my2cents.data.DataManager;
 import mobi.my2cents.utils.ImageManager;
 import mobi.my2cents.utils.RelativeTime;
 import android.content.Context;
@@ -40,15 +39,15 @@ public class FeedAdapter extends CursorAdapter {
 			productNameTextView.setText(productName);
 		}
 
-		final ImageView productImageView = (ImageView) view.findViewById(R.id.StreamProductImageView);
+		ImageView productImageView = (ImageView) view.findViewById(R.id.StreamProductImageView);
 		final String productKey = cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_KEY));		
 		if (ImageManager.hasImage(productKey)) {
 			final Bitmap bitmap = ImageManager.getImage(productKey);
 			productImageView.setImageBitmap(bitmap);
 		}
-		else {
-			productImageView.setImageResource(R.drawable.unknown_product_icon);
-		}
+//		else {
+//			productImageView.setImageResource(R.drawable.unknown_product_icon);
+//		}
 
 	}
 
