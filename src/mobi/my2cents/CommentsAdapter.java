@@ -34,11 +34,9 @@ public class CommentsAdapter extends CursorAdapter {
 		sentTextView.setText(RelativeTime.getDifference(time));
 
 		final ImageView profileImageView = (ImageView) view.findViewById(R.id.CommentImageView);
-		final String username = cursor.getString(cursor.getColumnIndex(Comment.USER_NAME));
-		if (ImageManager.hasImage(username)) {
-			final Bitmap bitmap = ImageManager.getImage(username);
-			profileImageView.setImageBitmap(bitmap);
-		}
+		final String url = cursor.getString(cursor.getColumnIndex(Comment.USER_IMAGE_URL));
+		final Bitmap bitmap = ImageManager.getImage(url);
+		profileImageView.setImageBitmap(bitmap);
 	}
 
 	@Override

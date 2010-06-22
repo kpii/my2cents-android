@@ -17,12 +17,15 @@ import android.widget.ListView;
 public final class HistoryActivity extends ListActivity {
 	
 	private HistoryAdapter adapter;
+	private Cursor cursor;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		bindAdapter();
 		prepareUI();
+		
 		handleIntent(getIntent());
 	}
 	
@@ -33,11 +36,11 @@ public final class HistoryActivity extends ListActivity {
 	}
 	
 	private void handleIntent(Intent intent) {
-		bindAdapter();
+		cursor.requery();
 	}
 	
 	private void bindAdapter() {
-		final Cursor cursor = managedQuery(Product.CONTENT_URI, null, null, null, null);
+		cursor = managedQuery(Product.CONTENT_URI, null, null, null, null);
 		adapter = new HistoryAdapter(this, cursor);
 		setListAdapter(adapter);
 	}

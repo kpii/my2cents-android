@@ -15,12 +15,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.util.EntityUtils;
 
 import android.content.Context;
@@ -35,24 +30,11 @@ public final class NetworkManager {
 
 	private static String authToken;
 	private static String sessionToken;
+	public static String userAgent;
 	public static final String BASE_URL = "http://my2cents.mobi";
-	private static final HttpParams httpParams;
-	private static final int TIMEOUT = 10 * 1000; // 10 seconds
 	
 	static {
 		System.setProperty("http.keepAlive", "false");
-		
-		httpParams = new BasicHttpParams();
-
-	    // Turn off stale checking.  Our connections break all the time anyway,
-	    // and it's not worth it to pay the penalty of checking every time.
-	    HttpConnectionParams.setStaleCheckingEnabled(httpParams, false);
-
-	    // Default connection and socket timeout of 10 seconds.  Tweak to taste.
-	    HttpConnectionParams.setConnectionTimeout(httpParams, TIMEOUT);
-        HttpConnectionParams.setSoTimeout(httpParams, TIMEOUT);
-        ConnManagerParams.setTimeout(httpParams, TIMEOUT);
-        HttpConnectionParams.setSocketBufferSize(httpParams, 8192);
 	}
 	
 	public static boolean isNetworkAvailable(Context context) {
@@ -74,10 +56,10 @@ public final class NetworkManager {
 		}
 	}
 	
-	public static Bitmap getRemoteImage(final String urlString) {
-		if (TextUtils.isEmpty(urlString)) return null;		
+	public static Bitmap getRemoteImage(final String url) {
+		if (TextUtils.isEmpty(url) || url.equals("null")) return null;		
 		try {
-			return BitmapFactory.decodeStream(new URL(urlString).openStream());
+			return BitmapFactory.decodeStream(new URL(url).openStream());
 		} catch (MalformedURLException e) {
 			Log.e(My2Cents.TAG, e.toString());
 			return null;
@@ -99,7 +81,7 @@ public final class NetworkManager {
 	public static String getREST(String url) throws ClientProtocolException, IOException {
 		String result = null;
 		final HttpGet httpGet = new HttpGet(url);
-		final AndroidHttpClient client = AndroidHttpClient.newInstance(getUserAgent());
+		final AndroidHttpClient client = AndroidHttpClient.newInstance(userAgent);
 		try {
 			final HttpResponse response = client.execute(httpGet);
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
@@ -138,7 +120,7 @@ public final class NetworkManager {
         entity.setContentType("application/json");
         httpPost.setEntity(entity);
         
-        final AndroidHttpClient client = AndroidHttpClient.newInstance(getUserAgent());
+        final AndroidHttpClient client = AndroidHttpClient.newInstance(userAgent);
         try {
         	final HttpResponse response = client.execute(httpPost);
     		if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
@@ -168,7 +150,7 @@ public final class NetworkManager {
         entity.setContentType("application/json");
         httpPut.setEntity(entity);
 		
-        final AndroidHttpClient client = AndroidHttpClient.newInstance(getUserAgent());
+        final AndroidHttpClient client = AndroidHttpClient.newInstance(userAgent);
         try {
         	final HttpResponse response = client.execute(httpPut);
     		if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
@@ -201,11 +183,7 @@ public final class NetworkManager {
 		return getREST(url);
 	}
 
-	public static void setUserAgent(String userAgent) {
-		HttpProtocolParams.setUserAgent(httpParams, userAgent);
-	}
-	
-	public static String getUserAgent() {
-		return HttpProtocolParams.getUserAgent(httpParams);
+	public static void setUserAgent(String value) {
+		userAgent = value;
 	}
 }

@@ -24,33 +24,38 @@ import android.widget.Toast;
 public final class FeedActivity extends ListActivity {
 	
 	private FeedAdapter adapter;
+	private Cursor cursor;
 	
 	private View statusLayout;
 	
-	private IntentFilter filter;
-	private FeedUpdaterReceiver receiver;
+	private FeedUpdaterReceiver feedUpdaterReceiver;
+	private ImageDownloaderReceiver imageDownloaderReceiver;
 	
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		filter = new IntentFilter(FeedUpdaterService.FEED_UPDATED);
-		receiver = new FeedUpdaterReceiver();
+		feedUpdaterReceiver = new FeedUpdaterReceiver();
+		imageDownloaderReceiver = new ImageDownloaderReceiver();
 		
+		bindAdapter();		
 		prepareUI();
+		
 		handleIntent(getIntent());
 	}
 	
 	@Override
 	public void onResume() {
 		super.onResume();
-		registerReceiver(receiver, filter);
+		registerReceiver(feedUpdaterReceiver, FeedUpdaterService.FILTER);
+		registerReceiver(imageDownloaderReceiver, ImageDownloaderService.FILTER);
 	}
 	
 	@Override
 	public void onPause() {
-		this.unregisterReceiver(receiver);
+		unregisterReceiver(feedUpdaterReceiver);
+		unregisterReceiver(imageDownloaderReceiver);
 		super.onPause();
 	}
 	
@@ -61,12 +66,11 @@ public final class FeedActivity extends ListActivity {
 	}
 	
 	private void handleIntent(Intent intent) {
-		bindAdapter();
 		updateFeed();
 	}
 	
 	private void bindAdapter() {
-		Cursor cursor = managedQuery(Comment.CONTENT_URI, null, null, null, null);
+		cursor = managedQuery(Comment.CONTENT_URI, null, null, null, null);
 		adapter = new FeedAdapter(this, cursor);
 		setListAdapter(adapter);
 	}
@@ -119,12 +123,12 @@ public final class FeedActivity extends ListActivity {
 
 	@Override
 	public void onListItemClick(ListView parent, View v, int position, long id) {
-		Cursor cursor = (Cursor) adapter.getItem(position);
-		String key = cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_KEY));
+		super.onListItemClick(parent, v, position, id);
 		
+		final Cursor cursor = (Cursor) adapter.getItem(position);
+		final String key = cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_KEY));
 		Intent intent = new Intent(this, CommentActivity.class);
-		intent.putExtra(Product.KEY, key);
-		
+		intent.putExtra(Product.KEY, key);		
 		startActivity(intent);
 	}
 
@@ -183,6 +187,17 @@ public final class FeedActivity extends ListActivity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			statusLayout.setVisibility(View.GONE);
+			cursor.requery();
+			adapter.notifyDataSetChanged();
+		}
+		
+	}
+	
+	private final class ImageDownloaderReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			cursor.requery();
 			adapter.notifyDataSetChanged();
 		}
 		

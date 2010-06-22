@@ -26,6 +26,7 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -54,6 +55,8 @@ import java.io.IOException;
  * </p>
  */
 public final class AndroidHttpClient implements HttpClient {
+	
+	private static final int TIMEOUT = 10 * 1000; // 10 seconds
 
   /**
    * Set if HTTP requests are blocked from being executed on this thread
@@ -86,9 +89,11 @@ public final class AndroidHttpClient implements HttpClient {
     // and it's not worth it to pay the penalty of checking every time.
     HttpConnectionParams.setStaleCheckingEnabled(params, false);
 
-    // Default connection and socket timeout of 20 seconds.  Tweak to taste.
-    HttpConnectionParams.setConnectionTimeout(params, 20 * 1000);
-    HttpConnectionParams.setSoTimeout(params, 20 * 1000);
+    ConnManagerParams.setTimeout(params, TIMEOUT);
+    
+    // Default connection and socket timeout of 10 seconds.  Tweak to taste.
+    HttpConnectionParams.setConnectionTimeout(params, TIMEOUT);
+    HttpConnectionParams.setSoTimeout(params, TIMEOUT);
     HttpConnectionParams.setSocketBufferSize(params, 8192);
 
     // Don't handle redirects -- return them to the caller.  Our code

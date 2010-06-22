@@ -16,15 +16,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
-public class FeedUpdaterService extends IntentService {
+public class SyncService extends IntentService {
 	
-	public final static String FEED_UPDATED = "mobi.my2cents.action.FEED_UPDATED";
-	public final static IntentFilter FILTER = new IntentFilter(FEED_UPDATED);
+	public final static String SYNC_COMPLETE = "mobi.my2cents.action.SYNC_COMPLETE";
+	public final static IntentFilter FILTER = new IntentFilter(SYNC_COMPLETE);
 	
-	private final static Intent broadcastIntent = new Intent(FEED_UPDATED);
+	private final static Intent broadcastIntent = new Intent(SYNC_COMPLETE);
 	
-	public FeedUpdaterService() {
-		super("FeedUpdater");
+	public SyncService() {
+		super("SyncService");
 	}
 
 	@Override

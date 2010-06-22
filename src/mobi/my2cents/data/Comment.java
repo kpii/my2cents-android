@@ -3,14 +3,19 @@ package mobi.my2cents.data;
 import java.util.HashMap;
 
 import mobi.my2cents.My2Cents;
+import mobi.my2cents.SettingsActivity;
+import mobi.my2cents.utils.GpsManager;
 import mobi.my2cents.utils.Helper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
+import android.database.Cursor;
+import android.location.Location;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 public class Comment implements BaseColumns, TransitionalStateColumns{
 	
@@ -55,7 +60,7 @@ public class Comment implements BaseColumns, TransitionalStateColumns{
 		projectionMap.put( Comment.DEL_TRANSITIONAL_STATE, 		Comment.DEL_TRANSITIONAL_STATE);
 	}
 	
-	public final static ContentValues ParseJson(JSONObject json) throws JSONException {
+	public final static ContentValues parseJson(JSONObject json) throws JSONException {
 		
 		if (json == null) return null;
 		
@@ -79,6 +84,29 @@ public class Comment implements BaseColumns, TransitionalStateColumns{
 		}
 		
 		return values;
-	}	
+	}
+	
+	public final static JSONObject getJson(Cursor cursor) {		
+    	try {
+    		final JSONObject jsonComment = new JSONObject();
+    		
+			jsonComment.put("product_key", cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_KEY)));
+			jsonComment.put("body", cursor.getString(cursor.getColumnIndex(Comment.BODY)));
+	    	
+			if (SettingsActivity.isShareLocation()) {
+				jsonComment.put("latitude", cursor.getDouble(cursor.getColumnIndex(Comment.LATITUDE)));
+				jsonComment.put("longitude", cursor.getDouble(cursor.getColumnIndex(Comment.LONGITUDE)));
+			}
+
+			final JSONObject json = new JSONObject();
+			json.put("comment", jsonComment);
+			final String publishToTwitter = SettingsActivity.isShareOnTwitter() ? "1" : "0";
+			json.put("publish_to_twitter", publishToTwitter);
+			return json;
+		} catch (JSONException e) {
+			Log.e(My2Cents.TAG, e.toString());
+			return null;
+		}
+	}
 	
 }

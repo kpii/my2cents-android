@@ -2,6 +2,7 @@
 package mobi.my2cents;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import mobi.my2cents.data.Comment;
@@ -26,6 +27,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -60,8 +62,9 @@ public final class CommentActivity extends ListActivity {
 	private InputMethodManager inputManager;
 
 	private CommentsAdapter adapter;
+	private Cursor cursor;
+	private Cursor productCursor;
 	
-	private IntentFilter filter;
 	private ProductUpdaterReceiver receiver;
 
 	private ArrayList<String> tags;
@@ -81,16 +84,14 @@ public final class CommentActivity extends ListActivity {
 	
 	private EditText commentEditor;
 	private View statusLayout;
-	private View productPanel;
 	private PopupWindow productPopup;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		prepareUI();
+		prepareUI();		
 		
-		filter = new IntentFilter(ProductUpdaterService.PRODUCT_UPDATED);
 		receiver = new ProductUpdaterReceiver();
 		
 		DataManager.UnknownProductName = getString(R.string.unknown_product);
@@ -106,7 +107,7 @@ public final class CommentActivity extends ListActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		registerReceiver(receiver, filter);
+		registerReceiver(receiver, ProductUpdaterService.FILTER);
 		
 		SettingsActivity.setShareOnTwitter(settings.getBoolean(getString(R.string.settings_twitter), false));
 		boolean shareLocation = settings.getBoolean(getString(R.string.settings_share_location), false);
@@ -131,48 +132,33 @@ public final class CommentActivity extends ListActivity {
 	private void handleIntent(Intent intent) {
 		hideVirtualKeyboard();
 		String key = intent.getStringExtra(Product.KEY);
+		displayProduct(key);
 		bindAdapter(key);
 		getProductInfo(key);		
 	}
 	
 	private void bindAdapter(String key) {		
-		Cursor cursor = managedQuery(Uri.withAppendedPath(Product.CONTENT_URI, key + "/comments"), null, null, null, null);
+		cursor = managedQuery(Uri.withAppendedPath(Product.CONTENT_URI, key + "/comments"), null, null, null, null);
 		adapter = new CommentsAdapter(this, cursor);
 		setListAdapter(adapter);
 	}
 	
 	private void displayProduct(String key)
 	{
-		final Cursor cursor = managedQuery(Uri.withAppendedPath(Product.CONTENT_URI, key), null, null, null, null);
-		if (cursor.moveToFirst()) {
-			productPanel.setVisibility(View.VISIBLE);
-			
-			final String name = cursor.getString(cursor.getColumnIndex(Product.NAME));
-			final String affiliateName = cursor.getString(cursor.getColumnIndex(Product.AFFILIATE_NAME));
-			final int likes = cursor.getInt(cursor.getColumnIndex(Product.RATING_LIKES));
-			final int dislikes = cursor.getInt(cursor.getColumnIndex(Product.RATING_DISLIKES));
+		productCursor = managedQuery(Uri.withAppendedPath(Product.CONTENT_URI, key), null, null, null, null);
+		if (productCursor.moveToFirst()) {			
+			final String name = productCursor.getString(productCursor.getColumnIndex(Product.NAME));
+			final String affiliateName = productCursor.getString(productCursor.getColumnIndex(Product.AFFILIATE_NAME));
+			final String imageUrl = productCursor.getString(productCursor.getColumnIndex(Product.IMAGE_URL));
+			final int likes = productCursor.getInt(productCursor.getColumnIndex(Product.RATING_LIKES));
+			final int dislikes = productCursor.getInt(productCursor.getColumnIndex(Product.RATING_DISLIKES));
 			
 			productNameTextView.setText(name);			
 			affiliateTextView.setText(affiliateName);
 			likesTextView.setText("Likes: " + likes);
 			dislikesTextView.setText("Dislikes: " + dislikes);
-			
-			if (ImageManager.hasImage(key)) {
-				productImageView.setImageBitmap(ImageManager.getImage(key));
-			}			
-			else {
-				productImageView.setImageResource(R.drawable.unknown_product_icon_inverted);
-			}
-			
-//			resolver.delete(Uri.withAppendedPath(Product.CONTENT_URI, key), null, null);
-			ContentValues values = new ContentValues();
-			values.put( Product.KEY, key);
-			values.put( Product.NAME, name);
-			values.put( Product.AFFILIATE_NAME, affiliateName);
-			values.put( Product.RATING_LIKES, likes);
-			values.put( Product.RATING_DISLIKES, dislikes);
-			
-			getContentResolver().insert(Product.CONTENT_URI, values);
+
+			productImageView.setImageBitmap(ImageManager.getImage(imageUrl));			
 		}
 	}
 	
@@ -181,30 +167,12 @@ public final class CommentActivity extends ListActivity {
 			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
 		}
 		else {
-			productPanel.setVisibility(View.GONE);
 			statusLayout.setVisibility(View.VISIBLE);
 			Intent intent = new Intent(this, ProductUpdaterService.class);
 			intent.putExtra(Product.KEY, key);
 			startService(intent);
 		}		
 	}
-	
-//	private void updateProduct(Intent intent) {
-//		if (!NetworkManager.isNetworkAvailable(this)) {
-//			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
-//		}
-//		else {
-//			String action = intent == null ? null : intent.getAction();
-//			if (intent != null && action != null) {
-//				if (action.equals(Intents.ACTION)) {
-//					gtin = intent.getStringExtra(Product.KEY);
-//					updateHistory = intent.getBooleanExtra(UPDATE_HISTORY, true);
-//					
-//					getProductInfoTask = new GetProductInfoTask(this).execute(gtin);
-//				}
-//			}
-//		}
-//	}
 	
 	private void prepareUI() {
 		setContentView(R.layout.comment);
@@ -226,8 +194,7 @@ public final class CommentActivity extends ListActivity {
 		tagsGallery.setAdapter(tagsAdapter);
 		tagsGallery.setOnItemLongClickListener(tagsLongClickListener);
 		
-		productPanel = findViewById(R.id.ProductInfoPanel);
-		productPanel.setOnClickListener(productQuickActionsListener);
+		findViewById(R.id.ProductInfoPanel).setOnClickListener(productQuickActionsListener);
 		findViewById(R.id.LoginButton).setOnClickListener(loginListener);
 		findViewById(R.id.SendButton).setOnClickListener(sendCommentListener);
 		
@@ -379,13 +346,27 @@ public final class CommentActivity extends ListActivity {
 		}
 	};
 	
-	private void postComment(Context context) {
-		if (!NetworkManager.isNetworkAvailable(this)) {
-			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
-		}
-		else {
-			String message = commentEditor.getText().toString();
-			new PostComment(context).execute(message);
+	private void postComment(Context context) {		
+		if (productCursor.moveToFirst()) {
+			final String body = commentEditor.getText().toString();
+			
+			ContentValues values = new ContentValues();
+			values.put(Comment.PRODUCT_KEY, productCursor.getString(productCursor.getColumnIndex(Product.KEY)));
+			values.put(Comment.PRODUCT_NAME, productCursor.getString(productCursor.getColumnIndex(Product.NAME)));
+			values.put(Comment.BODY, body);
+			values.put(Comment.CREATED_AT, new Date().getTime());
+			values.put(Comment.PRODUCT_IMAGE_URL, productCursor.getString(productCursor.getColumnIndex(Product.IMAGE_URL)));
+			
+			if (SettingsActivity.isShareLocation()) {
+				Location location = GpsManager.getLocation();
+				if (location != null) {
+					values.put(Comment.LATITUDE, location.getLatitude());
+					values.put(Comment.LONGITUDE, location.getLongitude());
+				}
+			}
+			hideVirtualKeyboard();
+			context.getContentResolver().insert(Comment.CONTENT_URI, values);
+			cursor.requery();
 		}
 	}
 	
@@ -401,6 +382,7 @@ public final class CommentActivity extends ListActivity {
 	private void hideVirtualKeyboard() {
 		inputManager.hideSoftInputFromWindow(commentEditor.getWindowToken(), 0);
         commentEditor.clearFocus();
+        commentEditor.setText("");
         productImageView.requestFocus();		
 	}
 	
@@ -480,30 +462,6 @@ public final class CommentActivity extends ListActivity {
 //	        
 //	        hideVirtualKeyboard();
 //	    }
-	}
-	
-	private class GetProfileImagesTask extends WeakAsyncTask<List<Comment>, Void, Void, Context> {
-		
-		public GetProfileImagesTask(Context target) {
-			super(target);
-		}
-
-		@Override
-		protected Void doInBackground(Context target, List<Comment>... params) {			
-//			for (Comment comment : params[0]) {
-//				if (!DataManager.profileImageCache.containsKey(comment.getUser())) {
-//					DataManager.profileImageCache.put(comment.getUser(), NetworkManager.getRemoteImage(comment.getUserProfileImageUrl()));
-//				}
-//				publishProgress();
-//			}
-//			getProfileImagesTask = null;
-			return null;
-		}
-		
-		@Override
-		protected void onProgressUpdate(Void... progress) {
-//			commentsAdapter.notifyDataSetChanged();
-	    }
 	}
 
 	private final OnItemLongClickListener tagsLongClickListener = new OnItemLongClickListener() {
@@ -686,9 +644,10 @@ public final class CommentActivity extends ListActivity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			statusLayout.setVisibility(View.GONE);
-			adapter.notifyDataSetChanged();
 			final String key = intent.getStringExtra(Product.KEY);
 			displayProduct(key);
+//			cursor.requery();
+			adapter.notifyDataSetChanged();
 		}
 		
 	}

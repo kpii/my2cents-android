@@ -6,7 +6,6 @@ import mobi.my2cents.utils.RelativeTime;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,32 +22,24 @@ public class FeedAdapter extends CursorAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		
-		TextView userTextView = (TextView) view.findViewById(R.id.StreamCommentAuthorTextView);
+		final TextView userTextView = (TextView) view.findViewById(R.id.StreamCommentAuthorTextView);
 		userTextView.setText(cursor.getString(cursor.getColumnIndex(Comment.USER_NAME)));
 
-		TextView messageTextView = (TextView) view.findViewById(R.id.StreamCommentTextView);
+		final TextView messageTextView = (TextView) view.findViewById(R.id.StreamCommentTextView);
 		messageTextView.setText(cursor.getString(cursor.getColumnIndex(Comment.BODY)));
 
-		TextView sentTextView = (TextView) view.findViewById(R.id.StreamCommentSentTextView);
-		long time = cursor.getLong(cursor.getColumnIndex(Comment.CREATED_AT));
+		final TextView sentTextView = (TextView) view.findViewById(R.id.StreamCommentSentTextView);
+		final long time = cursor.getLong(cursor.getColumnIndex(Comment.CREATED_AT));
 		sentTextView.setText(RelativeTime.getDifference(time));
 		
-		TextView productNameTextView = (TextView) view.findViewById(R.id.StreamProductTextView);
-		String productName = cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_NAME));
-		if (!TextUtils.isEmpty(productName)) {
-			productNameTextView.setText(productName);
-		}
+		final TextView productNameTextView = (TextView) view.findViewById(R.id.StreamProductTextView);
+		final String productName = cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_NAME));
+		productNameTextView.setText(productName);
 
 		ImageView productImageView = (ImageView) view.findViewById(R.id.StreamProductImageView);
-		final String productKey = cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_KEY));		
-		if (ImageManager.hasImage(productKey)) {
-			final Bitmap bitmap = ImageManager.getImage(productKey);
-			productImageView.setImageBitmap(bitmap);
-		}
-//		else {
-//			productImageView.setImageResource(R.drawable.unknown_product_icon);
-//		}
-
+		final String url = cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_IMAGE_URL));
+		final Bitmap bitmap = ImageManager.getImage(url);
+		productImageView.setImageBitmap(bitmap);
 	}
 
 	@Override

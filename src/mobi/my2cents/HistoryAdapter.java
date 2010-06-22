@@ -22,7 +22,7 @@ public class HistoryAdapter extends CursorAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		
-		String key = cursor.getString(cursor.getColumnIndex(Product.KEY));
+		final String key = cursor.getString(cursor.getColumnIndex(Product.KEY));
 		
 		TextView keyTextView = (TextView) view.findViewById(R.id.HistoryProductCodeTextView);
 		keyTextView.setText(key);
@@ -34,13 +34,9 @@ public class HistoryAdapter extends CursorAdapter {
 //		timeTextView.setText(cursor.getString(cursor.getColumnIndex(History.TIME)));
 		
 		ImageView imageView = (ImageView) view.findViewById(R.id.HistoryImageView);
-		if (ImageManager.hasImage(key)) {
-			final Bitmap bitmap = ImageManager.getImage(key);
-			imageView.setImageBitmap(bitmap);
-		}
-		else {
-			imageView.setImageResource(R.drawable.unknown_product_icon);
-		}
+		final String url = cursor.getString(cursor.getColumnIndex(Product.IMAGE_URL));
+		final Bitmap bitmap = ImageManager.getImage(url);
+		imageView.setImageBitmap(bitmap);
 	}
 
 	@Override

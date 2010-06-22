@@ -30,7 +30,7 @@ public final class AuthorizationActivity extends Activity {
 		
 		webView = (WebView) findViewById(R.id.AuthWebView);
 		webView.setWebViewClient(new AuthWebViewClient());
-		webView.getSettings().setUserAgentString(NetworkManager.getUserAgent());
+		webView.getSettings().setUserAgentString(NetworkManager.userAgent);
 	}
 	
 	private class AuthWebViewClient extends WebViewClient {

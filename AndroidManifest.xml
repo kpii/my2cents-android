@@ -130,6 +130,10 @@
 			android:name=".FeedUpdaterService"></service>
 		<service
 			android:name=".ProductUpdaterService"></service>
+		<service
+			android:name=".ImageDownloaderService"></service>
+		<service
+			android:name=".SyncService"></service>
 </application>
 	<uses-permission
 		android:name="android.permission.CAMERA" />
