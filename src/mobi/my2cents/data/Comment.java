@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import mobi.my2cents.My2Cents;
 import mobi.my2cents.SettingsActivity;
-import mobi.my2cents.utils.GpsManager;
 import mobi.my2cents.utils.Helper;
 
 import org.json.JSONException;
@@ -12,7 +11,6 @@ import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.location.Location;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
@@ -22,7 +20,6 @@ public class Comment implements BaseColumns, TransitionalStateColumns{
 	public static final Uri CONTENT_URI = Uri.parse("content://" + My2Cents.AUTHORITY + "/comments");
 	
 	public static final String KEY = "key";
-	public static final String URI = "uri";
 	public static final String BODY = "body";
 	public static final String CREATED_AT = "created_at";
 	public static final String LATITUDE = "latitude";
@@ -37,11 +34,12 @@ public class Comment implements BaseColumns, TransitionalStateColumns{
 
 	public static HashMap<String, String> projectionMap = new HashMap<String, String>();
 	static {
-		projectionMap.put( Comment._ID,							Comment._ID);
+		projectionMap.put( Comment._ID,							"rowid AS " + Comment._ID);
+		
 		projectionMap.put( Comment.KEY,							Comment.KEY);
-		projectionMap.put( Comment.URI, 						Comment.URI);
 		projectionMap.put( Comment.BODY, 						Comment.BODY);
 		projectionMap.put( Comment.CREATED_AT, 					Comment.CREATED_AT);
+		
 		projectionMap.put( Comment.LATITUDE, 					Comment.LATITUDE);
 		projectionMap.put( Comment.LONGITUDE, 					Comment.LONGITUDE);
 		
@@ -64,21 +62,21 @@ public class Comment implements BaseColumns, TransitionalStateColumns{
 		
 		if (json == null) return null;
 		
-		ContentValues values = new ContentValues();
+		final ContentValues values = new ContentValues();
 		values.put(Comment.KEY, json.getString("id"));
 		values.put(Comment.BODY, json.getString("body"));
 		values.put(Comment.CREATED_AT, Helper.parseDate(json.getString("created_at")));
 		
 		if (json.has("product")) {
-			JSONObject product = json.getJSONObject("product");
+			final JSONObject product = json.getJSONObject("product");
 			values.put(Comment.PRODUCT_KEY, product.getString("key"));
 			values.put(Comment.PRODUCT_NAME, product.getString("name"));
 			values.put(Comment.PRODUCT_IMAGE_URL, product.getString("image_url"));
 		}
 		
-		// User may be anonymous
 		if (json.has("user")) {
-			JSONObject user = json.getJSONObject("user");
+			final JSONObject user = json.getJSONObject("user");
+			values.put(Comment.USER_KEY, user.getString("id"));
 			values.put(Comment.USER_NAME, user.getString("name"));
 			values.put(Comment.USER_IMAGE_URL, user.getString("profile_image_url"));
 		}

@@ -77,16 +77,11 @@ public final class HistoryActivity extends ListActivity {
 
 	@Override
 	public void onListItemClick(ListView parent, View v, int position, long id) {
-		Cursor cursor = (Cursor) adapter.getItem(position);
-		String key = cursor.getString(cursor.getColumnIndex(Product.KEY));
+		final Cursor cursor = (Cursor) getListView().getItemAtPosition(position);
+		final String key = cursor.getString(cursor.getColumnIndex(Product.KEY));
 		
 		Intent intent = new Intent(this, CommentActivity.class);
-		intent.setAction(Intents.ACTION);
 		intent.setData(Uri.withAppendedPath(Product.CONTENT_URI, key));
-		intent.putExtra(CommentActivity.UPDATE_HISTORY, false);
-		intent.putExtra(Product.KEY, key);
-		
-//		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(Product.CONTENT_URI, key));
 		
 		startActivity(intent);
 	}

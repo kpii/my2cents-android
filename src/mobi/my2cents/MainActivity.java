@@ -1,14 +1,10 @@
 
 package mobi.my2cents;
 
-import mobi.my2cents.data.Product;
-import mobi.my2cents.data.ProductInfo;
 import mobi.my2cents.utils.NetworkManager;
 import android.app.Activity;
-import android.content.ContentUris;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.KeyEvent;
@@ -19,15 +15,12 @@ import android.view.View;
 import android.widget.TextView;
 
 public final class MainActivity extends Activity {
-	
-	private static final String TAG = "MainActivity";	
+		
 	private SharedPreferences settings;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-//		startActivity(new Intent(Intent.ACTION_VIEW, Uri.withAppendedPath(Product.CONTENT_URI, "4029764001807")));
 		
 		setContentView(R.layout.main);
 		

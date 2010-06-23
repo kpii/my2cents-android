@@ -427,7 +427,6 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	
 	private void showProductDetails(Context context, String gtin) {
 		Intent intent = new Intent(context, CommentActivity.class);
-		intent.setAction(Intents.ACTION);
 		intent.putExtra(Product.KEY, gtin);
 		intent.putExtra(getString(R.string.show_virtual_keyboard), showVirtualKeyboard);
 		startActivity(intent);

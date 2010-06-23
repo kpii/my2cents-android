@@ -27,14 +27,11 @@ public class Product implements BaseColumns, TransitionalStateColumns{
 	public static final String RATING_DISLIKES 	= "rating_dislikes";
 	public static final String RATING_PERSONAL 	= "rating_personal";
 	
-	public static final String IMAGE 			= "image";
-	public static final String URI 				= "uri";
-	public static final String ETAG  			= "etag";
-	
 	
 	public static final HashMap<String, String> projectionMap = new HashMap<String, String>();
 	static {
-		projectionMap.put( Product._ID,							Product._ID);
+		projectionMap.put( Product._ID,							"rowid AS " + Product._ID);
+		
 		projectionMap.put( Product.KEY, 						Product.KEY);
 		projectionMap.put( Product.NAME, 						Product.NAME);
 		projectionMap.put( Product.IMAGE_URL, 					Product.IMAGE_URL);
@@ -45,10 +42,7 @@ public class Product implements BaseColumns, TransitionalStateColumns{
 		projectionMap.put( Product.RATING_LIKES, 				Product.RATING_LIKES);
 		projectionMap.put( Product.RATING_DISLIKES, 			Product.RATING_DISLIKES);
 		projectionMap.put( Product.RATING_PERSONAL, 			Product.RATING_PERSONAL);
-		
-		projectionMap.put( Product.IMAGE, 						Product.IMAGE);		
-		projectionMap.put( Product.URI, 						Product.URI);
-		projectionMap.put( Product.ETAG, 						Product.ETAG);
+
 		projectionMap.put( Product.TRANSITION_ACTIVE,			Product.TRANSITION_ACTIVE);
 		projectionMap.put( Product.POST_TRANSITIONAL_STATE,		Product.POST_TRANSITIONAL_STATE);
 		projectionMap.put( Product.GET_TRANSITIONAL_STATE, 		Product.GET_TRANSITIONAL_STATE);

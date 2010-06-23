@@ -105,7 +105,7 @@ public class My2centsService extends WakefulIntentService {
 			
 			Log.d(TAG, "polling... ");
 			Cursor products = getContentResolver().query(Product.CONTENT_URI, 
-					new String[] {Product.KEY, Product.ETAG}, null, null, null);
+					new String[] { Product.KEY }, null, null, null);
 			while (!products.isLast()) {
 				products.moveToNext();
 				String key = products.getString(0);

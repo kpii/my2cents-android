@@ -8,9 +8,9 @@ import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -123,12 +123,10 @@ public final class FeedActivity extends ListActivity {
 
 	@Override
 	public void onListItemClick(ListView parent, View v, int position, long id) {
-		super.onListItemClick(parent, v, position, id);
-		
-		final Cursor cursor = (Cursor) adapter.getItem(position);
+		final Cursor cursor = (Cursor) getListView().getItemAtPosition(position);
 		final String key = cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_KEY));
 		Intent intent = new Intent(this, CommentActivity.class);
-		intent.putExtra(Product.KEY, key);		
+		intent.setData(Uri.withAppendedPath(Product.CONTENT_URI, key));
 		startActivity(intent);
 	}
 

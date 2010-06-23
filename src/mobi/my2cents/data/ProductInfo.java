@@ -106,7 +106,6 @@ public final class ProductInfo {
 		ContentValues cv = new ContentValues();
 		cv.put(Product.NAME, name);
 		cv.put(Product.KEY, gtin);
-		cv.put(Product.ETAG, etag);
 		return cv;
 	}
 	

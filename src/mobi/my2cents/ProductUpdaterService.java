@@ -15,6 +15,7 @@ import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -31,7 +32,7 @@ public class ProductUpdaterService extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		
-		String key = intent.getStringExtra(Product.KEY);
+		final String key = intent.getData().getLastPathSegment();
 		if (TextUtils.isEmpty(key)) return;
 		
 		String data = null;
@@ -44,17 +45,16 @@ public class ProductUpdaterService extends IntentService {
 		}
 		
 		final Intent broadcastIntent = new Intent(PRODUCT_UPDATED);
-		broadcastIntent.putExtra(Product.KEY, key);
 		try {
 			if (data != null) {
 				
 				final JSONObject json = new JSONObject(data).getJSONObject("product");
 				
 				final ContentValues product = Product.ParseJson(json);				
-				getContentResolver().insert(Product.CONTENT_URI, product);				
+				getContentResolver().insert(Product.CONTENT_URI, product);
 				
 				JSONArray comments = json.getJSONArray("comments");
-				if (comments.length() > 0) {					
+				if (comments.length() > 0) {
 					ContentValues[] values = new ContentValues[comments.length()];
 					for (int i=0; i<comments.length(); i++) {						
 		            	JSONObject comment = comments.getJSONObject(i);

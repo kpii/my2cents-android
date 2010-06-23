@@ -90,9 +90,9 @@ public class My2CentsProvider extends ContentProvider {
 	    	}
 	    		
 	    	case COMMENT_ITEM: {
-	    		String id = uri.getPathSegments().get(1);
+	    		final String key = uri.getPathSegments().get(1);
 	    		String whereClause = 
-	    			Comment._ID + "=" + id
+	    			Comment.KEY + "=" + key
 	    			+ (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : "");
 	            count = db.delete(DatabaseHelper.COMMENTS_TABLE, whereClause, whereArgs);
 	    		break;
@@ -202,7 +202,7 @@ public class My2CentsProvider extends ContentProvider {
 	    	case COMMENT_DIR: {
 	    		qb.setTables(DatabaseHelper.COMMENTS_TABLE);
 	            qb.setProjectionMap(Comment.projectionMap);
-	            orderBy = Comment.CREATED_AT + " DESC";
+	            orderBy = Comment.KEY + " DESC";
 	    		break;
 	    	}
 	    		
@@ -253,9 +253,9 @@ public class My2CentsProvider extends ContentProvider {
 	    	}
 	    		
 	    	case COMMENT_ITEM: {
-	    		String id = uri.getPathSegments().get(1);
+	    		final String key = uri.getPathSegments().get(1);
 	    		String whereClause = 
-	    			Comment._ID + "=" + id
+	    			Comment.KEY + "=" + key
 	    			+ (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : "");
 	            count = db.update(DatabaseHelper.COMMENTS_TABLE, values, whereClause, whereArgs);
 	    		break;

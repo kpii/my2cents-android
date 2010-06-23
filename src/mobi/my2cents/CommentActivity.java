@@ -90,9 +90,9 @@ public final class CommentActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		prepareUI();		
-		
 		receiver = new ProductUpdaterReceiver();
+		
+		prepareUI();
 		
 		DataManager.UnknownProductName = getString(R.string.unknown_product);
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -100,13 +100,14 @@ public final class CommentActivity extends ListActivity {
 		
 		tags = new ArrayList<String>();
 		tagsAdapter = new TagsAdapter(this, R.layout.tag_item, tags);		
-		
+				
 		handleIntent(getIntent());
 	}
 	
 	@Override
 	public void onResume() {
 		super.onResume();
+		
 		registerReceiver(receiver, ProductUpdaterService.FILTER);
 		
 		SettingsActivity.setShareOnTwitter(settings.getBoolean(getString(R.string.settings_twitter), false));
@@ -131,21 +132,21 @@ public final class CommentActivity extends ListActivity {
 	
 	private void handleIntent(Intent intent) {
 		hideVirtualKeyboard();
-		String key = intent.getStringExtra(Product.KEY);
-		displayProduct(key);
-		bindAdapter(key);
-		getProductInfo(key);		
+		final Uri uri = intent.getData();
+		displayProduct(uri);
+		bindAdapter(uri);
+		getProductInfo(uri);		
 	}
 	
-	private void bindAdapter(String key) {		
-		cursor = managedQuery(Uri.withAppendedPath(Product.CONTENT_URI, key + "/comments"), null, null, null, null);
+	private void bindAdapter(Uri uri) {		
+		cursor = managedQuery(Uri.withAppendedPath(uri, "comments"), null, null, null, null);
 		adapter = new CommentsAdapter(this, cursor);
 		setListAdapter(adapter);
 	}
 	
-	private void displayProduct(String key)
+	private void displayProduct(Uri uri)
 	{
-		productCursor = managedQuery(Uri.withAppendedPath(Product.CONTENT_URI, key), null, null, null, null);
+		productCursor = managedQuery(uri, null, null, null, null);
 		if (productCursor.moveToFirst()) {			
 			final String name = productCursor.getString(productCursor.getColumnIndex(Product.NAME));
 			final String affiliateName = productCursor.getString(productCursor.getColumnIndex(Product.AFFILIATE_NAME));
@@ -162,14 +163,14 @@ public final class CommentActivity extends ListActivity {
 		}
 	}
 	
-	private void getProductInfo(String key) {
+	private void getProductInfo(Uri uri) {
 		if (!NetworkManager.isNetworkAvailable(this)) {
 			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
 		}
 		else {
 			statusLayout.setVisibility(View.VISIBLE);
 			Intent intent = new Intent(this, ProductUpdaterService.class);
-			intent.putExtra(Product.KEY, key);
+			intent.setData(uri);
 			startService(intent);
 		}		
 	}
@@ -644,10 +645,9 @@ public final class CommentActivity extends ListActivity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			statusLayout.setVisibility(View.GONE);
-			final String key = intent.getStringExtra(Product.KEY);
-			displayProduct(key);
 //			cursor.requery();
 			adapter.notifyDataSetChanged();
+//			displayProduct(intent.getData());
 		}
 		
 	}
