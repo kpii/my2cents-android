@@ -110,6 +110,12 @@
 					android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
+		<activity
+			android:name="UserDetailActivity">
+		</activity>
+		<activity
+			android:name="WebViewActivity">
+		</activity>
 		<provider
 			android:name=".data.My2CentsProvider"
 			android:authorities="mobi.my2cents"></provider>
