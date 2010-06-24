@@ -23,9 +23,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COMMENTS_TABLE = "comments";
     private static final String CREATE_COMMENTS_TABLE =
     	"CREATE TABLE " + COMMENTS_TABLE + " ("
-		+ Comment.KEY + " INTEGER PRIMARY KEY, "
+		
+    	+ Comment.KEY + " INTEGER PRIMARY KEY, "
 		+ Comment.BODY + " TEXT, "
 		+ Comment.CREATED_AT + " BIGINT, "
+		
 		+ Comment.LATITUDE + " INTEGER, "
 		+ Comment.LONGITUDE + " INTEGER, "
 		

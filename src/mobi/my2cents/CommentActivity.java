@@ -3,7 +3,6 @@ package mobi.my2cents;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import mobi.my2cents.data.Comment;
 import mobi.my2cents.data.DataManager;
@@ -23,7 +22,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -53,7 +51,6 @@ import android.widget.Toast;
 
 public final class CommentActivity extends ListActivity {
 	
-	private boolean updateHistory;
 	public final static String UPDATE_HISTORY = "UpdateHistory";
 	
 	private final int DIALOG_PRODUCT_DETAILS = 0;
@@ -83,6 +80,8 @@ public final class CommentActivity extends ListActivity {
 	private EditText commentEditor;
 	private View statusLayout;
 	private PopupWindow productPopup;
+	
+	private Uri product;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -144,6 +143,7 @@ public final class CommentActivity extends ListActivity {
 	
 	private void displayProduct(Uri uri)
 	{
+		product = uri;
 		final Cursor cursor = managedQuery(uri, null, null, null, null);
 		if (cursor.moveToFirst()) {			
 			final String name = cursor.getString(cursor.getColumnIndex(Product.NAME));
@@ -345,28 +345,38 @@ public final class CommentActivity extends ListActivity {
 		}
 	};
 	
-	private void postComment(Context context) {		
-//		if (productCursor.moveToFirst()) {
-//			final String body = commentEditor.getText().toString();
-//			
-//			ContentValues values = new ContentValues();
-//			values.put(Comment.PRODUCT_KEY, productCursor.getString(productCursor.getColumnIndex(Product.KEY)));
-//			values.put(Comment.PRODUCT_NAME, productCursor.getString(productCursor.getColumnIndex(Product.NAME)));
-//			values.put(Comment.BODY, body);
-//			values.put(Comment.CREATED_AT, new Date().getTime());
-//			values.put(Comment.PRODUCT_IMAGE_URL, productCursor.getString(productCursor.getColumnIndex(Product.IMAGE_URL)));
-//			
-//			if (SettingsActivity.isShareLocation()) {
-//				Location location = GpsManager.getLocation();
-//				if (location != null) {
-//					values.put(Comment.LATITUDE, location.getLatitude());
-//					values.put(Comment.LONGITUDE, location.getLongitude());
-//				}
-//			}
-//			hideVirtualKeyboard();
-//			context.getContentResolver().insert(Comment.CONTENT_URI, values);
-//			cursor.requery();
-//		}
+	private void postComment(Context context) {
+		if (product == null) return;
+		
+		final Cursor cursor = managedQuery(product, null, null, null, null);
+		if (cursor.moveToFirst()) {
+			final String body = commentEditor.getText().toString();
+			
+			ContentValues values = new ContentValues();
+			values.put(Comment.PRODUCT_KEY, cursor.getString(cursor.getColumnIndex(Product.KEY)));
+			values.put(Comment.PRODUCT_NAME, cursor.getString(cursor.getColumnIndex(Product.NAME)));
+			values.put(Comment.BODY, body);
+			values.put(Comment.CREATED_AT, new Date().getTime());
+			values.put(Comment.PRODUCT_IMAGE_URL, cursor.getString(cursor.getColumnIndex(Product.IMAGE_URL)));
+			values.put(Comment.USER_NAME, "Me");
+			
+			values.put(Comment.TRANSITION_ACTIVE, true);
+			values.put(Comment.POST_TRANSITIONAL_STATE, true);
+			
+			if (SettingsActivity.isShareLocation()) {
+				Location location = GpsManager.getLocation();
+				if (location != null) {
+					values.put(Comment.LATITUDE, location.getLatitude());
+					values.put(Comment.LONGITUDE, location.getLongitude());
+				}
+			}
+			hideVirtualKeyboard();
+			getContentResolver().insert(Comment.CONTENT_URI, values);
+			adapter.getCursor().requery();
+			
+			final Intent intent = new Intent(this, SyncService.class);
+			startService(intent);
+		}
 	}
 	
 	private void rateProduct(Context context, String value) {
@@ -385,83 +395,40 @@ public final class CommentActivity extends ListActivity {
         productImageView.requestFocus();		
 	}
 	
-	private class GetProductInfoTask extends WeakAsyncTask<String, Void, ProductInfo, Context> {
-		public GetProductInfoTask(Context target) {
-			super(target);
-		}
-
-		@Override
-		protected void onPreExecute(Context target) {
-			statusLayout.setVisibility(View.VISIBLE);
-//			productInfo = getHistoryItem(gtin);
-			if (productInfo != null) {
-//				displayProductFound(productInfo);
-			}
-	    }
-
-		@Override
-		protected ProductInfo doInBackground(Context target, String... params) {
-			ProductInfo result = DataManager.getProductInfo(gtin);
-			
-			if (updateHistory) {
-				if (result != null) {
-//					addHistoryItem(result);
-				}
-				else {
-					ProductInfo dummy = new ProductInfo(params[0]);
-//					addHistoryItem(dummy);
-				}
-			}
-			return result;
-		}
-		
-//		@Override
-//		protected void onPostExecute(Context target, ProductInfo product) {
-//			statusLayout.setVisibility(View.GONE);
-//			//progressDialog.dismiss();
-//			
-//	        if (product != null) {
-//	        	displayProductFound(product);
-//	        	
-//	        	commentsAdapter.clear();
-//				tagsAdapter.clear();
-//	        	ArrayList<Comment> comments = product.getComments();
-//				if (comments.size() > 0) {
-//					Set<String> tags = new TreeSet<String>();
-//					for (Comment comment : comments) {
-//						commentsAdapter.add(comment);
-//						
-//						String text = comment.getText();
-//						if (text.contains("#")) {
-//							Pattern p = Pattern.compile("#[A-Za-z0-9]+");						
-//							Matcher m = p.matcher(text);
-//							while (m.find()) {
-//								tags.add(m.group());
-//							}
+//	private void parseTags() {
+//		if (product != null) {
+//        	displayProductFound(product);
+//        	
+//        	commentsAdapter.clear();
+//			tagsAdapter.clear();
+//        	ArrayList<Comment> comments = product.getComments();
+//			if (comments.size() > 0) {
+//				Set<String> tags = new TreeSet<String>();
+//				for (Comment comment : comments) {
+//					commentsAdapter.add(comment);
+//					
+//					String text = comment.getText();
+//					if (text.contains("#")) {
+//						Pattern p = Pattern.compile("#[A-Za-z0-9]+");						
+//						Matcher m = p.matcher(text);
+//						while (m.find()) {
+//							tags.add(m.group());
 //						}
 //					}
-//					
-//					if (tags.size() > 0) {
-//						for (String tag : tags) {
-//							tagsAdapter.add(tag);
-//						}
-//					}
-//					
-//					commentsAdapter.notifyDataSetChanged();
-//					
-//					getProfileImagesTask = new GetProfileImagesTask(target).execute(comments);
 //				}
+//				
+//				if (tags.size() > 0) {
+//					for (String tag : tags) {
+//						tagsAdapter.add(tag);
+//					}
+//				}
+//				
+//				commentsAdapter.notifyDataSetChanged();
+//				
+//				getProfileImagesTask = new GetProfileImagesTask(target).execute(comments);
 //			}
-//			else {
-//				Toast.makeText(target, R.string.error_message_no_server_connection, Toast.LENGTH_LONG).show();
-//			}
-//	        
-//	        productInfo = product;
-//	        getProductInfoTask = null;
-//	        
-//	        hideVirtualKeyboard();
-//	    }
-	}
+//		}
+//	}
 
 	private final OnItemLongClickListener tagsLongClickListener = new OnItemLongClickListener() {
 		public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
@@ -531,48 +498,6 @@ public final class CommentActivity extends ListActivity {
 			default:
 				return super.onOptionsItemSelected(item);
 		}
-	}
-	
-	
-	private class PostComment extends WeakAsyncTask<String, Void, Comment, Context> {
-
-		public PostComment(Context target) {
-			super(target);
-		}
-
-		@Override
-		protected void onPreExecute(Context target) {
-			progressDialog = ProgressDialog.show(CommentActivity.this, null, getString(R.string.progress_dialog_sending), true);
-	    }
-		
-		@Override
-		protected Comment doInBackground(Context target, String... params) {
-			
-			Comment comment = DataManager.postComment(gtin, params[0]);
-//			if (comment != null) {
-//				if (!DataManager.profileImageCache.containsKey(comment.getUser())) {
-//					DataManager.profileImageCache.put(comment.getUser(), NetworkManager.getRemoteImage(comment.getUserProfileImageUrl()));
-//				}
-//			}
-			return comment;
-		}
-		
-//		@Override
-//		protected void onPostExecute(Context target, Comment comment) {
-//			progressDialog.dismiss();
-//			if (comment != null) {
-//				hideVirtualKeyboard();
-//				
-//				commentsAdapter.insert(comment, 0);
-//				commentsAdapter.notifyDataSetChanged();
-//				
-//				commentEditor.setText("");
-//				Toast.makeText(CommentActivity.this, R.string.message_comment_posted_successfully, Toast.LENGTH_SHORT).show();
-//			}
-//			else {
-//				Toast.makeText(target, R.string.error_message_no_server_connection, Toast.LENGTH_LONG).show();
-//			}
-//	    }
 	}
 	
 	private class PutRating extends WeakAsyncTask<String, Void, Rating, Context> {

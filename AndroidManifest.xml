@@ -129,9 +129,9 @@
 		<receiver
 			android:name=".OnAlarmReceiver">
 		</receiver>
-		<service
-			android:name=".My2centsService">
-		</service>
+<!--		<service-->
+<!--			android:name=".My2centsService">-->
+<!--		</service>-->
 		<service
 			android:name=".FeedUpdaterService"></service>
 		<service

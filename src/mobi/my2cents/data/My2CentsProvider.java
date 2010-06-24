@@ -20,6 +20,7 @@ public class My2CentsProvider extends ContentProvider {
     
     private static final int COMMENT_DIR = 4;
     private static final int COMMENT_ITEM = 5;
+    private static final int COMMENT_POST = 6;
     
     private static final UriMatcher uriMatcher;    
 	private DatabaseHelper dbHelper;
@@ -51,6 +52,10 @@ public class My2CentsProvider extends ContentProvider {
 	    		
 	    	case COMMENT_ITEM: {
 	    		return "vnd.android.cursor.item/mobi.my2cents.comment";
+	    	}
+	    	
+	    	case COMMENT_POST: {
+	    		return "vnd.android.cursor.dir/mobi.my2cents.comment";
 	    	}
 	    	
 	    	default: {
@@ -90,9 +95,9 @@ public class My2CentsProvider extends ContentProvider {
 	    	}
 	    		
 	    	case COMMENT_ITEM: {
-	    		final String key = uri.getPathSegments().get(1);
+	    		final String id = uri.getLastPathSegment();
 	    		String whereClause = 
-	    			Comment.KEY + "=" + key
+	    			"rowid = " + id
 	    			+ (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : "");
 	            count = db.delete(DatabaseHelper.COMMENTS_TABLE, whereClause, whereArgs);
 	    		break;
@@ -130,18 +135,18 @@ public class My2CentsProvider extends ContentProvider {
 	    		break;
 	    	}
 	    	
-	    	case PRODUCT_COMMENTS: {
-	    		String key = uri.getPathSegments().get(1);
-	    		values.put(Comment.TRANSITION_ACTIVE, false);
-				values.put(Comment.PRODUCT_KEY, key);
-	    		long rowId = db.replace(DatabaseHelper.COMMENTS_TABLE, "", values);
-	            if (rowId > 0) {	
-	                Uri eventUri = ContentUris.withAppendedId(Product.CONTENT_URI, rowId);
-	                getContext().getContentResolver().notifyChange(eventUri, null);
-	                return eventUri;
-	            }
-	    		break;
-	    	}
+//	    	case PRODUCT_COMMENTS: {
+//	    		String key = uri.getPathSegments().get(1);
+//	    		values.put(Comment.TRANSITION_ACTIVE, false);
+//				values.put(Comment.PRODUCT_KEY, key);
+//	    		long rowId = db.replace(DatabaseHelper.COMMENTS_TABLE, "", values);
+//	            if (rowId > 0) {	
+//	                Uri eventUri = ContentUris.withAppendedId(Product.CONTENT_URI, rowId);
+//	                getContext().getContentResolver().notifyChange(eventUri, null);
+//	                return eventUri;
+//	            }
+//	    		break;
+//	    	}
 	    	
 	    	case COMMENT_DIR: {
 	    		long rowId = db.replace(DatabaseHelper.COMMENTS_TABLE, "", values);
@@ -196,6 +201,7 @@ public class My2CentsProvider extends ContentProvider {
 				qb.setTables(DatabaseHelper.COMMENTS_TABLE);
 	            qb.setProjectionMap(Comment.projectionMap);
 	            qb.appendWhere(Comment.PRODUCT_KEY + "='" + key + "'");
+	            orderBy = Comment.KEY + " DESC";
 	    		break;
 	    	}
 	    	
@@ -209,6 +215,13 @@ public class My2CentsProvider extends ContentProvider {
 	    	case COMMENT_ITEM: {
 	    		qb.setTables(DatabaseHelper.COMMENTS_TABLE);
 	            qb.setProjectionMap(Comment.projectionMap);
+	    		break;
+	    	}
+	    	
+	    	case COMMENT_POST: {
+	    		qb.setTables(DatabaseHelper.COMMENTS_TABLE);
+	            qb.setProjectionMap(Comment.projectionMap);
+	            qb.appendWhere(Comment.TRANSITION_ACTIVE + "=1 AND " + Comment.POST_TRANSITIONAL_STATE + "=1");
 	    		break;
 	    	}
 	    	
@@ -279,6 +292,7 @@ public class My2CentsProvider extends ContentProvider {
         uriMatcher.addURI(My2Cents.AUTHORITY, "products/*/comments", PRODUCT_COMMENTS);
         
         uriMatcher.addURI(My2Cents.AUTHORITY, "comments", COMMENT_DIR);
+        uriMatcher.addURI(My2Cents.AUTHORITY, "comments/post", COMMENT_POST);
         uriMatcher.addURI(My2Cents.AUTHORITY, "comments/*", COMMENT_ITEM);
 	}
 }
