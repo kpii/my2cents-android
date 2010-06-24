@@ -44,7 +44,6 @@ public class ProductUpdaterService extends IntentService {
 			Log.e(My2Cents.TAG, e.getMessage());
 		}
 		
-		final Intent broadcastIntent = new Intent(PRODUCT_UPDATED);
 		try {
 			if (data != null) {
 				
@@ -53,19 +52,22 @@ public class ProductUpdaterService extends IntentService {
 				final ContentValues product = Product.ParseJson(json);				
 				getContentResolver().insert(Product.CONTENT_URI, product);
 				
-				JSONArray comments = json.getJSONArray("comments");
-				if (comments.length() > 0) {
-					ContentValues[] values = new ContentValues[comments.length()];
-					for (int i=0; i<comments.length(); i++) {						
-		            	JSONObject comment = comments.getJSONObject(i);
-		            	values[i] = Comment.parseJson(comment);
-		            }					
-					getContentResolver().bulkInsert(Comment.CONTENT_URI, values);
+				if (json.has("comment")) {
+					final JSONArray comments = json.getJSONArray("comments");
+					if (comments.length() > 0) {
+						final ContentValues[] values = new ContentValues[comments.length()];
+						for (int i=0; i<comments.length(); i++) {
+			            	values[i] = Comment.parseJson(comments.getJSONObject(i));
+			            }					
+						getContentResolver().bulkInsert(Comment.CONTENT_URI, values);
+					}
 				}
 			}			
 		} catch (JSONException e) {
 			Log.e(My2Cents.TAG, e.toString());
 		} finally {
+			final Intent broadcastIntent = new Intent(PRODUCT_UPDATED);
+			broadcastIntent.putExtra(Product.KEY, key);
 			sendBroadcast(broadcastIntent);
 		}
 	}

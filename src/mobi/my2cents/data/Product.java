@@ -59,13 +59,15 @@ public class Product implements BaseColumns, TransitionalStateColumns{
 		
 		values.put(Product.KEY, json.getString("key"));
 		values.put(Product.NAME, json.getString("name"));
-		values.put(Product.IMAGE_URL, json.getString("image_url"));
+		
+		if (!json.isNull("image_url"))
+			values.put(Product.IMAGE_URL, json.getString("image_url"));
 		
 		
 		if (json.has("affiliates")) {
-			JSONArray jsonLinks = json.getJSONArray("affiliates");
-			if (jsonLinks.length() > 0) {
-				JSONObject affiliate = jsonLinks.getJSONObject(0);
+			final JSONArray affiliates = json.getJSONArray("affiliates");
+			if (affiliates.length() > 0) {
+				final JSONObject affiliate = affiliates.getJSONObject(0);
 				values.put(Product.AFFILIATE_NAME, affiliate.getString("text"));
 				values.put(Product.AFFILIATE_URL, affiliate.getString("href"));
 			}
@@ -81,15 +83,6 @@ public class Product implements BaseColumns, TransitionalStateColumns{
 				}
 			}
 		}
-	    
-//	    JSONArray jsonComments = jsonProduct.getJSONArray("comments");
-//	    for (int i=0; i<jsonComments.length(); i++) {
-//	    	JSONObject jsonComment = jsonComments.getJSONObject(i);
-//	    	Comment comment = Json2Comment(jsonComment);
-//			if (comment != null) {
-//				productInfo.getComments().add(comment);
-//			}
-//	    }
 		
 		return values;
 	}

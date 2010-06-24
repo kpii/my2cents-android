@@ -1,5 +1,6 @@
 package mobi.my2cents;
 
+import mobi.my2cents.data.Comment;
 import mobi.my2cents.data.Product;
 import android.app.ListActivity;
 import android.content.Intent;
@@ -17,7 +18,6 @@ import android.widget.ListView;
 public final class HistoryActivity extends ListActivity {
 	
 	private HistoryAdapter adapter;
-	private Cursor cursor;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -36,11 +36,11 @@ public final class HistoryActivity extends ListActivity {
 	}
 	
 	private void handleIntent(Intent intent) {
-		cursor.requery();
+		adapter.getCursor().requery();
 	}
 	
 	private void bindAdapter() {
-		cursor = managedQuery(Product.CONTENT_URI, null, null, null, null);
+		final Cursor cursor = managedQuery(Product.CONTENT_URI, null, null, null, null);
 		adapter = new HistoryAdapter(this, cursor);
 		setListAdapter(adapter);
 	}
@@ -99,6 +99,7 @@ public final class HistoryActivity extends ListActivity {
 		switch (item.getItemId()) {
 			case R.id.clearHistoryMenuItem: {
 				getContentResolver().delete(Product.CONTENT_URI, null, null);
+				getContentResolver().delete(Comment.CONTENT_URI, null, null);
 				adapter.getCursor().requery();
 				return true;
 			}

@@ -9,7 +9,7 @@ import android.util.Log;
 public class DatabaseHelper extends SQLiteOpenHelper {
 	
     private static final String DATABASE_NAME = "My2Cents.db";
-    private static final int DATABASE_VERSION = 26;
+    private static final int DATABASE_VERSION = 27;
     
     
     private static final String TRANSITION_FLAGS = 

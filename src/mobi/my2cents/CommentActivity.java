@@ -62,10 +62,8 @@ public final class CommentActivity extends ListActivity {
 	private InputMethodManager inputManager;
 
 	private CommentsAdapter adapter;
-	private Cursor cursor;
-	private Cursor productCursor;
 	
-	private ProductUpdaterReceiver receiver;
+	private ProductUpdaterReceiver productUpdaterReceiver;
 
 	private ArrayList<String> tags;
 	private TagsAdapter tagsAdapter;
@@ -90,7 +88,7 @@ public final class CommentActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		receiver = new ProductUpdaterReceiver();
+		productUpdaterReceiver = new ProductUpdaterReceiver();
 		
 		prepareUI();
 		
@@ -108,7 +106,7 @@ public final class CommentActivity extends ListActivity {
 	public void onResume() {
 		super.onResume();
 		
-		registerReceiver(receiver, ProductUpdaterService.FILTER);
+		registerReceiver(productUpdaterReceiver, ProductUpdaterService.FILTER);
 		
 		SettingsActivity.setShareOnTwitter(settings.getBoolean(getString(R.string.settings_twitter), false));
 		boolean shareLocation = settings.getBoolean(getString(R.string.settings_share_location), false);
@@ -120,7 +118,7 @@ public final class CommentActivity extends ListActivity {
 	
 	@Override
 	public void onPause() {
-		unregisterReceiver(receiver);
+		unregisterReceiver(productUpdaterReceiver);
 		super.onPause();
 	}
 	
@@ -133,26 +131,26 @@ public final class CommentActivity extends ListActivity {
 	private void handleIntent(Intent intent) {
 		hideVirtualKeyboard();
 		final Uri uri = intent.getData();
-		displayProduct(uri);
 		bindAdapter(uri);
-		getProductInfo(uri);		
+		displayProduct(uri);
+		getProductInfo(uri);
 	}
 	
-	private void bindAdapter(Uri uri) {		
-		cursor = managedQuery(Uri.withAppendedPath(uri, "comments"), null, null, null, null);
+	private void bindAdapter(Uri uri) {
+		final Cursor cursor = managedQuery(Uri.withAppendedPath(uri, "comments"), null, null, null, null);
 		adapter = new CommentsAdapter(this, cursor);
 		setListAdapter(adapter);
 	}
 	
 	private void displayProduct(Uri uri)
 	{
-		productCursor = managedQuery(uri, null, null, null, null);
-		if (productCursor.moveToFirst()) {			
-			final String name = productCursor.getString(productCursor.getColumnIndex(Product.NAME));
-			final String affiliateName = productCursor.getString(productCursor.getColumnIndex(Product.AFFILIATE_NAME));
-			final String imageUrl = productCursor.getString(productCursor.getColumnIndex(Product.IMAGE_URL));
-			final int likes = productCursor.getInt(productCursor.getColumnIndex(Product.RATING_LIKES));
-			final int dislikes = productCursor.getInt(productCursor.getColumnIndex(Product.RATING_DISLIKES));
+		final Cursor cursor = managedQuery(uri, null, null, null, null);
+		if (cursor.moveToFirst()) {			
+			final String name = cursor.getString(cursor.getColumnIndex(Product.NAME));
+			final String affiliateName = cursor.getString(cursor.getColumnIndex(Product.AFFILIATE_NAME));
+			final String imageUrl = cursor.getString(cursor.getColumnIndex(Product.IMAGE_URL));
+			final int likes = cursor.getInt(cursor.getColumnIndex(Product.RATING_LIKES));
+			final int dislikes = cursor.getInt(cursor.getColumnIndex(Product.RATING_DISLIKES));
 			
 			productNameTextView.setText(name);			
 			affiliateTextView.setText(affiliateName);
@@ -348,27 +346,27 @@ public final class CommentActivity extends ListActivity {
 	};
 	
 	private void postComment(Context context) {		
-		if (productCursor.moveToFirst()) {
-			final String body = commentEditor.getText().toString();
-			
-			ContentValues values = new ContentValues();
-			values.put(Comment.PRODUCT_KEY, productCursor.getString(productCursor.getColumnIndex(Product.KEY)));
-			values.put(Comment.PRODUCT_NAME, productCursor.getString(productCursor.getColumnIndex(Product.NAME)));
-			values.put(Comment.BODY, body);
-			values.put(Comment.CREATED_AT, new Date().getTime());
-			values.put(Comment.PRODUCT_IMAGE_URL, productCursor.getString(productCursor.getColumnIndex(Product.IMAGE_URL)));
-			
-			if (SettingsActivity.isShareLocation()) {
-				Location location = GpsManager.getLocation();
-				if (location != null) {
-					values.put(Comment.LATITUDE, location.getLatitude());
-					values.put(Comment.LONGITUDE, location.getLongitude());
-				}
-			}
-			hideVirtualKeyboard();
-			context.getContentResolver().insert(Comment.CONTENT_URI, values);
-			cursor.requery();
-		}
+//		if (productCursor.moveToFirst()) {
+//			final String body = commentEditor.getText().toString();
+//			
+//			ContentValues values = new ContentValues();
+//			values.put(Comment.PRODUCT_KEY, productCursor.getString(productCursor.getColumnIndex(Product.KEY)));
+//			values.put(Comment.PRODUCT_NAME, productCursor.getString(productCursor.getColumnIndex(Product.NAME)));
+//			values.put(Comment.BODY, body);
+//			values.put(Comment.CREATED_AT, new Date().getTime());
+//			values.put(Comment.PRODUCT_IMAGE_URL, productCursor.getString(productCursor.getColumnIndex(Product.IMAGE_URL)));
+//			
+//			if (SettingsActivity.isShareLocation()) {
+//				Location location = GpsManager.getLocation();
+//				if (location != null) {
+//					values.put(Comment.LATITUDE, location.getLatitude());
+//					values.put(Comment.LONGITUDE, location.getLongitude());
+//				}
+//			}
+//			hideVirtualKeyboard();
+//			context.getContentResolver().insert(Comment.CONTENT_URI, values);
+//			cursor.requery();
+//		}
 	}
 	
 	private void rateProduct(Context context, String value) {
@@ -645,9 +643,9 @@ public final class CommentActivity extends ListActivity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			statusLayout.setVisibility(View.GONE);
-//			cursor.requery();
 			adapter.notifyDataSetChanged();
-//			displayProduct(intent.getData());
+			final String key = intent.getStringExtra(Product.KEY);
+			displayProduct(Uri.withAppendedPath(Product.CONTENT_URI, key));
 		}
 		
 	}

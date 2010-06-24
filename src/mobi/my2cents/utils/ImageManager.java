@@ -65,7 +65,9 @@ public final class ImageManager {
 						return image;
 					}
 				}
-				cache.remove(key);
+				else {
+					cache.remove(key);
+				}
 			}
 			
 			final File file = new File(context.getCacheDir(), key);

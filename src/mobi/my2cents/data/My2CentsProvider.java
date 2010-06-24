@@ -116,7 +116,7 @@ public class My2CentsProvider extends ContentProvider {
         
         switch (uriMatcher.match(uri)) {    		
 	    	case PRODUCT_DIR: {
-	    		values.put(Comment.GET_TRANSITIONAL_STATE, true);
+//	    		values.put(Comment.GET_TRANSITIONAL_STATE, true);
 	    		long rowId = db.replace(DatabaseHelper.PRODUCTS_TABLE, "", values);
 	            if (rowId > 0) {	
 	                final Uri eventUri = ContentUris.withAppendedId(Product.CONTENT_URI, rowId);
@@ -184,18 +184,18 @@ public class My2CentsProvider extends ContentProvider {
 	    	}
 	    		
 	    	case PRODUCT_ITEM: {
-	    		String key = uri.getPathSegments().get(1);
+	    		final String key = uri.getLastPathSegment();
 	        	qb.setTables(DatabaseHelper.PRODUCTS_TABLE);
 	            qb.setProjectionMap(Product.projectionMap);
-	            qb.appendWhere(Product.KEY + "=" + key);
+	            qb.appendWhere(Product.KEY + "='" + key + "'");
 	    		break;
 	    	}
 	    	
 	    	case PRODUCT_COMMENTS: {
-	    		String key = uri.getPathSegments().get(1);
+	    		final String key = uri.getPathSegments().get(1);
 				qb.setTables(DatabaseHelper.COMMENTS_TABLE);
 	            qb.setProjectionMap(Comment.projectionMap);
-	            qb.appendWhere(Comment.PRODUCT_KEY + "=" + key);
+	            qb.appendWhere(Comment.PRODUCT_KEY + "='" + key + "'");
 	    		break;
 	    	}
 	    	

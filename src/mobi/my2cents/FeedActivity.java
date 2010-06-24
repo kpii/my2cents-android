@@ -12,6 +12,7 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,7 +25,6 @@ import android.widget.Toast;
 public final class FeedActivity extends ListActivity {
 	
 	private FeedAdapter adapter;
-	private Cursor cursor;
 	
 	private View statusLayout;
 	
@@ -70,7 +70,7 @@ public final class FeedActivity extends ListActivity {
 	}
 	
 	private void bindAdapter() {
-		cursor = managedQuery(Comment.CONTENT_URI, null, null, null, null);
+		final Cursor cursor = managedQuery(Comment.CONTENT_URI, null, null, null, null);
 		adapter = new FeedAdapter(this, cursor);
 		setListAdapter(adapter);
 	}
@@ -125,9 +125,11 @@ public final class FeedActivity extends ListActivity {
 	public void onListItemClick(ListView parent, View v, int position, long id) {
 		final Cursor cursor = (Cursor) getListView().getItemAtPosition(position);
 		final String key = cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_KEY));
-		Intent intent = new Intent(this, CommentActivity.class);
-		intent.setData(Uri.withAppendedPath(Product.CONTENT_URI, key));
-		startActivity(intent);
+		if (!TextUtils.isEmpty(key)) {
+			Intent intent = new Intent(this, CommentActivity.class);
+			intent.setData(Uri.withAppendedPath(Product.CONTENT_URI, key));
+			startActivity(intent);
+		}
 	}
 
 	@Override
@@ -185,7 +187,7 @@ public final class FeedActivity extends ListActivity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			statusLayout.setVisibility(View.GONE);
-			cursor.requery();
+			adapter.getCursor().requery();
 			adapter.notifyDataSetChanged();
 		}
 		
@@ -195,7 +197,7 @@ public final class FeedActivity extends ListActivity {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			cursor.requery();
+			adapter.getCursor().requery();
 			adapter.notifyDataSetChanged();
 		}
 		
