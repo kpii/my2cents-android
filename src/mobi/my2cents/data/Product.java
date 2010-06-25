@@ -3,14 +3,17 @@ package mobi.my2cents.data;
 import java.util.HashMap;
 
 import mobi.my2cents.My2Cents;
+import mobi.my2cents.SettingsActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 public class Product implements BaseColumns, TransitionalStateColumns{
 
@@ -85,6 +88,20 @@ public class Product implements BaseColumns, TransitionalStateColumns{
 		}
 		
 		return values;
+	}
+	
+	public final static JSONObject getRatingJson(Cursor cursor) {		
+    	try {
+    		final JSONObject jsonRating = new JSONObject();
+    		jsonRating.put("value", cursor.getString(cursor.getColumnIndex(Product.RATING_PERSONAL)));
+			
+			final JSONObject json = new JSONObject();
+			json.put("rating", jsonRating);
+			return json;
+		} catch (JSONException e) {
+			Log.e(My2Cents.TAG, e.toString());
+			return null;
+		}
 	}
 	
 }

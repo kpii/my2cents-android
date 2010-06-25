@@ -163,8 +163,8 @@ public final class NetworkManager {
 		return result;
 	}
 	
-	public static String putRating(String gtin, String content) throws ClientProtocolException, IOException {
-		final String url = BASE_URL + "/products/" + gtin + "/rating.json";
+	public static String putRating(String key, String content) throws ClientProtocolException, IOException {
+		final String url = BASE_URL + "/products/" + key + "/rating.json";
 		return putREST(url, content);
 	}
 	

@@ -1,16 +1,11 @@
 package mobi.my2cents;
 
  import mobi.my2cents.data.Comment;
-import mobi.my2cents.data.DataManager;
 import mobi.my2cents.data.Product;
-import mobi.my2cents.utils.RelativeTime;
-
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.ListActivity;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -20,21 +15,17 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class ProductActivity extends ListActivity {
@@ -240,10 +231,8 @@ public class ProductActivity extends ListActivity {
 					
 					View contentView = inflater.inflate(R.layout.product_popup, null, false);
 					contentView.setOnTouchListener(closePopupListener);
-					contentView.findViewById(R.id.ProductBarButtonDetails).setOnClickListener(affiliateListener);
 					contentView.findViewById(R.id.ProductBarButtonLike).setOnClickListener(likeListener);
 					contentView.findViewById(R.id.ProductBarButtonDislike).setOnClickListener(dislikeListener);
-					contentView.findViewById(R.id.ProductBarButtonEdit).setOnClickListener(editProductInfoListener);
 					
 					productPopup = new PopupWindow(
 							contentView, 

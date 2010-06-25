@@ -17,10 +17,11 @@ public class My2CentsProvider extends ContentProvider {
     private static final int PRODUCT_DIR = 1;
     private static final int PRODUCT_ITEM = 2;
     private static final int PRODUCT_COMMENTS = 3;
+    private static final int PRODUCT_PUT = 4;
     
-    private static final int COMMENT_DIR = 4;
-    private static final int COMMENT_ITEM = 5;
-    private static final int COMMENT_POST = 6;
+    private static final int COMMENT_DIR = 5;
+    private static final int COMMENT_ITEM = 6;
+    private static final int COMMENT_POST = 7;
     
     private static final UriMatcher uriMatcher;    
 	private DatabaseHelper dbHelper;
@@ -35,6 +36,10 @@ public class My2CentsProvider extends ContentProvider {
 	public String getType(Uri uri) {
     	switch (uriMatcher.match(uri)) {    		
 	    	case PRODUCT_DIR: {
+	    		return "vnd.android.cursor.dir/mobi.my2cents.product";
+	    	}
+	    	
+	    	case PRODUCT_PUT: {
 	    		return "vnd.android.cursor.dir/mobi.my2cents.product";
 	    	}
 	    		
@@ -187,6 +192,13 @@ public class My2CentsProvider extends ContentProvider {
 	            orderBy = Product._ID + " DESC";
 	    		break;
 	    	}
+	    	
+	    	case PRODUCT_PUT: {
+	    		qb.setTables(DatabaseHelper.PRODUCTS_TABLE);
+	            qb.setProjectionMap(Product.projectionMap);
+	            qb.appendWhere(Product.TRANSITION_ACTIVE + "=1 AND " + Product.PUT_TRANSITIONAL_STATE + "=1");
+	    		break;
+	    	}
 	    		
 	    	case PRODUCT_ITEM: {
 	    		final String key = uri.getLastPathSegment();
@@ -249,9 +261,9 @@ public class My2CentsProvider extends ContentProvider {
 	    	}
 	    		
 	    	case PRODUCT_ITEM: {
-	    		String key = uri.getPathSegments().get(1);
+	    		String key = uri.getLastPathSegment();
 	    		String whereClause = 
-	    			Product.KEY + "=" + key
+	    			Product.KEY + "='" + key + "'"
 	    			+ (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : "");
 	            count = db.update(DatabaseHelper.PRODUCTS_TABLE, values, whereClause, whereArgs);
 	    		break;
@@ -266,7 +278,7 @@ public class My2CentsProvider extends ContentProvider {
 	    	}
 	    		
 	    	case COMMENT_ITEM: {
-	    		final String key = uri.getPathSegments().get(1);
+	    		final String key = uri.getLastPathSegment();
 	    		String whereClause = 
 	    			Comment.KEY + "=" + key
 	    			+ (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : "");
@@ -288,6 +300,7 @@ public class My2CentsProvider extends ContentProvider {
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         
         uriMatcher.addURI(My2Cents.AUTHORITY, "products", PRODUCT_DIR);
+        uriMatcher.addURI(My2Cents.AUTHORITY, "products/put", PRODUCT_PUT);
         uriMatcher.addURI(My2Cents.AUTHORITY, "products/*", PRODUCT_ITEM);
         uriMatcher.addURI(My2Cents.AUTHORITY, "products/*/comments", PRODUCT_COMMENTS);
         

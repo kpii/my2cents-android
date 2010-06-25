@@ -5,22 +5,15 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import mobi.my2cents.data.Comment;
-import mobi.my2cents.data.DataManager;
 import mobi.my2cents.data.Product;
-import mobi.my2cents.data.ProductInfo;
-import mobi.my2cents.data.Rating;
 import mobi.my2cents.utils.GpsManager;
 import mobi.my2cents.utils.ImageManager;
 import mobi.my2cents.utils.NetworkManager;
-import mobi.my2cents.utils.WeakAsyncTask;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -61,14 +54,10 @@ public final class CommentActivity extends ListActivity {
 	private CommentsAdapter adapter;
 	
 	private ProductUpdaterReceiver productUpdaterReceiver;
+	private SyncReceiver syncReceiver;
 
 	private ArrayList<String> tags;
-	private TagsAdapter tagsAdapter;
-	
-	private ProductInfo productInfo;
-	private String gtin;
-	
-	private ProgressDialog progressDialog;
+	private TagsAdapter tagsAdapter;	
 	private Gallery tagsGallery;
 	
 	private ImageView productImageView;
@@ -88,10 +77,10 @@ public final class CommentActivity extends ListActivity {
 		super.onCreate(savedInstanceState);
 		
 		productUpdaterReceiver = new ProductUpdaterReceiver();
+		syncReceiver = new SyncReceiver();
 		
 		prepareUI();
-		
-		DataManager.UnknownProductName = getString(R.string.unknown_product);
+
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
 		inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 		
@@ -106,6 +95,7 @@ public final class CommentActivity extends ListActivity {
 		super.onResume();
 		
 		registerReceiver(productUpdaterReceiver, ProductUpdaterService.FILTER);
+		registerReceiver(syncReceiver, SyncService.FILTER);
 		
 		SettingsActivity.setShareOnTwitter(settings.getBoolean(getString(R.string.settings_twitter), false));
 		boolean shareLocation = settings.getBoolean(getString(R.string.settings_share_location), false);
@@ -118,6 +108,7 @@ public final class CommentActivity extends ListActivity {
 	@Override
 	public void onPause() {
 		unregisterReceiver(productUpdaterReceiver);
+		unregisterReceiver(syncReceiver);
 		super.onPause();
 	}
 	
@@ -183,6 +174,7 @@ public final class CommentActivity extends ListActivity {
 		
 		productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
 		affiliateTextView = (TextView) findViewById(R.id.AffiliateTextView);
+		affiliateTextView.setOnClickListener(affiliateListener);
 		likesTextView = (TextView) findViewById(R.id.LikesTextView);
 		dislikesTextView = (TextView) findViewById(R.id.DislikesTextView);
 		
@@ -234,7 +226,7 @@ public final class CommentActivity extends ListActivity {
 	
 	private final View.OnClickListener productImageListener = new View.OnClickListener() {
 		public void onClick(View view) {
-			if (productInfo != null) {
+			if (product != null) {
 				showDialog(DIALOG_PRODUCT_DETAILS);
 			}
 		}
@@ -247,10 +239,8 @@ public final class CommentActivity extends ListActivity {
 				
 				View contentView = inflater.inflate(R.layout.product_popup, null, false);
 				contentView.setOnTouchListener(closePopupListener);
-				contentView.findViewById(R.id.ProductBarButtonDetails).setOnClickListener(affiliateListener);
 				contentView.findViewById(R.id.ProductBarButtonLike).setOnClickListener(likeListener);
 				contentView.findViewById(R.id.ProductBarButtonDislike).setOnClickListener(dislikeListener);
-				contentView.findViewById(R.id.ProductBarButtonEdit).setOnClickListener(editProductInfoListener);
 				
 				productPopup = new PopupWindow(
 						contentView, 
@@ -286,10 +276,12 @@ public final class CommentActivity extends ListActivity {
 	private final View.OnClickListener affiliateListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			closeProductPopupBar();
-			if (productInfo != null) {
-				if (productInfo.getAffiliateUrl() != null) {
-					Intent viewIntent = new Intent("android.intent.action.VIEW", Uri.parse(productInfo.getAffiliateUrl()));  
-					startActivity(viewIntent);
+			if (product != null) {
+				final Cursor cursor = managedQuery(product, null, null, null, null);
+				if (cursor.moveToFirst()) {			
+					final String url = cursor.getString(cursor.getColumnIndex(Product.AFFILIATE_URL));
+					final Intent intent = new Intent("android.intent.action.VIEW", Uri.parse(url));  
+					startActivity(intent);
 				}
 			}
 		}
@@ -298,8 +290,8 @@ public final class CommentActivity extends ListActivity {
 	private final View.OnClickListener likeListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			closeProductPopupBar();
-			if (productInfo != null) {
-				rateProduct(view.getContext(), "like");
+			if (product != null) {
+				rateProduct("like");
 			}
 		}
 	};
@@ -307,17 +299,8 @@ public final class CommentActivity extends ListActivity {
 	private final View.OnClickListener dislikeListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			closeProductPopupBar();
-			if (productInfo != null) {
-				rateProduct(view.getContext(), "dislike");
-			}
-		}
-	};
-	
-	private final View.OnClickListener editProductInfoListener = new View.OnClickListener() {
-		public void onClick(View view) {
-			closeProductPopupBar();
-			if (productInfo != null) {
-				
+			if (product != null) {
+				rateProduct("dislike");
 			}
 		}
 	};
@@ -331,27 +314,24 @@ public final class CommentActivity extends ListActivity {
 
 	private final View.OnClickListener sendCommentListener = new View.OnClickListener() {
 		public void onClick(View view) {
-			postComment(view.getContext());
+			postComment(commentEditor.getText().toString());
 		}
 	};
 	
 	private final TextView.OnEditorActionListener sendCommentActionListener = new TextView.OnEditorActionListener() {
 		public boolean onEditorAction(TextView view, int actionId, KeyEvent event) {
 			if (actionId == EditorInfo.IME_ACTION_SEND) {
-				postComment(view.getContext());
+				postComment(commentEditor.getText().toString());
 				return true;
 			}			
 			return false;
 		}
 	};
 	
-	private void postComment(Context context) {
-		if (product == null) return;
-		
+	private void postComment(String body) {
+		if (product == null) return;		
 		final Cursor cursor = managedQuery(product, null, null, null, null);
-		if (cursor.moveToFirst()) {
-			final String body = commentEditor.getText().toString();
-			
+		if (cursor.moveToFirst()) {			
 			ContentValues values = new ContentValues();
 			values.put(Comment.PRODUCT_KEY, cursor.getString(cursor.getColumnIndex(Product.KEY)));
 			values.put(Comment.PRODUCT_NAME, cursor.getString(cursor.getColumnIndex(Product.NAME)));
@@ -379,12 +359,20 @@ public final class CommentActivity extends ListActivity {
 		}
 	}
 	
-	private void rateProduct(Context context, String value) {
-		if (!NetworkManager.isNetworkAvailable(this)) {
-			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
-		}
-		else {
-			new PutRating(context).execute(value);
+	private void rateProduct(String rating) {
+		if (product == null) return;		
+		final Cursor cursor = managedQuery(product, null, null, null, null);
+		if (cursor.moveToFirst()) {
+			
+			final ContentValues values = new ContentValues();			
+			values.put(Product.RATING_PERSONAL, rating);			
+			values.put(Product.TRANSITION_ACTIVE, true);
+			values.put(Product.PUT_TRANSITIONAL_STATE, true);
+			
+			getContentResolver().update(product, values, null, null);
+			
+			final Intent intent = new Intent(this, SyncService.class);
+			startService(intent);
 		}
 	}
 	
@@ -482,52 +470,10 @@ public final class CommentActivity extends ListActivity {
 				Intent intent = new Intent(this, HelpActivity.class);
 				startActivity(intent);
 				return true;
-			}
-			case R.id.thumbsUpMenuItem: {
-				Intent intent = new Intent(this, HelpActivity.class);
-				Toast.makeText(getApplicationContext(), "you like it", 3000).show();
-				return true;
-			}
-			case R.id.thumbsDownMenuItem: {
-				Intent intent = new Intent(this, HelpActivity.class);
-				// vote product
-				Toast.makeText(getApplicationContext(), "you dont like it", 3000).show();
-				return true;
-			}
-			
+			}			
 			default:
 				return super.onOptionsItemSelected(item);
 		}
-	}
-	
-	private class PutRating extends WeakAsyncTask<String, Void, Rating, Context> {
-
-		public PutRating(Context target) {
-			super(target);
-		}
-
-		@Override
-		protected void onPreExecute(Context target) {
-			progressDialog = ProgressDialog.show(target, null, "Rating product...", true);
-	    }
-		
-		@Override
-		protected Rating doInBackground(Context target, String... params) {
-			return DataManager.rateProduct(gtin, params[0]);
-		}
-		
-		@Override
-		protected void onPostExecute(Context target, Rating result) {
-			progressDialog.dismiss();
-			if (result == null) {
-				Toast.makeText(target, R.string.rating_unsuccesful, Toast.LENGTH_LONG).show();
-			}
-			else {
-				productInfo.setRating(result);
-//				displayProductFound(productInfo);
-				Toast.makeText(target, R.string.rating_successful, Toast.LENGTH_SHORT).show();
-			}
-	    }
 	}
 	
 	@Override
@@ -544,20 +490,20 @@ public final class CommentActivity extends ListActivity {
 		
 		switch (id) {
 			case DIALOG_PRODUCT_DETAILS: {
-				LayoutInflater factory = LayoutInflater.from(this);
-		        final View view = factory.inflate(R.layout.product_details_dialog, null);
-		        ImageView imageView = (ImageView) view.findViewById(R.id.ProductImageView);
-		        imageView.setImageBitmap(productInfo.getImage());
-		        return new AlertDialog.Builder(this)
-		            .setIcon(android.R.drawable.ic_dialog_info)
-		            .setTitle(productInfo.getGtin())
-		            .setView(view)
-		            .setPositiveButton(R.string.button_close, new DialogInterface.OnClickListener() {
-		                public void onClick(DialogInterface dialog, int whichButton) {
-		                	
-		                }
-		            })
-		            .create();
+//				LayoutInflater factory = LayoutInflater.from(this);
+//		        final View view = factory.inflate(R.layout.product_details_dialog, null);
+//		        ImageView imageView = (ImageView) view.findViewById(R.id.ProductImageView);
+//		        imageView.setImageBitmap(productInfo.getImage());
+//		        return new AlertDialog.Builder(this)
+//		            .setIcon(android.R.drawable.ic_dialog_info)
+//		            .setTitle(productInfo.getGtin())
+//		            .setView(view)
+//		            .setPositiveButton(R.string.button_close, new DialogInterface.OnClickListener() {
+//		                public void onClick(DialogInterface dialog, int whichButton) {
+//		                	
+//		                }
+//		            })
+//		            .create();
 	        }
 		}
 		return super.onCreateDialog(id);
@@ -571,6 +517,18 @@ public final class CommentActivity extends ListActivity {
 			adapter.notifyDataSetChanged();
 			final String key = intent.getStringExtra(Product.KEY);
 			displayProduct(Uri.withAppendedPath(Product.CONTENT_URI, key));
+		}
+		
+	}
+	
+	private final class SyncReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			adapter.notifyDataSetChanged();
+			if (product != null) {
+				displayProduct(product);
+			}
 		}
 		
 	}

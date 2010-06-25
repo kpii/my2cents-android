@@ -7,20 +7,6 @@
 	android:background="@drawable/product_bar"
 	android:layout_alignParentBottom="true">
 	<Button
-		android:id="@+id/ProductBarButtonDetails"
-		style="@style/BarButton"
-		android:drawableTop="@android:drawable/ic_dialog_info"
-		android:text="Details" />
-	<View
-		style="@style/BarDivider" />
-	<Button
-		android:id="@+id/ProductBarButtonEdit"
-		style="@style/BarButton"
-		android:drawableTop="@android:drawable/ic_dialog_dialer"
-		android:text="Edit" />
-	<View
-		style="@style/BarDivider" />
-	<Button
 		android:id="@+id/ProductBarButtonLike"
 		style="@style/BarButton"
 		android:drawableTop="@android:drawable/btn_star_big_on"

@@ -1,6 +1,5 @@
 package mobi.my2cents;
 
-import mobi.my2cents.data.DataManager;
 import mobi.my2cents.utils.NetworkManager;
 import mobi.my2cents.utils.WebViewPool;
 import android.app.Application;
@@ -30,7 +29,6 @@ public class My2CentsApplication extends Application {
 		} catch (NameNotFoundException e) {
 			Log.e(TAG, e.getMessage());
 		}
-		DataManager.initialize(this);
 		
 		webViewPool = new WebViewPool(this);
 	}

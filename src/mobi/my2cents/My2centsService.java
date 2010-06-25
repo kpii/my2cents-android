@@ -14,37 +14,19 @@
 
 package mobi.my2cents;
 
+import mobi.my2cents.data.Comment;
+import mobi.my2cents.data.Product;
+import mobi.my2cents.data.TransitionalStateColumns;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Environment;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.util.Log;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Date;
-
-import org.apache.http.ConnectionReuseStrategy;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import mobi.my2cents.data.Comment;
-import mobi.my2cents.data.DataManager;
-import mobi.my2cents.data.Product;
-import mobi.my2cents.data.ProductInfo;
-import mobi.my2cents.data.TransitionalStateColumns;
-import mobi.my2cents.utils.NetworkManager;
 
 
 public class My2centsService extends WakefulIntentService {
@@ -76,97 +58,97 @@ public class My2centsService extends WakefulIntentService {
 	@Override
 	protected void doWakefulWork(Intent intent) {
 		
-		// search product
-		if (intent.hasExtra(Product.KEY)) {
-			
-			String key = intent.getExtras().getString(Product.KEY);
-			Log.d(TAG, "searching product "+key+"...");
-
-			ContentValues cv = new ContentValues();
-			cv.put(Product.KEY, key);
-			cv.put(Product.TRANSITION_ACTIVE, true);
-			Uri uri = getContentResolver().insert(Product.CONTENT_URI, cv);
-		
-			ProductInfo product = getProduct(key, null);
-			
-			cv = product.toContentValues();
-			cv.put(Product.TRANSITION_ACTIVE, false);
-			cv.put(Product.GET_TRANSITIONAL_STATE, false);
-			getContentResolver().update(Uri.withAppendedPath(Product.CONTENT_URI, product.getGtin()), cv, null, null);
-			
-			// insert comments
-			for (Comment c : product.getComments()) {
-//				getContentResolver().insert(Uri.withAppendedPath(uri, "comments"), c.toContentValues());
-			}
-			Log.d(TAG, "->Done.");
-		
-		// check for product updates and/or new comments
-		} else if (intent.hasExtra("poll")) {
-			
-			Log.d(TAG, "polling... ");
-			Cursor products = getContentResolver().query(Product.CONTENT_URI, 
-					new String[] { Product.KEY }, null, null, null);
-			while (!products.isLast()) {
-				products.moveToNext();
-				String key = products.getString(0);
-				ProductInfo product = getProduct(key, products.getString(1));
-				if (product != null) {
-					getContentResolver().update(Uri.withAppendedPath(Product.CONTENT_URI, key), 
-										product.toContentValues(), null, null);
-					Log.d(TAG, "updated product");
-					
-					// reinsert all comments (for now)
-					getContentResolver().delete(Comment.CONTENT_URI, Comment.PRODUCT_KEY+"=?", new String[]{key});
-					for (Comment c : product.getComments())
-//						getContentResolver().insert(Uri.withAppendedPath(Product.CONTENT_URI, key+"/comments"), c.toContentValues());
-					
-					if (activityVisible) {
-						Log.d(TAG, "  -> activity is visible");
-					} else {
-						Log.d(TAG, "  -> activity NOT visible");
-						Notification n = new Notification();
-						n.icon = R.drawable.birdy;
-						n.setLatestEventInfo(this, "new Comments!", "super many cool new comments for products you care for",
-								PendingIntent.getActivity(this, 0, new Intent(), Notification.FLAG_ONLY_ALERT_ONCE));
-						notificationManagr.notify(1, n);
-						
-					}
-				} else
-					Log.d(TAG, "no updates.");
-			}
-			products.close();
-			Log.d(TAG, "->Done.");
-			
-		// sync changes up to server
-		} else if (intent.hasExtra("push")) {
-
-			try {
-				Log.d(TAG, "My2centsService started.");
-				// getTransferableItemsFromContentProvider() begin
-				Cursor comments2sync = getContentResolver().query(
-						Comment.CONTENT_URI, null,
-						TransitionalStateColumns.SELECTION, null, null);
-				// getTransferableItemsFromContentProvider() ende
-				while (comments2sync.getPosition() < comments2sync.getCount()-1) {
-					Log.d(TAG, "he lets do some work");
-					comments2sync.moveToNext();
-					ContentValues cv = new ContentValues();
-					cv.put(Comment.TRANSITION_ACTIVE, true);
-					getContentResolver().update(ContentUris.withAppendedId(Comment.CONTENT_URI,
-									comments2sync.getInt(0)), cv, null, null);
-					// TODO rest post to server
-				}
-				comments2sync.close();
-			} catch (Exception e) {
-				Log.e(TAG, "My2centsService crashed.", e);
-			}
-		}
+//		// search product
+//		if (intent.hasExtra(Product.KEY)) {
+//			
+//			String key = intent.getExtras().getString(Product.KEY);
+//			Log.d(TAG, "searching product "+key+"...");
+//
+//			ContentValues cv = new ContentValues();
+//			cv.put(Product.KEY, key);
+//			cv.put(Product.TRANSITION_ACTIVE, true);
+//			Uri uri = getContentResolver().insert(Product.CONTENT_URI, cv);
+//		
+//			ProductInfo product = getProduct(key, null);
+//			
+//			cv = product.toContentValues();
+//			cv.put(Product.TRANSITION_ACTIVE, false);
+//			cv.put(Product.GET_TRANSITIONAL_STATE, false);
+//			getContentResolver().update(Uri.withAppendedPath(Product.CONTENT_URI, product.getGtin()), cv, null, null);
+//			
+//			// insert comments
+//			for (Comment c : product.getComments()) {
+////				getContentResolver().insert(Uri.withAppendedPath(uri, "comments"), c.toContentValues());
+//			}
+//			Log.d(TAG, "->Done.");
+//		
+//		// check for product updates and/or new comments
+//		} else if (intent.hasExtra("poll")) {
+//			
+//			Log.d(TAG, "polling... ");
+//			Cursor products = getContentResolver().query(Product.CONTENT_URI, 
+//					new String[] { Product.KEY }, null, null, null);
+//			while (!products.isLast()) {
+//				products.moveToNext();
+//				String key = products.getString(0);
+//				ProductInfo product = getProduct(key, products.getString(1));
+//				if (product != null) {
+//					getContentResolver().update(Uri.withAppendedPath(Product.CONTENT_URI, key), 
+//										product.toContentValues(), null, null);
+//					Log.d(TAG, "updated product");
+//					
+//					// reinsert all comments (for now)
+//					getContentResolver().delete(Comment.CONTENT_URI, Comment.PRODUCT_KEY+"=?", new String[]{key});
+//					for (Comment c : product.getComments())
+////						getContentResolver().insert(Uri.withAppendedPath(Product.CONTENT_URI, key+"/comments"), c.toContentValues());
+//					
+//					if (activityVisible) {
+//						Log.d(TAG, "  -> activity is visible");
+//					} else {
+//						Log.d(TAG, "  -> activity NOT visible");
+//						Notification n = new Notification();
+//						n.icon = R.drawable.birdy;
+//						n.setLatestEventInfo(this, "new Comments!", "super many cool new comments for products you care for",
+//								PendingIntent.getActivity(this, 0, new Intent(), Notification.FLAG_ONLY_ALERT_ONCE));
+//						notificationManagr.notify(1, n);
+//						
+//					}
+//				} else
+//					Log.d(TAG, "no updates.");
+//			}
+//			products.close();
+//			Log.d(TAG, "->Done.");
+//			
+//		// sync changes up to server
+//		} else if (intent.hasExtra("push")) {
+//
+//			try {
+//				Log.d(TAG, "My2centsService started.");
+//				// getTransferableItemsFromContentProvider() begin
+//				Cursor comments2sync = getContentResolver().query(
+//						Comment.CONTENT_URI, null,
+//						TransitionalStateColumns.SELECTION, null, null);
+//				// getTransferableItemsFromContentProvider() ende
+//				while (comments2sync.getPosition() < comments2sync.getCount()-1) {
+//					Log.d(TAG, "he lets do some work");
+//					comments2sync.moveToNext();
+//					ContentValues cv = new ContentValues();
+//					cv.put(Comment.TRANSITION_ACTIVE, true);
+//					getContentResolver().update(ContentUris.withAppendedId(Comment.CONTENT_URI,
+//									comments2sync.getInt(0)), cv, null, null);
+//					// TODO rest post to server
+//				}
+//				comments2sync.close();
+//			} catch (Exception e) {
+//				Log.e(TAG, "My2centsService crashed.", e);
+//			}
+//		}
 	}
 
 
 	// this method is somehow redundant/duplicate :/
 	// found no better approach to get the ETag header out of the http response
-	private ProductInfo getProduct(String key, String etag) {
+//	private ProductInfo getProduct(String key, String etag) {
 //		try {
 //			DefaultHttpClient httpClient = new DefaultHttpClient();
 //			HttpGet get = new HttpGet(NetworkManager.BASE_URL+"/products/"+key+".json");
@@ -185,8 +167,8 @@ public class My2centsService extends WakefulIntentService {
 //			Log.e(TAG, "Mist!", e);
 //			e.printStackTrace();
 //		}
-		return null;
-	}
+//		return null;
+//	}
 
 
 
