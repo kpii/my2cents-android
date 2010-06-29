@@ -1,6 +1,9 @@
 package mobi.my2cents;
 
- import mobi.my2cents.data.Comment;
+ import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import mobi.my2cents.data.Comment;
 import mobi.my2cents.data.Product;
 import android.app.AlarmManager;
 import android.app.ListActivity;
@@ -90,9 +93,16 @@ public class ProductActivity extends ListActivity {
 		findViewById(R.id.NavigationButtonHistory).setOnClickListener(historyListener);
 	
 	    uri = getIntent().getData();
+	        
+        if (uri.getScheme().equals("http")) {
+            Matcher m = Pattern.compile(".*my2cents.mobi/products/(\\d*)$").matcher(getIntent().getDataString());
+            if (m.matches()) {
+                Log.d(TAG, "matched htttp uri. product_key: "+m.group(1));
+                uri = Uri.withAppendedPath(Product.CONTENT_URI, m.group(1));
+            } 
+        }
+      
 	    product = managedQuery(uri, null, null, null, null);
-	    
-	   
 	    if (product.getCount() > 0) {
 	    	product.moveToFirst();
 	    	Log.d(TAG, product.getString(1));

@@ -100,7 +100,13 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="ProductActivity">
+			android:name="ProductActivity" android:label="@string/product_view">
+			<intent-filter>
+           <action android:name="android.intent.action.VIEW" />
+           <category android:name="android.intent.category.DEFAULT" />
+           <data android:scheme="http" android:host="my2cents.mobi" />
+           <data android:scheme="http" android:host="twitter.com" /> 
+       </intent-filter>
 			<intent-filter>
 				<action
 					android:name="android.intent.action.VIEW" />
@@ -114,11 +120,12 @@
 			android:name="UserDetailActivity">
 		</activity>
 		<activity
-			android:name="WebViewActivity">
+			android:name="WebViewActivity" android:label="@string/web_view">
 					   <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:scheme="http" android:host="my2cents.mobi" /> 
+                
             </intent-filter>
 		</activity>
 		<provider
