@@ -14,8 +14,7 @@ public class WebViewPool {
 	private Context ctx;
 
 	public WebViewPool(Context ctx) {
-		poolsize = DEFAULT_POOLSIZE;
-		new WebViewPool(ctx, poolsize);
+	    this(ctx, DEFAULT_POOLSIZE);
 	}
 
 	public WebViewPool(Context ctx, int poolsize) {

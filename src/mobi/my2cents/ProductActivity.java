@@ -15,6 +15,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -185,6 +187,19 @@ public class ProductActivity extends ListActivity {
         super.onPause();
     }
 
+    @Override
+    public void onListItemClick(ListView parent, View v, int position, long id) {
+        final Cursor cursor = (Cursor) getListView().getItemAtPosition(position);
+        final String key = cursor.getString(cursor.getColumnIndex(Comment.USER_KEY));
+        String user_url = "http://my2cents.mobi/users/"+key;
+        Log.d(TAG, key);
+        if (!TextUtils.isEmpty(key)) {
+//          Intent intent = new Intent(this, CommentActivity.class);
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(user_url), this, WebViewActivity.class);
+            startActivity(intent);
+        }
+    }
+    
     private final View.OnClickListener homeListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			Intent intent = new Intent(getBaseContext(), MainActivity.class);
