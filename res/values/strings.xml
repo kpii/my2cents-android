@@ -146,4 +146,6 @@
 
     <string name="product_view">give your 2cents! on products</string>
     <string name="web_view">my2cents browser</string>
+    
+    <string name="client_token">client_token</string>
 </resources>

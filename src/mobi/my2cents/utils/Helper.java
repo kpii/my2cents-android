@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 
@@ -31,15 +32,15 @@ public final class Helper {
 		return BitmapFactory.decodeByteArray(bitmapArray, 0, bitmapArray.length); 
     }
 	
-	public static String getClientID(Context context) {
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
-		String key = context.getString(R.string.settings_client_id);
-		String clientId = settings.getString(key, "");
-		if(clientId == null || clientId.equals("")) {
-			clientId = UUID.randomUUID().toString();
-			settings.edit().putString(key, clientId).commit();
+	public static final String getClientID(Context context) {
+		final SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+		final String key = context.getString(R.string.client_token);
+		String clientToken = settings.getString(key, "");
+		if(TextUtils.isEmpty(clientToken)) {
+			clientToken = UUID.randomUUID().toString();
+			settings.edit().putString(key, clientToken).commit();
 		}	
-		return clientId;
+		return clientToken;
 	}
 	
 	public static long parseDate(String data) {
