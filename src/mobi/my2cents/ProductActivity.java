@@ -72,8 +72,8 @@ public class ProductActivity extends ListActivity {
 		
 		productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
 		affiliateTextView = (TextView) findViewById(R.id.AffiliateTextView);
-		likesTextView = (TextView) findViewById(R.id.LikesTextView);
-		dislikesTextView = (TextView) findViewById(R.id.DislikesTextView);
+//		likesTextView = (TextView) findViewById(R.id.LikesTextView);
+//		dislikesTextView = (TextView) findViewById(R.id.DislikesTextView);
 		
 		commentEditor = (EditText) findViewById(R.id.CommentEditText);
 		commentEditor.setOnEditorActionListener(sendCommentActionListener);

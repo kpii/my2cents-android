@@ -39,7 +39,7 @@ public final class FeedActivity extends ListActivity {
 		feedUpdaterReceiver = new FeedUpdaterReceiver();
 		imageDownloaderReceiver = new ImageDownloaderReceiver();
 		
-		bindAdapter();		
+		bindAdapter();
 		prepareUI();
 		
 		handleIntent(getIntent());
@@ -126,8 +126,8 @@ public final class FeedActivity extends ListActivity {
 		final Cursor cursor = (Cursor) getListView().getItemAtPosition(position);
 		final String key = cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_KEY));
 		if (!TextUtils.isEmpty(key)) {
-//			Intent intent = new Intent(this, CommentActivity.class);
-			Intent intent = new Intent(this, ProductActivity.class);
+			Intent intent = new Intent(this, CommentActivity.class);
+//			Intent intent = new Intent(this, ProductActivity.class);
 			intent.setData(Uri.withAppendedPath(Product.CONTENT_URI, key));
 			startActivity(intent);
 		}

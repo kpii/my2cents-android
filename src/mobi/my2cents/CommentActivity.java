@@ -23,6 +23,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.Html;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,6 +35,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
@@ -43,8 +45,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public final class CommentActivity extends ListActivity {
-	
-	public final static String UPDATE_HISTORY = "UpdateHistory";
 	
 	private final int DIALOG_PRODUCT_DETAILS = 0;
 	
@@ -63,8 +63,8 @@ public final class CommentActivity extends ListActivity {
 	private ImageView productImageView;
 	private TextView productNameTextView;
 	private TextView affiliateTextView;
-	private TextView likesTextView;
-	private TextView dislikesTextView;
+	private Button buttonLikes;
+	private Button buttonDislikes;
 	
 	private EditText commentEditor;
 	private View statusLayout;
@@ -139,14 +139,15 @@ public final class CommentActivity extends ListActivity {
 		if (cursor.moveToFirst()) {			
 			final String name = cursor.getString(cursor.getColumnIndex(Product.NAME));
 			final String affiliateName = cursor.getString(cursor.getColumnIndex(Product.AFFILIATE_NAME));
+			final String affiliateUrl = cursor.getString(cursor.getColumnIndex(Product.AFFILIATE_URL));
 			final String imageUrl = cursor.getString(cursor.getColumnIndex(Product.IMAGE_URL));
 			final int likes = cursor.getInt(cursor.getColumnIndex(Product.RATING_LIKES));
 			final int dislikes = cursor.getInt(cursor.getColumnIndex(Product.RATING_DISLIKES));
 			
 			productNameTextView.setText(name);			
-			affiliateTextView.setText(affiliateName);
-			likesTextView.setText("Likes: " + likes);
-			dislikesTextView.setText("Dislikes: " + dislikes);
+			affiliateTextView.setText("productinfo by " + Html.fromHtml("<a href='" + affiliateUrl + "'>" + affiliateName + "</a>"));
+			buttonLikes.setText(Integer.toString(likes));
+			buttonDislikes.setText(Integer.toString(dislikes));
 
 			productImageView.setImageBitmap(ImageManager.getImage(imageUrl));			
 		}
@@ -161,7 +162,7 @@ public final class CommentActivity extends ListActivity {
 			Intent intent = new Intent(this, ProductUpdaterService.class);
 			intent.setData(uri);
 			startService(intent);
-		}		
+		}
 	}
 	
 	private void prepareUI() {
@@ -175,8 +176,12 @@ public final class CommentActivity extends ListActivity {
 		productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
 		affiliateTextView = (TextView) findViewById(R.id.AffiliateTextView);
 		affiliateTextView.setOnClickListener(affiliateListener);
-		likesTextView = (TextView) findViewById(R.id.LikesTextView);
-		dislikesTextView = (TextView) findViewById(R.id.DislikesTextView);
+		
+		buttonLikes = (Button) findViewById(R.id.ButtonLikes);
+		buttonLikes.setOnClickListener(likeListener);
+		
+		buttonDislikes = (Button) findViewById(R.id.ButtonDislikes);
+		buttonDislikes.setOnClickListener(dislikeListener);
 		
 		commentEditor = (EditText) findViewById(R.id.CommentEditText);
 		commentEditor.setOnEditorActionListener(sendCommentActionListener);
