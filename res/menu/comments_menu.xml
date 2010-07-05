@@ -10,13 +10,7 @@
 		android:id="@+id/infoMenuItem"
 		android:title="@string/menu_info"
 		android:icon="@android:drawable/ic_menu_info_details" />
-	<item
-		android:id="@+id/thumbsUpMenuItem"
-		android:title="@string/thumbs_up"
-		android:icon="@android:drawable/ic_menu_info_details" />
-	<item
-		android:id="@+id/thumbsDownMenuItem"
-		android:title="@string/thumbs_down"
-		android:icon="@android:drawable/ic_menu_info_details" />
+	
+	
 		
 </menu>

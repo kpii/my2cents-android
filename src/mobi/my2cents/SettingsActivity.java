@@ -1,6 +1,7 @@
 
 package mobi.my2cents;
 
+import mobi.my2cents.utils.AuthenticationManager;
 import mobi.my2cents.utils.Helper;
 import mobi.my2cents.utils.NetworkManager;
 import android.app.AlarmManager;
@@ -18,6 +19,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
@@ -43,40 +45,35 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		addPreferencesFromResource(R.xml.preferences);
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
 		
-		ListPreference listpreference = ((ListPreference)findPreference("polling_interval"));
-		listpreference.setSummary(listpreference.getEntry());
-		
 		loginCheckBoxPreference = (CheckBoxPreference) findPreference(getString(R.string.settings_login));
 		
 		// Intent feedback
-        PreferenceScreen feedbackPreference = (PreferenceScreen)getPreferenceManager().findPreference(getString(R.string.settings_send_feedback));
-        Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+        final PreferenceScreen feedbackPreference = (PreferenceScreen)getPreferenceManager().findPreference(getString(R.string.settings_send_feedback));
+        final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
 		emailIntent.setType("plain/text");
 		emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"feedback@my2cents.mobi"});
-		emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "my2cents user feedback [" + Helper.getClientID(this) + "]");
+		emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "my2cents user feedback [" + AuthenticationManager.getClientToken() + "]");
 		feedbackPreference.setIntent(emailIntent);
 	}
 	
 	@Override
 	protected void onResume() {
-		super.onResume();
-		
+		super.onResume();		
 		settings.registerOnSharedPreferenceChangeListener(this);
+		
         if (!isAccessTokenStored())
         	unsetTokens();
 	}
 	
 	@Override
 	protected void onPause() {
-		getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+		settings.unregisterOnSharedPreferenceChangeListener(this);
 		super.onPause();
 	}
 	
 	public boolean isAccessTokenStored() {
-		String token = settings.getString(getString(R.string.settings_token),"");
-		if (token.equals(""))
-			return false;
-		return true;
+		final String token = settings.getString(getString(R.string.settings_token), "");
+		return !TextUtils.isEmpty(token);
 	}
 	
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {        
@@ -86,16 +83,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
         	} else {
         		unsetTokens();
         	}
-        } else if (key.equals("polling_interval")) {
-        	int newValue = Integer.valueOf(sharedPreferences.getString("polling_interval", "30000"));
-        	Log.d(My2Cents.TAG, "polling setting changed "+newValue);
-			AlarmManager mgr=(AlarmManager)getSystemService(Context.ALARM_SERVICE);
-			Intent i=new Intent(SettingsActivity.this, OnAlarmReceiver.class);
-			PendingIntent pi=PendingIntent.getBroadcast(SettingsActivity.this, 0,i, 0);
-			mgr.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-												SystemClock.elapsedRealtime()+newValue,newValue,pi);
-			ListPreference listpreference = ((ListPreference)findPreference("polling_interval"));
-			listpreference.setSummary(listpreference.getEntry());
         }
     }
 	
@@ -111,8 +98,8 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
         	switch (resultCode) {
 				case RESULT_OK: {
 					if (intent != null) {
-	                	String authToken = intent.getStringExtra(getString(R.string.settings_token));
-	                	if ((authToken != null) && (authToken != "")) {
+	                	final String authToken = intent.getStringExtra(getString(R.string.settings_token));
+	                	if (!TextUtils.isEmpty(authToken)) {
 	                		onSetToken();
 	                	}
 	                }
@@ -129,12 +116,12 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	private void unsetTokens() {
 		settings.unregisterOnSharedPreferenceChangeListener(this);
 		
-		SharedPreferences.Editor editor = settings.edit();
+		AuthenticationManager.logout();
+		
+		final SharedPreferences.Editor editor = settings.edit();
 		editor.putString(getString(R.string.settings_token), "");
 		editor.putBoolean(getString(R.string.settings_login), false);
 		editor.commit();
-		
-		NetworkManager.setAuthToken("");
 		
 		CookieSyncManager.getInstance().sync();
 		CookieManager cookieManager = CookieManager.getInstance();

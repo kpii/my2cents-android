@@ -170,10 +170,9 @@ public final class CommentActivity extends ListActivity {
 		
 		statusLayout = findViewById(R.id.StatusRelativeLayout);
 		
-		productImageView = (ImageView) findViewById(R.id.ProductImageView);
-		productImageView.setOnClickListener(productImageListener);
-		
+		productImageView = (ImageView) findViewById(R.id.ProductImageView);		
 		productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
+		
 		affiliateTextView = (TextView) findViewById(R.id.AffiliateTextView);
 		affiliateTextView.setOnClickListener(affiliateListener);
 		
@@ -190,7 +189,8 @@ public final class CommentActivity extends ListActivity {
 		tagsGallery.setAdapter(tagsAdapter);
 		tagsGallery.setOnItemLongClickListener(tagsLongClickListener);
 		
-		findViewById(R.id.ProductInfoPanel).setOnClickListener(productQuickActionsListener);
+//		findViewById(R.id.ProductInfoPanel).setOnClickListener(productQuickActionsListener);
+		
 		findViewById(R.id.LoginButton).setOnClickListener(loginListener);
 		findViewById(R.id.SendButton).setOnClickListener(sendCommentListener);
 		

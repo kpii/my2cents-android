@@ -7,7 +7,6 @@ import java.net.URL;
 
 import mobi.my2cents.My2Cents;
 
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -28,10 +27,9 @@ import android.util.Log;
 
 public final class NetworkManager {
 
-	private static String authToken;
-	private static String sessionToken;
-	public static String userAgent;
 	public static final String BASE_URL = "http://my2cents.mobi";
+	
+	public static String userAgent;
 	
 	static {
 		System.setProperty("http.keepAlive", "false");
@@ -68,14 +66,6 @@ public final class NetworkManager {
 			return null;
 		}
 	}
-
-	public static void setAuthToken(String authToken) {
-		NetworkManager.authToken = authToken;
-	}
-
-	public static String getAuthToken() {
-		return authToken;
-	}
 	
 	
 	public static String getREST(String url) throws ClientProtocolException, IOException {
@@ -84,15 +74,7 @@ public final class NetworkManager {
 		final AndroidHttpClient client = AndroidHttpClient.newInstance(userAgent);
 		try {
 			final HttpResponse response = client.execute(httpGet);
-			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				
-				if (sessionToken == null) {
-					Header sessionCookie = response.getFirstHeader("Set-Cookie");
-					if (sessionCookie != null) {
-						sessionToken = sessionCookie.getValue();
-					}
-				}		
-				
+			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {				
 				final HttpEntity entity = response.getEntity();
 				result = EntityUtils.toString(entity);
 			}
@@ -106,15 +88,7 @@ public final class NetworkManager {
 	public static String postREST(String url, String content) throws ClientProtocolException, IOException {
 		String result = null;
 		final HttpPost httpPost = new HttpPost(url);
-		
-		if ((authToken != null) && (!authToken.equals(""))) {
-	    	httpPost.setHeader("Cookie", authToken);
-	    }
-	    else {
-	    	if (sessionToken != null) {
-	    		httpPost.setHeader("Cookie", sessionToken);
-	    	}
-	    }
+		httpPost.setHeader("Cookie", "client_token=" + AuthenticationManager.getClientToken());
 		
 		StringEntity entity = new StringEntity(content, "UTF-8");
         entity.setContentType("application/json");
@@ -136,15 +110,7 @@ public final class NetworkManager {
 	public static String putREST(String url, String content) throws ClientProtocolException, IOException {
 		String result = null;
 		final HttpPut httpPut = new HttpPut(url);
-		
-		if ((authToken != null) && (!authToken.equals(""))) {
-			httpPut.setHeader("Cookie", authToken);
-	    }
-	    else {
-	    	if (sessionToken != null) {
-	    		httpPut.setHeader("Cookie", sessionToken);
-	    	}
-	    }
+		httpPut.setHeader("Cookie", "client_token=" + AuthenticationManager.getClientToken());
 		
 		StringEntity entity = new StringEntity(content, "UTF-8");
         entity.setContentType("application/json");

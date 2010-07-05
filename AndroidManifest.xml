@@ -98,51 +98,9 @@
 					android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
-		<activity
-			android:name="ProductActivity" android:label="@string/product_view">
-			<intent-filter>
-           <action android:name="android.intent.action.VIEW" />
-           <category android:name="android.intent.category.DEFAULT" />
-           <data android:scheme="http" android:host="my2cents.mobi" />
-           <data android:scheme="http" android:host="twitter.com" /> 
-       </intent-filter>
-			<intent-filter>
-				<action
-					android:name="android.intent.action.VIEW" />
-				<data
-					android:mimeType="vnd.android.cursor.item/mobi.my2cents.product" />
-				<category
-					android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-		</activity>
-		<activity
-			android:name="UserDetailActivity">
-		</activity>
-		<activity
-			android:name="WebViewActivity" android:label="@string/web_view">
-					   <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:scheme="http" android:host="my2cents.mobi" /> 
-                
-            </intent-filter>
-		</activity>
 		<provider
 			android:name=".data.My2CentsProvider"
 			android:authorities="mobi.my2cents"></provider>
-		<receiver
-			android:name=".OnBootReceiver">
-			<intent-filter>
-				<action
-					android:name="android.intent.action.BOOT_COMPLETED" />
-			</intent-filter>
-		</receiver>
-		<receiver
-			android:name=".OnAlarmReceiver">
-		</receiver>
-<!--		<service-->
-<!--			android:name=".My2centsService">-->
-<!--		</service>-->
 		<service
 			android:name=".FeedUpdaterService"></service>
 		<service

@@ -1,5 +1,6 @@
 package mobi.my2cents;
 
+import mobi.my2cents.utils.AuthenticationManager;
 import mobi.my2cents.utils.NetworkManager;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -92,7 +93,7 @@ public final class AuthorizationActivity extends Activity {
 		editor.putBoolean(getString(R.string.settings_login), true);
 		editor.commit();
 		
-		NetworkManager.setAuthToken(token);
+//		NetworkManager.setAuthToken(token);
 		
 		Log.i(TAG, "Tokens stored");
 	}
@@ -101,7 +102,7 @@ public final class AuthorizationActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		CookieSyncManager.getInstance().startSync();
-		webView.loadUrl(NetworkManager.BASE_URL + "/login");
+		webView.loadUrl(NetworkManager.BASE_URL + "/login?client_token=" + AuthenticationManager.getClientToken());
 	}
 	
 	@Override

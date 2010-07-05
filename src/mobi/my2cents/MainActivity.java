@@ -1,7 +1,6 @@
 
 package mobi.my2cents;
 
-import mobi.my2cents.utils.NetworkManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,7 +29,6 @@ public final class MainActivity extends Activity {
 		findViewById(R.id.HomeTwitterLayout).setOnClickListener(loginListener);
 		
         settings = PreferenceManager.getDefaultSharedPreferences(this);
-		NetworkManager.setAuthToken(settings.getString(getString(R.string.settings_token),""));
 		
 		showHelpOnFirstLaunch();
 	}
