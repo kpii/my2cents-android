@@ -23,9 +23,7 @@
 		android:layout_alignParentTop="true"
 		android:ellipsize="marquee"
 		android:textColor="@color/comment_text"
-		android:textSize="@dimen/comment_text" 	
-	/>	
-	
+		android:textSize="@dimen/comment_text" />
 	<TextView
 		android:id="@+id/CommentAuthorTextView"
 		android:layout_toRightOf="@id/CommentImageView"
@@ -45,12 +43,11 @@
 		android:layout_below="@id/CommentTextView"
 		android:layout_width="fill_parent"
 		android:gravity="right"></TextView>
-	<ProgressBar 
-		android:id="@+id/NetworkState"
-		android:layout_height="5dip"
-		android:layout_width="5dip"
+	<ProgressBar
+		android:id="@+id/StateProgressBar"
+		android:layout_height="5dp"
+		android:layout_width="5dp"
 		android:layout_alignParentRight="true"
 		android:layout_alignParentTop="true"
-		
-	/>
+		android:visibility="gone" />
 </RelativeLayout>

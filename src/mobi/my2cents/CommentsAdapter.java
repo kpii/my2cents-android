@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
@@ -37,6 +38,15 @@ public class CommentsAdapter extends CursorAdapter {
 		final String url = cursor.getString(cursor.getColumnIndex(Comment.USER_IMAGE_URL));
 		final Bitmap bitmap = ImageManager.getImage(url);
 		profileImageView.setImageBitmap(bitmap);
+		
+		final ProgressBar stateProgressBar = (ProgressBar) view.findViewById(R.id.StateProgressBar);
+		final int state = cursor.getInt(cursor.getColumnIndex(Comment.TRANSITION_ACTIVE));
+		if (state == 1) {
+			stateProgressBar.setVisibility(View.VISIBLE);
+		}
+		else {
+			stateProgressBar.setVisibility(View.GONE);
+		}
 	}
 
 	@Override
