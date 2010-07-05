@@ -488,6 +488,9 @@ public final class CommentActivity extends ListActivity {
 		super.onConfigurationChanged(config);
 		closeProductPopupBar();
 		prepareUI();
+		if (product != null) {
+			displayProduct(product);
+		}
 	}
 	
 	@Override
