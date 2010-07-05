@@ -145,7 +145,7 @@ public final class CommentActivity extends ListActivity {
 			final int dislikes = cursor.getInt(cursor.getColumnIndex(Product.RATING_DISLIKES));
 			
 			productNameTextView.setText(name);			
-			affiliateTextView.setText("productinfo by " + Html.fromHtml("<a href='" + affiliateUrl + "'>" + affiliateName + "</a>"));
+			affiliateTextView.setText(Html.fromHtml("productinfo by <a href='" + affiliateUrl + "'>" + affiliateName + "</a>"));
 			buttonLikes.setText(Integer.toString(likes));
 			buttonDislikes.setText(Integer.toString(dislikes));
 
