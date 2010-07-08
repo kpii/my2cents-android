@@ -61,6 +61,7 @@ public final class ProductActivity extends ListActivity {
 	private TagsAdapter tagsAdapter;	
 	private Gallery tagsGallery;
 	
+	private View productPanel;
 	private ImageView productImageView;
 	private TextView productNameTextView;
 	private TextView affiliateTextView;
@@ -139,7 +140,8 @@ public final class ProductActivity extends ListActivity {
 	{
 		product = uri;
 		final Cursor cursor = managedQuery(uri, null, null, null, null);
-		if (cursor.moveToFirst()) {			
+		if (cursor.moveToFirst()) {
+			
 			final String name = cursor.getString(cursor.getColumnIndex(Product.NAME));
 			final String affiliateName = cursor.getString(cursor.getColumnIndex(Product.AFFILIATE_NAME));
 			final String affiliateUrl = cursor.getString(cursor.getColumnIndex(Product.AFFILIATE_URL));
@@ -160,7 +162,12 @@ public final class ProductActivity extends ListActivity {
 			buttonLikes.setText(Integer.toString(likes));
 			buttonDislikes.setText(Integer.toString(dislikes));
 
-			productImageView.setImageBitmap(ImageManager.getImage(imageUrl));			
+			productImageView.setImageBitmap(ImageManager.getImage(imageUrl));
+			
+			productPanel.setVisibility(View.VISIBLE);
+		}
+		else {
+			productPanel.setVisibility(View.GONE);
 		}
 	}
 	
@@ -182,7 +189,8 @@ public final class ProductActivity extends ListActivity {
 		statusPanel = findViewById(R.id.StatusPanel);
 		statusTextView = (TextView) findViewById(R.id.StatusTextView);
 		
-		productImageView = (ImageView) findViewById(R.id.ProductImageView);		
+		productPanel = findViewById(R.id.ProductInfoPanel);
+		productImageView = (ImageView) findViewById(R.id.ProductImageView);
 		productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
 		
 		affiliateTextView = (TextView) findViewById(R.id.AffiliateTextView);

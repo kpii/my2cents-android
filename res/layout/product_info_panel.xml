@@ -5,7 +5,7 @@
 	android:layout_height="wrap_content"
 	android:padding="@dimen/product_layout_padding"
 	android:background="@color/product_panel_background"
-	android:id="@+id/ProductInfoPanel">
+	android:id="@+id/ProductInfoPanel" android:visibility="gone">
 	<ImageView
 		android:layout_width="wrap_content"
 		android:layout_marginRight="6dip"
