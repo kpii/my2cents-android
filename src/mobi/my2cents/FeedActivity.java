@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public final class FeedActivity extends ListActivity {
@@ -27,6 +28,7 @@ public final class FeedActivity extends ListActivity {
 	private FeedAdapter adapter;
 	
 	private View statusPanel;
+	private TextView statusTextView;
 	
 	private FeedUpdaterReceiver feedUpdaterReceiver;
 	private ImageDownloaderReceiver imageDownloaderReceiver;
@@ -80,7 +82,7 @@ public final class FeedActivity extends ListActivity {
 			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
 		}
 		else {
-			statusPanel.setVisibility(View.VISIBLE);
+			showStatus(getString(R.string.message_stream_loading));
 			Intent intent = new Intent(this, FeedUpdaterService.class);
 			startService(intent);
 		}		
@@ -90,6 +92,7 @@ public final class FeedActivity extends ListActivity {
 		setContentView(R.layout.feed_activity);
 
 		statusPanel = findViewById(R.id.StatusPanel);
+		statusTextView = (TextView) findViewById(R.id.StatusTextView);
 		
 		findViewById(R.id.NavigationButtonHome).setOnClickListener(homeListener);
 		findViewById(R.id.NavigationButtonScan).setOnClickListener(scanListener);
@@ -97,7 +100,14 @@ public final class FeedActivity extends ListActivity {
 		findViewById(R.id.NavigationButtonHistory).setOnClickListener(historyListener);
 	}
 	
+	private void showStatus(String message) {
+		statusTextView.setText(message);
+		statusPanel.setVisibility(View.VISIBLE);
+	}
 	
+	private void hideStatus() {
+		statusPanel.setVisibility(View.GONE);
+	}
 	
 	private final Button.OnClickListener scanListener = new Button.OnClickListener() {
 		public void onClick(View view) {
@@ -186,7 +196,7 @@ public final class FeedActivity extends ListActivity {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			statusPanel.setVisibility(View.GONE);
+			hideStatus();
 			adapter.getCursor().requery();
 			adapter.notifyDataSetChanged();
 		}

@@ -67,8 +67,10 @@ public final class ProductActivity extends ListActivity {
 	private Button buttonDislikes;
 	
 	private EditText commentEditor;
-	private View statusPanel;
 	private PopupWindow productPopup;
+	
+	private View statusPanel;
+	private TextView statusTextView;
 	
 	private Uri product;
 
@@ -158,7 +160,7 @@ public final class ProductActivity extends ListActivity {
 			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
 		}
 		else {
-			statusPanel.setVisibility(View.VISIBLE);
+			showStatus(getString(R.string.message_product_info_loading));
 			Intent intent = new Intent(this, ProductUpdaterService.class);
 			intent.setData(uri);
 			startService(intent);
@@ -169,6 +171,7 @@ public final class ProductActivity extends ListActivity {
 		setContentView(R.layout.product_activity);
 		
 		statusPanel = findViewById(R.id.StatusPanel);
+		statusTextView = (TextView) findViewById(R.id.StatusTextView);
 		
 		productImageView = (ImageView) findViewById(R.id.ProductImageView);		
 		productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
@@ -199,6 +202,15 @@ public final class ProductActivity extends ListActivity {
 		findViewById(R.id.NavigationButtonScan).setOnClickListener(scanListener);
 		findViewById(R.id.NavigationButtonStream).setOnClickListener(streamListener);
 		findViewById(R.id.NavigationButtonHistory).setOnClickListener(historyListener);
+	}
+	
+	private void showStatus(String message) {
+		statusTextView.setText(message);
+		statusPanel.setVisibility(View.VISIBLE);
+	}
+	
+	private void hideStatus() {
+		statusPanel.setVisibility(View.GONE);
 	}
 	
 	private final View.OnClickListener homeListener = new View.OnClickListener() {
@@ -521,7 +533,7 @@ public final class ProductActivity extends ListActivity {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			statusPanel.setVisibility(View.GONE);
+			hideStatus();
 			adapter.notifyDataSetChanged();
 			final String key = intent.getStringExtra(Product.KEY);
 			displayProduct(Uri.withAppendedPath(Product.CONTENT_URI, key));

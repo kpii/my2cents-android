@@ -19,6 +19,5 @@
 		android:textSize="@dimen/status_text"
 		android:layout_toRightOf="@id/StatusProgressBar"
 		android:layout_centerVertical="true"
-		android:text="@string/message_product_info_loading"
 		android:layout_height="wrap_content"></TextView>
 </RelativeLayout>
