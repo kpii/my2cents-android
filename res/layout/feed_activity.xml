@@ -15,8 +15,6 @@
 		android:textSize="@dimen/info_text"
 		android:padding="@dimen/info_padding"
 		android:text="@string/stream_header"></TextView>
-	<include
-		layout="@layout/status_panel" />
 	<View
 		android:layout_width="fill_parent"
 		android:layout_height="3dp"
@@ -39,6 +37,8 @@
 		android:layout_weight="1"
 		android:textSize="@dimen/empty_list_text"
 		android:text="@string/message_no_stream" />
+	<include
+		layout="@layout/status_panel" />
 	<View
 		android:layout_width="fill_parent"
 		android:layout_height="3dp"

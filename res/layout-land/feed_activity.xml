@@ -15,8 +15,6 @@
 		android:orientation="vertical"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent">
-		<include
-			layout="@layout/status_panel" />
 		<ListView
 			android:layout_width="fill_parent"
 			android:layout_weight="1"
@@ -35,5 +33,7 @@
 			android:layout_weight="1"
 			android:textSize="@dimen/empty_list_text"
 			android:text="@string/message_no_stream" />
+		<include
+			layout="@layout/status_panel" />
 	</LinearLayout>
 </LinearLayout>
