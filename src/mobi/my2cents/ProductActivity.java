@@ -24,6 +24,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -147,7 +148,15 @@ public final class ProductActivity extends ListActivity {
 			final int dislikes = cursor.getInt(cursor.getColumnIndex(Product.RATING_DISLIKES));
 			
 			productNameTextView.setText(name);			
-			affiliateTextView.setText(Html.fromHtml("productinfo by <a href='" + affiliateUrl + "'>" + affiliateName + "</a>"));
+			
+			if (TextUtils.isEmpty(affiliateName) || affiliateName.equals("null")) {
+				affiliateTextView.setVisibility(View.GONE);
+			}
+			else {
+				affiliateTextView.setText(Html.fromHtml("productinfo by <a href='" + affiliateUrl + "'>" + affiliateName + "</a>"));
+				affiliateTextView.setVisibility(View.VISIBLE);
+			}
+			
 			buttonLikes.setText(Integer.toString(likes));
 			buttonDislikes.setText(Integer.toString(dislikes));
 
