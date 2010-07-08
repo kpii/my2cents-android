@@ -161,40 +161,5 @@
 					android:layout_below="@id/HomeHistoryHeaderTextView"></TextView>
 			</RelativeLayout>
 		</LinearLayout>
-		<TextView
-			android:layout_height="wrap_content"
-			android:layout_width="fill_parent"
-			android:text="@string/my2cents_is_empowering"
-			android:paddingLeft="@dimen/home_screen_button_margin_normal"
-			android:paddingRight="@dimen/home_screen_button_margin_normal"
-			android:layout_marginBottom="@dimen/home_screen_button_margin_normal"
-			android:typeface="monospace"
-			android:textSize="@dimen/home_screen_text"
-			android:visibility="gone"></TextView>
-		<TextView
-			android:layout_height="wrap_content"
-			android:layout_width="fill_parent"
-			android:paddingLeft="@dimen/home_screen_button_margin_normal"
-			android:paddingRight="@dimen/home_screen_button_margin_normal"
-			android:layout_marginBottom="@dimen/home_screen_button_margin_normal"
-			android:textSize="@dimen/home_screen_text"
-			android:typeface="monospace"
-			android:text="@string/my2cents_is_social"
-			android:autoLink="web"
-			android:linksClickable="true"
-			android:textColorLink="@color/header_backgroung"
-			android:visibility="gone"></TextView>
-		<TextView
-			android:layout_height="wrap_content"
-			android:layout_width="fill_parent"
-			android:textSize="@dimen/home_screen_text"
-			android:paddingLeft="@dimen/home_screen_button_margin_normal"
-			android:paddingRight="@dimen/home_screen_button_margin_normal"
-			android:text="@string/my2cents_is_evolving"
-			android:typeface="monospace"
-			android:linksClickable="true"
-			android:textColorLink="@color/header_backgroung"
-			android:autoLink="web|email"
-			android:visibility="gone"></TextView>
 	</LinearLayout>
 </LinearLayout>
