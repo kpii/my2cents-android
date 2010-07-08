@@ -33,5 +33,16 @@
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">2dp</item>
         <item name="android:background">@drawable/divider</item>
-    </style>    
+    </style>
+    
+    <style name="ProductNameText">
+        <item name="android:textSize">@dimen/product_name_text</item>
+		<item name="android:textColor">@color/product_name_text</item>
+    </style>
+    
+    <style name="AffiliateText">
+        <item name="android:textSize">@dimen/affiliate_text</item>
+		<item name="android:textColor">@color/affiliate_text</item>
+    </style>
+    
 </resources>

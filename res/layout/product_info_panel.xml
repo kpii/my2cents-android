@@ -4,7 +4,7 @@
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:padding="@dimen/product_layout_padding"
-	android:background="@color/info_backgroung"
+	android:background="@color/product_panel_background"
 	android:id="@+id/ProductInfoPanel">
 	<ImageView
 		android:layout_width="wrap_content"
@@ -19,46 +19,30 @@
 		android:layout_height="wrap_content"
 		android:layout_toRightOf="@id/ProductImageView"
 		android:id="@+id/ProductNameTextView"
-		android:textSize="@dimen/product_name_text"
-		android:textColor="@color/product_name_text"
-		android:layout_marginBottom="5dp" />
+		android:layout_marginBottom="5dp" style="@style/ProductNameText"/>
 	<TextView
 		android:layout_height="wrap_content"
 		android:layout_below="@id/ProductNameTextView"
 		android:layout_toRightOf="@id/ProductImageView"
-		android:textColor="@color/affiliate_text"
-		android:textSize="@dimen/affiliate_text"
 		android:layout_width="fill_parent"
 		android:id="@+id/AffiliateTextView"
-		android:layout_marginBottom="5dp"></TextView>
+		android:layout_marginBottom="5dp" style="@style/AffiliateText"></TextView>
 	<Button
 		android:drawableLeft="@drawable/thumb_up"
 		android:id="@+id/ButtonLikes"
-		android:layout_toRightOf="@id/ProductImageView"
 		android:layout_width="75dp"
 		android:text="0"
 		android:layout_below="@id/AffiliateTextView"
 		android:textSize="12sp"
 		android:layout_height="wrap_content"
-		style="?android:attr/buttonStyleSmall"></Button>
+		style="?android:attr/buttonStyleSmall" android:layout_toLeftOf="@+id/ButtonDislikes"></Button>
 	<Button
 		android:drawableLeft="@drawable/thumb_down"
 		android:id="@+id/ButtonDislikes"
-		android:layout_toRightOf="@id/ButtonLikes"
 		android:layout_width="75dp"
 		android:text="0"
 		android:layout_below="@id/AffiliateTextView"
 		android:layout_height="wrap_content"
 		android:textSize="12sp"
-		style="?android:attr/buttonStyleSmall"></Button>
-	<TextView
-		android:layout_height="wrap_content"
-		android:textSize="@dimen/affiliate_text"
-		android:layout_width="fill_parent"
-		android:layout_toRightOf="@id/ButtonDislikes"
-		android:layout_alignBaseline="@id/ButtonDislikes"
-		android:text="How about you?"
-		android:layout_below="@id/AffiliateTextView"
-		android:textColor="@color/product_name_text"
-		android:layout_margin="5dp" />
+		style="?android:attr/buttonStyleSmall" android:layout_alignParentRight="true"></Button>
 </RelativeLayout>
