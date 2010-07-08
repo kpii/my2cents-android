@@ -5,7 +5,6 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 	<include
-		android:id="@+id/Header"
 		layout="@layout/header" />
 	<TextView
 		android:layout_width="fill_parent"
@@ -16,28 +15,8 @@
 		android:textSize="@dimen/info_text"
 		android:padding="@dimen/info_padding"
 		android:text="@string/stream_header"></TextView>
-	<RelativeLayout
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:id="@+id/StatusRelativeLayout"
-		android:background="@color/status_backgroung"
-		android:visibility="gone"
-		android:padding="5dip">
-		<ProgressBar
-			android:layout_height="24dip"
-			android:layout_width="24dip"
-			android:id="@+id/StatusProgressBar"
-			android:layout_marginRight="5dip"></ProgressBar>
-		<TextView
-			android:layout_width="fill_parent"
-			android:id="@+id/StatusTextView"
-			android:textColor="@color/status_text"
-			android:textSize="@dimen/status_text"
-			android:layout_toRightOf="@id/StatusProgressBar"
-			android:layout_centerVertical="true"
-			android:text="@string/message_stream_loading"
-			android:layout_height="wrap_content"></TextView>
-	</RelativeLayout>
+	<include
+		layout="@layout/status_panel" />
 	<View
 		android:layout_width="fill_parent"
 		android:layout_height="3dp"
@@ -60,12 +39,10 @@
 		android:layout_weight="1"
 		android:textSize="@dimen/empty_list_text"
 		android:text="@string/message_no_stream" />
-	
 	<View
-        android:layout_width="fill_parent"
-        android:layout_height="3dp"
-        android:background="@drawable/navigation_bar_shadow" />
+		android:layout_width="fill_parent"
+		android:layout_height="3dp"
+		android:background="@drawable/navigation_bar_shadow" />
 	<include
-		android:id="@+id/NavigationBar"
 		layout="@layout/navigation_bar" />
 </LinearLayout>

@@ -5,7 +5,6 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 	<include
-		android:id="@+id/NavigationBar"
 		layout="@layout/navigation_bar" />
 	<View
 		android:layout_width="3dp"
@@ -16,28 +15,8 @@
 		android:orientation="vertical"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent">
-		<RelativeLayout
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:id="@+id/StatusRelativeLayout"
-			android:background="@color/status_backgroung"
-			android:visibility="gone"
-			android:padding="5dp">
-			<ProgressBar
-				android:layout_height="24dp"
-				android:layout_width="24dp"
-				android:id="@+id/StatusProgressBar"
-				android:layout_marginRight="5dp"></ProgressBar>
-			<TextView
-				android:layout_width="fill_parent"
-				android:id="@+id/StatusTextView"
-				android:textColor="@color/status_text"
-				android:textSize="@dimen/status_text"
-				android:layout_toRightOf="@id/StatusProgressBar"
-				android:layout_centerVertical="true"
-				android:text="@string/message_stream_loading"
-				android:layout_height="wrap_content"></TextView>
-		</RelativeLayout>
+		<include
+			layout="@layout/status_panel" />
 		<ListView
 			android:layout_width="fill_parent"
 			android:layout_weight="1"

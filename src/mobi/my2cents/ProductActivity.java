@@ -67,7 +67,7 @@ public final class ProductActivity extends ListActivity {
 	private Button buttonDislikes;
 	
 	private EditText commentEditor;
-	private View statusLayout;
+	private View statusPanel;
 	private PopupWindow productPopup;
 	
 	private Uri product;
@@ -158,7 +158,7 @@ public final class ProductActivity extends ListActivity {
 			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
 		}
 		else {
-			statusLayout.setVisibility(View.VISIBLE);
+			statusPanel.setVisibility(View.VISIBLE);
 			Intent intent = new Intent(this, ProductUpdaterService.class);
 			intent.setData(uri);
 			startService(intent);
@@ -168,7 +168,7 @@ public final class ProductActivity extends ListActivity {
 	private void prepareUI() {
 		setContentView(R.layout.product_activity);
 		
-		statusLayout = findViewById(R.id.StatusRelativeLayout);
+		statusPanel = findViewById(R.id.StatusPanel);
 		
 		productImageView = (ImageView) findViewById(R.id.ProductImageView);		
 		productNameTextView = (TextView) findViewById(R.id.ProductNameTextView);
@@ -521,7 +521,7 @@ public final class ProductActivity extends ListActivity {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			statusLayout.setVisibility(View.GONE);
+			statusPanel.setVisibility(View.GONE);
 			adapter.notifyDataSetChanged();
 			final String key = intent.getStringExtra(Product.KEY);
 			displayProduct(Uri.withAppendedPath(Product.CONTENT_URI, key));

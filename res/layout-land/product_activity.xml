@@ -5,7 +5,6 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 	<include
-		android:id="@+id/NavigationBar"
 		layout="@layout/navigation_bar" />
 	<View
 		android:layout_width="3dp"
@@ -18,28 +17,8 @@
 		android:layout_height="fill_parent">
 		<include
 			layout="@layout/product_info_panel" />
-		<RelativeLayout
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:id="@+id/StatusRelativeLayout"
-			android:background="@color/status_backgroung"
-			android:padding="5dip"
-			android:visibility="gone">
-			<ProgressBar
-				android:layout_height="24dip"
-				android:layout_width="24dip"
-				android:id="@+id/StatusProgressBar"
-				android:layout_marginRight="5dip"></ProgressBar>
-			<TextView
-				android:layout_width="fill_parent"
-				android:id="@+id/StatusTextView"
-				android:textColor="@color/status_text"
-				android:textSize="@dimen/status_text"
-				android:layout_toRightOf="@id/StatusProgressBar"
-				android:layout_centerVertical="true"
-				android:text="@string/message_product_info_loading"
-				android:layout_height="wrap_content"></TextView>
-		</RelativeLayout>
+		<include
+			layout="@layout/status_panel" />
 		<View
 			android:layout_width="fill_parent"
 			android:layout_height="3dp"
@@ -81,36 +60,7 @@
 				android:text="@string/button_login_invitation"
 				android:id="@+id/LoginButton" />
 		</LinearLayout>
-		<RelativeLayout
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:id="@+id/CommentEditorLayout"
-			android:background="@color/comment_editor_background"
-			android:paddingLeft="@dimen/comment_editor_padding"
-			android:paddingRight="@dimen/comment_editor_padding"
-			android:paddingTop="@dimen/comment_editor_padding">
-			<Button
-				android:text="@string/button_send"
-				android:layout_width="wrap_content"
-				android:id="@+id/SendButton"
-				android:layout_alignParentRight="true"
-				android:layout_height="wrap_content" />
-			<EditText
-				android:layout_height="wrap_content"
-				android:id="@+id/CommentEditText"
-				android:hint="@string/comment_hint"
-				android:layout_width="fill_parent"
-				android:layout_toLeftOf="@id/SendButton"
-				android:imeOptions="actionSend|flagNoEnterAction"
-				android:inputType="textCapSentences|textAutoCorrect|textMultiLine|textImeMultiLine" />
-			<Gallery
-				android:layout_height="wrap_content"
-				android:layout_width="fill_parent"
-				android:longClickable="true"
-				android:unselectedAlpha="0.3"
-				android:id="@+id/TagsGallery"
-				android:spacing="@dimen/tab_gallery_spacing"
-				android:layout_below="@id/CommentEditText" />
-		</RelativeLayout>
+		<include
+			layout="@layout/comment_editor_panel" />
 	</LinearLayout>
 </LinearLayout>

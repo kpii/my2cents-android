@@ -48,6 +48,5 @@
 			android:layout_height="40dp"></Button>
 	</LinearLayout>
 	<include
-		android:id="@+id/NavigationBar"
 		layout="@layout/scanner_navigation_bar" />
 </FrameLayout>

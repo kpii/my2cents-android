@@ -10,7 +10,6 @@
 		android:layout_width="fill_parent"
 		android:imeOptions="flagNoEnterAction"
 		android:id="@+id/InputEditText"
-		android:hint="@string/search_hint" android:inputType="number"/>
-	
-	
+		android:hint="@string/search_hint"
+		android:inputType="number" />
 </LinearLayout>

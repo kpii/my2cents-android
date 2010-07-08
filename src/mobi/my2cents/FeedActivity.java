@@ -26,7 +26,7 @@ public final class FeedActivity extends ListActivity {
 	
 	private FeedAdapter adapter;
 	
-	private View statusLayout;
+	private View statusPanel;
 	
 	private FeedUpdaterReceiver feedUpdaterReceiver;
 	private ImageDownloaderReceiver imageDownloaderReceiver;
@@ -80,7 +80,7 @@ public final class FeedActivity extends ListActivity {
 			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
 		}
 		else {
-			statusLayout.setVisibility(View.VISIBLE);
+			statusPanel.setVisibility(View.VISIBLE);
 			Intent intent = new Intent(this, FeedUpdaterService.class);
 			startService(intent);
 		}		
@@ -89,7 +89,7 @@ public final class FeedActivity extends ListActivity {
 	private void prepareUI() {
 		setContentView(R.layout.feed_activity);
 
-		statusLayout = findViewById(R.id.StatusRelativeLayout);
+		statusPanel = findViewById(R.id.StatusPanel);
 		
 		findViewById(R.id.NavigationButtonHome).setOnClickListener(homeListener);
 		findViewById(R.id.NavigationButtonScan).setOnClickListener(scanListener);
@@ -186,7 +186,7 @@ public final class FeedActivity extends ListActivity {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			statusLayout.setVisibility(View.GONE);
+			statusPanel.setVisibility(View.GONE);
 			adapter.getCursor().requery();
 			adapter.notifyDataSetChanged();
 		}
