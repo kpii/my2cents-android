@@ -96,7 +96,7 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 
 		Window window = getWindow();
 		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		setContentView(R.layout.scan);
+		setContentView(R.layout.scan_activity);
 
 		findViewById(R.id.NavigationButtonHome).setOnClickListener(homeListener);
 		findViewById(R.id.NavigationButtonScan).setEnabled(false);
@@ -426,7 +426,7 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	}
 	
 	private void showProductDetails(Context context, String gtin) {
-		Intent intent = new Intent(context, CommentActivity.class);
+		Intent intent = new Intent(context, ProductActivity.class);
 		intent.putExtra(Product.KEY, gtin);
 		intent.putExtra(getString(R.string.show_virtual_keyboard), showVirtualKeyboard);
 		startActivity(intent);

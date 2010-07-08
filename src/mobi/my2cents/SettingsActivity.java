@@ -40,7 +40,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.settings);
+		setContentView(R.layout.settings_activity);
 		
 		addPreferencesFromResource(R.xml.preferences);
 		settings = PreferenceManager.getDefaultSharedPreferences(this);

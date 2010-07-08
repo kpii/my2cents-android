@@ -27,7 +27,7 @@ public final class AuthorizationActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.authorization);
+		setContentView(R.layout.authorization_activity);
 		
 		webView = (WebView) findViewById(R.id.AuthWebView);
 		webView.setWebViewClient(new AuthWebViewClient());

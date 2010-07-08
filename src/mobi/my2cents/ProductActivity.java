@@ -44,14 +44,14 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public final class CommentActivity extends ListActivity {
+public final class ProductActivity extends ListActivity {
 	
 	private final int DIALOG_PRODUCT_DETAILS = 0;
 	
 	private SharedPreferences settings;
 	private InputMethodManager inputManager;
 
-	private CommentsAdapter adapter;
+	private ProductAdapter adapter;
 	
 	private ProductUpdaterReceiver productUpdaterReceiver;
 	private SyncReceiver syncReceiver;
@@ -128,7 +128,7 @@ public final class CommentActivity extends ListActivity {
 	
 	private void bindAdapter(Uri uri) {
 		final Cursor cursor = managedQuery(Uri.withAppendedPath(uri, "comments"), null, null, null, null);
-		adapter = new CommentsAdapter(this, cursor);
+		adapter = new ProductAdapter(this, cursor);
 		setListAdapter(adapter);
 	}
 	
@@ -166,7 +166,7 @@ public final class CommentActivity extends ListActivity {
 	}
 	
 	private void prepareUI() {
-		setContentView(R.layout.comment);
+		setContentView(R.layout.product_activity);
 		
 		statusLayout = findViewById(R.id.StatusRelativeLayout);
 		

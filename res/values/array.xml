@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-       <string-array name="polling_intervals_values">
-                <item>30000</item>
-                <item>60000</item>
-                <item>300000</item>
-                <item>1800000</item>
-                <item>3600000</item>
-        </string-array>
-        <string-array
-                name="polling_intervals">
-                <item>@string/time_30_sec</item>
-                <item>@string/time_1_min</item>
-                <item>@string/time_5_min</item>
-                <item>@string/time_30_min</item>
-                <item>@string/time_1_hour</item>
-        </string-array>
-
+	<string-array
+		name="polling_intervals_values">
+		<item>30000</item>
+		<item>60000</item>
+		<item>300000</item>
+		<item>1800000</item>
+		<item>3600000</item>
+	</string-array>
+	<string-array
+		name="polling_intervals">
+		<item>@string/time_30_sec</item>
+		<item>@string/time_1_min</item>
+		<item>@string/time_5_min</item>
+		<item>@string/time_30_min</item>
+		<item>@string/time_1_hour</item>
+	</string-array>
 </resources>

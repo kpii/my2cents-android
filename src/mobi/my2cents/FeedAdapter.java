@@ -55,7 +55,7 @@ public class FeedAdapter extends CursorAdapter {
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 		LayoutInflater inflater = LayoutInflater.from(context);
-		View view = inflater.inflate(R.layout.stream_item, parent, false);
+		View view = inflater.inflate(R.layout.feed_item, parent, false);
 		bindView(view, context, cursor);
 		return view;
 	}

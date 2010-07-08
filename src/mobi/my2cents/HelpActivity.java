@@ -35,7 +35,7 @@ public final class HelpActivity extends Activity {
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
-		setContentView(R.layout.help);
+		setContentView(R.layout.help_activity);
 		
 		webView = (WebView) findViewById(R.id.help_contents);
 		webView.setWebViewClient(new HelpClient());

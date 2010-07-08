@@ -46,7 +46,7 @@ public final class HistoryActivity extends ListActivity {
 	}
 	
 	private void prepareUI() {
-		setContentView(R.layout.history);
+		setContentView(R.layout.history_activity);
 		
 		findViewById(R.id.NavigationButtonHome).setOnClickListener(homeListener);
 		findViewById(R.id.NavigationButtonScan).setOnClickListener(scanListener);
@@ -80,7 +80,7 @@ public final class HistoryActivity extends ListActivity {
 		final Cursor cursor = (Cursor) getListView().getItemAtPosition(position);
 		final String key = cursor.getString(cursor.getColumnIndex(Product.KEY));
 		
-		Intent intent = new Intent(this, CommentActivity.class);
+		Intent intent = new Intent(this, ProductActivity.class);
 		intent.setData(Uri.withAppendedPath(Product.CONTENT_URI, key));
 		
 		startActivity(intent);

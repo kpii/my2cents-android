@@ -15,9 +15,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
-public class CommentsAdapter extends CursorAdapter {
+public class ProductAdapter extends CursorAdapter {
 	
-	public CommentsAdapter(Context context, Cursor cursor) {
+	public ProductAdapter(Context context, Cursor cursor) {
 		super(context, cursor);
 	}
 

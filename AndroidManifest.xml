@@ -51,7 +51,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".CommentActivity"
+			android:name=".ProductActivity"
 			android:configChanges="orientation|keyboardHidden"
 			android:windowSoftInputMode="stateHidden">
 			<intent-filter>
