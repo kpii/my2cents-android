@@ -16,11 +16,11 @@
 	
 	<color name="header_backgroung">#446C86</color>
 	<color name="info_backgroung">#2B5D74</color>
-	<color name="status_backgroung">#9EBACC</color>
+	<color name="status_backgroung">#2B5D74</color>
 	
 	<color name="header_text">#FFF</color>
 	<color name="info_text">#FFF</color>
-	<color name="status_text">#2B5D74</color>
+	<color name="status_text">#E6E6E6</color>
 	
 	<color name="product_panel_background">#EEF3F6</color>
 	<color name="product_name_text">#486F89</color>

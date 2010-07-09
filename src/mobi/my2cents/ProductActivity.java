@@ -42,6 +42,7 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -71,7 +72,7 @@ public final class ProductActivity extends ListActivity {
 	private EditText commentEditor;
 	private PopupWindow productPopup;
 	
-	private View statusPanel;
+	private ProgressBar progressBar;
 	private TextView statusTextView;
 	
 	private Uri product;
@@ -186,8 +187,9 @@ public final class ProductActivity extends ListActivity {
 	private void prepareUI() {
 		setContentView(R.layout.product_activity);
 		
-		statusPanel = findViewById(R.id.StatusPanel);
+		progressBar = (ProgressBar) findViewById(R.id.StatusProgressBar);
 		statusTextView = (TextView) findViewById(R.id.StatusTextView);
+		statusTextView.setText(R.string.product_status);
 		
 		productPanel = findViewById(R.id.ProductInfoPanel);
 		productImageView = (ImageView) findViewById(R.id.ProductImageView);
@@ -222,12 +224,13 @@ public final class ProductActivity extends ListActivity {
 	}
 	
 	private void showStatus(String message) {
+		progressBar.setVisibility(View.VISIBLE);
 		statusTextView.setText(message);
-		statusPanel.setVisibility(View.VISIBLE);
 	}
 	
 	private void hideStatus() {
-		statusPanel.setVisibility(View.GONE);
+		progressBar.setVisibility(View.GONE);
+		statusTextView.setText(R.string.product_status);
 	}
 	
 	private final View.OnClickListener homeListener = new View.OnClickListener() {

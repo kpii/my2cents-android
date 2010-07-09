@@ -16,6 +16,8 @@
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent">
 		<include
+			layout="@layout/status_panel" />
+		<include
 			layout="@layout/product_info_panel" />
 		<View
 			android:layout_width="fill_parent"
@@ -58,8 +60,6 @@
 				android:text="@string/button_login_invitation"
 				android:id="@+id/LoginButton" />
 		</LinearLayout>
-		<include
-			layout="@layout/status_panel" />
 		<include
 			layout="@layout/comment_editor_panel" />
 	</LinearLayout>

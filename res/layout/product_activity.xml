@@ -7,6 +7,8 @@
 	<include
 		layout="@layout/header" />
 	<include
+		layout="@layout/status_panel" />
+	<include
 		layout="@layout/product_info_panel" />
 	<View
 		android:layout_width="fill_parent"
@@ -49,8 +51,6 @@
 			android:text="@string/button_login_invitation"
 			android:id="@+id/LoginButton" />
 	</LinearLayout>
-	<include
-		layout="@layout/status_panel" />
 	<View
 		android:layout_width="fill_parent"
 		android:layout_height="3dp"

@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +28,7 @@ public final class FeedActivity extends ListActivity {
 	
 	private FeedAdapter adapter;
 	
-	private View statusPanel;
+	private ProgressBar progressBar;
 	private TextView statusTextView;
 	
 	private FeedUpdaterReceiver feedUpdaterReceiver;
@@ -91,8 +92,9 @@ public final class FeedActivity extends ListActivity {
 	private void prepareUI() {
 		setContentView(R.layout.feed_activity);
 
-		statusPanel = findViewById(R.id.StatusPanel);
+		progressBar = (ProgressBar) findViewById(R.id.StatusProgressBar);
 		statusTextView = (TextView) findViewById(R.id.StatusTextView);
+		statusTextView.setText(R.string.stream_header);
 		
 		findViewById(R.id.NavigationButtonHome).setOnClickListener(homeListener);
 		findViewById(R.id.NavigationButtonScan).setOnClickListener(scanListener);
@@ -101,12 +103,13 @@ public final class FeedActivity extends ListActivity {
 	}
 	
 	private void showStatus(String message) {
+		progressBar.setVisibility(View.VISIBLE);
 		statusTextView.setText(message);
-		statusPanel.setVisibility(View.VISIBLE);
 	}
 	
 	private void hideStatus() {
-		statusPanel.setVisibility(View.GONE);
+		progressBar.setVisibility(View.GONE);
+		statusTextView.setText(R.string.stream_header);
 	}
 	
 	private final Button.OnClickListener scanListener = new Button.OnClickListener() {
