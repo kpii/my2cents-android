@@ -3,6 +3,7 @@ package mobi.my2cents;
 import java.io.IOException;
 import java.util.Vector;
 
+import mobi.my2cents.data.Comment;
 import mobi.my2cents.data.Product;
 import mobi.my2cents.scanner.CameraManager;
 import mobi.my2cents.scanner.CaptureActivityHandler;
@@ -16,6 +17,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -23,10 +25,12 @@ import android.graphics.Rect;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -425,10 +429,12 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 		return super.onKeyDown(keyCode, event);
 	}
 	
-	private void showProductDetails(Context context, String gtin) {
-		Intent intent = new Intent(context, ProductActivity.class);
-		intent.putExtra(Product.KEY, gtin);
-		intent.putExtra(getString(R.string.show_virtual_keyboard), showVirtualKeyboard);
-		startActivity(intent);
+	private void showProductDetails(Context context, String key) {
+		if (!TextUtils.isEmpty(key)) {
+			Intent intent = new Intent(context, ProductActivity.class);
+			intent.setData(Uri.withAppendedPath(Product.CONTENT_URI, key));
+			intent.putExtra(getString(R.string.show_virtual_keyboard), showVirtualKeyboard);
+			startActivity(intent);
+		}
 	}
 }
