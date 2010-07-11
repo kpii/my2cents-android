@@ -139,6 +139,11 @@ public final class NetworkManager {
 		return postREST(url, content);
 	}
 	
+	public static String postScan(String content) throws ClientProtocolException, IOException {
+		final String url = BASE_URL + "/scans.json";
+		return postREST(url, content);
+	}
+	
 	public static String getFeed() throws ClientProtocolException, IOException {
 		final String url = BASE_URL + "/comments.json";
         return getREST(url);

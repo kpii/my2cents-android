@@ -99,7 +99,7 @@ public final class ProductActivity extends ListActivity {
 	public void onResume() {
 		super.onResume();
 		
-		registerReceiver(productUpdaterReceiver, ProductUpdaterService.FILTER);
+		registerReceiver(productUpdaterReceiver, ProductGetterService.FILTER);
 		registerReceiver(syncReceiver, SyncService.FILTER);
 		
 		SettingsActivity.setShareOnTwitter(settings.getBoolean(getString(R.string.settings_twitter), false));
@@ -125,10 +125,20 @@ public final class ProductActivity extends ListActivity {
 	
 	private void handleIntent(Intent intent) {
 		hideVirtualKeyboard();
-		final Uri uri = intent.getData();
-		bindAdapter(uri);
-		displayProduct(uri);
-		getProductInfo(uri);
+		
+		if (intent.hasExtra(Product.GTIN)) {
+			final String gtin = intent.getStringExtra(Product.GTIN);
+			final Uri uri = Uri.withAppendedPath(Product.CONTENT_URI, "gtin/" + gtin);
+			bindAdapter(uri);
+			displayProduct(uri);
+		}
+		else if (intent.hasExtra(Product.KEY)) {
+			final String key = intent.getStringExtra(Product.KEY);
+			final Uri uri = Uri.withAppendedPath(Product.CONTENT_URI, "key/" + key);
+			getProductInfo(uri);
+			bindAdapter(uri);
+			displayProduct(uri);
+		}
 	}
 	
 	private void bindAdapter(Uri uri) {
@@ -178,7 +188,7 @@ public final class ProductActivity extends ListActivity {
 		}
 		else {
 			showStatus(getString(R.string.message_product_info_loading));
-			Intent intent = new Intent(this, ProductUpdaterService.class);
+			Intent intent = new Intent(this, ProductGetterService.class);
 			intent.setData(uri);
 			startService(intent);
 		}

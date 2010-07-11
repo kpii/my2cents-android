@@ -2,7 +2,7 @@
 <resources>
     <string name="product_status">Product information and comments</string>
     <string name="app_name">my2cents</string>
-	<string name="app_notes">by ETH Zurich [v1.1.beta2]</string>
+	<string name="app_notes">by ETH Zurich [v1.1.beta3]</string>
 	<string name="app_url">http://my2cents.mobi</string>
     
     <string name="navigation_button_history">History</string>

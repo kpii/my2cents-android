@@ -14,14 +14,15 @@ import android.text.TextUtils;
 
 public class My2CentsProvider extends ContentProvider {
 	
-    private static final int PRODUCT_DIR = 1;
-    private static final int PRODUCT_ITEM = 2;
-    private static final int PRODUCT_COMMENTS = 3;
-    private static final int PRODUCT_PUT = 4;
+    private static final int PRODUCTS = 1;
+    private static final int PRODUCT_KEY = 2;
+    private static final int PRODUCT_GTIN = 3;    
+    private static final int PRODUCT_COMMENTS = 4;
+    private static final int PRODUCT_PUT = 5;
     
-    private static final int COMMENT_DIR = 5;
-    private static final int COMMENT_ITEM = 6;
-    private static final int COMMENT_POST = 7;
+    private static final int COMMENTS = 6;
+    private static final int COMMENT_ID = 7;
+    private static final int COMMENT_POST = 8;
     
     private static final UriMatcher uriMatcher;    
 	private DatabaseHelper dbHelper;
@@ -35,7 +36,7 @@ public class My2CentsProvider extends ContentProvider {
     @Override
 	public String getType(Uri uri) {
     	switch (uriMatcher.match(uri)) {    		
-	    	case PRODUCT_DIR: {
+	    	case PRODUCTS: {
 	    		return "vnd.android.cursor.dir/mobi.my2cents.product";
 	    	}
 	    	
@@ -43,7 +44,11 @@ public class My2CentsProvider extends ContentProvider {
 	    		return "vnd.android.cursor.dir/mobi.my2cents.product";
 	    	}
 	    		
-	    	case PRODUCT_ITEM: {
+	    	case PRODUCT_KEY: {
+	    		return "vnd.android.cursor.item/mobi.my2cents.product";
+	    	}
+	    	
+	    	case PRODUCT_GTIN: {
 	    		return "vnd.android.cursor.item/mobi.my2cents.product";
 	    	}
 	    	
@@ -51,11 +56,11 @@ public class My2CentsProvider extends ContentProvider {
 	    		return "vnd.android.cursor.dir/mobi.my2cents.comment";
 	    	}
 	    	
-	    	case COMMENT_DIR: {
+	    	case COMMENTS: {
 	    		return "vnd.android.cursor.dir/mobi.my2cents.comment";
 	    	}
 	    		
-	    	case COMMENT_ITEM: {
+	    	case COMMENT_ID: {
 	    		return "vnd.android.cursor.item/mobi.my2cents.comment";
 	    	}
 	    	
@@ -72,36 +77,32 @@ public class My2CentsProvider extends ContentProvider {
 	@Override
 	public int delete(Uri uri, String where, String[] whereArgs) {
 		
-		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		final SQLiteDatabase db = dbHelper.getWritableDatabase();
         int count = 0;
         
         switch (uriMatcher.match(uri)) {    		
-	    	case PRODUCT_DIR: {
+	    	case PRODUCTS: {
 	    		count = db.delete(DatabaseHelper.PRODUCTS_TABLE, where, whereArgs);
 	    		break;
 	    	}
 	    		
-	    	case PRODUCT_ITEM: {
-	    		String key = uri.getPathSegments().get(1);
-	    		String whereClause = 
+	    	case PRODUCT_KEY: {
+	    		final String key = uri.getLastPathSegment();
+	    		final String whereClause = 
 	    			Product.KEY + "=" + key
 	    			+ (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : "");
 	            count = db.delete(DatabaseHelper.PRODUCTS_TABLE, whereClause, whereArgs);
 	    		break;
 	    	}
 	    	
-	    	case PRODUCT_COMMENTS: {
-	    		break;
-	    	}
-	    	
-	    	case COMMENT_DIR: {
+	    	case COMMENTS: {
 	    		count = db.delete(DatabaseHelper.COMMENTS_TABLE, where, whereArgs);
 	    		break;
 	    	}
 	    		
-	    	case COMMENT_ITEM: {
+	    	case COMMENT_ID: {
 	    		final String id = uri.getLastPathSegment();
-	    		String whereClause = 
+	    		final String whereClause = 
 	    			"rowid = " + id
 	    			+ (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : "");
 	            count = db.delete(DatabaseHelper.COMMENTS_TABLE, whereClause, whereArgs);
@@ -122,48 +123,27 @@ public class My2CentsProvider extends ContentProvider {
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
 
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        final SQLiteDatabase db = dbHelper.getWritableDatabase();
         
         switch (uriMatcher.match(uri)) {    		
-	    	case PRODUCT_DIR: {
+	    	case PRODUCTS: {
 //	    		values.put(Comment.GET_TRANSITIONAL_STATE, true);
 	    		long rowId = db.replace(DatabaseHelper.PRODUCTS_TABLE, "", values);
 	            if (rowId > 0) {	
-	                final Uri eventUri = ContentUris.withAppendedId(Product.CONTENT_URI, rowId);
+	                final Uri resultUri = ContentUris.withAppendedId(Product.CONTENT_URI, rowId);
 //	                getContext().getContentResolver().notifyChange(eventUri, null);
-	                return eventUri;
+	                return resultUri;
 	            }
 	    		break;
 	    	}
-	    		
-	    	case PRODUCT_ITEM: {
-	    		break;
-	    	}
 	    	
-//	    	case PRODUCT_COMMENTS: {
-//	    		String key = uri.getPathSegments().get(1);
-//	    		values.put(Comment.TRANSITION_ACTIVE, false);
-//				values.put(Comment.PRODUCT_KEY, key);
-//	    		long rowId = db.replace(DatabaseHelper.COMMENTS_TABLE, "", values);
-//	            if (rowId > 0) {	
-//	                Uri eventUri = ContentUris.withAppendedId(Product.CONTENT_URI, rowId);
-//	                getContext().getContentResolver().notifyChange(eventUri, null);
-//	                return eventUri;
-//	            }
-//	    		break;
-//	    	}
-	    	
-	    	case COMMENT_DIR: {
+	    	case COMMENTS: {
 	    		long rowId = db.replace(DatabaseHelper.COMMENTS_TABLE, "", values);
 	            if (rowId > 0) {	
-	                final Uri eventUri = ContentUris.withAppendedId(Comment.CONTENT_URI, rowId);
+	                final Uri resultUri = ContentUris.withAppendedId(Comment.CONTENT_URI, rowId);
 //	                getContext().getContentResolver().notifyChange(eventUri, null);
-	                return eventUri;
+	                return resultUri;
 	            }
-	    		break;
-	    	}
-	    		
-	    	case COMMENT_ITEM: {
 	    		break;
 	    	}
 	    	
@@ -172,21 +152,21 @@ public class My2CentsProvider extends ContentProvider {
 	    	}
 	    }
         
-        throw new SQLException("Failed to insert row into " + uri);
+        throw new SQLException("Failed to insert row into: " + uri);
         
 	}
 
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		
-		SQLiteDatabase db = dbHelper.getReadableDatabase();
-		SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+		final SQLiteDatabase db = dbHelper.getReadableDatabase();
+		final SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
 		
 		// If no sort order is specified use the default
         String orderBy = sortOrder;
 		
 		switch (uriMatcher.match(uri)) {    		
-	    	case PRODUCT_DIR: {
+	    	case PRODUCTS: {
 	    		qb.setTables(DatabaseHelper.PRODUCTS_TABLE);
 	            qb.setProjectionMap(Product.projectionMap);
 	            orderBy = Product._ID + " DESC";
@@ -200,11 +180,19 @@ public class My2CentsProvider extends ContentProvider {
 	    		break;
 	    	}
 	    		
-	    	case PRODUCT_ITEM: {
+	    	case PRODUCT_KEY: {
 	    		final String key = uri.getLastPathSegment();
 	        	qb.setTables(DatabaseHelper.PRODUCTS_TABLE);
 	            qb.setProjectionMap(Product.projectionMap);
 	            qb.appendWhere(Product.KEY + "='" + key + "'");
+	    		break;
+	    	}
+	    	
+	    	case PRODUCT_GTIN: {
+	    		final String gtin = uri.getLastPathSegment();
+	        	qb.setTables(DatabaseHelper.PRODUCTS_TABLE);
+	            qb.setProjectionMap(Product.projectionMap);
+	            qb.appendWhere(Product.GTIN + "='" + gtin + "'");
 	    		break;
 	    	}
 	    	
@@ -217,14 +205,14 @@ public class My2CentsProvider extends ContentProvider {
 	    		break;
 	    	}
 	    	
-	    	case COMMENT_DIR: {
+	    	case COMMENTS: {
 	    		qb.setTables(DatabaseHelper.COMMENTS_TABLE);
 	            qb.setProjectionMap(Comment.projectionMap);
 	            orderBy = Comment.KEY + " DESC";
 	    		break;
 	    	}
 	    		
-	    	case COMMENT_ITEM: {
+	    	case COMMENT_ID: {
 	    		qb.setTables(DatabaseHelper.COMMENTS_TABLE);
 	            qb.setProjectionMap(Comment.projectionMap);
 	    		break;
@@ -242,7 +230,7 @@ public class My2CentsProvider extends ContentProvider {
 	    	}
 	    }
 
-        Cursor cursor = qb.query(db, projection, selection, selectionArgs, null, null, orderBy);
+        final Cursor cursor = qb.query(db, projection, selection, selectionArgs, null, null, orderBy);
 
         // Tell the cursor what uri to watch, so it knows when its source data changes
         cursor.setNotificationUri(getContext().getContentResolver(), uri);
@@ -252,37 +240,17 @@ public class My2CentsProvider extends ContentProvider {
 	@Override
 	public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
 		
-		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		final SQLiteDatabase db = dbHelper.getWritableDatabase();
         int count = 0;
         
         switch (uriMatcher.match(uri)) {    		
-	    	case PRODUCT_DIR: {
-	    		break;
-	    	}
 	    		
-	    	case PRODUCT_ITEM: {
-	    		String key = uri.getLastPathSegment();
-	    		String whereClause = 
+	    	case PRODUCT_KEY: {
+	    		final String key = uri.getLastPathSegment();
+	    		final String whereClause = 
 	    			Product.KEY + "='" + key + "'"
 	    			+ (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : "");
 	            count = db.update(DatabaseHelper.PRODUCTS_TABLE, values, whereClause, whereArgs);
-	    		break;
-	    	}
-	    	
-	    	case PRODUCT_COMMENTS: {
-	    		break;
-	    	}
-	    	
-	    	case COMMENT_DIR: {
-	    		break;
-	    	}
-	    		
-	    	case COMMENT_ITEM: {
-	    		final String key = uri.getLastPathSegment();
-	    		String whereClause = 
-	    			Comment.KEY + "=" + key
-	    			+ (!TextUtils.isEmpty(where) ? " AND (" + where + ')' : "");
-	            count = db.update(DatabaseHelper.COMMENTS_TABLE, values, whereClause, whereArgs);
 	    		break;
 	    	}
 	    	
@@ -299,13 +267,14 @@ public class My2CentsProvider extends ContentProvider {
 	static {
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         
-        uriMatcher.addURI(My2Cents.AUTHORITY, "products", PRODUCT_DIR);
+        uriMatcher.addURI(My2Cents.AUTHORITY, "products", PRODUCTS);
         uriMatcher.addURI(My2Cents.AUTHORITY, "products/put", PRODUCT_PUT);
-        uriMatcher.addURI(My2Cents.AUTHORITY, "products/*", PRODUCT_ITEM);
-        uriMatcher.addURI(My2Cents.AUTHORITY, "products/*/comments", PRODUCT_COMMENTS);
+        uriMatcher.addURI(My2Cents.AUTHORITY, "products/key/*", PRODUCT_KEY);
+        uriMatcher.addURI(My2Cents.AUTHORITY, "products/gtin/*", PRODUCT_GTIN);
+        uriMatcher.addURI(My2Cents.AUTHORITY, "products/key/*/comments", PRODUCT_COMMENTS);
         
-        uriMatcher.addURI(My2Cents.AUTHORITY, "comments", COMMENT_DIR);
+        uriMatcher.addURI(My2Cents.AUTHORITY, "comments", COMMENTS);
         uriMatcher.addURI(My2Cents.AUTHORITY, "comments/post", COMMENT_POST);
-        uriMatcher.addURI(My2Cents.AUTHORITY, "comments/*", COMMENT_ITEM);
+        uriMatcher.addURI(My2Cents.AUTHORITY, "comments/*", COMMENT_ID);
 	}
 }

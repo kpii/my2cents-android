@@ -2,7 +2,7 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="mobi.my2cents"
-	android:versionCode="7" android:versionName="1.1.beta2">
+	android:versionCode="7" android:versionName="1.1.beta3">
 	<!-- We require Cupcake (Android 1.5) or later, but are really targeting Donut. -->
 	<uses-sdk
 		android:minSdkVersion="3"
@@ -104,7 +104,9 @@
 		<service
 			android:name=".FeedUpdaterService"></service>
 		<service
-			android:name=".ProductUpdaterService"></service>
+			android:name=".ProductGetterService"></service>
+		<service
+			android:name=".ScanPosterService"></service>
 		<service
 			android:name=".ImageDownloaderService"></service>
 		<service

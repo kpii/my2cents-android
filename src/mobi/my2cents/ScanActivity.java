@@ -3,21 +3,21 @@ package mobi.my2cents;
 import java.io.IOException;
 import java.util.Vector;
 
-import mobi.my2cents.data.Comment;
 import mobi.my2cents.data.Product;
 import mobi.my2cents.scanner.CameraManager;
 import mobi.my2cents.scanner.CaptureActivityHandler;
 import mobi.my2cents.scanner.ViewfinderView;
+import mobi.my2cents.utils.NetworkManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -25,7 +25,6 @@ import android.graphics.Rect;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -45,6 +44,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
@@ -73,6 +73,8 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	private boolean vibrate;
 	private boolean showVirtualKeyboard;
 	private final OnCompletionListener beepListener = new BeepListener();
+	
+	private ScanPosterReceiver scanPosterReceiver;
 
 	public static final Vector<BarcodeFormat> PRODUCT_FORMATS;
 	static {
@@ -143,6 +145,8 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	@Override
 	protected void onResume() {
 		super.onResume();
+		
+		registerReceiver(scanPosterReceiver, ScanPosterService.FILTER);
 
 		SurfaceView surfaceView = (SurfaceView) findViewById(R.id.PreviewSurfaceView);
 		SurfaceHolder surfaceHolder = surfaceView.getHolder();
@@ -170,6 +174,7 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 
 	@Override
 	protected void onPause() {
+		unregisterReceiver(scanPosterReceiver);
 		super.onPause();
 		if (handler != null) {
 			handler.quitSynchronously();
@@ -282,13 +287,13 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 
 	// Put up our own UI for how to handle the decoded contents.
 	private void handleDecodeInternally(Result rawResult, Bitmap barcode) {
-		ParsedResult result = ResultParser.parseResult(rawResult);
+		final ParsedResult result = ResultParser.parseResult(rawResult);
 		String gtin = result.getDisplayResult().replace("\r", "");
 		if (rawResult.getBarcodeFormat().equals(BarcodeFormat.UPC_A)) {
 			gtin = "0" + gtin;
 		}
 		
-		showProductDetails(this, gtin);
+		postScan(gtin);
 	}
 
 	/**
@@ -396,8 +401,8 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 		                public void onClick(DialogInterface dialog, int whichButton) {
 		                	EditText editor = (EditText)view.findViewById(R.id.InputEditText);
 		                	String gtin = editor.getText().toString();
-		        			if ((gtin != null) && (!gtin.equals(""))) {
-		        				showProductDetails(view.getContext(), gtin);
+		        			if (!TextUtils.isEmpty(gtin)) {
+		        				postScan(gtin);
 		        			}
 		                }
 		            })
@@ -429,12 +434,31 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 		return super.onKeyDown(keyCode, event);
 	}
 	
-	private void showProductDetails(Context context, String key) {
-		if (!TextUtils.isEmpty(key)) {
-			Intent intent = new Intent(context, ProductActivity.class);
-			intent.setData(Uri.withAppendedPath(Product.CONTENT_URI, key));
-			intent.putExtra(getString(R.string.show_virtual_keyboard), showVirtualKeyboard);
-			startActivity(intent);
+	private void postScan(String gtin) {
+		if (!NetworkManager.isNetworkAvailable(this)) {
+			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
 		}
+		else {
+			Intent intent = new Intent(this, ScanPosterService.class);
+			intent.putExtra(Product.GTIN, gtin);
+			startService(intent);
+		}
+	}
+	
+	private final class ScanPosterReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.hasExtra(Product.KEY)) {
+				final String key = intent.getStringExtra(Product.KEY);
+				if (!TextUtils.isEmpty(key)) {
+					Intent productIntent = new Intent(context, ProductActivity.class);
+					productIntent.putExtra(getString(R.string.show_virtual_keyboard), showVirtualKeyboard);
+					productIntent.putExtra(Product.KEY, key);
+					startActivity(productIntent);
+				}
+			}
+		}
+		
 	}
 }

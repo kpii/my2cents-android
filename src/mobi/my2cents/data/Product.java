@@ -3,7 +3,6 @@ package mobi.my2cents.data;
 import java.util.HashMap;
 
 import mobi.my2cents.My2Cents;
-import mobi.my2cents.SettingsActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,6 +19,7 @@ public class Product implements BaseColumns, TransitionalStateColumns{
 	public static final Uri CONTENT_URI = Uri.parse("content://" + My2Cents.AUTHORITY + "/products");
 	
 	public static final String KEY 				= "key";
+	public static final String GTIN 			= "gtin";
 	public static final String NAME 			= "name";
 	public static final String IMAGE_URL 		= "image_url";
 	
@@ -36,6 +36,7 @@ public class Product implements BaseColumns, TransitionalStateColumns{
 		projectionMap.put( Product._ID,							"rowid AS " + Product._ID);
 		
 		projectionMap.put( Product.KEY, 						Product.KEY);
+		projectionMap.put( Product.GTIN, 						Product.GTIN);
 		projectionMap.put( Product.NAME, 						Product.NAME);
 		projectionMap.put( Product.IMAGE_URL, 					Product.IMAGE_URL);
 		
@@ -97,6 +98,20 @@ public class Product implements BaseColumns, TransitionalStateColumns{
 			
 			final JSONObject json = new JSONObject();
 			json.put("rating", jsonRating);
+			return json;
+		} catch (JSONException e) {
+			Log.e(My2Cents.TAG, e.toString());
+			return null;
+		}
+	}
+	
+	public final static JSONObject getScanJson(String gtin) {		
+    	try {
+    		final JSONObject jsonScan = new JSONObject();
+    		jsonScan.put("gtin", gtin);
+			
+			final JSONObject json = new JSONObject();
+			json.put("scan", jsonScan);
 			return json;
 		} catch (JSONException e) {
 			Log.e(My2Cents.TAG, e.toString());

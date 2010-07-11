@@ -15,29 +15,29 @@ import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
-public class ProductUpdaterService extends IntentService {
+public class ScanPosterService extends IntentService {
 	
-	public final static String PRODUCT_UPDATED = "mobi.my2cents.action.PRODUCT_UPDATED";
-	public final static IntentFilter FILTER = new IntentFilter(PRODUCT_UPDATED);
+	public final static String SCAN_POSTED = "mobi.my2cents.action.SCAN_POSTED";
+	public final static IntentFilter FILTER = new IntentFilter(SCAN_POSTED);
 	
-	public ProductUpdaterService() {
-		super("ProductUpdater");
+	public ScanPosterService() {
+		super("ScanPoster");
 	}
 	
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		
-		final String key = intent.getData().getLastPathSegment();
-		if (TextUtils.isEmpty(key)) return;
+		final String gtin = intent.getStringExtra(Product.GTIN);
+		if (TextUtils.isEmpty(gtin)) return;
 		
 		String data = null;
 		try {
-			data = NetworkManager.getProduct(key);
+			final String content = Product.getScanJson(gtin).toString();
+			data = NetworkManager.postScan(content);
 		} catch (ClientProtocolException e) {
 			Log.e(My2Cents.TAG, e.getMessage());
 		} catch (IOException e) {
@@ -47,7 +47,7 @@ public class ProductUpdaterService extends IntentService {
 		try {
 			if (data != null) {
 				
-				final JSONObject json = new JSONObject(data).getJSONObject("product");
+				final JSONObject json = new JSONObject(data).getJSONObject("scan");
 				
 				final ContentValues product = Product.ParseJson(json);				
 				getContentResolver().insert(Product.CONTENT_URI, product);
@@ -66,8 +66,8 @@ public class ProductUpdaterService extends IntentService {
 		} catch (JSONException e) {
 			Log.e(My2Cents.TAG, e.toString());
 		} finally {
-			final Intent broadcastIntent = new Intent(PRODUCT_UPDATED);
-			broadcastIntent.putExtra(Product.KEY, key);
+			final Intent broadcastIntent = new Intent(SCAN_POSTED);
+			broadcastIntent.putExtra(Product.GTIN, gtin);
 			sendBroadcast(broadcastIntent);
 		}
 	}
