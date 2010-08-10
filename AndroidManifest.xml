@@ -2,7 +2,7 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="mobi.my2cents"
-	android:versionCode="7" android:versionName="1.1.beta3">
+	android:versionCode="8" android:versionName="1.1.beta4">
 	<!-- We require Cupcake (Android 1.5) or later, but are really targeting Donut. -->
 	<uses-sdk
 		android:minSdkVersion="3"

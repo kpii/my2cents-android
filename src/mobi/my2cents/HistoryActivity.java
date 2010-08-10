@@ -81,7 +81,7 @@ public final class HistoryActivity extends ListActivity {
 		final String key = cursor.getString(cursor.getColumnIndex(Product.KEY));
 		
 		Intent intent = new Intent(this, ProductActivity.class);
-		intent.setData(Uri.withAppendedPath(Product.CONTENT_URI, key));
+		intent.setData(Uri.withAppendedPath(Product.CONTENT_URI, "key/" + key));
 		
 		startActivity(intent);
 	}

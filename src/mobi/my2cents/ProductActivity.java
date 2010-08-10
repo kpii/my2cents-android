@@ -132,9 +132,15 @@ public final class ProductActivity extends ListActivity {
 			bindAdapter(uri);
 			displayProduct(uri);
 		}
-		else if (intent.hasExtra(Product.KEY)) {
-			final String key = intent.getStringExtra(Product.KEY);
-			final Uri uri = Uri.withAppendedPath(Product.CONTENT_URI, "key/" + key);
+//		else if (intent.hasExtra(Product.KEY)) {
+//			final String key = intent.getStringExtra(Product.KEY);
+//			final Uri uri = Uri.withAppendedPath(Product.CONTENT_URI, "key/" + key);
+//			getProductInfo(uri);
+//			bindAdapter(uri);
+//			displayProduct(uri);
+//		}
+		else {
+			final Uri uri = intent.getData();
 			getProductInfo(uri);
 			bindAdapter(uri);
 			displayProduct(uri);
@@ -142,7 +148,8 @@ public final class ProductActivity extends ListActivity {
 	}
 	
 	private void bindAdapter(Uri uri) {
-		final Cursor cursor = managedQuery(Uri.withAppendedPath(uri, "comments"), null, null, null, null);
+		final Uri commentsUri = Uri.withAppendedPath(uri, "comments");
+		final Cursor cursor = managedQuery(commentsUri, null, null, null, null);
 		adapter = new ProductAdapter(this, cursor);
 		setListAdapter(adapter);
 	}
@@ -564,9 +571,9 @@ public final class ProductActivity extends ListActivity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			hideStatus();
-			adapter.notifyDataSetChanged();
 			final String key = intent.getStringExtra(Product.KEY);
-			displayProduct(Uri.withAppendedPath(Product.CONTENT_URI, key));
+			final Uri uri = Uri.withAppendedPath(Product.CONTENT_URI, "key/" + key);
+			displayProduct(uri);
 		}
 		
 	}

@@ -15,6 +15,7 @@ import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -51,7 +52,7 @@ public class ProductGetterService extends IntentService {
 				final ContentValues product = Product.ParseJson(json);				
 				getContentResolver().insert(Product.CONTENT_URI, product);
 				
-				if (json.has("comment")) {
+				if (json.has("comments")) {
 					final JSONArray comments = json.getJSONArray("comments");
 					if (comments.length() > 0) {
 						final ContentValues[] values = new ContentValues[comments.length()];
