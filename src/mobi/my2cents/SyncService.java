@@ -77,7 +77,7 @@ public class SyncService extends IntentService {
 											values.put(Product.RATING_PERSONAL, ratingJson.getString("me"));
 										}								
 										values.put(Product.PENDING, false);
-										getContentResolver().update(Uri.withAppendedPath(Product.CONTENT_URI, key), values, null, null);
+										getContentResolver().update(Uri.withAppendedPath(Product.CONTENT_URI, "key/" + key), values, null, null);
 									}
 								}
 							}
