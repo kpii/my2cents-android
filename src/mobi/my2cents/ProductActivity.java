@@ -132,13 +132,6 @@ public final class ProductActivity extends ListActivity {
 			bindAdapter(uri);
 			displayProduct(uri);
 		}
-//		else if (intent.hasExtra(Product.KEY)) {
-//			final String key = intent.getStringExtra(Product.KEY);
-//			final Uri uri = Uri.withAppendedPath(Product.CONTENT_URI, "key/" + key);
-//			getProductInfo(uri);
-//			bindAdapter(uri);
-//			displayProduct(uri);
-//		}
 		else {
 			final Uri uri = intent.getData();
 			getProductInfo(uri);
@@ -436,41 +429,6 @@ public final class ProductActivity extends ListActivity {
         commentEditor.setText("");
         productImageView.requestFocus();		
 	}
-	
-//	private void parseTags() {
-//		if (product != null) {
-//        	displayProductFound(product);
-//        	
-//        	commentsAdapter.clear();
-//			tagsAdapter.clear();
-//        	ArrayList<Comment> comments = product.getComments();
-//			if (comments.size() > 0) {
-//				Set<String> tags = new TreeSet<String>();
-//				for (Comment comment : comments) {
-//					commentsAdapter.add(comment);
-//					
-//					String text = comment.getText();
-//					if (text.contains("#")) {
-//						Pattern p = Pattern.compile("#[A-Za-z0-9]+");						
-//						Matcher m = p.matcher(text);
-//						while (m.find()) {
-//							tags.add(m.group());
-//						}
-//					}
-//				}
-//				
-//				if (tags.size() > 0) {
-//					for (String tag : tags) {
-//						tagsAdapter.add(tag);
-//					}
-//				}
-//				
-//				commentsAdapter.notifyDataSetChanged();
-//				
-//				getProfileImagesTask = new GetProfileImagesTask(target).execute(comments);
-//			}
-//		}
-//	}
 
 	private final OnItemLongClickListener tagsLongClickListener = new OnItemLongClickListener() {
 		public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
@@ -480,29 +438,6 @@ public final class ProductActivity extends ListActivity {
 			return true;
 		}
 	};
-
-	@Override
-	public void onListItemClick(ListView parent, View v, int position, long id) {
-//		Comment selectedComment = commentsAdapter.getItem(position);
-//		
-//		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//		builder.setMessage(selectedComment.getText())
-//		       .setPositiveButton(R.string.button_close, new DialogInterface.OnClickListener() {
-//		           public void onClick(DialogInterface dialog, int id) {
-//		                dialog.dismiss();
-//		           }
-//		       });
-//		
-//		if ((selectedComment.getUser() == null) || (selectedComment.getUser() == "")) {
-//			builder.setTitle(R.string.anonymous_username);
-//		}
-//		else {
-//			builder.setTitle(selectedComment.getUser());
-//		}
-//		
-//		AlertDialog alert = builder.create();
-//		alert.show();
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
