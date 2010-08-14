@@ -126,8 +126,8 @@ public final class ProductActivity extends ListActivity {
 	private void handleIntent(Intent intent) {
 		hideVirtualKeyboard();
 		product = intent.getData();
-		bindAdapter();
 		displayProduct();
+		bindAdapter();
 		getProductInfo();
 	}
 	

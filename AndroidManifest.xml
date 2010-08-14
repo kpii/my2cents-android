@@ -53,7 +53,7 @@
 		<activity
 			android:name=".ProductActivity"
 			android:configChanges="orientation|keyboardHidden"
-			android:windowSoftInputMode="stateHidden">
+			android:windowSoftInputMode="stateHidden" android:launchMode="singleTop">
 			<intent-filter>
 				<action
 					android:name="android.intent.action.VIEW" />

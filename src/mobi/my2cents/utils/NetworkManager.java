@@ -71,6 +71,8 @@ public final class NetworkManager {
 	public static String getREST(String url) throws ClientProtocolException, IOException {
 		String result = null;
 		final HttpGet httpGet = new HttpGet(url);
+		httpGet.setHeader("Cookie", "client_token=" + AuthenticationManager.getClientToken());
+		
 		final AndroidHttpClient client = AndroidHttpClient.newInstance(userAgent);
 		try {
 			final HttpResponse response = client.execute(httpGet);
@@ -90,7 +92,7 @@ public final class NetworkManager {
 		final HttpPost httpPost = new HttpPost(url);
 		httpPost.setHeader("Cookie", "client_token=" + AuthenticationManager.getClientToken());
 		
-		StringEntity entity = new StringEntity(content, "UTF-8");
+		final StringEntity entity = new StringEntity(content, "UTF-8");
         entity.setContentType("application/json");
         httpPost.setEntity(entity);
         

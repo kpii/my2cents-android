@@ -30,7 +30,7 @@ public class Product implements BaseColumns {
 	public static final String RATING_DISLIKES 	= "rating_dislikes";
 	public static final String RATING_PERSONAL 	= "rating_personal";
 	
-	public static final String PENDING = "pending";
+	public static final String PENDING 			= "pending";
 	
 	
 	public static final HashMap<String, String> projectionMap = new HashMap<String, String>();
