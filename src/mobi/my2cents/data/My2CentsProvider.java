@@ -268,12 +268,12 @@ public class My2CentsProvider extends ContentProvider {
         
         uriMatcher.addURI(My2Cents.AUTHORITY, "products", PRODUCTS);
         uriMatcher.addURI(My2Cents.AUTHORITY, "products/pending", PRODUCTS_PENDING);
-        uriMatcher.addURI(My2Cents.AUTHORITY, "products/key/*/comments", PRODUCT_COMMENTS);
+        uriMatcher.addURI(My2Cents.AUTHORITY, "products/comments/*", PRODUCT_COMMENTS);
         uriMatcher.addURI(My2Cents.AUTHORITY, "products/key/*", PRODUCT_KEY);
         uriMatcher.addURI(My2Cents.AUTHORITY, "products/gtin/*", PRODUCT_GTIN);
         
         uriMatcher.addURI(My2Cents.AUTHORITY, "comments", COMMENTS);
         uriMatcher.addURI(My2Cents.AUTHORITY, "comments/pending", COMMENTS_PENDING);
-        uriMatcher.addURI(My2Cents.AUTHORITY, "comments/*", COMMENT_ID);
+        uriMatcher.addURI(My2Cents.AUTHORITY, "comments/id/*", COMMENT_ID);
 	}
 }

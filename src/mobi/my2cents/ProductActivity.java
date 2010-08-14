@@ -57,10 +57,6 @@ public final class ProductActivity extends ListActivity {
 	
 	private ProductUpdaterReceiver productUpdaterReceiver;
 	private SyncReceiver syncReceiver;
-
-	private ArrayList<String> tags;
-	private TagsAdapter tagsAdapter;	
-	private Gallery tagsGallery;
 	
 	private View productPanel;
 	private ImageView productImageView;
@@ -81,16 +77,13 @@ public final class ProductActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		prepareUI();
+		
 		productUpdaterReceiver = new ProductUpdaterReceiver();
 		syncReceiver = new SyncReceiver();
-		
-		prepareUI();
 
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
-		inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-		
-		tags = new ArrayList<String>();
-		tagsAdapter = new TagsAdapter(this, R.layout.tag_item, tags);		
+		inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);		
 				
 		handleIntent(getIntent());
 	}
@@ -112,9 +105,9 @@ public final class ProductActivity extends ListActivity {
 	
 	@Override
 	public void onPause() {
+		super.onPause();
 		unregisterReceiver(productUpdaterReceiver);
 		unregisterReceiver(syncReceiver);
-		super.onPause();
 	}
 	
 	@Override
@@ -125,15 +118,15 @@ public final class ProductActivity extends ListActivity {
 	
 	private void handleIntent(Intent intent) {
 		hideVirtualKeyboard();
-		product = intent.getData();
+		final String key = intent.getStringExtra(Product.KEY);
+		product = Uri.withAppendedPath(Product.CONTENT_URI, "key/" + key);
+		bindAdapter(key);
 		displayProduct();
-		bindAdapter();
 		getProductInfo();
 	}
 	
-	private void bindAdapter() {
-		final Uri commentsUri = Uri.withAppendedPath(product, "comments");
-		final Cursor cursor = managedQuery(commentsUri, null, null, null, null);
+	private void bindAdapter(String key) {
+		final Cursor cursor = managedQuery(Uri.withAppendedPath(Product.CONTENT_URI, "comments/" + key), null, null, null, null);
 		adapter = new ProductAdapter(this, cursor);
 		setListAdapter(adapter);
 	}
@@ -191,7 +184,7 @@ public final class ProductActivity extends ListActivity {
 		else {
 			showStatus(getString(R.string.message_product_info_loading));
 			final Intent intent = new Intent(this, ProductGetterService.class);
-			intent.setData(product);
+			intent.putExtra(Product.KEY, product.getLastPathSegment());
 			startService(intent);
 		}
 	}
@@ -219,10 +212,6 @@ public final class ProductActivity extends ListActivity {
 		commentEditor = (EditText) findViewById(R.id.CommentEditText);
 		commentEditor.setOnEditorActionListener(sendCommentActionListener);
 		
-		tagsGallery = (Gallery) findViewById(R.id.TagsGallery);
-		tagsGallery.setAdapter(tagsAdapter);
-		tagsGallery.setOnItemLongClickListener(tagsLongClickListener);
-		
 //		findViewById(R.id.ProductInfoPanel).setOnClickListener(productQuickActionsListener);
 		
 		findViewById(R.id.LoginButton).setOnClickListener(loginListener);
@@ -247,28 +236,28 @@ public final class ProductActivity extends ListActivity {
 	
 	private final View.OnClickListener homeListener = new View.OnClickListener() {
 		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), MainActivity.class);
+			final Intent intent = new Intent(getBaseContext(), MainActivity.class);
 			startActivity(intent);
 		}
 	};
 	
 	private final View.OnClickListener scanListener = new View.OnClickListener() {
 		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), ScanActivity.class);
+			final Intent intent = new Intent(getBaseContext(), ScanActivity.class);
 			startActivity(intent);
 		}
 	};
 	
 	private final View.OnClickListener historyListener = new View.OnClickListener() {
 		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), HistoryActivity.class);
+			final Intent intent = new Intent(getBaseContext(), HistoryActivity.class);
 			startActivity(intent);
 		}
 	};
 	
 	private final View.OnClickListener streamListener = new View.OnClickListener() {
 		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), FeedActivity.class);
+			final Intent intent = new Intent(getBaseContext(), FeedActivity.class);
 			startActivity(intent);
 		}
 	};
@@ -308,7 +297,6 @@ public final class ProductActivity extends ListActivity {
 		if (productPopup != null) {
 			productPopup.dismiss();
 			productPopup = null;
-			
 		}
 	}
 	
@@ -399,7 +387,9 @@ public final class ProductActivity extends ListActivity {
 				}
 			}
 			hideVirtualKeyboard();
+			
 			getContentResolver().insert(Comment.CONTENT_URI, values);
+			
 //			adapter.getCursor().requery();
 			
 			final Intent intent = new Intent(this, SyncService.class);
@@ -430,15 +420,6 @@ public final class ProductActivity extends ListActivity {
         productImageView.requestFocus();		
 	}
 
-	private final OnItemLongClickListener tagsLongClickListener = new OnItemLongClickListener() {
-		public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
-			String text = tagsAdapter.getItem(position);
-			EditText commentEditor = (EditText) findViewById(R.id.CommentEditText);
-			commentEditor.append(text);
-			return true;
-		}
-	};
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -451,12 +432,12 @@ public final class ProductActivity extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.settingsMenuItem: {
-				Intent intent = new Intent(this, SettingsActivity.class);
+				final Intent intent = new Intent(this, SettingsActivity.class);
 				startActivity(intent);
 				return true;
 			}
 			case R.id.infoMenuItem: {
-				Intent intent = new Intent(this, HelpActivity.class);
+				final Intent intent = new Intent(this, HelpActivity.class);
 				startActivity(intent);
 				return true;
 			}			
@@ -477,30 +458,6 @@ public final class ProductActivity extends ListActivity {
 		}
 	}
 	
-	@Override
-	protected Dialog onCreateDialog(int id) {
-		
-		switch (id) {
-			case DIALOG_PRODUCT_DETAILS: {
-//				LayoutInflater factory = LayoutInflater.from(this);
-//		        final View view = factory.inflate(R.layout.product_details_dialog, null);
-//		        ImageView imageView = (ImageView) view.findViewById(R.id.ProductImageView);
-//		        imageView.setImageBitmap(productInfo.getImage());
-//		        return new AlertDialog.Builder(this)
-//		            .setIcon(android.R.drawable.ic_dialog_info)
-//		            .setTitle(productInfo.getGtin())
-//		            .setView(view)
-//		            .setPositiveButton(R.string.button_close, new DialogInterface.OnClickListener() {
-//		                public void onClick(DialogInterface dialog, int whichButton) {
-//		                	
-//		                }
-//		            })
-//		            .create();
-	        }
-		}
-		return super.onCreateDialog(id);
-	}
-	
 	private final class ProductUpdaterReceiver extends BroadcastReceiver {
 
 		@Override
@@ -517,7 +474,6 @@ public final class ProductActivity extends ListActivity {
 		public void onReceive(Context context, Intent intent) {
 			displayProduct();
 			adapter.getCursor().requery();
-			adapter.notifyDataSetChanged();
 		}
 		
 	}

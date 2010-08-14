@@ -44,7 +44,7 @@
 		android:layout_width="fill_parent"
 		android:gravity="right"></TextView>
 	<ProgressBar
-		android:id="@+id/StateProgressBar"
+		android:id="@+id/CommentStateProgressBar"
 		android:layout_height="5dp"
 		android:layout_width="5dp"
 		android:layout_alignParentRight="true"

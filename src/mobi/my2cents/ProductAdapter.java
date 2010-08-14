@@ -18,7 +18,7 @@ import android.widget.TextView;
 public class ProductAdapter extends CursorAdapter {
 	
 	public ProductAdapter(Context context, Cursor cursor) {
-		super(context, cursor);
+		super(context, cursor, true);
 	}
 
 	@Override
@@ -39,7 +39,7 @@ public class ProductAdapter extends CursorAdapter {
 		final Bitmap bitmap = ImageManager.getImage(url);
 		profileImageView.setImageBitmap(bitmap);
 		
-		final ProgressBar stateProgressBar = (ProgressBar) view.findViewById(R.id.StateProgressBar);
+		final ProgressBar stateProgressBar = (ProgressBar) view.findViewById(R.id.CommentStateProgressBar);
 		final int state = cursor.getInt(cursor.getColumnIndex(Comment.PENDING));
 		if (state == 1) {
 			stateProgressBar.setVisibility(View.VISIBLE);

@@ -57,21 +57,21 @@ public final class MainActivity extends Activity {
 	
 	private final View.OnClickListener scanListener = new View.OnClickListener() {
 		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), ScanActivity.class);
+			final Intent intent = new Intent(getBaseContext(), ScanActivity.class);
 			startActivity(intent);
 		}
 	};
 	
 	private final View.OnClickListener streamListener = new View.OnClickListener() {
 		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), FeedActivity.class);
+			final Intent intent = new Intent(getBaseContext(), FeedActivity.class);
 			startActivity(intent);
 		}
 	};
 	
 	private final View.OnClickListener historyListener = new View.OnClickListener() {
 		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), HistoryActivity.class);
+			final Intent intent = new Intent(getBaseContext(), HistoryActivity.class);
 			startActivity(intent);
 		}
 	};
@@ -81,11 +81,11 @@ public final class MainActivity extends Activity {
 			boolean isLoggedIn = settings.getBoolean(getString(R.string.settings_login), false);
 			boolean isSharingOnTwitter = settings.getBoolean(getString(R.string.settings_twitter), false);
 			if (isLoggedIn && !isSharingOnTwitter) {
-				Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
+				final Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
 				startActivity(intent);
 			}
 			else {
-				Intent intent = new Intent(getBaseContext(), AuthorizationActivity.class);
+				final Intent intent = new Intent(getBaseContext(), AuthorizationActivity.class);
 				startActivity(intent);
 			}			
 		}
@@ -131,7 +131,7 @@ public final class MainActivity extends Activity {
 		int lastVersion = settings.getInt(getString(R.string.last_version), 0);
 		if (currentVersion > lastVersion) {
 			settings.edit().putInt(getString(R.string.last_version), currentVersion).commit();
-			Intent intent = new Intent(this, HelpActivity.class);
+			final Intent intent = new Intent(this, HelpActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
 			startActivity(intent);
 		}

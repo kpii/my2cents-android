@@ -40,7 +40,7 @@ public class SyncService extends IntentService {
 							final String response = NetworkManager.postComment(json.toString());
 							if (response != null) {
 								final String id = commentsCursor.getString(commentsCursor.getColumnIndex(Comment._ID)); 
-								getContentResolver().delete(Uri.withAppendedPath(Comment.CONTENT_URI, id), null, null);
+								getContentResolver().delete(Uri.withAppendedPath(Comment.CONTENT_URI, "id/" + id), null, null);
 							}
 						} catch (ClientProtocolException e) {
 							Log.e(My2Cents.TAG, e.toString());

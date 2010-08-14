@@ -32,7 +32,7 @@ public class ProductGetterService extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		
-		final String key = intent.getData().getLastPathSegment();
+		final String key = intent.getStringExtra(Product.KEY);
 		if (TextUtils.isEmpty(key)) return;
 		
 		String data = null;
@@ -67,7 +67,6 @@ public class ProductGetterService extends IntentService {
 			Log.e(My2Cents.TAG, e.toString());
 		} finally {
 			final Intent broadcastIntent = new Intent(PRODUCT_UPDATED);
-			broadcastIntent.putExtra(Product.KEY, key);
 			sendBroadcast(broadcastIntent);
 		}
 	}

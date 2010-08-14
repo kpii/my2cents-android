@@ -24,20 +24,8 @@ public final class HistoryActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		bindAdapter();
 		prepareUI();
-		
-		handleIntent(getIntent());
-	}
-	
-	@Override
-	protected void onNewIntent(Intent intent) {
-	    setIntent(intent);
-	    handleIntent(intent);
-	}
-	
-	private void handleIntent(Intent intent) {
-		adapter.getCursor().requery();
+		bindAdapter();
 	}
 	
 	private void bindAdapter() {
@@ -82,7 +70,7 @@ public final class HistoryActivity extends ListActivity {
 		final String key = cursor.getString(cursor.getColumnIndex(Product.KEY));
 		
 		final Intent intent = new Intent(this, ProductActivity.class);
-		intent.setData(Uri.withAppendedPath(Product.CONTENT_URI, "key/" + key));
+		intent.putExtra(Product.KEY, key);
 		startActivity(intent);
 	}
 
@@ -104,12 +92,12 @@ public final class HistoryActivity extends ListActivity {
 				return true;
 			}
 			case R.id.settingsMenuItem: {
-				Intent intent = new Intent(this, SettingsActivity.class);
+				final Intent intent = new Intent(this, SettingsActivity.class);
 				startActivity(intent);
 				return true;
 			}
 			case R.id.infoMenuItem: {
-				Intent intent = new Intent(this, HelpActivity.class);
+				final Intent intent = new Intent(this, HelpActivity.class);
 				startActivity(intent);
 				return true;
 			}

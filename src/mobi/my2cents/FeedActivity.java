@@ -84,7 +84,7 @@ public final class FeedActivity extends ListActivity {
 		}
 		else {
 			showStatus(getString(R.string.message_stream_loading));
-			Intent intent = new Intent(this, FeedUpdaterService.class);
+			final Intent intent = new Intent(this, FeedUpdaterService.class);
 			startService(intent);
 		}		
 	}
@@ -114,21 +114,21 @@ public final class FeedActivity extends ListActivity {
 	
 	private final Button.OnClickListener scanListener = new Button.OnClickListener() {
 		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), ScanActivity.class);
+			final Intent intent = new Intent(getBaseContext(), ScanActivity.class);
 			startActivity(intent);
 		}
 	};
 	
 	private final Button.OnClickListener homeListener = new Button.OnClickListener() {
 		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), MainActivity.class);
+			final Intent intent = new Intent(getBaseContext(), MainActivity.class);
 			startActivity(intent);
 		}
 	};
 	
 	private final Button.OnClickListener historyListener = new Button.OnClickListener() {
 		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), HistoryActivity.class);
+			final Intent intent = new Intent(getBaseContext(), HistoryActivity.class);
 			startActivity(intent);
 		}
 	};
@@ -140,7 +140,7 @@ public final class FeedActivity extends ListActivity {
 		final String key = cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_KEY));
 		if (!TextUtils.isEmpty(key)) {
 			final Intent intent = new Intent(this, ProductActivity.class);
-			intent.setData(Uri.withAppendedPath(Product.CONTENT_URI, "key/" + key));
+			intent.putExtra(Product.KEY, key);
 			startActivity(intent);
 		}
 	}
@@ -157,17 +157,17 @@ public final class FeedActivity extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.refreshMenuItem: {
-				this.getContentResolver().delete(Comment.CONTENT_URI, null, null);
+				getContentResolver().delete(Comment.CONTENT_URI, null, null);
 				updateFeed();
 				return true;
 			}
 			case R.id.settingsMenuItem: {
-				Intent intent = new Intent(this, SettingsActivity.class);
+				final Intent intent = new Intent(this, SettingsActivity.class);
 				startActivity(intent);
 				return true;
 			}
 			case R.id.infoMenuItem: {
-				Intent intent = new Intent(this, HelpActivity.class);
+				final Intent intent = new Intent(this, HelpActivity.class);
 				startActivity(intent);
 				return true;
 			}
@@ -187,7 +187,7 @@ public final class FeedActivity extends ListActivity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event)  {
 	    if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-	    	Intent back = new Intent(this, MainActivity.class);
+	    	final Intent back = new Intent(this, MainActivity.class);
 	    	back.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(back);
 			finish();
@@ -202,7 +202,6 @@ public final class FeedActivity extends ListActivity {
 		public void onReceive(Context context, Intent intent) {
 			hideStatus();
 			adapter.getCursor().requery();
-			adapter.notifyDataSetChanged();
 		}
 		
 	}
@@ -211,7 +210,6 @@ public final class FeedActivity extends ListActivity {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			adapter.getCursor().requery();
 			adapter.notifyDataSetChanged();
 		}
 		
