@@ -32,7 +32,7 @@ public class SyncService extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		
-		Cursor cursor = getContentResolver().query(Uri.withAppendedPath(Comment.CONTENT_URI, "post"), null, null, null, null);
+		Cursor cursor = getContentResolver().query(Uri.withAppendedPath(Comment.CONTENT_URI, "pending"), null, null, null, null);
 		try {
 			if (cursor.moveToFirst()) {
 				do {
@@ -56,7 +56,7 @@ public class SyncService extends IntentService {
 			cursor.close();
 		}
 		
-		cursor = getContentResolver().query(Uri.withAppendedPath(Product.CONTENT_URI, "put"), null, null, null, null);
+		cursor = getContentResolver().query(Uri.withAppendedPath(Product.CONTENT_URI, "pending"), null, null, null, null);
 		try {
 			if (cursor.moveToFirst()) {
 				do {
@@ -76,8 +76,7 @@ public class SyncService extends IntentService {
 										if (ratingJson.has("me")) {
 											values.put(Product.RATING_PERSONAL, ratingJson.getString("me"));
 										}								
-										values.put(Product.TRANSITION_ACTIVE, false);
-										values.put(Product.PUT_TRANSITIONAL_STATE, false);
+										values.put(Product.PENDING, false);
 										getContentResolver().update(Uri.withAppendedPath(Product.CONTENT_URI, key), values, null, null);
 									}
 								}

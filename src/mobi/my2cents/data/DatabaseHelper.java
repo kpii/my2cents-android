@@ -9,15 +9,7 @@ import android.util.Log;
 public class DatabaseHelper extends SQLiteOpenHelper {
 	
     private static final String DATABASE_NAME = "My2Cents.db";
-    private static final int DATABASE_VERSION = 28;
-    
-    
-    private static final String TRANSITION_FLAGS = 
-    	Comment.TRANSITION_ACTIVE + " BOOLEAN, "
-    	+ Comment.GET_TRANSITIONAL_STATE + " BOOLEAN, "
-    	+ Comment.POST_TRANSITIONAL_STATE + " BOOLEAN, "
-    	+ Comment.DEL_TRANSITIONAL_STATE + " BOOLEAN, "
-    	+ Comment.PUT_TRANSITIONAL_STATE + " BOOLEAN ";
+    private static final int DATABASE_VERSION = 29;
     
     
     public static final String COMMENTS_TABLE = "comments";
@@ -39,7 +31,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		+ Comment.USER_NAME + " TEXT, "
 		+ Comment.USER_IMAGE_URL + " TEXT, "
 		
-		+ TRANSITION_FLAGS + ");";
+		+ Comment.PENDING + " BOOLEAN "
+		
+		+ ");";
     
     
     public static final String PRODUCTS_TABLE = "products";
@@ -57,8 +51,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     	+ Product.RATING_LIKES + " INTEGER, "
     	+ Product.RATING_DISLIKES + " INTEGER, "
     	+ Product.RATING_PERSONAL + " TEXT, "
+    	
+    	+ Product.PENDING + " BOOLEAN "
 
-    	+ TRANSITION_FLAGS + ");"
+    	+ ");"
     	+ "CREATE INDEX products_gtin_index ON " + PRODUCTS_TABLE + "(" + Product.GTIN + ");";
     
     

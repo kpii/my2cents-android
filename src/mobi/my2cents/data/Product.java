@@ -14,7 +14,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
 
-public class Product implements BaseColumns, TransitionalStateColumns{
+public class Product implements BaseColumns {
 
 	public static final Uri CONTENT_URI = Uri.parse("content://" + My2Cents.AUTHORITY + "/products");
 	
@@ -29,6 +29,8 @@ public class Product implements BaseColumns, TransitionalStateColumns{
 	public static final String RATING_LIKES 	= "rating_likes";
 	public static final String RATING_DISLIKES 	= "rating_dislikes";
 	public static final String RATING_PERSONAL 	= "rating_personal";
+	
+	public static final String PENDING = "pending";
 	
 	
 	public static final HashMap<String, String> projectionMap = new HashMap<String, String>();
@@ -47,11 +49,7 @@ public class Product implements BaseColumns, TransitionalStateColumns{
 		projectionMap.put( Product.RATING_DISLIKES, 			Product.RATING_DISLIKES);
 		projectionMap.put( Product.RATING_PERSONAL, 			Product.RATING_PERSONAL);
 
-		projectionMap.put( Product.TRANSITION_ACTIVE,			Product.TRANSITION_ACTIVE);
-		projectionMap.put( Product.POST_TRANSITIONAL_STATE,		Product.POST_TRANSITIONAL_STATE);
-		projectionMap.put( Product.GET_TRANSITIONAL_STATE, 		Product.GET_TRANSITIONAL_STATE);
-		projectionMap.put( Product.PUT_TRANSITIONAL_STATE, 		Product.PUT_TRANSITIONAL_STATE);
-		projectionMap.put( Product.DEL_TRANSITIONAL_STATE, 		Product.DEL_TRANSITIONAL_STATE);
+		projectionMap.put( Product.PENDING,						Product.PENDING);
 	}
 	
 	

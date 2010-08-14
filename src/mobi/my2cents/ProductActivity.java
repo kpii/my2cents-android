@@ -387,8 +387,7 @@ public final class ProductActivity extends ListActivity {
 			values.put(Comment.PRODUCT_IMAGE_URL, cursor.getString(cursor.getColumnIndex(Product.IMAGE_URL)));
 			values.put(Comment.USER_NAME, "Me");
 			
-			values.put(Comment.TRANSITION_ACTIVE, true);
-			values.put(Comment.POST_TRANSITIONAL_STATE, true);
+			values.put(Comment.PENDING, true);
 			
 			if (SettingsActivity.isShareLocation()) {
 				Location location = GpsManager.getLocation();
@@ -413,8 +412,7 @@ public final class ProductActivity extends ListActivity {
 			
 			final ContentValues values = new ContentValues();			
 			values.put(Product.RATING_PERSONAL, rating);			
-			values.put(Product.TRANSITION_ACTIVE, true);
-			values.put(Product.PUT_TRANSITIONAL_STATE, true);
+			values.put(Product.PENDING, true);
 			
 			getContentResolver().update(product, values, null, null);
 			

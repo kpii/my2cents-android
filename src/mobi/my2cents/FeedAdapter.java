@@ -43,7 +43,7 @@ public class FeedAdapter extends CursorAdapter {
 		productImageView.setImageBitmap(bitmap);
 		
 		final ProgressBar stateProgressBar = (ProgressBar) view.findViewById(R.id.StateProgressBar);
-		final int state = cursor.getInt(cursor.getColumnIndex(Comment.TRANSITION_ACTIVE));
+		final int state = cursor.getInt(cursor.getColumnIndex(Comment.PENDING));
 		if (state == 1) {
 			stateProgressBar.setVisibility(View.VISIBLE);
 		}

@@ -18,11 +18,11 @@ public class My2CentsProvider extends ContentProvider {
     private static final int PRODUCT_KEY = 2;
     private static final int PRODUCT_GTIN = 3;    
     private static final int PRODUCT_COMMENTS = 4;
-    private static final int PRODUCT_PUT = 5;
+    private static final int PRODUCTS_PENDING = 5;
     
     private static final int COMMENTS = 6;
     private static final int COMMENT_ID = 7;
-    private static final int COMMENT_POST = 8;
+    private static final int COMMENTS_PENDING = 8;
     
     private static final UriMatcher uriMatcher;    
 	private DatabaseHelper dbHelper;
@@ -40,7 +40,7 @@ public class My2CentsProvider extends ContentProvider {
 	    		return "vnd.android.cursor.dir/mobi.my2cents.product";
 	    	}
 	    	
-	    	case PRODUCT_PUT: {
+	    	case PRODUCTS_PENDING: {
 	    		return "vnd.android.cursor.dir/mobi.my2cents.product";
 	    	}
 	    		
@@ -64,7 +64,7 @@ public class My2CentsProvider extends ContentProvider {
 	    		return "vnd.android.cursor.item/mobi.my2cents.comment";
 	    	}
 	    	
-	    	case COMMENT_POST: {
+	    	case COMMENTS_PENDING: {
 	    		return "vnd.android.cursor.dir/mobi.my2cents.comment";
 	    	}
 	    	
@@ -127,7 +127,6 @@ public class My2CentsProvider extends ContentProvider {
         
         switch (uriMatcher.match(uri)) {    		
 	    	case PRODUCTS: {
-//	    		values.put(Comment.GET_TRANSITIONAL_STATE, true);
 	    		long rowId = db.replace(DatabaseHelper.PRODUCTS_TABLE, "", values);
 	            if (rowId > 0) {	
 	                final Uri resultUri = ContentUris.withAppendedId(Product.CONTENT_URI, rowId);
@@ -173,10 +172,10 @@ public class My2CentsProvider extends ContentProvider {
 	    		break;
 	    	}
 	    	
-	    	case PRODUCT_PUT: {
+	    	case PRODUCTS_PENDING: {
 	    		qb.setTables(DatabaseHelper.PRODUCTS_TABLE);
 	            qb.setProjectionMap(Product.projectionMap);
-	            qb.appendWhere(Product.TRANSITION_ACTIVE + "=1 AND " + Product.PUT_TRANSITIONAL_STATE + "=1");
+	            qb.appendWhere(Product.PENDING + "=1");
 	    		break;
 	    	}
 	    		
@@ -218,10 +217,10 @@ public class My2CentsProvider extends ContentProvider {
 	    		break;
 	    	}
 	    	
-	    	case COMMENT_POST: {
+	    	case COMMENTS_PENDING: {
 	    		qb.setTables(DatabaseHelper.COMMENTS_TABLE);
 	            qb.setProjectionMap(Comment.projectionMap);
-	            qb.appendWhere(Comment.TRANSITION_ACTIVE + "=1 AND " + Comment.POST_TRANSITIONAL_STATE + "=1");
+	            qb.appendWhere(Comment.PENDING + "=1");
 	    		break;
 	    	}
 	    	
@@ -268,13 +267,13 @@ public class My2CentsProvider extends ContentProvider {
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         
         uriMatcher.addURI(My2Cents.AUTHORITY, "products", PRODUCTS);
-        uriMatcher.addURI(My2Cents.AUTHORITY, "products/put", PRODUCT_PUT);
+        uriMatcher.addURI(My2Cents.AUTHORITY, "products/pending", PRODUCTS_PENDING);
         uriMatcher.addURI(My2Cents.AUTHORITY, "products/key/*/comments", PRODUCT_COMMENTS);
         uriMatcher.addURI(My2Cents.AUTHORITY, "products/key/*", PRODUCT_KEY);
         uriMatcher.addURI(My2Cents.AUTHORITY, "products/gtin/*", PRODUCT_GTIN);
         
         uriMatcher.addURI(My2Cents.AUTHORITY, "comments", COMMENTS);
-        uriMatcher.addURI(My2Cents.AUTHORITY, "comments/post", COMMENT_POST);
+        uriMatcher.addURI(My2Cents.AUTHORITY, "comments/pending", COMMENTS_PENDING);
         uriMatcher.addURI(My2Cents.AUTHORITY, "comments/*", COMMENT_ID);
 	}
 }

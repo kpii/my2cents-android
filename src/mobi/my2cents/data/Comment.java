@@ -15,7 +15,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
 
-public class Comment implements BaseColumns, TransitionalStateColumns{
+public class Comment implements BaseColumns {
 	
 	public static final Uri CONTENT_URI = Uri.parse("content://" + My2Cents.AUTHORITY + "/comments");
 	
@@ -30,6 +30,8 @@ public class Comment implements BaseColumns, TransitionalStateColumns{
 	public static final String USER_KEY = "user_key";
 	public static final String USER_NAME = "user_name";
 	public static final String USER_IMAGE_URL = "user_image_url";
+	
+	public static final String PENDING = "pending";
 
 
 	public static HashMap<String, String> projectionMap = new HashMap<String, String>();
@@ -51,11 +53,7 @@ public class Comment implements BaseColumns, TransitionalStateColumns{
 		projectionMap.put( Comment.USER_NAME, 					Comment.USER_NAME);
 		projectionMap.put( Comment.USER_IMAGE_URL, 				Comment.USER_IMAGE_URL);
 
-		projectionMap.put( Comment.TRANSITION_ACTIVE, 			Comment.TRANSITION_ACTIVE);
-		projectionMap.put( Comment.POST_TRANSITIONAL_STATE,		Comment.POST_TRANSITIONAL_STATE);
-		projectionMap.put( Comment.GET_TRANSITIONAL_STATE, 		Comment.GET_TRANSITIONAL_STATE);
-		projectionMap.put( Comment.PUT_TRANSITIONAL_STATE, 		Comment.PUT_TRANSITIONAL_STATE);
-		projectionMap.put( Comment.DEL_TRANSITIONAL_STATE, 		Comment.DEL_TRANSITIONAL_STATE);
+		projectionMap.put( Comment.PENDING, 					Comment.PENDING);
 	}
 	
 	public final static ContentValues parseJson(JSONObject json) throws JSONException {
