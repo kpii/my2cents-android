@@ -159,6 +159,7 @@ public final class ProductActivity extends ListActivity {
 			final String imageUrl = cursor.getString(cursor.getColumnIndex(Product.IMAGE_URL));
 			final int likes = cursor.getInt(cursor.getColumnIndex(Product.RATING_LIKES));
 			final int dislikes = cursor.getInt(cursor.getColumnIndex(Product.RATING_DISLIKES));
+			final String personalRating = cursor.getString(cursor.getColumnIndex(Product.RATING_PERSONAL));
 			
 			productNameTextView.setText(name);			
 			
@@ -172,6 +173,17 @@ public final class ProductActivity extends ListActivity {
 			
 			buttonLikes.setText(Integer.toString(likes));
 			buttonDislikes.setText(Integer.toString(dislikes));
+			
+			if (!TextUtils.isEmpty(personalRating)) {
+				if (personalRating.equals("like")) {
+					buttonLikes.setEnabled(false);
+					buttonDislikes.setEnabled(true);
+				}
+				else if (personalRating.equals("dislike")) {
+					buttonLikes.setEnabled(true);
+					buttonDislikes.setEnabled(false);
+				}
+			}
 
 			productImageView.setImageBitmap(ImageManager.getImage(imageUrl));
 			
