@@ -125,32 +125,22 @@ public final class ProductActivity extends ListActivity {
 	
 	private void handleIntent(Intent intent) {
 		hideVirtualKeyboard();
-		
-		if (intent.hasExtra(Product.GTIN)) {
-			final String gtin = intent.getStringExtra(Product.GTIN);
-			final Uri uri = Uri.withAppendedPath(Product.CONTENT_URI, "gtin/" + gtin);
-			bindAdapter(uri);
-			displayProduct(uri);
-		}
-		else {
-			final Uri uri = intent.getData();
-			getProductInfo(uri);
-			bindAdapter(uri);
-			displayProduct(uri);
-		}
+		product = intent.getData();
+		bindAdapter();
+		displayProduct();
+		getProductInfo();
 	}
 	
-	private void bindAdapter(Uri uri) {
-		final Uri commentsUri = Uri.withAppendedPath(uri, "comments");
+	private void bindAdapter() {
+		final Uri commentsUri = Uri.withAppendedPath(product, "comments");
 		final Cursor cursor = managedQuery(commentsUri, null, null, null, null);
 		adapter = new ProductAdapter(this, cursor);
 		setListAdapter(adapter);
 	}
 	
-	private void displayProduct(Uri uri)
+	private void displayProduct()
 	{
-		product = uri;
-		final Cursor cursor = managedQuery(uri, null, null, null, null);
+		final Cursor cursor = managedQuery(product, null, null, null, null);
 		if (cursor.moveToFirst()) {
 			
 			final String name = cursor.getString(cursor.getColumnIndex(Product.NAME));
@@ -194,14 +184,14 @@ public final class ProductActivity extends ListActivity {
 		}
 	}
 	
-	private void getProductInfo(Uri uri) {
+	private void getProductInfo() {
 		if (!NetworkManager.isNetworkAvailable(this)) {
 			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
 		}
 		else {
 			showStatus(getString(R.string.message_product_info_loading));
-			Intent intent = new Intent(this, ProductGetterService.class);
-			intent.setData(uri);
+			final Intent intent = new Intent(this, ProductGetterService.class);
+			intent.setData(product);
 			startService(intent);
 		}
 	}
@@ -410,7 +400,7 @@ public final class ProductActivity extends ListActivity {
 			}
 			hideVirtualKeyboard();
 			getContentResolver().insert(Comment.CONTENT_URI, values);
-			adapter.getCursor().requery();
+//			adapter.getCursor().requery();
 			
 			final Intent intent = new Intent(this, SyncService.class);
 			startService(intent);
@@ -483,7 +473,7 @@ public final class ProductActivity extends ListActivity {
 		closeProductPopupBar();
 		prepareUI();
 		if (product != null) {
-			displayProduct(product);
+			displayProduct();
 		}
 	}
 	
@@ -516,9 +506,7 @@ public final class ProductActivity extends ListActivity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			hideStatus();
-			final String key = intent.getStringExtra(Product.KEY);
-			final Uri uri = Uri.withAppendedPath(Product.CONTENT_URI, "key/" + key);
-			displayProduct(uri);
+			displayProduct();
 		}
 		
 	}
@@ -527,10 +515,9 @@ public final class ProductActivity extends ListActivity {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			displayProduct();
+			adapter.getCursor().requery();
 			adapter.notifyDataSetChanged();
-			if (product != null) {
-				displayProduct(product);
-			}
 		}
 		
 	}

@@ -23,8 +23,6 @@ public class SyncService extends IntentService {
 	public final static String SYNC_COMPLETE = "mobi.my2cents.action.SYNC_COMPLETE";
 	public final static IntentFilter FILTER = new IntentFilter(SYNC_COMPLETE);
 	
-	private final static Intent broadcastIntent = new Intent(SYNC_COMPLETE);
-	
 	public SyncService() {
 		super("SyncService");
 	}
@@ -32,16 +30,16 @@ public class SyncService extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		
-		Cursor cursor = getContentResolver().query(Uri.withAppendedPath(Comment.CONTENT_URI, "pending"), null, null, null, null);
+		final Cursor commentsCursor = getContentResolver().query(Uri.withAppendedPath(Comment.CONTENT_URI, "pending"), null, null, null, null);
 		try {
-			if (cursor.moveToFirst()) {
+			if (commentsCursor.moveToFirst()) {
 				do {
-					final JSONObject json = Comment.getJson(cursor);
+					final JSONObject json = Comment.getJson(commentsCursor);
 					if (json != null) {
 						try {
 							final String response = NetworkManager.postComment(json.toString());
 							if (response != null) {
-								final String id = cursor.getString(cursor.getColumnIndex(Comment._ID)); 
+								final String id = commentsCursor.getString(commentsCursor.getColumnIndex(Comment._ID)); 
 								getContentResolver().delete(Uri.withAppendedPath(Comment.CONTENT_URI, id), null, null);
 							}
 						} catch (ClientProtocolException e) {
@@ -50,20 +48,20 @@ public class SyncService extends IntentService {
 							Log.e(My2Cents.TAG, e.toString());
 						}
 					}
-				} while (cursor.moveToNext());
+				} while (commentsCursor.moveToNext());
 			}
 		} finally {
-			cursor.close();
+			commentsCursor.close();
 		}
 		
-		cursor = getContentResolver().query(Uri.withAppendedPath(Product.CONTENT_URI, "pending"), null, null, null, null);
+		final Cursor productsCursor = getContentResolver().query(Uri.withAppendedPath(Product.CONTENT_URI, "pending"), null, null, null, null);
 		try {
-			if (cursor.moveToFirst()) {
+			if (productsCursor.moveToFirst()) {
 				do {
-					final JSONObject json = Product.getRatingJson(cursor);
+					final JSONObject json = Product.getRatingJson(productsCursor);
 					if (json != null) {
 						try {
-							final String key = cursor.getString(cursor.getColumnIndex(Product.KEY)); 
+							final String key = productsCursor.getString(productsCursor.getColumnIndex(Product.KEY)); 
 							final String response = NetworkManager.putRating(key, json.toString());
 							if (response != null) {								
 								final JSONObject responseJson = new JSONObject(response);
@@ -89,12 +87,13 @@ public class SyncService extends IntentService {
 							Log.e(My2Cents.TAG, e.toString());
 						}
 					}
-				} while (cursor.moveToNext());
+				} while (productsCursor.moveToNext());
 			}
 		} finally {
-			cursor.close();
+			productsCursor.close();
 		}
 		
+		final Intent broadcastIntent = new Intent(SYNC_COMPLETE);
 		sendBroadcast(broadcastIntent);
 	}
 }

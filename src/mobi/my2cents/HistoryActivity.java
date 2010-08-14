@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -80,9 +81,8 @@ public final class HistoryActivity extends ListActivity {
 		final Cursor cursor = (Cursor) getListView().getItemAtPosition(position);
 		final String key = cursor.getString(cursor.getColumnIndex(Product.KEY));
 		
-		Intent intent = new Intent(this, ProductActivity.class);
+		final Intent intent = new Intent(this, ProductActivity.class);
 		intent.setData(Uri.withAppendedPath(Product.CONTENT_URI, "key/" + key));
-		
 		startActivity(intent);
 	}
 

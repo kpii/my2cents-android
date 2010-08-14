@@ -24,13 +24,13 @@ public class ProductAdapter extends CursorAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		
-		TextView usernameTextView = (TextView) view.findViewById(R.id.CommentAuthorTextView);
+		final TextView usernameTextView = (TextView) view.findViewById(R.id.CommentAuthorTextView);
 		usernameTextView.setText(cursor.getString(cursor.getColumnIndex(Comment.USER_NAME)));
 
-		TextView bodyTextView = (TextView) view.findViewById(R.id.CommentTextView);
+		final TextView bodyTextView = (TextView) view.findViewById(R.id.CommentTextView);
 		bodyTextView.setText(cursor.getString(cursor.getColumnIndex(Comment.BODY)));
 
-		TextView sentTextView = (TextView) view.findViewById(R.id.CommentSentTextView);
+		final TextView sentTextView = (TextView) view.findViewById(R.id.CommentSentTextView);
 		long time = cursor.getLong(cursor.getColumnIndex(Comment.CREATED_AT));
 		sentTextView.setText(RelativeTime.getDifference(time));
 
@@ -51,8 +51,8 @@ public class ProductAdapter extends CursorAdapter {
 
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
-		LayoutInflater inflater = LayoutInflater.from(context);
-		View view = inflater.inflate(R.layout.comment_item, parent, false);
+		final LayoutInflater inflater = LayoutInflater.from(context);
+		final View view = inflater.inflate(R.layout.comment_item, parent, false);
 		bindView(view, context, cursor);
 		return view;
 	}

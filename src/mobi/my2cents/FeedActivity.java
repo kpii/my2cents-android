@@ -139,7 +139,7 @@ public final class FeedActivity extends ListActivity {
 		final Cursor cursor = (Cursor) getListView().getItemAtPosition(position);
 		final String key = cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_KEY));
 		if (!TextUtils.isEmpty(key)) {
-			Intent intent = new Intent(this, ProductActivity.class);
+			final Intent intent = new Intent(this, ProductActivity.class);
 			intent.setData(Uri.withAppendedPath(Product.CONTENT_URI, "key/" + key));
 			startActivity(intent);
 		}
