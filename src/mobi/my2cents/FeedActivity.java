@@ -157,6 +157,7 @@ public final class FeedActivity extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.refreshMenuItem: {
+				this.getContentResolver().delete(Comment.CONTENT_URI, null, null);
 				updateFeed();
 				return true;
 			}
