@@ -15,14 +15,15 @@ import android.text.TextUtils;
 public class My2CentsProvider extends ContentProvider {
 	
     private static final int PRODUCTS = 1;
-    private static final int PRODUCT_KEY = 2;
-    private static final int PRODUCT_GTIN = 3;    
-    private static final int PRODUCT_COMMENTS = 4;
-    private static final int PRODUCTS_PENDING = 5;
+    private static final int PRODUCT_ID = 2;
+    private static final int PRODUCT_KEY = 3;
+    private static final int PRODUCT_GTIN = 4;    
+    private static final int PRODUCT_COMMENTS = 5;
+    private static final int PRODUCTS_PENDING = 6;
     
-    private static final int COMMENTS = 6;
-    private static final int COMMENT_ID = 7;
-    private static final int COMMENTS_PENDING = 8;
+    private static final int COMMENTS = 7;
+    private static final int COMMENT_ID = 8;
+    private static final int COMMENTS_PENDING = 9;
     
     private static final UriMatcher uriMatcher;    
 	private DatabaseHelper dbHelper;
@@ -130,7 +131,7 @@ public class My2CentsProvider extends ContentProvider {
 	    		long rowId = db.replace(DatabaseHelper.PRODUCTS_TABLE, "", values);
 	            if (rowId > 0) {	
 	                final Uri resultUri = ContentUris.withAppendedId(Product.CONTENT_URI, rowId);
-//	                getContext().getContentResolver().notifyChange(eventUri, null);
+//	                getContext().getContentResolver().notifyChange(resultUri, null);
 	                return resultUri;
 	            }
 	    		break;
@@ -140,7 +141,7 @@ public class My2CentsProvider extends ContentProvider {
 	    		long rowId = db.replace(DatabaseHelper.COMMENTS_TABLE, "", values);
 	            if (rowId > 0) {	
 	                final Uri resultUri = ContentUris.withAppendedId(Comment.CONTENT_URI, rowId);
-//	                getContext().getContentResolver().notifyChange(eventUri, null);
+//	                getContext().getContentResolver().notifyChange(resultUri, null);
 	                return resultUri;
 	            }
 	    		break;
@@ -196,7 +197,7 @@ public class My2CentsProvider extends ContentProvider {
 	    	}
 	    	
 	    	case PRODUCT_COMMENTS: {
-	    		final String key = uri.getPathSegments().get(2);
+	    		final String key = uri.getLastPathSegment();
 				qb.setTables(DatabaseHelper.COMMENTS_TABLE);
 	            qb.setProjectionMap(Comment.projectionMap);
 	            qb.appendWhere(Comment.PRODUCT_KEY + "='" + key + "'");
@@ -267,13 +268,14 @@ public class My2CentsProvider extends ContentProvider {
 		uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         
         uriMatcher.addURI(My2Cents.AUTHORITY, "products", PRODUCTS);
+        uriMatcher.addURI(My2Cents.AUTHORITY, "products/#", PRODUCT_ID);
         uriMatcher.addURI(My2Cents.AUTHORITY, "products/pending", PRODUCTS_PENDING);
-        uriMatcher.addURI(My2Cents.AUTHORITY, "products/comments/*", PRODUCT_COMMENTS);
         uriMatcher.addURI(My2Cents.AUTHORITY, "products/key/*", PRODUCT_KEY);
         uriMatcher.addURI(My2Cents.AUTHORITY, "products/gtin/*", PRODUCT_GTIN);
         
         uriMatcher.addURI(My2Cents.AUTHORITY, "comments", COMMENTS);
         uriMatcher.addURI(My2Cents.AUTHORITY, "comments/pending", COMMENTS_PENDING);
-        uriMatcher.addURI(My2Cents.AUTHORITY, "comments/id/*", COMMENT_ID);
+        uriMatcher.addURI(My2Cents.AUTHORITY, "comments/product/*", PRODUCT_COMMENTS);
+        uriMatcher.addURI(My2Cents.AUTHORITY, "comments/#", COMMENT_ID);
 	}
 }

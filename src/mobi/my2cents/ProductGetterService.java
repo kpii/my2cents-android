@@ -27,7 +27,6 @@ public class ProductGetterService extends IntentService {
 	public ProductGetterService() {
 		super("ProductGetter");
 	}
-	
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
@@ -57,7 +56,7 @@ public class ProductGetterService extends IntentService {
 					if (comments.length() > 0) {
 						final ContentValues[] values = new ContentValues[comments.length()];
 						for (int i=0; i<comments.length(); i++) {
-			            	values[i] = Comment.parseJson(comments.getJSONObject(i));
+			            	values[i] = Comment.parseProductJson(comments.getJSONObject(i), product.getAsString(Product.KEY), product.getAsString(Product.NAME), product.getAsString(Product.IMAGE_URL));
 			            }					
 						getContentResolver().bulkInsert(Comment.CONTENT_URI, values);
 					}

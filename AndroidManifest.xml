@@ -5,8 +5,7 @@
 	android:versionCode="8" android:versionName="1.1.beta4">
 	<!-- We require Cupcake (Android 1.5) or later, but are really targeting Donut. -->
 	<uses-sdk
-		android:minSdkVersion="3"
-		android:targetSdkVersion="4" />
+		android:minSdkVersion="3" android:targetSdkVersion="4"/>
 	<!-- Donut-specific flags which allow us to run on large and high dpi screens. -->
 	<supports-screens
 		android:largeScreens="true"
@@ -128,4 +127,6 @@
 		android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 	<uses-permission
 		android:name="android.permission.WAKE_LOCK" />
+
+
 </manifest>

@@ -21,8 +21,6 @@ public class FeedUpdaterService extends IntentService {
 	public final static String FEED_UPDATED = "mobi.my2cents.action.FEED_UPDATED";
 	public final static IntentFilter FILTER = new IntentFilter(FEED_UPDATED);
 	
-	private final static Intent broadcastIntent = new Intent(FEED_UPDATED);
-	
 	public FeedUpdaterService() {
 		super("FeedUpdater");
 	}
@@ -48,7 +46,7 @@ public class FeedUpdaterService extends IntentService {
 					for (int i=0; i<json.length(); i++) {
 						
 		            	JSONObject item = json.getJSONObject(i).getJSONObject("comment");
-		            	values[i] = Comment.parseJson(item);
+		            	values[i] = Comment.parseFeedJson(item);
 		            }
 					
 					getContentResolver().bulkInsert(Comment.CONTENT_URI, values);
@@ -57,6 +55,7 @@ public class FeedUpdaterService extends IntentService {
 		} catch (JSONException e) {
 			Log.e(My2Cents.TAG, e.getMessage());
 		} finally {
+			final Intent broadcastIntent = new Intent(FEED_UPDATED);
 			sendBroadcast(broadcastIntent);
 		}
 	}

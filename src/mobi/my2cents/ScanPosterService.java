@@ -57,7 +57,7 @@ public class ScanPosterService extends IntentService {
 					if (comments.length() > 0) {
 						final ContentValues[] values = new ContentValues[comments.length()];
 						for (int i=0; i<comments.length(); i++) {
-			            	values[i] = Comment.parseJson(comments.getJSONObject(i));
+			            	values[i] = Comment.parseFeedJson(comments.getJSONObject(i));
 			            }					
 						getContentResolver().bulkInsert(Comment.CONTENT_URI, values);
 					}

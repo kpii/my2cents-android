@@ -56,7 +56,7 @@ public class Comment implements BaseColumns {
 		projectionMap.put( Comment.PENDING, 					Comment.PENDING);
 	}
 	
-	public final static ContentValues parseJson(JSONObject json) throws JSONException {
+	public final static ContentValues parseFeedJson(JSONObject json) throws JSONException {
 		
 		if (json == null) return null;
 		
@@ -71,6 +71,29 @@ public class Comment implements BaseColumns {
 			values.put(Comment.PRODUCT_NAME, product.getString("name"));
 			values.put(Comment.PRODUCT_IMAGE_URL, product.getString("image_url"));
 		}
+		
+		if (json.has("user")) {
+			final JSONObject user = json.getJSONObject("user");
+			values.put(Comment.USER_KEY, user.getString("id"));
+			values.put(Comment.USER_NAME, user.getString("name"));
+			values.put(Comment.USER_IMAGE_URL, user.getString("profile_image_url"));
+		}
+		
+		return values;
+	}
+	
+	public final static ContentValues parseProductJson(JSONObject json, String productKey, String productName, String productImageUrl) throws JSONException {
+		
+		if (json == null) return null;
+		
+		final ContentValues values = new ContentValues();
+		values.put(Comment.KEY, json.getString("id"));
+		values.put(Comment.BODY, json.getString("body"));
+		values.put(Comment.CREATED_AT, Helper.parseDate(json.getString("created_at")));
+		
+		values.put(Comment.PRODUCT_KEY, productKey);
+		values.put(Comment.PRODUCT_NAME, productName);
+		values.put(Comment.PRODUCT_IMAGE_URL, productImageUrl);
 		
 		if (json.has("user")) {
 			final JSONObject user = json.getJSONObject("user");
