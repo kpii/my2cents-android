@@ -187,7 +187,7 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.capture_menu, menu);
+		inflater.inflate(R.menu.scan_menu, menu);
 		return true;
 	}
 

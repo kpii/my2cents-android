@@ -6,19 +6,18 @@ import mobi.my2cents.utils.RelativeTime;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
 
-public class ProductAdapter extends CursorAdapter {
+public class ProductAdapter extends ResourceCursorAdapter
+ {
 	
 	public ProductAdapter(Context context, Cursor cursor) {
-		super(context, cursor, true);
+		super(context, R.layout.comment_item, cursor);
 	}
 
 	@Override
@@ -47,14 +46,6 @@ public class ProductAdapter extends CursorAdapter {
 		else {
 			stateProgressBar.setVisibility(View.GONE);
 		}
-	}
-
-	@Override
-	public View newView(Context context, Cursor cursor, ViewGroup parent) {
-		final LayoutInflater inflater = LayoutInflater.from(context);
-		final View view = inflater.inflate(R.layout.comment_item, parent, false);
-		bindView(view, context, cursor);
-		return view;
 	}
 
 }

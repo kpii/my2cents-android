@@ -149,7 +149,7 @@ public final class FeedActivity extends ListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.stream_menu, menu);
+		inflater.inflate(R.menu.feed_menu, menu);
 		return true;
 	}
 

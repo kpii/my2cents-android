@@ -37,6 +37,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
@@ -424,13 +425,17 @@ public final class ProductActivity extends ListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.comments_menu, menu);
+		inflater.inflate(R.menu.product_menu, menu);
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+			case R.id.refreshMenuItem: {
+				((CursorAdapter) getListAdapter()).getCursor().requery();
+				return true;
+			}
 			case R.id.settingsMenuItem: {
 				final Intent intent = new Intent(this, SettingsActivity.class);
 				startActivity(intent);

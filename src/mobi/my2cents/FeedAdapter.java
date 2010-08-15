@@ -6,18 +6,16 @@ import mobi.my2cents.utils.RelativeTime;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
-public class FeedAdapter extends CursorAdapter {
+public class FeedAdapter extends ResourceCursorAdapter {
 	
 	public FeedAdapter(Context context, Cursor cursor) {
-		super(context, cursor);
+		super(context, R.layout.feed_item, cursor);
 	}
 
 	@Override
@@ -50,14 +48,6 @@ public class FeedAdapter extends CursorAdapter {
 		else {
 			stateProgressBar.setVisibility(View.GONE);
 		}
-	}
-
-	@Override
-	public View newView(Context context, Cursor cursor, ViewGroup parent) {
-		LayoutInflater inflater = LayoutInflater.from(context);
-		View view = inflater.inflate(R.layout.feed_item, parent, false);
-		bindView(view, context, cursor);
-		return view;
 	}
 
 }

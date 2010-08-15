@@ -5,18 +5,16 @@ import mobi.my2cents.utils.ImageManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CursorAdapter;
 import android.widget.ImageView;
+import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
 
-public class HistoryAdapter extends CursorAdapter {
+public class HistoryAdapter extends ResourceCursorAdapter {
 	
 	public HistoryAdapter(Context context, Cursor cursor) {
-		super(context, cursor);
+		super(context, R.layout.history_item, cursor);
 	}
 
 	@Override
@@ -37,14 +35,6 @@ public class HistoryAdapter extends CursorAdapter {
 		final String url = cursor.getString(cursor.getColumnIndex(Product.IMAGE_URL));
 		final Bitmap bitmap = ImageManager.getImage(url);
 		imageView.setImageBitmap(bitmap);
-	}
-
-	@Override
-	public View newView(Context context, Cursor cursor, ViewGroup parent) {
-		LayoutInflater inflater = LayoutInflater.from(context);
-		View view = inflater.inflate(R.layout.history_item, parent, false);
-		bindView(view, context, cursor);
-		return view;
 	}
 
 }
