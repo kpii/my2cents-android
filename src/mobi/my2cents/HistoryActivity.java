@@ -7,18 +7,16 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
 
 public final class HistoryActivity extends ListActivity {
-	
-	private HistoryAdapter adapter;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -30,8 +28,7 @@ public final class HistoryActivity extends ListActivity {
 	
 	private void bindAdapter() {
 		final Cursor cursor = managedQuery(Product.CONTENT_URI, null, null, null, null);
-		adapter = new HistoryAdapter(this, cursor);
-		setListAdapter(adapter);
+		setListAdapter(new HistoryAdapter(this, cursor));
 	}
 	
 	private void prepareUI() {
@@ -45,21 +42,21 @@ public final class HistoryActivity extends ListActivity {
 	
 	private final Button.OnClickListener scanListener = new Button.OnClickListener() {
 		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), ScanActivity.class);
+			final Intent intent = new Intent(getBaseContext(), ScanActivity.class);
 			startActivity(intent);
 		}
 	};
 	
 	private final Button.OnClickListener streamListener = new Button.OnClickListener() {
 		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), FeedActivity.class);
+			final Intent intent = new Intent(getBaseContext(), FeedActivity.class);
 			startActivity(intent);
 		}
 	};
 	
 	private final Button.OnClickListener homeListener = new Button.OnClickListener() {
 		public void onClick(View view) {
-			Intent intent = new Intent(getBaseContext(), MainActivity.class);
+			final Intent intent = new Intent(getBaseContext(), MainActivity.class);
 			startActivity(intent);
 		}
 	};
@@ -70,7 +67,7 @@ public final class HistoryActivity extends ListActivity {
 		final String key = cursor.getString(cursor.getColumnIndex(Product.KEY));
 		
 		final Intent intent = new Intent(this, ProductActivity.class);
-		intent.putExtra(Product.KEY, key);
+		intent.setData(Uri.withAppendedPath(Product.CONTENT_URI, "key/" + key));
 		startActivity(intent);
 	}
 
@@ -88,7 +85,7 @@ public final class HistoryActivity extends ListActivity {
 			case R.id.clearHistoryMenuItem: {
 				getContentResolver().delete(Product.CONTENT_URI, null, null);
 				getContentResolver().delete(Comment.CONTENT_URI, null, null);
-				adapter.getCursor().requery();
+				((CursorAdapter) getListAdapter()).getCursor().requery();
 				return true;
 			}
 			case R.id.settingsMenuItem: {

@@ -197,7 +197,7 @@ public class My2CentsProvider extends ContentProvider {
 	    	}
 	    	
 	    	case PRODUCT_COMMENTS: {
-	    		final String key = uri.getLastPathSegment();
+	    		final String key = uri.getPathSegments().get(2);
 				qb.setTables(DatabaseHelper.COMMENTS_TABLE);
 	            qb.setProjectionMap(Comment.projectionMap);
 	            qb.appendWhere(Comment.PRODUCT_KEY + "='" + key + "'");
@@ -272,10 +272,10 @@ public class My2CentsProvider extends ContentProvider {
         uriMatcher.addURI(My2Cents.AUTHORITY, "products/pending", PRODUCTS_PENDING);
         uriMatcher.addURI(My2Cents.AUTHORITY, "products/key/*", PRODUCT_KEY);
         uriMatcher.addURI(My2Cents.AUTHORITY, "products/gtin/*", PRODUCT_GTIN);
+        uriMatcher.addURI(My2Cents.AUTHORITY, "products/key/*/comments", PRODUCT_COMMENTS);
         
         uriMatcher.addURI(My2Cents.AUTHORITY, "comments", COMMENTS);
         uriMatcher.addURI(My2Cents.AUTHORITY, "comments/pending", COMMENTS_PENDING);
-        uriMatcher.addURI(My2Cents.AUTHORITY, "comments/product/*", PRODUCT_COMMENTS);
         uriMatcher.addURI(My2Cents.AUTHORITY, "comments/#", COMMENT_ID);
 	}
 }

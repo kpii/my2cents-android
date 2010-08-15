@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.IntentService;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -39,8 +40,8 @@ public class SyncService extends IntentService {
 						try {
 							final String response = NetworkManager.postComment(json.toString());
 							if (response != null) {
-								final String id = commentsCursor.getString(commentsCursor.getColumnIndex(Comment._ID)); 
-								getContentResolver().delete(Uri.withAppendedPath(Comment.CONTENT_URI, "id/" + id), null, null);
+								final long id = commentsCursor.getLong(commentsCursor.getColumnIndex(Comment._ID)); 
+								getContentResolver().delete(ContentUris.withAppendedId(Comment.CONTENT_URI, id), null, null);
 							}
 						} catch (ClientProtocolException e) {
 							Log.e(My2Cents.TAG, e.toString());

@@ -15,7 +15,6 @@ import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 

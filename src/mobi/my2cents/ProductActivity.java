@@ -1,7 +1,6 @@
 
 package mobi.my2cents;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import mobi.my2cents.data.Comment;
@@ -9,10 +8,8 @@ import mobi.my2cents.data.Product;
 import mobi.my2cents.utils.GpsManager;
 import mobi.my2cents.utils.ImageManager;
 import mobi.my2cents.utils.NetworkManager;
-import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -35,14 +32,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
-import android.widget.Gallery;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -71,7 +64,7 @@ public final class ProductActivity extends ListActivity {
 	private ProgressBar progressBar;
 	private TextView statusTextView;
 	
-	private static String productKey;
+	private static Uri product;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -118,20 +111,20 @@ public final class ProductActivity extends ListActivity {
 	
 	private void handleIntent(Intent intent) {
 		hideVirtualKeyboard();
-		productKey = intent.getStringExtra(Product.KEY);
+		product = intent.getData();
 		bindAdapter();
 		displayProduct();
 		getProductInfo();
 	}
 	
 	private void bindAdapter() {
-		final Cursor cursor = managedQuery(Uri.withAppendedPath(Comment.CONTENT_URI, "product/" + productKey), null, null, null, null);
+		final Cursor cursor = managedQuery(Uri.withAppendedPath(product, "comments"), null, null, null, null);
 		setListAdapter(new ProductAdapter(this, cursor));
 	}
 	
 	private void displayProduct()
 	{
-		final Cursor cursor = managedQuery(Uri.withAppendedPath(Product.CONTENT_URI, "key/" + productKey), null, null, null, null);
+		final Cursor cursor = managedQuery(product, null, null, null, null);
 		if (cursor.moveToFirst()) {
 			
 			final String name = cursor.getString(cursor.getColumnIndex(Product.NAME));
@@ -182,7 +175,7 @@ public final class ProductActivity extends ListActivity {
 		else {
 			showStatus(getString(R.string.message_product_info_loading));
 			final Intent intent = new Intent(this, ProductGetterService.class);
-			intent.putExtra(Product.KEY, productKey);
+			intent.putExtra(Product.KEY, product.getPathSegments().get(2));
 			startService(intent);
 		}
 	}
@@ -262,7 +255,7 @@ public final class ProductActivity extends ListActivity {
 	
 	private final View.OnClickListener productImageListener = new View.OnClickListener() {
 		public void onClick(View view) {
-			if (!TextUtils.isEmpty(productKey)) {
+			if (product != null) {
 				showDialog(DIALOG_PRODUCT_DETAILS);
 			}
 		}
@@ -311,8 +304,8 @@ public final class ProductActivity extends ListActivity {
 	private final View.OnClickListener affiliateListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			closeProductPopupBar();
-			if (!TextUtils.isEmpty(productKey)) {
-				final Cursor cursor = managedQuery(Uri.withAppendedPath(Product.CONTENT_URI, "key/" + productKey), null, null, null, null);
+			if (product != null) {
+				final Cursor cursor = managedQuery(product, null, null, null, null);
 				if (cursor.moveToFirst()) {			
 					final String url = cursor.getString(cursor.getColumnIndex(Product.AFFILIATE_URL));
 					final Intent intent = new Intent("android.intent.action.VIEW", Uri.parse(url));  
@@ -325,7 +318,7 @@ public final class ProductActivity extends ListActivity {
 	private final View.OnClickListener likeListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			closeProductPopupBar();
-			if (!TextUtils.isEmpty(productKey)) {
+			if (product != null) {
 				rateProduct("like");
 			}
 		}
@@ -334,7 +327,7 @@ public final class ProductActivity extends ListActivity {
 	private final View.OnClickListener dislikeListener = new View.OnClickListener() {
 		public void onClick(View view) {
 			closeProductPopupBar();
-			if (!TextUtils.isEmpty(productKey)) {
+			if (product != null) {
 				rateProduct("dislike");
 			}
 		}
@@ -364,8 +357,8 @@ public final class ProductActivity extends ListActivity {
 	};
 	
 	private void postComment(String body) {
-		if (TextUtils.isEmpty(productKey)) return;		
-		final Cursor cursor = managedQuery(Uri.withAppendedPath(Product.CONTENT_URI, "key/" + productKey), null, null, null, null);
+		if (product == null) return;		
+		final Cursor cursor = managedQuery(product, null, null, null, null);
 		if (cursor.moveToFirst()) {			
 			ContentValues values = new ContentValues();
 			values.put(Comment.PRODUCT_KEY, cursor.getString(cursor.getColumnIndex(Product.KEY)));
@@ -388,7 +381,7 @@ public final class ProductActivity extends ListActivity {
 			
 			getContentResolver().insert(Comment.CONTENT_URI, values);
 			
-//			adapter.getCursor().requery();
+			((CursorAdapter) getListAdapter()).getCursor().requery();
 			
 			final Intent intent = new Intent(this, SyncService.class);
 			startService(intent);
@@ -396,15 +389,15 @@ public final class ProductActivity extends ListActivity {
 	}
 	
 	private void rateProduct(String rating) {
-		if (TextUtils.isEmpty(productKey)) return;		
-		final Cursor cursor = managedQuery(Uri.withAppendedPath(Product.CONTENT_URI, "key/" + productKey), null, null, null, null);
+		if (product == null) return;		
+		final Cursor cursor = managedQuery(product, null, null, null, null);
 		if (cursor.moveToFirst()) {
 			
 			final ContentValues values = new ContentValues();			
 			values.put(Product.RATING_PERSONAL, rating);			
 			values.put(Product.PENDING, true);
 			
-			getContentResolver().update(Uri.withAppendedPath(Product.CONTENT_URI, "key/" + productKey), values, null, null);
+			getContentResolver().update(product, values, null, null);
 			
 			final Intent intent = new Intent(this, SyncService.class);
 			startService(intent);
@@ -429,10 +422,6 @@ public final class ProductActivity extends ListActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.refreshMenuItem: {
-				((CursorAdapter) getListAdapter()).getCursor().requery();
-				return true;
-			}
 			case R.id.settingsMenuItem: {
 				final Intent intent = new Intent(this, SettingsActivity.class);
 				startActivity(intent);
@@ -455,7 +444,7 @@ public final class ProductActivity extends ListActivity {
 		super.onConfigurationChanged(config);
 		closeProductPopupBar();
 		prepareUI();
-		if (!TextUtils.isEmpty(productKey)) {
+		if (product != null) {
 			displayProduct();
 		}
 	}
@@ -466,6 +455,7 @@ public final class ProductActivity extends ListActivity {
 		public void onReceive(Context context, Intent intent) {
 			hideStatus();
 			displayProduct();
+			((CursorAdapter) getListAdapter()).getCursor().requery();
 		}
 		
 	}
@@ -475,6 +465,7 @@ public final class ProductActivity extends ListActivity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			displayProduct();
+			((CursorAdapter) getListAdapter()).getCursor().requery();
 		}
 		
 	}

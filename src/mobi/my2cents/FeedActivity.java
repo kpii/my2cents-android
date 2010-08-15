@@ -18,15 +18,15 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public final class FeedActivity extends ListActivity {
-	
-	private FeedAdapter adapter;
 	
 	private ProgressBar progressBar;
 	private TextView statusTextView;
@@ -74,8 +74,7 @@ public final class FeedActivity extends ListActivity {
 	
 	private void bindAdapter() {
 		final Cursor cursor = managedQuery(Comment.CONTENT_URI, null, null, null, null);
-		adapter = new FeedAdapter(this, cursor);
-		setListAdapter(adapter);
+		setListAdapter(new FeedAdapter(this, cursor));
 	}
 	
 	private void updateFeed() {
@@ -140,7 +139,7 @@ public final class FeedActivity extends ListActivity {
 		final String key = cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_KEY));
 		if (!TextUtils.isEmpty(key)) {
 			final Intent intent = new Intent(this, ProductActivity.class);
-			intent.putExtra(Product.KEY, key);
+			intent.setData(Uri.withAppendedPath(Product.CONTENT_URI, "key/" + key));
 			startActivity(intent);
 		}
 	}
@@ -201,7 +200,7 @@ public final class FeedActivity extends ListActivity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			hideStatus();
-			adapter.getCursor().requery();
+			((CursorAdapter) getListAdapter()).getCursor().requery();
 		}
 		
 	}
@@ -210,7 +209,7 @@ public final class FeedActivity extends ListActivity {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			adapter.notifyDataSetChanged();
+			((BaseAdapter) getListAdapter()).notifyDataSetChanged();
 		}
 		
 	}
