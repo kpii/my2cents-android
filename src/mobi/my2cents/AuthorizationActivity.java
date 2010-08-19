@@ -10,8 +10,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -31,7 +29,6 @@ public final class AuthorizationActivity extends Activity {
 		
 		webView = (WebView) findViewById(R.id.AuthWebView);
 		webView.setWebViewClient(new AuthWebViewClient());
-//		webView.getSettings().setUserAgentString(NetworkManager.userAgent);
 	}
 	
 	private class AuthWebViewClient extends WebViewClient {
@@ -54,15 +51,9 @@ public final class AuthorizationActivity extends Activity {
 	        if (url.equals(NetworkManager.BASE_URL + "/auth/success")) {
 	        	Toast.makeText(view.getContext(), R.string.message_successful_authorization, Toast.LENGTH_LONG).show();
 	        	
-	        	CookieSyncManager.getInstance().sync();
-	    		CookieManager cookieManager = CookieManager.getInstance();
-	    		String cookie = cookieManager.getCookie(NetworkManager.BASE_URL + "/remember_token");
-	    		CookieSyncManager.getInstance().sync();
+	        	authorized();
 	    		
-	    		storeAuthToken(cookie);
-	    		
-	    		Intent intent = getIntent();
-	    		intent.putExtra(getString(R.string.settings_token), cookie);
+	    		final Intent intent = getIntent();
 	    		setResult(RESULT_OK, intent);
 
 				finish();
@@ -70,7 +61,7 @@ public final class AuthorizationActivity extends Activity {
 	        else if (url.equals(NetworkManager.BASE_URL + "/auth/failure")) {
 	        	Toast.makeText(view.getContext(), R.string.message_unsuccessful_authorization, Toast.LENGTH_LONG).show();
 	        	
-	        	Intent intent = getIntent();
+	        	final Intent intent = getIntent();
 	    		setResult(RESULT_CANCELED, intent);
 
 				finish();
@@ -85,27 +76,22 @@ public final class AuthorizationActivity extends Activity {
     	}
 	}
 	
-	private void storeAuthToken(String token) {
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-		
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putString(getString(R.string.settings_token), token);
+	private void authorized() {
+		final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 		editor.putBoolean(getString(R.string.settings_login), true);
 		editor.commit();
 		
-		Log.i(TAG, "Tokens stored");
+		Log.i(TAG, "Successful authorization");
 	}
 		
 	@Override
 	protected void onResume() {
 		super.onResume();
-		CookieSyncManager.getInstance().startSync();
 		webView.loadUrl(NetworkManager.BASE_URL + "/login?client_token=" + AuthenticationManager.getClientToken());
 	}
 	
 	@Override
 	protected void onPause() {
-		CookieSyncManager.getInstance().stopSync();
 		closeProgressDialog();
 		super.onPause();
 	}

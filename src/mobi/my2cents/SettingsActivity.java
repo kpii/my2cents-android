@@ -46,9 +46,6 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	protected void onResume() {
 		super.onResume();		
 		settings.registerOnSharedPreferenceChangeListener(this);
-		
-        if (!isAccessTokenStored())
-        	unsetTokens();
 	}
 	
 	@Override
@@ -57,24 +54,19 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		super.onPause();
 	}
 	
-	public boolean isAccessTokenStored() {
-		final String token = settings.getString(getString(R.string.settings_token), "");
-		return !TextUtils.isEmpty(token);
-	}
-	
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {        
 		if (key.equals(getString(R.string.settings_login))) {
         	if(loginCheckBoxPreference.isChecked()) {
-        		askOAuth();
+        		startAuthorization();
         	} else {
-        		unsetTokens();
+        		logout();
         	}
         }
     }
 	
-	private void askOAuth() {
+	private void startAuthorization() {
 		Toast.makeText(this, R.string.message_authorize, Toast.LENGTH_LONG).show();
-		Intent intent = new Intent(this, AuthorizationActivity.class);
+		final Intent intent = new Intent(this, AuthorizationActivity.class);
 		startActivityForResult(intent, AUTH_REQUEST);
 	}
 	
@@ -83,44 +75,32 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
         if (requestCode == AUTH_REQUEST) {
         	switch (resultCode) {
 				case RESULT_OK: {
-					if (intent != null) {
-	                	final String authToken = intent.getStringExtra(getString(R.string.settings_token));
-	                	if (!TextUtils.isEmpty(authToken)) {
-	                		onSetToken();
-	                	}
-	                }
+					login();
 					return;
 				}
 				case RESULT_CANCELED: {
-					unsetTokens();
+					logout();
 					return;
 				}
         	}
         }
     }
 		
-	private void unsetTokens() {
+	private void logout() {
 		settings.unregisterOnSharedPreferenceChangeListener(this);
 		
 		AuthenticationManager.logout();
 		
 		final SharedPreferences.Editor editor = settings.edit();
-		editor.putString(getString(R.string.settings_token), "");
 		editor.putBoolean(getString(R.string.settings_login), false);
 		editor.commit();
-		
-		CookieSyncManager.getInstance().sync();
-		CookieManager cookieManager = CookieManager.getInstance();
-		cookieManager.removeAllCookie();
-		CookieSyncManager.getInstance().sync();
 		
 		loginCheckBoxPreference.setChecked(false);
 		
 		settings.registerOnSharedPreferenceChangeListener(this);
-		Log.i(My2Cents.TAG, "Tokens unset");
 	}
 	
-	private void onSetToken() {
+	private void login() {
 		settings.unregisterOnSharedPreferenceChangeListener(this);
 		loginCheckBoxPreference.setChecked(true);
 		settings.registerOnSharedPreferenceChangeListener(this);
