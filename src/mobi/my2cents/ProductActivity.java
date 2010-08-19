@@ -17,7 +17,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -84,16 +83,15 @@ public final class ProductActivity extends ListActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		
 		registerReceiver(productUpdaterReceiver, ProductGetterService.FILTER);
 		registerReceiver(syncReceiver, SyncService.FILTER);
 	}
 	
 	@Override
 	public void onPause() {
-		super.onPause();
 		unregisterReceiver(productUpdaterReceiver);
 		unregisterReceiver(syncReceiver);
+		super.onPause();
 	}
 	
 	@Override

@@ -93,8 +93,6 @@ public final class AuthorizationActivity extends Activity {
 		editor.putBoolean(getString(R.string.settings_login), true);
 		editor.commit();
 		
-//		NetworkManager.setAuthToken(token);
-		
 		Log.i(TAG, "Tokens stored");
 	}
 		
