@@ -1,6 +1,7 @@
 package mobi.my2cents;
 
 import mobi.my2cents.utils.AuthenticationManager;
+import mobi.my2cents.utils.GpsManager;
 import mobi.my2cents.utils.ImageManager;
 import mobi.my2cents.utils.NetworkManager;
 import android.app.Application;
@@ -35,5 +36,6 @@ public class My2Cents extends Application {
 		}
 		
 		ImageManager.initialize(this);
+		GpsManager.initialize(this);
     }
 }

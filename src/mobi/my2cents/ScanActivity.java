@@ -54,8 +54,6 @@ import com.google.zxing.client.result.ResultParser;
 
 public final class ScanActivity extends Activity implements SurfaceHolder.Callback {
 
-	private static final String TAG = "ScanActivity";
-
 	private static final float BEEP_VOLUME = 0.15f;
 	private static final long VIBRATE_DURATION = 200L;
 	
@@ -336,13 +334,13 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 		try {
 			CameraManager.get().openDriver(surfaceHolder);
 		} catch (IOException ioe) {
-			Log.w(TAG, ioe);
+			Log.w(My2Cents.TAG, ioe);
 			displayFrameworkBugMessageAndExit();
 			return;
 		} catch (RuntimeException e) {
 			// Barcode Scanner has seen crashes in the wild of this variety:
 			// java.?lang.?RuntimeException: Fail to connect to camera service
-			Log.e(TAG, e.toString());
+			Log.e(My2Cents.TAG, e.toString());
 			displayFrameworkBugMessageAndExit();
 			return;
 		}
@@ -439,7 +437,7 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
 		}
 		else {
-			Intent intent = new Intent(this, ScanPosterService.class);
+			final Intent intent = new Intent(this, ScanPosterService.class);
 			intent.putExtra(Product.GTIN, gtin);
 			startService(intent);
 		}
@@ -452,7 +450,7 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 			if (intent.hasExtra(Product.KEY)) {
 				final String key = intent.getStringExtra(Product.KEY);
 				if (!TextUtils.isEmpty(key)) {
-					Intent productIntent = new Intent(context, ProductActivity.class);
+					final Intent productIntent = new Intent(context, ProductActivity.class);
 					productIntent.putExtra(getString(R.string.show_virtual_keyboard), showVirtualKeyboard);
 					productIntent.putExtra(Product.KEY, key);
 					startActivity(productIntent);

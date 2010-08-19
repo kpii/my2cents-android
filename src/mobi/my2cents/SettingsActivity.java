@@ -26,11 +26,6 @@ import android.webkit.CookieSyncManager;
 import android.widget.Toast;
 
 public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
-
-	private static final String TAG = "SettingsActivity";
-	
-	private static boolean shareOnTwitter;
-	private static boolean shareLocation;
 	
 	private SharedPreferences settings;
 	private CheckBoxPreference loginCheckBoxPreference;
@@ -131,28 +126,12 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 		loginCheckBoxPreference.setChecked(false);
 		
 		settings.registerOnSharedPreferenceChangeListener(this);
-		Log.i(TAG, "Tokens unset");
+		Log.i(My2Cents.TAG, "Tokens unset");
 	}
 	
 	private void onSetToken() {
 		settings.unregisterOnSharedPreferenceChangeListener(this);
 		loginCheckBoxPreference.setChecked(true);
 		settings.registerOnSharedPreferenceChangeListener(this);
-	}
-
-	public static void setShareOnTwitter(boolean shareOnTwitter) {
-		SettingsActivity.shareOnTwitter = shareOnTwitter;
-	}
-
-	public static boolean isShareOnTwitter() {
-		return shareOnTwitter;
-	}
-
-	public static void setShareLocation(boolean shareLocation) {
-		SettingsActivity.shareLocation = shareLocation;
-	}
-
-	public static boolean isShareLocation() {
-		return shareLocation;
 	}
 }

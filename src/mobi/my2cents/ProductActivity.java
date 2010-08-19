@@ -87,13 +87,6 @@ public final class ProductActivity extends ListActivity {
 		
 		registerReceiver(productUpdaterReceiver, ProductGetterService.FILTER);
 		registerReceiver(syncReceiver, SyncService.FILTER);
-		
-		SettingsActivity.setShareOnTwitter(settings.getBoolean(getString(R.string.settings_twitter), false));
-		boolean shareLocation = settings.getBoolean(getString(R.string.settings_share_location), false);
-		SettingsActivity.setShareLocation(shareLocation);
-		if (shareLocation) {
-			GpsManager.locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		}
 	}
 	
 	@Override
@@ -370,7 +363,8 @@ public final class ProductActivity extends ListActivity {
 			
 			values.put(Comment.PENDING, true);
 			
-			if (SettingsActivity.isShareLocation()) {
+			final boolean shareLocation = settings.getBoolean(getString(R.string.settings_share_location), false);
+			if (shareLocation) {
 				Location location = GpsManager.getLocation();
 				if (location != null) {
 					values.put(Comment.LATITUDE, location.getLatitude());

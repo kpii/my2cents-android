@@ -105,21 +105,21 @@ public class Comment implements BaseColumns {
 		return values;
 	}
 	
-	public final static JSONObject getJson(Cursor cursor) {		
+	public final static JSONObject getJson(Cursor cursor, boolean shareLocation, boolean shareOnTwitter) {		
     	try {
     		final JSONObject jsonComment = new JSONObject();
     		
 			jsonComment.put("product_key", cursor.getString(cursor.getColumnIndex(Comment.PRODUCT_KEY)));
 			jsonComment.put("body", cursor.getString(cursor.getColumnIndex(Comment.BODY)));
 	    	
-			if (SettingsActivity.isShareLocation()) {
+			if (shareLocation) {
 				jsonComment.put("latitude", cursor.getDouble(cursor.getColumnIndex(Comment.LATITUDE)));
 				jsonComment.put("longitude", cursor.getDouble(cursor.getColumnIndex(Comment.LONGITUDE)));
 			}
 
 			final JSONObject json = new JSONObject();
 			json.put("comment", jsonComment);
-			final String publishToTwitter = SettingsActivity.isShareOnTwitter() ? "1" : "0";
+			final String publishToTwitter = shareOnTwitter ? "1" : "0";
 			json.put("publish_to_twitter", publishToTwitter);
 			return json;
 		} catch (JSONException e) {

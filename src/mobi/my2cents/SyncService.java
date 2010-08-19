@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class SyncService extends IntentService {
@@ -30,12 +31,13 @@ public class SyncService extends IntentService {
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		
+		final boolean shareLocation = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.settings_share_location), false);
+		final boolean shareOnTwitter = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.settings_twitter), false);
 		final Cursor commentsCursor = getContentResolver().query(Uri.withAppendedPath(Comment.CONTENT_URI, "pending"), null, null, null, null);
 		try {
 			if (commentsCursor.moveToFirst()) {
 				do {
-					final JSONObject json = Comment.getJson(commentsCursor);
+					final JSONObject json = Comment.getJson(commentsCursor, shareLocation, shareOnTwitter);
 					if (json != null) {
 						try {
 							final String response = NetworkManager.postComment(json.toString());

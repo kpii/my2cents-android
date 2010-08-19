@@ -3,12 +3,17 @@ package mobi.my2cents.utils;
 
 import java.util.List;
 
+import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 
 public class GpsManager {
 	
-	public static LocationManager locationManager;
+	private static LocationManager locationManager;
+	
+	public static void initialize(Context context) {
+		locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+	}
 	
 	public static final Location getLocation() { 
 		if (locationManager == null) return null;
