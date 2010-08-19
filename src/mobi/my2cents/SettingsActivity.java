@@ -2,36 +2,44 @@
 package mobi.my2cents;
 
 import mobi.my2cents.utils.AuthenticationManager;
+import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.text.TextUtils;
-import android.util.Log;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.widget.Toast;
 
 public class SettingsActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	
 	private SharedPreferences settings;
-	private CheckBoxPreference loginCheckBoxPreference;
+	private PreferenceScreen loginPreference;
+
+	private UserGetterReceiver userGetterReceiver;
 	
 	private static final int AUTH_REQUEST = 1;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.settings_activity);
 		
+		userGetterReceiver = new UserGetterReceiver();
+		
+		setContentView(R.layout.settings_activity);
 		addPreferencesFromResource(R.xml.preferences);
+		
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
 		
-		loginCheckBoxPreference = (CheckBoxPreference) findPreference(getString(R.string.settings_login));
+		loginPreference = (PreferenceScreen) findPreference(getString(R.string.settings_login));
+		loginPreference.setOnPreferenceClickListener(authorizationListener);
 		
 		// Intent feedback
         final PreferenceScreen feedbackPreference = (PreferenceScreen)getPreferenceManager().findPreference(getString(R.string.settings_send_feedback));
@@ -44,28 +52,50 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
 	
 	@Override
 	protected void onResume() {
-		super.onResume();		
-		settings.registerOnSharedPreferenceChangeListener(this);
+		super.onResume();
+		displayUser();
+		registerReceiver(userGetterReceiver, UserGetterService.FILTER);
 	}
 	
 	@Override
-	protected void onPause() {
-		settings.unregisterOnSharedPreferenceChangeListener(this);
+	public void onPause() {
+		unregisterReceiver(userGetterReceiver);
 		super.onPause();
 	}
 	
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {        
-		if (key.equals(getString(R.string.settings_login))) {
-        	if(loginCheckBoxPreference.isChecked()) {
-        		startAuthorization();
-        	} else {
-        		logout();
-        	}
-        }
-    }
+	private final OnPreferenceClickListener authorizationListener = new OnPreferenceClickListener() {
+		public boolean onPreferenceClick(Preference preference) {
+			final boolean isAuthorized = settings.getBoolean(getString(R.string.settings_login), false);
+			if (isAuthorized) {
+				askLogout();
+			}
+			else {
+				startAuthorization();
+			}
+			return true;
+		}
+	};
+	
+	private void askLogout() {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Do you want to logout?")
+		       .setCancelable(false)
+		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                logout();
+		           }
+		       })
+		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                dialog.cancel();
+		           }
+		       });
+		final AlertDialog alert = builder.create();
+		alert.show();
+	}
+
 	
 	private void startAuthorization() {
-		Toast.makeText(this, R.string.message_authorize, Toast.LENGTH_LONG).show();
 		final Intent intent = new Intent(this, AuthorizationActivity.class);
 		startActivityForResult(intent, AUTH_REQUEST);
 	}
@@ -75,7 +105,7 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
         if (requestCode == AUTH_REQUEST) {
         	switch (resultCode) {
 				case RESULT_OK: {
-					login();
+					displayUser();
 					return;
 				}
 				case RESULT_CANCELED: {
@@ -87,22 +117,40 @@ public class SettingsActivity extends PreferenceActivity implements OnSharedPref
     }
 		
 	private void logout() {
-		settings.unregisterOnSharedPreferenceChangeListener(this);
-		
 		AuthenticationManager.logout();
 		
-		final SharedPreferences.Editor editor = settings.edit();
+		final Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 		editor.putBoolean(getString(R.string.settings_login), false);
+		editor.putString(getString(R.string.user_name), getString(R.string.anonymous_username));
+		editor.putString(getString(R.string.user_avatar_url), "");
 		editor.commit();
 		
-		loginCheckBoxPreference.setChecked(false);
-		
-		settings.registerOnSharedPreferenceChangeListener(this);
+		displayUser();
 	}
 	
-	private void login() {
-		settings.unregisterOnSharedPreferenceChangeListener(this);
-		loginCheckBoxPreference.setChecked(true);
-		settings.registerOnSharedPreferenceChangeListener(this);
+	private void displayUser() {
+		final boolean isAuthorized = settings.getBoolean(getString(R.string.settings_login), false);
+		if (isAuthorized) {
+			loginPreference.setTitle(R.string.settings_logout);
+		}
+		else {
+			loginPreference.setTitle(R.string.settings_login);
+		}
+		
+		loginPreference.setSummary(settings.getString(getString(R.string.user_name), getString(R.string.anonymous_username)));
+	}
+
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private final class UserGetterReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			displayUser();
+		}
+		
 	}
 }

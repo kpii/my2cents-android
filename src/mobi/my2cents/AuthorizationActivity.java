@@ -10,13 +10,12 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.webkit.CookieManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 public final class AuthorizationActivity extends Activity {
-	
-	private final static String TAG = "AuthorizationActivity";
 	
 	private WebView webView;
 	private ProgressDialog progressDialog;
@@ -49,7 +48,6 @@ public final class AuthorizationActivity extends Activity {
 	    	closeProgressDialog();
 	    	
 	        if (url.equals(NetworkManager.BASE_URL + "/auth/success")) {
-	        	Toast.makeText(view.getContext(), R.string.message_successful_authorization, Toast.LENGTH_LONG).show();
 	        	
 	        	authorized();
 	    		
@@ -59,7 +57,8 @@ public final class AuthorizationActivity extends Activity {
 				finish();
 	        }
 	        else if (url.equals(NetworkManager.BASE_URL + "/auth/failure")) {
-	        	Toast.makeText(view.getContext(), R.string.message_unsuccessful_authorization, Toast.LENGTH_LONG).show();
+	        	
+	        	nonAuthorized();
 	        	
 	        	final Intent intent = getIntent();
 	    		setResult(RESULT_CANCELED, intent);
@@ -77,16 +76,28 @@ public final class AuthorizationActivity extends Activity {
 	}
 	
 	private void authorized() {
+		Toast.makeText(this, R.string.message_successful_authorization, Toast.LENGTH_LONG).show();
+		
 		final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
 		editor.putBoolean(getString(R.string.settings_login), true);
 		editor.commit();
 		
-		Log.i(TAG, "Successful authorization");
+		final Intent intent = new Intent(this, UserGetterService.class);
+		startService(intent);
+	}
+	
+	private void nonAuthorized() {
+		Toast.makeText(this, R.string.message_unsuccessful_authorization, Toast.LENGTH_LONG).show();
+		
+		final SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+		editor.putBoolean(getString(R.string.settings_login), false);
+		editor.commit();
 	}
 		
 	@Override
 	protected void onResume() {
 		super.onResume();
+		CookieManager.getInstance().removeAllCookie();
 		webView.loadUrl(NetworkManager.BASE_URL + "/login?client_token=" + AuthenticationManager.getClientToken());
 	}
 	

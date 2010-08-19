@@ -151,6 +151,11 @@ public final class NetworkManager {
         return getREST(url);
 	}
 	
+	public static String getUser() throws ClientProtocolException, IOException {
+		final String url = BASE_URL + "/me.json";
+        return getREST(url);
+	}
+	
 	public static String getProduct(String key) throws ClientProtocolException, IOException {
 		final String url = BASE_URL + "/products/" + key + ".json";
 		return getREST(url);

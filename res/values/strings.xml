@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+   
     <string name="product_status">Product information and comments</string>
     <string name="app_name">my2cents</string>
 	<string name="app_notes">by ETH Zurich [v1.1.beta4]</string>
@@ -59,7 +60,8 @@
 	<string name="message_camera_problem">Sorry, the Android camera encountered a problem. You may need to restart the device.</string>
 	
     <string name="settings_token">Token</string>
-    <string name="settings_login">Login with Twitter</string>
+    <string name="settings_login">Press to login with Twitter</string>
+    <string name="settings_logout">Press to logout</string>
     <string name="settings_login_checked">Logged in</string>
     <string name="settings_login_desc_out">You are not logged in</string>
     <string name="settings_login_desc_in">You are logged in</string>
@@ -123,4 +125,7 @@
     <string name="error_message_no_server_connection">Cannot connect to my2cents server</string>
     
     <string name="client_token">client_token</string>
+    
+    <string name="user_name">user_name</string>
+    <string name="user_avatar_url">user_avatar_url</string>
 </resources>
