@@ -31,6 +31,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
@@ -49,6 +50,7 @@ public final class ProductActivity extends ListActivity {
 	
 	private ProductUpdaterReceiver productUpdaterReceiver;
 	private SyncReceiver syncReceiver;
+	private ImageDownloaderReceiver imageDownloaderReceiver;
 	
 	private View productPanel;
 	private ImageView productImageView;
@@ -69,10 +71,11 @@ public final class ProductActivity extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		prepareUI();
-		
 		productUpdaterReceiver = new ProductUpdaterReceiver();
 		syncReceiver = new SyncReceiver();
+		imageDownloaderReceiver = new ImageDownloaderReceiver();
+		
+		prepareUI();
 
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
 		inputManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);		
@@ -85,12 +88,14 @@ public final class ProductActivity extends ListActivity {
 		super.onResume();
 		registerReceiver(productUpdaterReceiver, ProductGetterService.FILTER);
 		registerReceiver(syncReceiver, SyncService.FILTER);
+		registerReceiver(imageDownloaderReceiver, ImageDownloaderService.FILTER);
 	}
 	
 	@Override
 	public void onPause() {
 		unregisterReceiver(productUpdaterReceiver);
 		unregisterReceiver(syncReceiver);
+		unregisterReceiver(imageDownloaderReceiver);
 		super.onPause();
 	}
 	
@@ -458,6 +463,15 @@ public final class ProductActivity extends ListActivity {
 		public void onReceive(Context context, Intent intent) {
 			displayProduct();
 			((CursorAdapter) getListAdapter()).getCursor().requery();
+		}
+		
+	}
+	
+	private final class ImageDownloaderReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			((BaseAdapter) getListAdapter()).notifyDataSetChanged();
 		}
 		
 	}
