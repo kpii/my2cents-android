@@ -421,7 +421,7 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 			setResult(RESULT_CANCELED);
 	        finish();
 	        
-			Intent back = new Intent(this, MainActivity.class);
+			final Intent back = new Intent(this, MainActivity.class);
 	    	back.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(back);	
 			return true;

@@ -3,6 +3,7 @@ package mobi.my2cents.data;
 import java.util.HashMap;
 
 import mobi.my2cents.My2Cents;
+import mobi.my2cents.utils.GpsManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,6 +11,7 @@ import org.json.JSONObject;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.location.Location;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
@@ -103,10 +105,16 @@ public class Product implements BaseColumns {
 		}
 	}
 	
-	public final static JSONObject getScanJson(String gtin) {		
+	public final static JSONObject getScanJson(String gtin, boolean shareLocation) {		
     	try {
     		final JSONObject jsonScan = new JSONObject();
     		jsonScan.put("gtin", gtin);
+    		
+    		if (shareLocation) {
+    			final Location location = GpsManager.getLocation();
+    			jsonScan.put("latitude", location.getLatitude());
+    			jsonScan.put("longitude", location.getLongitude());
+    		}
 			
 			final JSONObject json = new JSONObject();
 			json.put("scan", jsonScan);

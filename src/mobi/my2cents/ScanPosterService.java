@@ -16,6 +16,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -35,9 +36,11 @@ public class ScanPosterService extends IntentService {
 		final String gtin = intent.getStringExtra(Product.GTIN);
 		if (TextUtils.isEmpty(gtin)) return;
 		
+		final boolean shareLocation = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.settings_share_location), false);
+		
 		String postResponse = null;
 		try {
-			final String content = Product.getScanJson(gtin).toString();
+			final String content = Product.getScanJson(gtin, shareLocation).toString();
 			postResponse = NetworkManager.postScan(content);
 		} catch (ClientProtocolException e) {
 			Log.e(My2Cents.TAG, e.getMessage());
