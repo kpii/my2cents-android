@@ -25,6 +25,7 @@ import android.graphics.Rect;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
@@ -69,7 +70,6 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	private boolean hasSurface;
 	private boolean playBeep;
 	private boolean vibrate;
-	private boolean showVirtualKeyboard;
 	private final OnCompletionListener beepListener = new BeepListener();
 	
 	private ScanPosterReceiver scanPosterReceiver;
@@ -96,6 +96,8 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		scanPosterReceiver = new ScanPosterReceiver();
+		
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
 
 		Window window = getWindow();
@@ -146,8 +148,8 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 		
 		registerReceiver(scanPosterReceiver, ScanPosterService.FILTER);
 
-		SurfaceView surfaceView = (SurfaceView) findViewById(R.id.PreviewSurfaceView);
-		SurfaceHolder surfaceHolder = surfaceView.getHolder();
+		final SurfaceView surfaceView = (SurfaceView) findViewById(R.id.PreviewSurfaceView);
+		final SurfaceHolder surfaceHolder = surfaceView.getHolder();
 		if (hasSurface) {
 			// The activity was paused but not stopped, so the surface still
 			// exists. Therefore
@@ -165,20 +167,18 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 		playBeep = settings.getBoolean(getString(R.string.settings_play_beep), true);
 		vibrate = settings.getBoolean(getString(R.string.settings_vibrate), false);
 		
-		showVirtualKeyboard = getIntent().getBooleanExtra(getString(R.string.show_virtual_keyboard), false);
-		
 		initBeepSound();
 	}
 
 	@Override
 	protected void onPause() {
 		unregisterReceiver(scanPosterReceiver);
-		super.onPause();
 		if (handler != null) {
 			handler.quitSynchronously();
 			handler = null;
 		}
 		CameraManager.get().closeDriver();
+		super.onPause();
 	}
 
 	@Override
@@ -447,15 +447,12 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			if (intent.hasExtra(Product.KEY)) {
-				final String key = intent.getStringExtra(Product.KEY);
-				if (!TextUtils.isEmpty(key)) {
-					final Intent productIntent = new Intent(context, ProductActivity.class);
-					productIntent.putExtra(getString(R.string.show_virtual_keyboard), showVirtualKeyboard);
-					productIntent.putExtra(Product.KEY, key);
-					startActivity(productIntent);
-				}
-			}
+			final String key = intent.getStringExtra(Product.KEY);
+			final Uri product = Uri.withAppendedPath(Product.CONTENT_URI, "key/" + key);
+			
+			final Intent productIntent = new Intent(context, ProductActivity.class);
+			productIntent.setData(product);
+			startActivity(productIntent);
 		}
 		
 	}

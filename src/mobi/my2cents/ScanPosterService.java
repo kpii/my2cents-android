@@ -15,6 +15,7 @@ import android.app.IntentService;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -34,10 +35,10 @@ public class ScanPosterService extends IntentService {
 		final String gtin = intent.getStringExtra(Product.GTIN);
 		if (TextUtils.isEmpty(gtin)) return;
 		
-		String data = null;
+		String postResponse = null;
 		try {
 			final String content = Product.getScanJson(gtin).toString();
-			data = NetworkManager.postScan(content);
+			postResponse = NetworkManager.postScan(content);
 		} catch (ClientProtocolException e) {
 			Log.e(My2Cents.TAG, e.getMessage());
 		} catch (IOException e) {
@@ -45,30 +46,52 @@ public class ScanPosterService extends IntentService {
 		}
 		
 		try {
-			if (data != null) {
+			if (postResponse != null) {
 				
-				final JSONObject json = new JSONObject(data).getJSONObject("scan");
+				final JSONObject postResponseJson = new JSONObject(postResponse).getJSONObject("scan");
+				final String id = postResponseJson.getString("id");
 				
-				final ContentValues product = Product.ParseJson(json);				
-				getContentResolver().insert(Product.CONTENT_URI, product);
-				
-				if (json.has("comment")) {
-					final JSONArray comments = json.getJSONArray("comments");
-					if (comments.length() > 0) {
-						final ContentValues[] values = new ContentValues[comments.length()];
-						for (int i=0; i<comments.length(); i++) {
-			            	values[i] = Comment.parseFeedJson(comments.getJSONObject(i));
-			            }					
-						getContentResolver().bulkInsert(Comment.CONTENT_URI, values);
+				for (byte i=0; i<5; i++) {
+					
+					String getResponse = null;
+					try {
+						getResponse = NetworkManager.getScan(id);
+					} catch (ClientProtocolException e) {
+						Log.e(My2Cents.TAG, e.getMessage());
+					} catch (IOException e) {
+						Log.e(My2Cents.TAG, e.getMessage());
 					}
+					
+					if (getResponse != null) {
+						final JSONObject getResponseJson = new JSONObject(getResponse).getJSONObject("scan");
+						if (getResponseJson.isNull("product")) {
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+								Log.e(My2Cents.TAG, e.getMessage());
+							}
+							
+							continue;
+						}
+						else {
+							final String key = getResponseJson.getJSONObject("product").getString("key");
+							final String name = getResponseJson.getJSONObject("product").getString("name");
+							
+							final Intent broadcastIntent = new Intent(SCAN_POSTED);
+							broadcastIntent.putExtra(Product.KEY, key);
+							sendBroadcast(broadcastIntent);
+							
+							break;
+						}
+					}
+
 				}
+				
 			}			
 		} catch (JSONException e) {
 			Log.e(My2Cents.TAG, e.toString());
 		} finally {
-			final Intent broadcastIntent = new Intent(SCAN_POSTED);
-			broadcastIntent.putExtra(Product.GTIN, gtin);
-			sendBroadcast(broadcastIntent);
+			
 		}
 	}
 }
