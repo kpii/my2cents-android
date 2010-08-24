@@ -58,7 +58,7 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	private static final float BEEP_VOLUME = 0.15f;
 	private static final long VIBRATE_DURATION = 200L;
 	
-	private final int DIALOG_SEARCH	= 0;
+	private final int TYPE_BARCODE	= 0;
 
 	private SharedPreferences settings;
 
@@ -138,7 +138,7 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	
 	private final View.OnClickListener manualInputListener = new View.OnClickListener() {
 		public void onClick(View view) {
-			showDialog(DIALOG_SEARCH);
+			showDialog(TYPE_BARCODE);
 		}
 	};
 
@@ -192,8 +192,8 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.searchMenuItem: {
-				showDialog(DIALOG_SEARCH);
+			case R.id.typeBarcodeMenuItem: {
+				showDialog(TYPE_BARCODE);
 				return true;
 			}
 			case R.id.settingsMenuItem: {
@@ -388,7 +388,7 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	protected Dialog onCreateDialog(int id) {
 		
 		switch (id) {
-			case DIALOG_SEARCH: {
+			case TYPE_BARCODE: {
 				LayoutInflater factory = LayoutInflater.from(this);
 		        final View view = factory.inflate(R.layout.search_dialog, null);
 		        return new AlertDialog.Builder(this)
