@@ -54,7 +54,7 @@ public class ScanPosterService extends IntentService {
 				final JSONObject postResponseJson = new JSONObject(postResponse).getJSONObject("scan");
 				final String id = postResponseJson.getString("id");
 				
-				for (byte i=0; i<5; i++) {
+				for (byte i=0; i<10; i++) {
 					
 					String getResponse = null;
 					try {
@@ -69,7 +69,7 @@ public class ScanPosterService extends IntentService {
 						final JSONObject getResponseJson = new JSONObject(getResponse).getJSONObject("scan");
 						if (getResponseJson.isNull("product")) {
 							try {
-								Thread.sleep(1000);
+								Thread.sleep(2000);
 							} catch (InterruptedException e) {
 								Log.e(My2Cents.TAG, e.getMessage());
 							}

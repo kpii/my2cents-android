@@ -400,6 +400,7 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 		                	EditText editor = (EditText)view.findViewById(R.id.InputEditText);
 		                	String gtin = editor.getText().toString();
 		        			if (!TextUtils.isEmpty(gtin)) {
+   		        				Toast.makeText(getApplicationContext(), R.string.barcode_send_stay_tuned, Toast.LENGTH_LONG).show();
 		        				postScan(gtin);
 		        			}
 		                }

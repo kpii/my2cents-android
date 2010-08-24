@@ -123,6 +123,7 @@
     
     <string name="error_message_no_network_connection">No network connection</string>    
     <string name="error_message_no_server_connection">Cannot connect to my2cents server</string>
+    <string name="barcode_send_stay_tuned">The entered Barcode is submitted. Please stay tuned while we check for productinformation.</string>
     
     <string name="client_token">client_token</string>
     
