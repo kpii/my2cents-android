@@ -44,6 +44,13 @@ public class SyncService extends IntentService {
 							if (response != null) {
 								final long id = commentsCursor.getLong(commentsCursor.getColumnIndex(Comment._ID)); 
 								getContentResolver().delete(ContentUris.withAppendedId(Comment.CONTENT_URI, id), null, null);
+								ContentValues postedValues;
+								try {
+									postedValues = Comment.parsePostedJson(json);
+									getContentResolver().insert(Comment.CONTENT_URI, postedValues);
+								} catch (JSONException e) {
+									Log.e(My2Cents.TAG, e.toString());
+								}
 							}
 						} catch (ClientProtocolException e) {
 							Log.e(My2Cents.TAG, e.toString());

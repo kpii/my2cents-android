@@ -82,6 +82,32 @@ public class Comment implements BaseColumns {
 		return values;
 	}
 	
+	public final static ContentValues parsePostedJson(JSONObject json) throws JSONException {
+		
+		if (json == null) return null;
+		
+		final ContentValues values = new ContentValues();
+		values.put(Comment.KEY, json.getString("id"));
+		values.put(Comment.BODY, json.getString("body"));
+		values.put(Comment.CREATED_AT, Helper.parseDate(json.getString("created_at")));
+		
+		if (json.has("product")) {
+			final JSONObject product = json.getJSONObject("product");
+			values.put(Comment.PRODUCT_KEY, product.getString("key"));
+			values.put(Comment.PRODUCT_NAME, product.getString("name"));
+			values.put(Comment.PRODUCT_IMAGE_URL, product.getString("image_url"));
+		}
+		
+		if (json.has("user")) {
+			final JSONObject user = json.getJSONObject("user");
+			values.put(Comment.USER_KEY, user.getString("id"));
+			values.put(Comment.USER_NAME, user.getString("name"));
+			values.put(Comment.USER_IMAGE_URL, user.getString("profile_image_url"));
+		}
+		
+		return values;
+	}
+	
 	public final static ContentValues parseProductJson(JSONObject json, String productKey, String productName, String productImageUrl) throws JSONException {
 		
 		if (json == null) return null;
