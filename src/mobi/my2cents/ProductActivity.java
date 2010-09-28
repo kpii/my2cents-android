@@ -137,7 +137,7 @@ public final class ProductActivity extends ListActivity {
 				affiliateTextView.setVisibility(View.GONE);
 			}
 			else {
-				affiliateTextView.setText(Html.fromHtml("productinfo by <a href='" + affiliateUrl + "'>" + affiliateName + "</a>"));
+				affiliateTextView.setText(Html.fromHtml("productinfo from <a href='" + affiliateUrl + "'>" + affiliateName + "</a>"));
 				affiliateTextView.setVisibility(View.VISIBLE);
 			}
 			
