@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -39,12 +38,17 @@ public final class AuthorizationActivity extends Activity {
 	    
 	    @Override
 	    public void onPageStarted(WebView view, String url, Bitmap favicon) {
-	    	closeProgressDialog();
-	    	progressDialog = ProgressDialog.show(AuthorizationActivity.this, null, getString(R.string.progress_dialog_loading), true);
+	    	if (progressDialog == null) {
+	    		progressDialog = ProgressDialog.show(view.getContext(), null, getString(R.string.progress_dialog_loading), true);
+	    	}
+	    	else {
+	    		progressDialog.show();
+	    	}
 	    }
 	    
 	    @Override
 	    public void onPageFinished(WebView view, String url) {
+	    	
 	    	closeProgressDialog();
 	    	
 	        if (url.equals(NetworkManager.BASE_URL + "/auth/success")) {
@@ -69,9 +73,8 @@ public final class AuthorizationActivity extends Activity {
 	}
 	
 	private void closeProgressDialog() {
-		if (progressDialog != null && progressDialog.isShowing()) {
-    		progressDialog.dismiss();
-    		progressDialog = null;
+		if (progressDialog != null) {
+    		progressDialog.hide();
     	}
 	}
 	
@@ -104,6 +107,7 @@ public final class AuthorizationActivity extends Activity {
 	@Override
 	protected void onPause() {
 		closeProgressDialog();
+		webView.stopLoading();
 		super.onPause();
 	}
 }
