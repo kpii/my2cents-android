@@ -46,7 +46,8 @@ public class SyncService extends IntentService {
 								getContentResolver().delete(ContentUris.withAppendedId(Comment.CONTENT_URI, id), null, null);
 								ContentValues postedValues;
 								try {
-									postedValues = Comment.parsePostedJson(json);
+									final JSONObject responseJson = new JSONObject(response).getJSONObject("comment");
+									postedValues = Comment.parsePostedJson(responseJson);
 									getContentResolver().insert(Comment.CONTENT_URI, postedValues);
 								} catch (JSONException e) {
 									Log.e(My2Cents.TAG, e.toString());
