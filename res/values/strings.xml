@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <string name="codecheck_action">com.codecheck.info</string>
    
     <string name="product_status">Product information and comments</string>
     <string name="app_name">my2cents</string>

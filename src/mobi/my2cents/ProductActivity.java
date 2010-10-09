@@ -6,6 +6,7 @@ import java.util.Date;
 import mobi.my2cents.data.Comment;
 import mobi.my2cents.data.Product;
 import mobi.my2cents.utils.GpsManager;
+import mobi.my2cents.utils.Helper;
 import mobi.my2cents.utils.ImageManager;
 import mobi.my2cents.utils.NetworkManager;
 import android.app.ListActivity;
@@ -66,6 +67,8 @@ public final class ProductActivity extends ListActivity {
 	private TextView statusTextView;
 	
 	private static Uri product;
+	
+	private boolean isCodeCheckInstalled;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -89,6 +92,8 @@ public final class ProductActivity extends ListActivity {
 		registerReceiver(productUpdaterReceiver, ProductGetterService.FILTER);
 		registerReceiver(syncReceiver, SyncService.FILTER);
 		registerReceiver(imageDownloaderReceiver, ImageDownloaderService.FILTER);
+		
+		isCodeCheckInstalled = Helper.isIntentAvailable(this, getString(R.string.codecheck_action));
 	}
 	
 	@Override
@@ -302,7 +307,17 @@ public final class ProductActivity extends ListActivity {
 			closeProductPopupBar();
 			if (product != null) {
 				final Cursor cursor = managedQuery(product, null, null, null, null);
-				if (cursor.moveToFirst()) {			
+				if (cursor.moveToFirst()) {
+					final String name = cursor.getString(cursor.getColumnIndex(Product.AFFILIATE_NAME));
+					if (name.equals("Codecheck")) {
+						if (isCodeCheckInstalled) {
+							final String url = cursor.getString(cursor.getColumnIndex(Product.AFFILIATE_URL));
+							final Intent intent = new Intent(getString(R.string.codecheck_action), Uri.parse(url));  
+							startActivity(intent);
+							return;
+						}
+					}
+					
 					final String url = cursor.getString(cursor.getColumnIndex(Product.AFFILIATE_URL));
 					final Intent intent = new Intent("android.intent.action.VIEW", Uri.parse(url));  
 					startActivity(intent);
