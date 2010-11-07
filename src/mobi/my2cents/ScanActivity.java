@@ -66,13 +66,10 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 
 	private ViewfinderView viewfinderView;
 	private MediaPlayer mediaPlayer;
-	private Result lastResult;
 	private boolean hasSurface;
 	private boolean playBeep;
 	private boolean vibrate;
 	private final OnCompletionListener beepListener = new BeepListener();
-	
-	private ScanPosterReceiver scanPosterReceiver;
 
 	public static final Vector<BarcodeFormat> PRODUCT_FORMATS;
 	static {
@@ -95,8 +92,6 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		scanPosterReceiver = new ScanPosterReceiver();
 		
 		settings = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -145,8 +140,6 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
-		registerReceiver(scanPosterReceiver, ScanPosterService.FILTER);
 
 		final SurfaceView surfaceView = (SurfaceView) findViewById(R.id.PreviewSurfaceView);
 		final SurfaceHolder surfaceHolder = surfaceView.getHolder();
@@ -172,13 +165,12 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 
 	@Override
 	protected void onPause() {
-		unregisterReceiver(scanPosterReceiver);
+		super.onPause();
 		if (handler != null) {
 			handler.quitSynchronously();
 			handler = null;
 		}
 		CameraManager.get().closeDriver();
-		super.onPause();
 	}
 
 	@Override
@@ -243,7 +235,6 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 	 *            A greyscale bitmap of the camera data which was decoded.
 	 */
 	public void handleDecode(Result rawResult, Bitmap barcode) {
-		lastResult = rawResult;
 		playBeepSoundAndVibrate();
 		drawResultPoints(barcode, rawResult);
 
@@ -367,7 +358,6 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 		TextView textView = (TextView) findViewById(R.id.StatusTextView);
 		textView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
 		textView.setTextSize(14.0f);
-		lastResult = null;
 	}
 
 	public void drawViewfinder() {
@@ -437,23 +427,9 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 			Toast.makeText(this, R.string.error_message_no_network_connection, Toast.LENGTH_LONG).show();
 		}
 		else {
-			final Intent intent = new Intent(this, ScanPosterService.class);
-			intent.putExtra(Product.GTIN, gtin);
-			startService(intent);
-		}
-	}
-	
-	private final class ScanPosterReceiver extends BroadcastReceiver {
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			final String key = intent.getStringExtra(Product.KEY);
-			final Uri product = Uri.withAppendedPath(Product.CONTENT_URI, "key/" + key);
-			
-			final Intent productIntent = new Intent(context, ProductActivity.class);
-			productIntent.setData(product);
+			final Intent productIntent = new Intent(this, ProductActivity.class);
+			productIntent.putExtra(Product.GTIN, gtin);
 			startActivity(productIntent);
 		}
-		
 	}
 }

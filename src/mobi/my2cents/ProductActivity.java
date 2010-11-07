@@ -10,6 +10,7 @@ import mobi.my2cents.utils.Helper;
 import mobi.my2cents.utils.ImageManager;
 import mobi.my2cents.utils.NetworkManager;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -52,6 +53,7 @@ public final class ProductActivity extends ListActivity {
 	private ProductUpdaterReceiver productUpdaterReceiver;
 	private SyncReceiver syncReceiver;
 	private ImageDownloaderReceiver imageDownloaderReceiver;
+	private ScanPosterReceiver scanPosterReceiver;
 	
 	private View productPanel;
 	private ImageView productImageView;
@@ -77,6 +79,7 @@ public final class ProductActivity extends ListActivity {
 		productUpdaterReceiver = new ProductUpdaterReceiver();
 		syncReceiver = new SyncReceiver();
 		imageDownloaderReceiver = new ImageDownloaderReceiver();
+		scanPosterReceiver = new ScanPosterReceiver();
 		
 		prepareUI();
 
@@ -92,6 +95,7 @@ public final class ProductActivity extends ListActivity {
 		registerReceiver(productUpdaterReceiver, ProductGetterService.FILTER);
 		registerReceiver(syncReceiver, SyncService.FILTER);
 		registerReceiver(imageDownloaderReceiver, ImageDownloaderService.FILTER);
+		registerReceiver(scanPosterReceiver, ScanPosterService.FILTER);
 		
 		isCodeCheckInstalled = Helper.isIntentAvailable(this, getString(R.string.codecheck_action));
 	}
@@ -101,6 +105,8 @@ public final class ProductActivity extends ListActivity {
 		unregisterReceiver(productUpdaterReceiver);
 		unregisterReceiver(syncReceiver);
 		unregisterReceiver(imageDownloaderReceiver);
+		unregisterReceiver(scanPosterReceiver);
+		
 		super.onPause();
 	}
 	
@@ -112,10 +118,20 @@ public final class ProductActivity extends ListActivity {
 	
 	private void handleIntent(Intent intent) {
 		hideVirtualKeyboard();
-		product = intent.getData();
-		bindAdapter();
-		displayProduct();
-		getProductInfo();
+		
+		if (intent.hasExtra(Product.GTIN)) {
+			Toast.makeText(this, "Waiting for scan result", Toast.LENGTH_LONG).show();
+			
+			final Intent serviceIntent = new Intent(this, ScanPosterService.class);
+			serviceIntent.putExtra(Product.GTIN, intent.getStringExtra(Product.GTIN));
+			startService(serviceIntent);
+		}
+		else {
+			product = intent.getData();
+			bindAdapter();
+			displayProduct();
+			getProductInfo();
+		}
 	}
 	
 	private void bindAdapter() {
@@ -487,6 +503,21 @@ public final class ProductActivity extends ListActivity {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			((BaseAdapter) getListAdapter()).notifyDataSetChanged();
+		}
+		
+	}
+	
+	private final class ScanPosterReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			
+			final String key = intent.getStringExtra(Product.KEY);
+			product = Uri.withAppendedPath(Product.CONTENT_URI, "key/" + key);
+			
+			bindAdapter();
+			displayProduct();
+			getProductInfo();
 		}
 		
 	}
