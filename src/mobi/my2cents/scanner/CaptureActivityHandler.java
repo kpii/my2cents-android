@@ -51,20 +51,17 @@ public final class CaptureActivityHandler extends Handler {
     DONE
   }
 
-  public CaptureActivityHandler(ScanActivity activity,
-                         Vector<BarcodeFormat> decodeFormats,
-                         boolean beginScanning) {
+  public CaptureActivityHandler(ScanActivity activity, Vector<BarcodeFormat> decodeFormats,
+      String characterSet) {
     this.activity = activity;
-    decodeThread = new DecodeThread(activity, decodeFormats,
+    decodeThread = new DecodeThread(activity, decodeFormats, characterSet,
         new ViewfinderResultPointCallback(activity.getViewfinderView()));
     decodeThread.start();
     state = State.SUCCESS;
 
     // Start ourselves capturing previews and decoding.
     CameraManager.get().startPreview();
-    if (beginScanning) {
-      restartPreviewAndDecode();
-    }
+    restartPreviewAndDecode();
   }
 
   @Override
@@ -86,7 +83,8 @@ public final class CaptureActivityHandler extends Handler {
         Log.d(TAG, "Got decode succeeded message");
         state = State.SUCCESS;
         Bundle bundle = message.getData();
-        Bitmap barcode = bundle == null ? null : (Bitmap) bundle.getParcelable(DecodeThread.BARCODE_BITMAP);
+        Bitmap barcode = bundle == null ? null :
+            (Bitmap) bundle.getParcelable(DecodeThread.BARCODE_BITMAP);
         activity.handleDecode((Result) message.obj, barcode);
         break;
       case R.id.decode_failed:
@@ -103,7 +101,7 @@ public final class CaptureActivityHandler extends Handler {
         Log.d(TAG, "Got product query message");
         String url = (String) message.obj;
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);        
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         activity.startActivity(intent);
         break;
     }
@@ -117,6 +115,7 @@ public final class CaptureActivityHandler extends Handler {
     try {
       decodeThread.join();
     } catch (InterruptedException e) {
+      // continue
     }
 
     // Be absolutely sure we don't send any queued up messages

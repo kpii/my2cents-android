@@ -345,8 +345,7 @@ public final class ScanActivity extends Activity implements SurfaceHolder.Callba
 			return;
 		}
 		if (handler == null) {
-			boolean beginScanning = lastResult == null;
-			handler = new CaptureActivityHandler(this, PRODUCT_FORMATS, beginScanning);
+			handler = new CaptureActivityHandler(this, PRODUCT_FORMATS, null);
 		}
 	}
 

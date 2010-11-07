@@ -16,22 +16,23 @@
 
 package mobi.my2cents.scanner;
 
-import java.util.Hashtable;
-
-import mobi.my2cents.R;
-import mobi.my2cents.ScanActivity;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.util.Log;
-
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
+
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.util.Log;
+
+import java.util.Hashtable;
+
+import mobi.my2cents.R;
+import mobi.my2cents.ScanActivity;
 
 final class DecodeHandler extends Handler {
 
